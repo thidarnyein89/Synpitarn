@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:synpitarn/screens/loan/interview_appointment.dart';
 import 'package:synpitarn/screens/profile/loan_type.dart';
 import 'package:synpitarn/screens/profile/document_file.dart';
-import 'package:synpitarn/screens/profile/information1.dart';
-import 'package:synpitarn/screens/profile/information2.dart';
+import 'package:synpitarn/screens/profile/customer_information.dart';
+import 'package:synpitarn/screens/profile/additional_information.dart';
 import 'package:synpitarn/screens/profile/work_permit.dart';
 
 class StepData {
@@ -40,7 +40,7 @@ class StepData {
         loanFormState: 'qr_scan',
         icon: Icons.person_2_outlined,
         text: 'Customer Information',
-        page: Information1Page()));
+        page: CustomerInformationPage()));
 
     stepList.add(StepData(
         loanFormState: 'customer_information',
@@ -76,7 +76,7 @@ class StepData {
       StepData(
           icon: Icons.person_2_outlined,
           text: 'Basic Information',
-          page: Information1Page()),
+          page: CustomerInformationPage()),
     );
 
     stepList.add(

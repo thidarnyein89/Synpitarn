@@ -20,10 +20,13 @@ class LoanResponse {
   factory LoanResponse.fromJson(Map<String, dynamic> json) {
     List<Loan> loanList = [];
 
-    final loanJson = json['data'] ?? {};
-    for (final key in loanJson.keys) {
-      final loanMap = loanJson[key] as Map<String, dynamic>;
-      loanList.add(loanJson.fromJson(loanMap));
+    final loanJson = json['data'] ?? [];
+    if (loanJson is List) {
+      for (final loanMap in loanJson) {
+        if (loanMap is Map<String, dynamic>) {
+          loanList.add(Loan.fromJson(loanMap));
+        }
+      }
     }
 
     return LoanResponse(

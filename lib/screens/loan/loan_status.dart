@@ -1,32 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
-import 'package:synpitarn/models/admin.dart';
-import 'package:synpitarn/models/application_response.dart';
 import 'package:synpitarn/models/loan.dart';
+import 'package:synpitarn/models/loan_application_response.dart';
 import 'package:synpitarn/models/user.dart';
-import 'package:synpitarn/repositories/application_repository.dart';
+import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/data/app_config.dart';
-import 'package:intl/intl.dart';
 import 'package:synpitarn/screens/loan/interview_appointment.dart';
 import 'package:synpitarn/screens/profile/profile_home.dart';
+import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 class LoanStatusPage extends StatefulWidget {
-  LoanStatusPage({super.key});
+
+  bool isHome = false;
+
+  LoanStatusPage({super.key, required this.isHome});
 
   @override
   LoanStatusState createState() => LoanStatusState();
 }
 
 class LoanStatusState extends State<LoanStatusPage> {
-  Loan applicationData = Loan.defaultLoan(
-    User.defaultUser(),
-    Admin.defaultAdmin(),
-  );
+  Loan applicationData = Loan.defaultLoan();
   bool isLoading = false;
 
   @override
@@ -46,7 +45,7 @@ class LoanStatusState extends State<LoanStatusPage> {
 
     User loginUser = await getLoginUser();
 
-    ApplicationResponse applicationResponse = await ApplicationRepository()
+    LoanApplicationResponse applicationResponse = await LoanRepository()
         .getApplication(loginUser);
 
     if (applicationResponse.response.code != 200) {
@@ -72,22 +71,6 @@ class LoanStatusState extends State<LoanStatusPage> {
     );
   }
 
-  String formatDate(String rawDate) {
-    if (rawDate != "") {
-      DateTime parsedDate = DateTime.parse(rawDate);
-      return DateFormat("dd MMM yyyy").format(parsedDate);
-    }
-    return "";
-  }
-
-  String formatTime(String rawTime) {
-    if (rawTime != "") {
-      DateTime parsedTime = DateFormat("HH:mm:ss").parse(rawTime);
-      return DateFormat("hh:mm a").format(parsedTime);
-    }
-    return "";
-  }
-
   void showErrorDialog(String errorMessage) {
     CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
@@ -96,6 +79,15 @@ class LoanStatusState extends State<LoanStatusPage> {
 
   @override
   Widget build(BuildContext context) {
+    if(widget.isHome) {
+      return createLoanStatusWidget();
+    }
+    else {
+      return createLoanStatusPage();
+    }
+  }
+
+  Widget createLoanStatusPage() {
     return Scaffold(
       appBar: CustomAppBar(),
       body: LayoutBuilder(
@@ -169,6 +161,7 @@ class LoanStatusState extends State<LoanStatusPage> {
     if (AppConfig.PRE_APPROVE_STATUS.contains(applicationData.status)) {
       return preApproveWidget();
     }
+
     if (AppConfig.APPROVE_STATUS.contains(applicationData.status)) {
       return approveWidget();
     }
@@ -207,17 +200,17 @@ class LoanStatusState extends State<LoanStatusPage> {
         _buildRow("Contract No", applicationData.contractNo.toString()),
         _buildRow(
           "Loan Applied Date",
-          formatDate(applicationData.createdAt.toString()),
+          CommonService.formatDate(applicationData.createdAt.toString()),
         ),
         _buildRow(
           "Request Interview Date",
-          formatDate(applicationData.appointmentDate.toString()),
+          CommonService.formatDate(applicationData.appointmentDate.toString()),
         ),
         _buildRow(
           "Request Interview Time",
-          formatTime(applicationData.appointmentTime.toString()),
+          CommonService.formatTime(applicationData.appointmentTime.toString()),
         ),
-        _buildRow("Loan Status", applicationData.appointmentStatus.toString()),
+        _buildRow("Loan Status", 'pending'),
         CustomWidget.verticalSpacing(),
         if (applicationData.appointmentResubmit) ...[
           Text(
@@ -250,7 +243,7 @@ class LoanStatusState extends State<LoanStatusPage> {
         _buildRow("Loan Term", "${applicationData.loanTerm.toString()} Months"),
         _buildRow(
           "Branch Appointment Date",
-          formatDate(applicationData.appointmentBranchDate.toString()),
+          CommonService.formatDate(applicationData.appointmentBranchDate.toString()),
         ),
         _buildRow(
           "Branch Appointment Time",
@@ -276,7 +269,7 @@ class LoanStatusState extends State<LoanStatusPage> {
         _buildRow("Loan Term", "${applicationData.loanTerm.toString()} Months"),
         _buildRow(
           "Branch Appointment Date",
-          formatDate(applicationData.appointmentBranchDate.toString()),
+          CommonService.formatDate(applicationData.appointmentBranchDate.toString()),
         ),
         _buildRow(
           "Branch Appointment Time",

@@ -20,10 +20,13 @@ class AppConfig {
   static List<String> PENDING_STATUS = ["pending", "complete-review"];
   static List<String> PRE_APPROVE_STATUS = [
     "pre-approved",
-    "agree",
     "thlo-approved",
+    "approved",
+    "agree",
+    "ready-to-disburse",
     "disburse-approved",
   ];
   static List<String> APPROVE_STATUS = ["disbursed"];
   static List<String> REJECT_STATUS = ["reject"];
+  static List<String> POSTPONE_STATUS = ["postpone"];
 }

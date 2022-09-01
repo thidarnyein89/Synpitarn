@@ -16,7 +16,7 @@ import 'package:synpitarn/repositories/document_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/screens/profile/information1.dart';
+import 'package:synpitarn/screens/profile/customer_information.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:synpitarn/models/image_file.dart';
@@ -328,7 +328,7 @@ class DocumentFileState extends State<DocumentFilePage> {
   void handlePrevious() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => Information1Page()),
+      MaterialPageRoute(builder: (context) => CustomerInformationPage()),
     );
   }
 

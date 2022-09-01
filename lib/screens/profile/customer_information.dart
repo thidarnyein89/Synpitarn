@@ -15,14 +15,14 @@ import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/services/route_service.dart';
 
-class Information1Page extends StatefulWidget {
-  const Information1Page({super.key});
+class CustomerInformationPage extends StatefulWidget {
+  const CustomerInformationPage({super.key});
 
   @override
-  Information1State createState() => Information1State();
+  CustomerInformationState createState() => CustomerInformationState();
 }
 
-class Information1State extends State<Information1Page> {
+class CustomerInformationState extends State<CustomerInformationPage> {
   User loginUser = User.defaultUser();
   DefaultData defaultData = new DefaultData.defaultDefaultData();
 

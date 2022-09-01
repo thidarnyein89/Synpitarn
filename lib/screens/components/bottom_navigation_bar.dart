@@ -54,7 +54,7 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         showErrorDialog(AppConfig.NO_CURRENT_LOAN);
       }
       else {
-        RouteService.goToReplaceNavigator(context, LoanStatusPage());
+        RouteService.goToReplaceNavigator(context, LoanStatusPage(isHome: false));
       }
     } else if (index == AppConfig.PROFILE_INDEX) {
       RouteService.goToReplaceNavigator(context, ProfileHomePage());

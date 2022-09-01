@@ -183,10 +183,13 @@ class Loan {
   factory Loan.fromJson(Map<String, dynamic> json) {
     List<LoanSchedule> scheduleList = [];
 
-    final scheduleJson = json['schedule'] ?? {};
-    for (final key in scheduleJson.keys) {
-      final scheduleMap = scheduleJson[key] as Map<String, dynamic>;
-      scheduleList.add(LoanSchedule.fromJson(scheduleMap));
+    final scheduleJson = json['schedule'] ?? [];
+    if (scheduleJson is List) {
+      for (final scheduleMap in scheduleJson) {
+        if (scheduleMap is Map<String, dynamic>) {
+          scheduleList.add(LoanSchedule.fromJson(scheduleMap));
+        }
+      }
     }
 
     return Loan(
@@ -217,7 +220,7 @@ class Loan {
         branch: json["branch"] ?? "",
         branchId: json["branch_id"] ?? 0,
         branchCode: json["branch_code"] ?? "",
-        branchSectionTimeSlot: json["branch_section_time_slot"],
+        branchSectionTimeSlot: json["branch_section_time_slot"] ?? [],
         clientId: json["client_id"] ?? 0,
         collectionFee: json["collection_fee"] ?? "",
         contractDate: json["contract_date"] ?? "",
@@ -256,7 +259,7 @@ class Loan {
         policyDate: json["policy_date"] ?? "",
         provinceId: json["province_id"] ?? 0,
         principleAmount: json[''] ?? "principle_amount",
-        qrcode: json['qrcode'] ?? QrCode.defaultQrCode(),
+        qrcode: json['qrcode'] != null ? QrCode.fromJson(json['qrcode']) : QrCode.defaultQrCode(),
         receiptDocument: json["receipt_document"] ?? "",
         rejectCode: json["reject_code"] ?? "",
         rejectDate: json["reject_date"] ?? "",

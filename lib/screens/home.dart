@@ -3,11 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/loan.dart';
+import 'package:synpitarn/models/loan_application_response.dart';
 import 'package:synpitarn/models/loan_response.dart';
+import 'package:synpitarn/models/loan_schedule.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:synpitarn/screens/loan/loan_status.dart';
 import 'package:synpitarn/screens/setting/about_us.dart';
 import 'package:synpitarn/screens/setting/guide_header.dart';
 import 'package:synpitarn/services/common_service.dart';
@@ -31,6 +32,7 @@ class HomeState extends State<HomePage> {
   final PageController _pageController = PageController();
 
   User loginUser = User.defaultUser();
+  Loan applicationData = Loan.defaultLoan();
 
   final List<String> images = [
     'assets/images/slider1.jpeg',
@@ -45,39 +47,20 @@ class HomeState extends State<HomePage> {
     {"icon": Icons.support_agent, "label": "Call Center"},
   ];
 
-  final List<Map<String, dynamic>> loanSteps = [
-    {'label': 'Apply', 'isActive': false},
+  List<Map<String, dynamic>> loanSteps = [
+    {'label': 'Apply', 'isActive': true},
     {'label': 'Interview', 'isActive': false},
     {'label': 'Pre-approved', 'isActive': false},
-    {'label': 'Disbursed', 'isActive': true},
+    {'label': 'Disbursed', 'isActive': false},
   ];
 
-  final List<Map<String, dynamic>> repaymentList = [
-    {
-      'dueDate': '15 Aug 2024',
-      'amount': '1200.00 Baht',
-      'status': 'Unpaid',
-      'isLate': true
-    },
-    {
-      'dueDate': '30 July 2024',
-      'amount': '1200.00 Baht',
-      'status': 'Paid',
-      'isLate': false
-    },
-    {
-      'dueDate': '15 July 2024',
-      'amount': '1200.00 Baht',
-      'status': 'Paid',
-      'isLate': false
-    },
-  ];
+  List<Map<String, dynamic>> repaymentList = [];
+  int totalLateDate = 0;
 
   int _currentIndex = 0;
   bool isLoading = false;
 
   List<AboutUS> aboutList = [];
-  List<Loan> loanList = [];
 
   @override
   void initState() {
@@ -85,13 +68,7 @@ class HomeState extends State<HomePage> {
     slideImage();
     readAboutUsData();
 
-    getLoanHistory();
-
-    if (loginUser.loanApplicationSubmitted) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        scrollToActiveStep();
-      });
-    }
+    getInitData();
   }
 
   @override
@@ -101,24 +78,108 @@ class HomeState extends State<HomePage> {
     super.dispose();
   }
 
-  Future<void> getLoanHistory() async {
+  Future<void> getInitData() async {
     setState(() {
       isLoading = true;
     });
 
     loginUser = await getLoginUser();
 
-    LoanResponse loanResponse =
-        await LoanRepository().getLoanHistory(loginUser);
-    if (loanResponse.response.code != 200) {
-      showErrorDialog(loanResponse.response.message ??
-          'Error is occur, please contact admin');
-    } else {
-      loanList = loanResponse.data;
-    }
-
-    isLoading = false;
     setState(() {});
+    getApplicationData();
+    getLoanHistory();
+  }
+
+  Future<void> getApplicationData() async {
+    LoanApplicationResponse applicationResponse =
+        await LoanRepository().getApplication(loginUser);
+
+    if (applicationResponse.response.code != 200) {
+      showErrorDialog(
+        applicationResponse.response.message ?? AppConfig.ERR_MESSAGE,
+      );
+    } else {
+      applicationData = applicationResponse.data;
+
+      if (AppConfig.PENDING_STATUS.contains(applicationData.status)) {
+        var lateRepayment = loanSteps.firstWhere(
+          (step) => step['isLate'] == true,
+          orElse: () => <String, Object>{},
+        );
+
+        if (lateRepayment.isNotEmpty) {
+          totalLateDate = lateRepayment['dayCount'];
+        }
+      }
+
+      loanSteps = [
+        {'label': 'Apply', 'isActive': false},
+        {'label': 'Interview', 'isActive': false},
+        {'label': 'Pre-approved', 'isActive': false},
+        {'label': 'Disbursed', 'isActive': false},
+      ];
+
+      if (AppConfig.PENDING_STATUS.contains(applicationData.status)) {
+        loanSteps[0]['isActive'] = true;
+      }
+
+      if (AppConfig.PRE_APPROVE_STATUS.contains(applicationData.status)) {
+        loanSteps[2]['isActive'] = true;
+      }
+
+      if (AppConfig.APPROVE_STATUS.contains(applicationData.status)) {
+        loanSteps[3]['isActive'] = true;
+      }
+
+      if (loginUser.loanApplicationSubmitted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          scrollToActiveStep();
+        });
+      }
+    }
+  }
+
+  Future<void> getLoanHistory() async {
+    if ((loginUser.loanApplicationSubmitted)) {
+      LoanResponse loanResponse =
+          await LoanRepository().getLoanHistory(loginUser);
+
+      if (loanResponse.response.code != 200) {
+        showErrorDialog(loanResponse.response.message);
+      } else {
+        repaymentList = [];
+
+        if (loanResponse.data.isNotEmpty) {
+          repaymentList =
+              loanResponse.data[0].schedules!.map((LoanSchedule loanSchedule) {
+            int dayCount = CommonService.getDayCount(loanSchedule.pmtDate);
+            bool isLate = loanSchedule.isPaymentDone == 0 && dayCount > 0;
+
+            return {
+              'dueDate': CommonService.formatDate(loanSchedule.pmtDate),
+              'amount': '${loanSchedule.pmtAmount} Baht',
+              'status': loanSchedule.isPaymentDone == 0 ? 'Unpaid' : 'Paid',
+              'dayCount': dayCount,
+              'isLate': isLate,
+            };
+          }).toList();
+
+          var lateRepayment = repaymentList.firstWhere(
+            (repayment) => repayment['isLate'] == true,
+            orElse: () => <String, Object>{},
+          );
+
+          if (lateRepayment.isNotEmpty) {
+            totalLateDate = lateRepayment['dayCount'];
+          }
+        }
+      }
+      isLoading = false;
+      setState(() {});
+    } else {
+      isLoading = false;
+      setState(() {});
+    }
   }
 
   Future<void> slideImage() async {
@@ -154,28 +215,18 @@ class HomeState extends State<HomePage> {
     return Scaffold(
       appBar: CustomAppBar(),
       body: SingleChildScrollView(
-        child: (loginUser.loanApplicationSubmitted)
-            ? Column(
-                children: [
-                  createSliderSection(),
-                  createFeatureSection(),
-                  CustomWidget.verticalSpacing(),
-                  if (loanList.isNotEmpty) ...[
-                    createLoanSection(),
-                    createRepaymentSection(),
-                  ]
-                  else
-                    LoanStatusPage()
-                ],
-              )
-            : Column(
-                children: [
-                  createSliderSection(),
-                  GuideHeaderPage(),
-                  createAboutUs(),
-                ],
-              ),
-      ),
+          child: Column(
+        children: [
+          createSliderSection(),
+          createFeatureSection(),
+          createLoanSection(),
+          createRepaymentSection(),
+          if (!loginUser.loanApplicationSubmitted) ...[
+            GuideHeaderPage(),
+            createAboutUs(),
+          ]
+        ],
+      )),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: AppConfig.HOME_INDEX,
         onItemTapped: (index) {
@@ -274,6 +325,10 @@ class HomeState extends State<HomePage> {
   }
 
   Widget createLoanSection() {
+    if (!loginUser.loanApplicationSubmitted) {
+      return Container();
+    }
+
     return Padding(
       padding: CustomStyle.pagePaddingSmall(),
       child: Column(
@@ -339,6 +394,10 @@ class HomeState extends State<HomePage> {
   }
 
   Widget createRepaymentSection() {
+    if (repaymentList.isEmpty) {
+      return Container();
+    }
+
     return Padding(
       padding: CustomStyle.pagePaddingSmall(),
       child: Column(
@@ -357,15 +416,17 @@ class HomeState extends State<HomePage> {
               ),
             ],
           ),
-          CustomWidget.verticalSpacing(),
-          Text(
-            'Your repayment is 5 days late.',
-            style: CustomStyle.bodyRedColor(),
-          ),
-          Text(
-            'Please make a payment to maintain good credit.',
-            style: CustomStyle.bodyRedColor(),
-          ),
+          if (totalLateDate > 0) ...[
+            CustomWidget.verticalSpacing(),
+            Text(
+              'Your repayment is $totalLateDate days late.',
+              style: CustomStyle.bodyRedColor(),
+            ),
+            Text(
+              'Please make a payment to maintain good credit.',
+              style: CustomStyle.bodyRedColor(),
+            ),
+          ],
           CustomWidget.verticalSpacing(),
           ...repaymentList.map((item) => createRepaymentCard(item: item)),
         ],
@@ -374,8 +435,6 @@ class HomeState extends State<HomePage> {
   }
 
   Widget createRepaymentCard({required Map<String, dynamic> item}) {
-    final bool isPaid = item['status'].toLowerCase() == 'paid';
-
     return SizedBox(
       height: 80,
       child: ListView.builder(
@@ -402,9 +461,9 @@ class HomeState extends State<HomePage> {
                     const SizedBox(height: 8),
                     Text(
                       item['dueDate'],
-                      style: isPaid
-                          ? CustomStyle.body()
-                          : CustomStyle.bodyRedColor(),
+                      style: item['isLate']
+                          ? CustomStyle.bodyRedColor()
+                          : CustomStyle.body(),
                     ),
                   ],
                 ),
@@ -417,9 +476,9 @@ class HomeState extends State<HomePage> {
                     const SizedBox(height: 8),
                     Text(
                       item['amount'],
-                      style: isPaid
-                          ? CustomStyle.body()
-                          : CustomStyle.bodyRedColor(),
+                      style: item['isLate']
+                          ? CustomStyle.bodyRedColor()
+                          : CustomStyle.body(),
                     ),
                   ],
                 ),
@@ -432,9 +491,9 @@ class HomeState extends State<HomePage> {
                     const SizedBox(height: 8),
                     Text(
                       item['status'],
-                      style: isPaid
-                          ? CustomStyle.body()
-                          : CustomStyle.bodyRedColor(),
+                      style: item['isLate']
+                          ? CustomStyle.bodyRedColor()
+                          : CustomStyle.body(),
                     ),
                   ],
                 ),
@@ -445,7 +504,7 @@ class HomeState extends State<HomePage> {
                     children: [
                       CustomWidget.elevatedButton(
                         isLoading: false,
-                        text: isPaid ? 'Complete' : 'Pay Now',
+                        text: item['status'] == 0 ? 'Complete' : 'Pay Now',
                         isSmall: true,
                         onPressed: handleContinue,
                       )
