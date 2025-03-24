@@ -1,12 +1,13 @@
 import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:synpitarn/models/login.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/my_theme.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
-import 'package:synpitarn/screens/auth/set-pincode.dart';
+import 'package:synpitarn/screens/auth/set_password.dart';
 
 import 'package:synpitarn/models/otp.dart';
 
@@ -22,11 +23,12 @@ class OTPPage extends StatefulWidget {
 class OTPState extends State<OTPPage> {
 
   final TextEditingController otpController  = TextEditingController();
+  String code = "";
 
   String? otpError = "";
   bool isOTPValidate = false;
 
-  int _minuteRemaining = 3;
+  int _minuteRemaining = 1;
   int _secondsRemaining = 0; // Countdown Timer
   late Timer _timer;
   bool _canResendOtp = false;
@@ -36,6 +38,8 @@ class OTPState extends State<OTPPage> {
     super.initState();
     startTimer();
     otpController.addListener(_validateOTPValue);
+    code = widget.loginUser.code;
+    setState(() {});
   }
 
   @override
@@ -76,6 +80,8 @@ class OTPState extends State<OTPPage> {
 
   Future<void> resendOtp() async {
     otpError = "";
+    code = "";
+    otpController.text = "";
 
     User user = User.defaultUser();
     user.phoneNumber = widget.loginUser.phoneNumber;
@@ -88,6 +94,7 @@ class OTPState extends State<OTPPage> {
     }
     else {
       user.code = otpResponse.data;
+      code = otpResponse.data;
 
       _minuteRemaining = 3;
       _secondsRemaining = 0;
@@ -111,9 +118,10 @@ class OTPState extends State<OTPPage> {
       otpError = loginResponse.response.message;
     }
     else {
+      user.token = loginResponse.data.token;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => SetPinCodePage()),
+        MaterialPageRoute(builder: (context) => SetPasswordPage(loginUser: user)),
       );
     }
 
@@ -124,103 +132,109 @@ class OTPState extends State<OTPPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Verify OTP code',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.indigo,
-                ),
-              ),
-              SizedBox(height: 100),
-              Text(
-                "Please enter the 6 digits number that we have sent to you here then click \"Verify OTP Code\" below.",
-                style: TextStyle(fontSize: 14),
-              ),
-              SizedBox(height: 20),
-              PinCodeTextField(
-                appContext: context,
-                length: 6,
-                obscureText: false,
-                obscuringCharacter: '●',
-                keyboardType: TextInputType.number,
-                controller: otpController,
-                pinTheme: PinTheme(
-                  shape: PinCodeFieldShape.box,
-                  borderRadius: BorderRadius.circular(8),
-                  fieldHeight: 50,
-                  fieldWidth: 45,
-                  activeFillColor: Colors.white,
-                  inactiveFillColor: Colors.white,
-                  inactiveColor: Colors.grey,
-                  selectedFillColor: Colors.white,
-                  activeColor: Colors.grey,
-                  selectedColor: MyTheme.primary_color,
-                  errorBorderColor: otpError == null ? Colors.grey : Colors.red,
-                  borderWidth: 2,
-                ),
-                onChanged: (value) {},
-              ),
-              if (otpError != null)
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 30),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
                 Text(
-                  otpError!,
-                  style: TextStyle(color: Colors.red, fontSize: 14),
-                ),
-              SizedBox(height: 20),
-              if(!_canResendOtp)
-                Text(
-                  "OTP Code will expire in ${_minuteRemaining.toString().padLeft(2, '0')}:${_secondsRemaining.toString().padLeft(2, '0')}",
-                  style: TextStyle(fontSize: 14, color: Colors.black),
-                ),
-              if(_canResendOtp)
-                RichText(
-                  text: TextSpan(
-                    text: "OTP not received? ",
-                    style: TextStyle(
-                      color: Colors.black, // Normal text color
-                      fontSize: 14,
-                    ),
-                    children: [
-                      TextSpan(
-                        text: "Resend OTP Code",
-                        style: TextStyle(
-                          color: Colors.black,
-                          decoration: TextDecoration.underline,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                  'Verify OTP code',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.indigo,
                   ),
                 ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: isOTPValidate ? handleVerifyOTP : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.indigo,
-                  minimumSize: Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
+                SizedBox(height: 100),
+                Text(
+                  "Please enter the 6 digits number that we have sent to you here then click \"Verify OTP Code\" below.",
+                  style: TextStyle(fontSize: 14),
+                ),
+                SizedBox(height: 20),
+                PinCodeTextField(
+                  appContext: context,
+                  length: 6,
+                  obscureText: false,
+                  obscuringCharacter: '●',
+                  keyboardType: TextInputType.number,
+                  controller: otpController,
+                  pinTheme: PinTheme(
+                    shape: PinCodeFieldShape.box,
                     borderRadius: BorderRadius.circular(8),
+                    fieldHeight: 50,
+                    fieldWidth: 45,
+                    activeFillColor: Colors.white,
+                    inactiveFillColor: Colors.white,
+                    inactiveColor: Colors.grey,
+                    selectedFillColor: Colors.white,
+                    activeColor: Colors.grey,
+                    selectedColor: MyTheme.primary_color,
+                    errorBorderColor: otpError == null ? Colors.grey : Colors.red,
+                    borderWidth: 2,
+                  ),
+                  onChanged: (value) {},
+                ),
+                if (otpError != null)
+                  Text(
+                    otpError!,
+                    style: TextStyle(color: Colors.red, fontSize: 14),
+                  ),
+                SizedBox(height: 20),
+                if(!_canResendOtp)
+                  Text(
+                    "OTP Code will expire in ${_minuteRemaining.toString().padLeft(2, '0')}:${_secondsRemaining.toString().padLeft(2, '0')}",
+                    style: TextStyle(fontSize: 14, color: Colors.black),
+                  ),
+                if(_canResendOtp)
+                  RichText(
+                    text: TextSpan(
+                      text: "OTP not received? ",
+                      style: TextStyle(
+                        color: Colors.black, // Normal text color
+                        fontSize: 14,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: "Resend OTP Code",
+                          style: TextStyle(
+                            color: Colors.black,
+                            decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              resendOtp();
+                            },
+                        ),
+                      ],
+                    ),
+                  ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: isOTPValidate ? handleVerifyOTP : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.indigo,
+                    minimumSize: Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text(
+                    'Verify OTP Code',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
-                child: Text(
-                  'Verify OTP Code',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
+                SizedBox(height: 20),
+                Text(
+                    "OTP Code ${widget.loginUser.code}"
                 ),
-              ),
-              SizedBox(height: 20),
-              Text(
-                  "ABC ${widget.loginUser.code}"
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
+      )
     );
   }
 }

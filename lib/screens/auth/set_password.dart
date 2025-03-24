@@ -6,27 +6,27 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/home.dart';
 import 'forget_password.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class SetPasswordPage extends StatefulWidget {
+  User loginUser;
+
+  SetPasswordPage({super.key, required this.loginUser});
 
   @override
-  LoginState createState() => LoginState();
+  SetPasswordState createState() => SetPasswordState();
 }
 
-class LoginState extends State<LoginPage> {
+class SetPasswordState extends State<SetPasswordPage> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController pinController = TextEditingController();
 
   bool _isObscured = true;
-  String? phoneError;
   String? pinError;
-  bool isPhoneValidate = false;
   bool isPinValidate = false;
 
   @override
   void initState() {
     super.initState();
-    phoneController.addListener(_validatePhoneValue);
+    phoneController.text = widget.loginUser.phoneNumber;
     pinController.addListener(_validatePinValue);
   }
 
@@ -37,13 +37,6 @@ class LoginState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _validatePhoneValue() {
-    setState(() {
-      phoneError = null;
-      isPhoneValidate = phoneController.text.isNotEmpty && phoneController.text.length == 10;
-    });
-  }
-
   void _validatePinValue() {
     setState(() {
       pinError = null;
@@ -51,23 +44,18 @@ class LoginState extends State<LoginPage> {
     });
   }
 
-  Future<void> handleLogin() async {
+  Future<void> handleSetPassowrd() async {
 
     User user = User.defaultUser();
+    user.token = widget.loginUser.token;
+    user.forgetPassword = widget.loginUser.forgetPassword;
     user.phoneNumber = phoneController.text;
     user.code = pinController.text;
 
-    Login loginResponse = await AuthRepository().login(user);
+    Login loginResponse = await AuthRepository().setPassword(user);
 
     if(loginResponse.response.code != 200) {
-      String msg = loginResponse.response.message.toLowerCase();
-
-      if(msg.contains("phone")) {
-        phoneError = loginResponse.response.message;
-      }
-      else {
-        pinError = loginResponse.response.message;
-      }
+      pinError = loginResponse.response.message;
     }
     else {
       Navigator.pushReplacement(
@@ -90,13 +78,8 @@ class LoginState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(
-                  'assets/images/synpitarn.jpg', // Replace with your logo asset
-                  height: 150,
-                ),
-                SizedBox(height: 10),
                 Text(
-                  'Welcome from Synpitarn',
+                  'Set Your Pin Code',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -106,15 +89,11 @@ class LoginState extends State<LoginPage> {
                 SizedBox(height: 100),
                 TextField(
                   controller: phoneController,
-                  keyboardType: TextInputType.phone,inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly, // Allow only digits
-                  LengthLimitingTextInputFormatter(10), // Limit to 10 digits
-                ],
+                  readOnly: true,
                   decoration: InputDecoration(
                     labelText: 'Phone number',
                     prefixText: '+66 ',
                     border: OutlineInputBorder(),
-                    errorText: phoneError,
                   ),
                 ),
                 SizedBox(height: 15),
@@ -142,30 +121,8 @@ class LoginState extends State<LoginPage> {
                   ),
                 ),
                 SizedBox(height: 20),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => ForgetPasswordPage()),
-                    );
-                  },
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: RichText(
-                      textAlign: TextAlign.right,
-                      text: TextSpan(
-                        text: "Forgot PIN code",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: isPhoneValidate && isPinValidate ? handleLogin : null, // Disable when fields are empty
+                  onPressed: isPinValidate ? handleSetPassowrd : null, // Disable when fields are empty
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.indigo,
                     minimumSize: Size(double.infinity, 50),
@@ -174,33 +131,8 @@ class LoginState extends State<LoginPage> {
                     ),
                   ),
                   child: Text(
-                    'Login',
+                    'Set New Password',
                     style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
-                SizedBox(height: 20),
-                GestureDetector(
-                  onTap: () {
-                    // Navigate to signup or relevant page
-                  },
-                  child: RichText(
-                    text: TextSpan(
-                      text: "Don't have an account, ",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: "click here",
-                          style: TextStyle(
-                            color: Colors.black,
-                            decoration: TextDecoration.underline,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               ],

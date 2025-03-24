@@ -58,4 +58,23 @@ class AuthRepository {
 
     return Login.loginResponseFromJson(response.body);
   }
+
+  Future<Login> setPassword(User loginRequest) async {
+    var post_body = {
+      "auth_token": loginRequest.token,
+      "forget_password": loginRequest.forgetPassword,
+      "phone_number": loginRequest.phoneNumber,
+      "password": loginRequest.code
+    };
+
+    String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/auth/set-password");
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(post_body),
+    );
+
+    return Login.loginResponseFromJson(response.body);
+  }
 }
