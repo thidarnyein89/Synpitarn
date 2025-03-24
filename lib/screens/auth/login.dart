@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:synpitarn/models/login.dart';
+import 'package:synpitarn/repositories/auth_repository.dart';
+import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/screens/home.dart';
 import 'forget-password.dart';
 
 class LoginPage extends StatefulWidget {
@@ -47,11 +51,32 @@ class LoginState extends State<LoginPage> {
     });
   }
 
-  void handleLogin() {
-    setState(() {
-      phoneError = phoneController.text.isEmpty ? "Phone number cannot be empty" : null;
-      pinError = pinController.text.isEmpty ? "PIN cannot be empty" : null;
-    });
+  Future<void> handleLogin() async {
+
+    User user = User.defaultUser();
+    user.phoneNumber = phoneController.text;
+    user.code = pinController.text;
+
+    Login loginResponse = await AuthRepository().login(user);
+
+    if(loginResponse.response.code != 200) {
+      String msg = loginResponse.response.message.toLowerCase();
+
+      if(msg.contains("phone")) {
+        phoneError = loginResponse.response.message;
+      }
+      else {
+        pinError = loginResponse.response.message;
+      }
+    }
+    else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    }
+
+    setState(() {});
   }
 
   @override
@@ -65,8 +90,8 @@ class LoginState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/images/logo.png', // Replace with your logo asset
-                height: 100,
+                'assets/images/synpitarn.jpg', // Replace with your logo asset
+                height: 150,
               ),
               SizedBox(height: 10),
               Text(

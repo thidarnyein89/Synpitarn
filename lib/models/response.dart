@@ -9,7 +9,7 @@ class Response {
     required this.message,
   });
 
-  factory Response.fromMap(Map<String, dynamic> json) => Response(
+  factory Response.fromJson(Map<String, dynamic> json) => Response(
     code: json["code"],
     status: json["status"],
     message: json["message"],

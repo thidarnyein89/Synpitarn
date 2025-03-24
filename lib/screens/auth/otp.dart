@@ -2,11 +2,18 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:synpitarn/models/login.dart';
+import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/my_theme.dart';
+import 'package:synpitarn/repositories/auth_repository.dart';
+import 'package:synpitarn/screens/auth/set-pincode.dart';
 
-import '../../my_theme.dart';
+import 'package:synpitarn/models/otp.dart';
 
 class OTPPage extends StatefulWidget {
-  const OTPPage({super.key});
+  User loginUser;
+
+  OTPPage({super.key, required this.loginUser});
 
   @override
   OTPState createState() => OTPState();
@@ -16,10 +23,11 @@ class OTPState extends State<OTPPage> {
 
   final TextEditingController otpController  = TextEditingController();
 
-  String? otpError;
+  String? otpError = "";
   bool isOTPValidate = false;
 
-  int _secondsRemaining = 60; // Countdown Timer
+  int _minuteRemaining = 3;
+  int _secondsRemaining = 0; // Countdown Timer
   late Timer _timer;
   bool _canResendOtp = false;
 
@@ -39,7 +47,7 @@ class OTPState extends State<OTPPage> {
 
   void _validateOTPValue() {
     setState(() {
-      otpError = null;
+      otpError = "";
       isOTPValidate = otpController.text.isNotEmpty && otpController.text.length == 6;
     });
   }
@@ -48,32 +56,68 @@ class OTPState extends State<OTPPage> {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_secondsRemaining > 0) {
         setState(() {
-          _secondsRemaining--;
+          _secondsRemaining--; // Decrease seconds
         });
       } else {
-        setState(() {
-          _canResendOtp = true;
-          _timer.cancel();
-        });
+        if (_minuteRemaining > 0) {
+          setState(() {
+            _minuteRemaining--;  // Decrease minutes
+            _secondsRemaining = 59; // Reset seconds to 59
+          });
+        } else {
+          setState(() {
+            _canResendOtp = true; // Allow OTP resend after countdown finishes
+            _timer.cancel(); // Cancel the timer
+          });
+        }
       }
     });
   }
 
-  void resendOtp() {
-    setState(() {
-      _secondsRemaining = 60;
+  Future<void> resendOtp() async {
+    otpError = "";
+
+    User user = User.defaultUser();
+    user.phoneNumber = widget.loginUser.phoneNumber;
+    user.forgetPassword = widget.loginUser.forgetPassword;
+
+    OTP otpResponse = await AuthRepository().getOTP(user);
+
+    if(otpResponse.response.code != 200) {
+      otpError = otpResponse.response.message;
+    }
+    else {
+      user.code = otpResponse.data;
+
+      _minuteRemaining = 3;
+      _secondsRemaining = 0;
       _canResendOtp = false;
-    });
+    }
+
+    setState(() {});
+
     startTimer();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("OTP Resend")),
-    );
   }
 
-  void handleVerifyOTP() {
-    String otp = otpController.text;
-    // Add authentication logic here
-    print("Phone: $otp");
+  Future<void> handleVerifyOTP() async {
+    User user = User.defaultUser();
+    user.code = otpController.text;
+    user.forgetPassword = widget.loginUser.forgetPassword;
+    user.phoneNumber = widget.loginUser.phoneNumber;
+
+    Login loginResponse = await AuthRepository().checkOTP(user);
+
+    if(loginResponse.response.code != 200) {
+      otpError = loginResponse.response.message;
+    }
+    else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => SetPinCodePage()),
+      );
+    }
+
+    setState(() {});
   }
 
   @override
@@ -118,16 +162,23 @@ class OTPState extends State<OTPPage> {
                   selectedFillColor: Colors.white,
                   activeColor: Colors.grey,
                   selectedColor: MyTheme.primary_color,
+                  errorBorderColor: otpError == null ? Colors.grey : Colors.red,
+                  borderWidth: 2,
                 ),
                 onChanged: (value) {},
               ),
-              SizedBox(height: 10),
-              if(_secondsRemaining > 0)
+              if (otpError != null)
                 Text(
-                  "OTP Code will expire in 00:${_secondsRemaining.toString().padLeft(2, '0')}",
+                  otpError!,
+                  style: TextStyle(color: Colors.red, fontSize: 14),
+                ),
+              SizedBox(height: 20),
+              if(!_canResendOtp)
+                Text(
+                  "OTP Code will expire in ${_minuteRemaining.toString().padLeft(2, '0')}:${_secondsRemaining.toString().padLeft(2, '0')}",
                   style: TextStyle(fontSize: 14, color: Colors.black),
                 ),
-              if(_secondsRemaining <= 0)
+              if(_canResendOtp)
                 RichText(
                   text: TextSpan(
                     text: "OTP not received? ",
@@ -161,6 +212,10 @@ class OTPState extends State<OTPPage> {
                   'Verify OTP Code',
                   style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
+              ),
+              SizedBox(height: 20),
+              Text(
+                  "ABC ${widget.loginUser.code}"
               ),
             ],
           ),

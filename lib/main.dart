@@ -28,7 +28,7 @@ class MainPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/logo.png', height: 100), // Replace with your logo
+              Image.asset('assets/images/synpitarn.jpg', height: 150), // Replace with your logo
               SizedBox(height: 20),
               Text(
                 'Welcome from Synpitarn',

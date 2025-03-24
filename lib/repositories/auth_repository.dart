@@ -1,26 +1,61 @@
-import 'package:synpitarn/data_model/request/login_request.dart';
-
-import '../data_model/response/login_response.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:synpitarn/models/otp.dart';
+import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/config/app_config.dart';
+import 'package:synpitarn/models/login.dart';
 
 class AuthRepository {
-  Future<LoginResponse> getLoginResponse(LoginRequest loginRequest) async {
-    var post_body = jsonEncode({
-      "email": "${email}",
-      "password": "$password",
-      "identity_matrix": AppConfig.purchase_code,
-      "login_by": loginBy
-    });
+  Future<Login> login(User loginRequest) async {
+    var post_body = {
+      "code": loginRequest.code,
+      "phone_number": loginRequest.phoneNumber,
+      "type": "pincode"
+    };
 
-    String url = ("${AppConfig.BASE_URL}/auth/login");
-    final response = await ApiRequest.post(
-        url: url,
-        headers: {
-          "Accept": "*/*",
-          "Content-Type": "application/json",
-          "App-Language": app_language.$!,
-        },
-        body: post_body);
+    String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/auth/login");
 
-    return loginResponseFromJson(response.body);
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(post_body),
+    );
+
+    return Login.loginResponseFromJson(response.body);
+  }
+
+  Future<OTP> getOTP(User loginRequest) async {
+    var post_body = {
+      "forget_password": loginRequest.forgetPassword,
+      "phone_number": loginRequest.phoneNumber
+    };
+
+    String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/auth/send-otp");
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(post_body),
+    );
+
+    return OTP.otpResponseFromJson(response.body);
+  }
+
+  Future<Login> checkOTP(User loginRequest) async {
+    var post_body = {
+      "code": loginRequest.code,
+      "forget_password": loginRequest.forgetPassword,
+      "phone_number": loginRequest.phoneNumber
+    };
+
+    String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/auth/check-otp");
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(post_body),
+    );
+
+    return Login.loginResponseFromJson(response.body);
   }
 }

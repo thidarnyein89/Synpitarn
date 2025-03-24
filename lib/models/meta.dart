@@ -13,7 +13,7 @@ class Meta {
     required this.message,
   });
 
-  factory Meta.fromMap(Map<String, dynamic> json) => Meta(
+  factory Meta.fromJson(Map<String, dynamic> json) => Meta(
     hasNextPage: json["has_next_page"],
     count: json["count"],
     perPage: json["per_page"],
