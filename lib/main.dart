@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:synpitarn/screens/auth/login.dart';
+import 'package:synpitarn/screens/auth/register.dart';
 
 import 'my_theme.dart';
 
@@ -28,16 +29,19 @@ class MainPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/synpitarn.jpg', height: 150), // Replace with your logo
+              Image.asset('assets/images/synpitarn.jpg', height: 180), // Replace with your logo
               SizedBox(height: 20),
               Text(
-                'Welcome from Synpitarn',
+                'Welcome to SynPitarn',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: MyTheme.primary_color),
               ),
               SizedBox(height: 100),
               ElevatedButton(
                 onPressed: () {
-                  // Navigate to Open Account screen
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegisterPage()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: MyTheme.primary_color,

@@ -13,7 +13,6 @@ class ForgetPasswordPage extends StatefulWidget {
 }
 
 class ForgetPasswordState extends State<ForgetPasswordPage> {
-
   final TextEditingController phoneController = TextEditingController();
   String? phoneError;
   bool isPhoneValidate = false;
@@ -44,10 +43,9 @@ class ForgetPasswordState extends State<ForgetPasswordPage> {
 
     OTP otpResponse = await AuthRepository().getOTP(user);
 
-    if(otpResponse.response.code != 200) {
+    if (otpResponse.response.code != 200) {
       phoneError = otpResponse.response.message;
-    }
-    else {
+    } else {
       user.code = otpResponse.data;
       Navigator.pushReplacement(
         context,
@@ -63,54 +61,58 @@ class ForgetPasswordState extends State<ForgetPasswordPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 30),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Forgot PIN code',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.indigo,
-                  ),
-                ),
-                SizedBox(height: 100),
-                TextField(
-                  controller: phoneController,
-                  keyboardType: TextInputType.phone,inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly, // Allow only digits
-                  LengthLimitingTextInputFormatter(10), // Limit to 10 digits
-                ],
-                  decoration: InputDecoration(
-                    labelText: 'Phone number',
-                    prefixText: '+66 ',
-                    border: OutlineInputBorder(),
-                    errorText: phoneError,
-                  ),
-                ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: isPhoneValidate && isPhoneValidate ? handleResetPin : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.indigo,
-                    minimumSize: Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Forgot PIN code',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.indigo,
                     ),
                   ),
-                  child: Text(
-                    'Reset PIN code',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  SizedBox(height: 40),
+                  TextField(
+                    controller: phoneController,
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
+                    ],
+                    decoration: InputDecoration(
+                      labelText: 'Phone number',
+                      prefixText: '+66 ',
+                      border: OutlineInputBorder(),
+                      errorText: phoneError,
+                    ),
                   ),
-                ),
-              ],
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: isPhoneValidate ? handleResetPin : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.indigo,
+                      minimumSize: Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'Reset PIN code',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      )
+      ),
     );
   }
 }

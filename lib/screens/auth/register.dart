@@ -1,31 +1,48 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:synpitarn/models/login.dart';
+import 'package:synpitarn/models/nrc.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/home.dart';
-import 'forget_password.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+import 'package:synpitarn/services/common_service.dart';
 
+class RegisterPage extends StatefulWidget {
   @override
-  LoginState createState() => LoginState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class LoginState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
+  CommonService _commonService = CommonService();
+
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController pinController = TextEditingController();
+  final TextEditingController nrcController = TextEditingController();
+
+  List<NRC> nrcList = [];
+  List<Township> townshipList = [];
+  List<String> citizenList = ["N", "P", "E", "C"];
+
+  String selectedState = "1";
+  String selectedTownship = "";
+  String selectedCitizen = "N";
 
   bool _isObscured = true;
+  bool isChecked = false;
+
   String? phoneError;
   String? pinError;
+
   bool isPhoneValidate = false;
   bool isPinValidate = false;
 
   @override
   void initState() {
     super.initState();
+    readNRCData();
     phoneController.addListener(_validatePhoneValue);
     pinController.addListener(_validatePinValue);
   }
@@ -35,6 +52,14 @@ class LoginState extends State<LoginPage> {
     phoneController.dispose();
     pinController.dispose();
     super.dispose();
+  }
+
+  Future<void> readNRCData() async {
+    nrcList = await _commonService.readNRCData();
+    townshipList = nrcList.where((nrc) => nrc.state == selectedState).expand((nrc) => nrc.townshipList).toList();
+    selectedTownship = townshipList.first.name;
+
+    setState(() {});
   }
 
   void _validatePhoneValue() {
@@ -90,18 +115,17 @@ class LoginState extends State<LoginPage> {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'assets/images/synpitarn.jpg',
-                    height: 180,
-                  ),
-                  SizedBox(height: 10),
                   Text(
-                    'Welcome from Synpitarn',
+                    'Welcome to SynPitarn',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.indigo,
                     ),
+                  ),
+                  SizedBox(height: 40),
+                  Text(
+                      ' SynPitarn will use this phone number as the primary authentication method. Please fill in the phone number that you always use and is with you. '
                   ),
                   SizedBox(height: 40),
                   TextField(
@@ -116,6 +140,90 @@ class LoginState extends State<LoginPage> {
                       prefixText: '+66 ',
                       border: OutlineInputBorder(),
                       errorText: phoneError,
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  SizedBox(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Flexible(
+                          child: DropdownButtonFormField<String>(
+                            value: selectedState,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedState = newValue!;
+                              });
+                            },
+                            items: nrcList.map<DropdownMenuItem<String>>((NRC nrc) {
+                              return DropdownMenuItem<String>(
+                                value: nrc.state,
+                                child: Text(nrc.state),
+                              );
+                            }).toList(),
+                            decoration: InputDecoration(
+                              labelText: '',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          fit: FlexFit.tight,
+                          child: DropdownButtonFormField<String>(
+                            isExpanded: true,
+                            value: selectedTownship,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedTownship = newValue!;
+                              });
+                            },
+                            items: townshipList.map<DropdownMenuItem<String>>((Township township) {
+                              return DropdownMenuItem<String>(
+                                value: township.name,
+                                child: Text(township.name, overflow: TextOverflow.ellipsis),
+                              );
+                            }).toList(),
+                            decoration: InputDecoration(
+                              labelText: '',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          child: DropdownButtonFormField<String>(
+                            value: selectedCitizen,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedCitizen = newValue!;
+                              });
+                            },
+                            items: citizenList.map<DropdownMenuItem<String>>((String citizen) {
+                              return DropdownMenuItem<String>(
+                                value: citizen,
+                                child: Text(citizen),
+                              );
+                            }).toList(),
+                            decoration: InputDecoration(
+                              labelText: '',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          child: TextField(
+                            controller: nrcController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(6),
+                            ],
+                            decoration: InputDecoration(
+                              labelText: '',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                   SizedBox(height: 15),
@@ -144,23 +252,25 @@ class LoginState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => ForgetPasswordPage()),
-                      );
-                    },
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        "Forgot PIN code",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 14,
-                        ),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: isChecked,
+                        onChanged: (bool? newValue) {
+                          setState(() {
+                            isChecked = newValue!;
+                          });
+                        },
                       ),
-                    ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isChecked = !isChecked;
+                          });
+                        },
+                        child: Text("Accept Terms & Conditions"),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(

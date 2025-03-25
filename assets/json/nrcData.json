@@ -1,0 +1,1359 @@
+[
+  {
+    "state": "1",
+    "townshipList": [
+      {
+        "name": "SABATA"
+      },
+      {
+        "name": "SADANA"
+      },
+      {
+        "name": "YABAYA"
+      },
+      {
+        "name": "KAPATA"
+      },
+      {
+        "name": "PAWANA"
+      },
+      {
+        "name": "KAMATA"
+      },
+      {
+        "name": "MALANA"
+      },
+      {
+        "name": "AHGAYA"
+      },
+      {
+        "name": "BAMANA"
+      },
+      {
+        "name": "DAPHAYA"
+      },
+      {
+        "name": "HAPANA"
+      },
+      {
+        "name": "KAMANA"
+      },
+      {
+        "name": "KHABADA"
+      },
+      {
+        "name": "KHALAPHA"
+      },
+      {
+        "name": "KHAPHANA"
+      },
+      {
+        "name": "LAGANA"
+      },
+      {
+        "name": "MAKANA"
+      },
+      {
+        "name": "MAKATA"
+      },
+      {
+        "name": "MAKHABA"
+      },
+      {
+        "name": "MAMANA"
+      },
+      {
+        "name": "NAMANA"
+      },
+      {
+        "name": "MANYANA"
+      },
+      {
+        "name": "MASANA"
+      },
+      {
+        "name": "PANADA"
+      },
+      {
+        "name": "PATAAH"
+      },
+      {
+        "name": "SALANA"
+      },
+      {
+        "name": "SAPABA"
+      },
+      {
+        "name": "TANANA"
+      },
+      {
+        "name": "WAMANA"
+      },
+      {
+        "name": "YAKANA"
+      }
+    ]
+  },
+  {
+    "state": "2",
+    "townshipList": [
+      {
+        "name": "BALAKHA"
+      },
+      {
+        "name": "DAMASA"
+      },
+      {
+        "name": "LAKANA"
+      },
+      {
+        "name": "MASANA"
+      },
+      {
+        "name": "PHASANA"
+      },
+      {
+        "name": "PHAYASA"
+      },
+      {
+        "name": "YATANA"
+      },
+      {
+        "name": "YATHANA"
+      }
+    ]
+  },
+  {
+    "state": "3",
+    "townshipList": [
+      {
+        "name": "RARATHA"
+      },
+      {
+        "name": "LATHANA"
+      },
+      {
+        "name": "BAGALA"
+      },
+      {
+        "name": "KAMAMA"
+      },
+      {
+        "name": "SAKALA"
+      },
+      {
+        "name": "WALAMA"
+      },
+      {
+        "name": "BAAHNA"
+      },
+      {
+        "name": "BATHASA"
+      },
+      {
+        "name": "KASAKA"
+      },
+      {
+        "name": "KADANA"
+      },
+      {
+        "name": "KAKAYA"
+      },
+      {
+        "name": "LABANA"
+      },
+      {
+        "name": "MAWATA"
+      },
+      {
+        "name": "PAKANA"
+      },
+      {
+        "name": "PHAPANA"
+      },
+      {
+        "name": "THATAKA"
+      },
+      {
+        "name": "THATANA"
+      }
+    ]
+  },
+  {
+    "state": "4",
+    "townshipList": [
+      {
+        "name": "SAMANA"
+      },
+      {
+        "name": "HAKHANA"
+      },
+      {
+        "name": "HTATALA"
+      },
+      {
+        "name": "KAKHANA"
+      },
+      {
+        "name": "KAPALA"
+      },
+      {
+        "name": "MATANA"
+      },
+      {
+        "name": "MATAPA"
+      },
+      {
+        "name": "PALAWA"
+      },
+      {
+        "name": "PHALANA"
+      },
+      {
+        "name": "TATANA"
+      },
+      {
+        "name": "TAZANA"
+      },
+      {
+        "name": "YAKHADA"
+      },
+      {
+        "name": "YAZANA"
+      }
+    ]
+  },
+  {
+    "state": "5",
+    "townshipList": [
+      {
+        "name": "KHAPANA"
+      },
+      {
+        "name": "DAHANA"
+      },
+      {
+        "name": "MAPALA"
+      },
+      {
+        "name": "HTAPAKHA"
+      },
+      {
+        "name": "HSAMARA"
+      },
+      {
+        "name": "AHTANA"
+      },
+      {
+        "name": "AHYATA"
+      },
+      {
+        "name": "BAMANA"
+      },
+      {
+        "name": "BATALA"
+      },
+      {
+        "name": "DAPAYA"
+      },
+      {
+        "name": "HAMALA"
+      },
+      {
+        "name": "HTAKHANA"
+      },
+      {
+        "name": "KABALA"
+      },
+      {
+        "name": "KALAHTA"
+      },
+      {
+        "name": "KALANA"
+      },
+      {
+        "name": "KALATA"
+      },
+      {
+        "name": "KALAWA"
+      },
+      {
+        "name": "KANANA"
+      },
+      {
+        "name": "KAMANA"
+      },
+      {
+        "name": "KHATANA"
+      },
+      {
+        "name": "KATHANA"
+      },
+      {
+        "name": "KHAOONA"
+      },
+      {
+        "name": "KHAOOTA"
+      },
+      {
+        "name": "LAHANA"
+      },
+      {
+        "name": "LAYANA"
+      },
+      {
+        "name": "MAKANA"
+      },
+      {
+        "name": "MALANA"
+      },
+      {
+        "name": "MAMATA"
+      },
+      {
+        "name": "MATHANA"
+      },
+      {
+        "name": "NAYANA"
+      },
+      {
+        "name": "NGAZANA"
+      },
+      {
+        "name": "PALANA"
+      },
+      {
+        "name": "PASANA"
+      },
+      {
+        "name": "SAKANA"
+      },
+      {
+        "name": "SALAKA"
+      },
+      {
+        "name": "TASANA"
+      },
+      {
+        "name": "WALANA"
+      },
+      {
+        "name": "YABANA"
+      },
+      {
+        "name": "YAMAPA"
+      },
+      {
+        "name": "MAMANA"
+      },
+      {
+        "name": "MAYANA"
+      },
+      {
+        "name": "PALABA"
+      },
+      {
+        "name": "PHAPANA"
+      },
+      {
+        "name": "TAMANA"
+      },
+      {
+        "name": "WATHANA"
+      },
+      {
+        "name": "YAONA"
+      }
+    ]
+  },
+  {
+    "state": "6",
+    "townshipList": [
+      {
+        "name": "KALAAH"
+      },
+      {
+        "name": "PALATA"
+      },
+      {
+        "name": "PAKAMA"
+      },
+      {
+        "name": "BAPANA"
+      },
+      {
+        "name": "HTAWANA"
+      },
+      {
+        "name": "KATHANA"
+      },
+      {
+        "name": "KAYAYA"
+      },
+      {
+        "name": "LALANA"
+      },
+      {
+        "name": "MAAHNA"
+      },
+      {
+        "name": "MAAHYA"
+      },
+      {
+        "name": "PALANA"
+      },
+      {
+        "name": "TATHAYA"
+      },
+      {
+        "name": "YAPHANA"
+      },
+      {
+        "name": "MAMANA"
+      },
+      {
+        "name": "KASANA"
+      },
+      {
+        "name": "KHAMAKA"
+      },
+      {
+        "name": "MATANA"
+      },
+      {
+        "name": "THAYAKHA"
+      }
+    ]
+  },
+  {
+    "state": "7",
+    "townshipList": [
+      {
+        "name": "AHPHANA"
+      },
+      {
+        "name": "DAOONA"
+      },
+      {
+        "name": "HTATAPA"
+      },
+      {
+        "name": "KAPAKA"
+      },
+      {
+        "name": "KATAKHA"
+      },
+      {
+        "name": "LAPATA"
+      },
+      {
+        "name": "MALANA"
+      },
+      {
+        "name": "NATALA"
+      },
+      {
+        "name": "NYALAPA"
+      },
+      {
+        "name": "PAKHANA"
+      },
+      {
+        "name": "PAMANA"
+      },
+      {
+        "name": "PATANA"
+      },
+      {
+        "name": "PHAMANA"
+      },
+      {
+        "name": "TANGANA"
+      },
+      {
+        "name": "THANAPA"
+      },
+      {
+        "name": "THAWATA"
+      },
+      {
+        "name": "YAKANA"
+      },
+      {
+        "name": "YATANA"
+      },
+      {
+        "name": "ZAKANA"
+      },
+      {
+        "name": "AHTANA"
+      },
+      {
+        "name": "KAKANA"
+      },
+      {
+        "name": "KAWANA"
+      },
+      {
+        "name": "MANYANA"
+      },
+      {
+        "name": "PAKHATA"
+      },
+      {
+        "name": "PATATA"
+      },
+      {
+        "name": "THAKANA"
+      },
+      {
+        "name": "WAMANA"
+      },
+      {
+        "name": "YATAYA"
+      }
+    ]
+  },
+  {
+    "state": "8",
+    "townshipList": [
+      {
+        "name": "MAHTANA"
+      },
+      {
+        "name": "AHLANA"
+      },
+      {
+        "name": "HTALANA"
+      },
+      {
+        "name": "KAHTANA"
+      },
+      {
+        "name": "KHAMANA"
+      },
+      {
+        "name": "MABANA"
+      },
+      {
+        "name": "MALANA"
+      },
+      {
+        "name": "MAMANA"
+      },
+      {
+        "name": "MATANA"
+      },
+      {
+        "name": "NAMANA"
+      },
+      {
+        "name": "NGAPHANA"
+      },
+      {
+        "name": "PAMANA"
+      },
+      {
+        "name": "PAPHANA"
+      },
+      {
+        "name": "SAMANA"
+      },
+      {
+        "name": "SAPAWA"
+      },
+      {
+        "name": "SATAYA"
+      },
+      {
+        "name": "TATAKA"
+      },
+      {
+        "name": "YANAKHA"
+      },
+      {
+        "name": "YASAKA"
+      },
+      {
+        "name": "GAGANA"
+      },
+      {
+        "name": "KAMANA"
+      },
+      {
+        "name": "MAKANA"
+      },
+      {
+        "name": "MATHANA"
+      },
+      {
+        "name": "PAKHAKA"
+      },
+      {
+        "name": "SALANA"
+      },
+      {
+        "name": "SAPHANA"
+      },
+      {
+        "name": "THAYANA"
+      }
+    ]
+  },
+  {
+    "state": "9",
+    "townshipList": [
+      {
+        "name": "NGAZANA"
+      },
+      {
+        "name": "AHMAZA"
+      },
+      {
+        "name": "KAPATA"
+      },
+      {
+        "name": "KASANA"
+      },
+      {
+        "name": "KHAMASA"
+      },
+      {
+        "name": "LAWANA"
+      },
+      {
+        "name": "MAHTALA"
+      },
+      {
+        "name": "MAKANA"
+      },
+      {
+        "name": "MALANA"
+      },
+      {
+        "name": "MAMANA"
+      },
+      {
+        "name": "MANATA"
+      },
+      {
+        "name": "MATAYA"
+      },
+      {
+        "name": "MAYAMA"
+      },
+      {
+        "name": "MAYATA"
+      },
+      {
+        "name": "NGATHAYA"
+      },
+      {
+        "name": "NYAONA"
+      },
+      {
+        "name": "PABANA"
+      },
+      {
+        "name": "PAMANA"
+      },
+      {
+        "name": "PAOLA"
+      },
+      {
+        "name": "SAKANA"
+      },
+      {
+        "name": "SAKATA"
+      },
+      {
+        "name": "TAKATA"
+      },
+      {
+        "name": "TATAOO"
+      },
+      {
+        "name": "THAPAKA"
+      },
+      {
+        "name": "THASANA"
+      },
+      {
+        "name": "YAMATHA"
+      },
+      {
+        "name": "OOTATHA"
+      },
+      {
+        "name": "ZAYATHA"
+      },
+      {
+        "name": "PABATHA"
+      },
+      {
+        "name": "DAKHATHA"
+      },
+      {
+        "name": "ZABATHA"
+      },
+      {
+        "name": "AHMAYA"
+      },
+      {
+        "name": "KHAAHZA"
+      },
+      {
+        "name": "MAHAMA"
+      },
+      {
+        "name": "MAKHANA"
+      },
+      {
+        "name": "MANAMA"
+      },
+      {
+        "name": "MATHANA"
+      },
+      {
+        "name": "NAHTAKA"
+      },
+      {
+        "name": "PAKAKHA"
+      },
+      {
+        "name": "PATHAKA"
+      },
+      {
+        "name": "TAKANA"
+      },
+      {
+        "name": "TATHANA"
+      },
+      {
+        "name": "WATANA"
+      }
+    ]
+  },
+  {
+    "state": "10",
+    "townshipList": [
+      {
+        "name": "KHAZANA"
+      },
+      {
+        "name": "BALANA"
+      },
+      {
+        "name": "KAMAYA"
+      },
+      {
+        "name": "KHASANA"
+      },
+      {
+        "name": "LAMANA"
+      },
+      {
+        "name": "MALAMA"
+      },
+      {
+        "name": "PAMANA"
+      },
+      {
+        "name": "THAPHAYA"
+      },
+      {
+        "name": "YAMANA"
+      },
+      {
+        "name": "KAHTANA"
+      },
+      {
+        "name": "MADANA"
+      },
+      {
+        "name": "THAHTANA"
+      }
+    ]
+  },
+  {
+    "state": "11",
+    "townshipList": [
+      {
+        "name": "TAPAWA"
+      },
+      {
+        "name": "BATHATA"
+      },
+      {
+        "name": "GAMANA"
+      },
+      {
+        "name": "KAPHANA"
+      },
+      {
+        "name": "KATANA"
+      },
+      {
+        "name": "MAAHNA"
+      },
+      {
+        "name": "MAAHTA"
+      },
+      {
+        "name": "MAPATA"
+      },
+      {
+        "name": "MAONA"
+      },
+      {
+        "name": "MAPANA"
+      },
+      {
+        "name": "MATANA"
+      },
+      {
+        "name": "PANAKA"
+      },
+      {
+        "name": "PATANA"
+      },
+      {
+        "name": "SATANA"
+      },
+      {
+        "name": "TAKANA"
+      },
+      {
+        "name": "THATANA"
+      },
+      {
+        "name": "YABANA"
+      },
+      {
+        "name": "YATHATA"
+      },
+      {
+        "name": "AHMANA"
+      },
+      {
+        "name": "KATALA"
+      }
+    ]
+  },
+  {
+    "state": "12",
+    "townshipList": [
+      {
+        "name": "AHLANA"
+      },
+      {
+        "name": "AHSANA"
+      },
+      {
+        "name": "BAHANA"
+      },
+      {
+        "name": "BATAHTA"
+      },
+      {
+        "name": "DAGAMA"
+      },
+      {
+        "name": "DAGANA"
+      },
+      {
+        "name": "DAGASA"
+      },
+      {
+        "name": "DAGATA"
+      },
+      {
+        "name": "DAGAYA"
+      },
+      {
+        "name": "DALANA"
+      },
+      {
+        "name": "DAPANA"
+      },
+      {
+        "name": "HTATAPA"
+      },
+      {
+        "name": "KAKAKA"
+      },
+      {
+        "name": "KAKHAKA"
+      },
+      {
+        "name": "KAMANA"
+      },
+      {
+        "name": "KAMATA"
+      },
+      {
+        "name": "KAMAYA"
+      },
+      {
+        "name": "KATANA"
+      },
+      {
+        "name": "KATATA"
+      },
+      {
+        "name": "KHAYANA"
+      },
+      {
+        "name": "LAKANA"
+      },
+      {
+        "name": "LAMANA"
+      },
+      {
+        "name": "LAMATA"
+      },
+      {
+        "name": "LATHANA"
+      },
+      {
+        "name": "LATHAYA"
+      },
+      {
+        "name": "MABANA"
+      },
+      {
+        "name": "MAGADA"
+      },
+      {
+        "name": "MAGATA"
+      },
+      {
+        "name": "MAYAKA"
+      },
+      {
+        "name": "OKAMA"
+      },
+      {
+        "name": "OKATA"
+      },
+      {
+        "name": "PABATA"
+      },
+      {
+        "name": "PAZATA"
+      },
+      {
+        "name": "SAKAKHA"
+      },
+      {
+        "name": "SAKANA"
+      },
+      {
+        "name": "SAKHANA"
+      },
+      {
+        "name": "TAKANA"
+      },
+      {
+        "name": "TAMANA"
+      },
+      {
+        "name": "TATANA"
+      },
+      {
+        "name": "TATATA"
+      },
+      {
+        "name": "TATAHTA"
+      },
+      {
+        "name": "THAGAKA"
+      },
+      {
+        "name": "THAKATA"
+      },
+      {
+        "name": "THAKHANA"
+      },
+      {
+        "name": "THALANA"
+      },
+      {
+        "name": "YAKANA"
+      },
+      {
+        "name": "YAPATHA"
+      }
+    ]
+  },
+  {
+    "state": "13",
+    "townshipList": [
+      {
+        "name": "KATALA"
+      },
+      {
+        "name": "NATARA"
+      },
+      {
+        "name": "KHALANA"
+      },
+      {
+        "name": "KALADA"
+      },
+      {
+        "name": "PAHSANA"
+      },
+      {
+        "name": "MAKAHTA"
+      },
+      {
+        "name": "PAHSATA"
+      },
+      {
+        "name": "MALATA"
+      },
+      {
+        "name": "PALAHTA"
+      },
+      {
+        "name": "MAYANA"
+      },
+      {
+        "name": "MAHSANA"
+      },
+      {
+        "name": "MAHTANA"
+      },
+      {
+        "name": "AHTANA"
+      },
+      {
+        "name": "HAMANA"
+      },
+      {
+        "name": "HAPANA"
+      },
+      {
+        "name": "HAPATA"
+      },
+      {
+        "name": "KAHANA"
+      },
+      {
+        "name": "KAKANA"
+      },
+      {
+        "name": "KAKHANA"
+      },
+      {
+        "name": "KALAHTA"
+      },
+      {
+        "name": "KALANA"
+      },
+      {
+        "name": "KALATA"
+      },
+      {
+        "name": "KAMANA"
+      },
+      {
+        "name": "KATAKA"
+      },
+      {
+        "name": "KATANA"
+      },
+      {
+        "name": "KATATA"
+      },
+      {
+        "name": "KATHANA"
+      },
+      {
+        "name": "KHAYAHA"
+      },
+      {
+        "name": "LAKANA"
+      },
+      {
+        "name": "LAKHATA"
+      },
+      {
+        "name": "LALANA"
+      },
+      {
+        "name": "LAYANA"
+      },
+      {
+        "name": "MABANA"
+      },
+      {
+        "name": "MAHAYA"
+      },
+      {
+        "name": "MAKANA"
+      },
+      {
+        "name": "MAKATA"
+      },
+      {
+        "name": "MAKHANA"
+      },
+      {
+        "name": "MAKHATA"
+      },
+      {
+        "name": "MALANA"
+      },
+      {
+        "name": "MAMAHTA"
+      },
+      {
+        "name": "MAMANA"
+      },
+      {
+        "name": "MAMATA"
+      },
+      {
+        "name": "MANANA"
+      },
+      {
+        "name": "MANATA"
+      },
+      {
+        "name": "MANGANA"
+      },
+      {
+        "name": "MAPAHTA"
+      },
+      {
+        "name": "MAPANA"
+      },
+      {
+        "name": "MAPATA"
+      },
+      {
+        "name": "MAPHANA"
+      },
+      {
+        "name": "MAPHATA"
+      },
+      {
+        "name": "MASANA"
+      },
+      {
+        "name": "MASATA"
+      },
+      {
+        "name": "MAHTATA"
+      },
+      {
+        "name": "MATANA"
+      },
+      {
+        "name": "MATATA"
+      },
+      {
+        "name": "MAYAHTA"
+      },
+      {
+        "name": "MARATA"
+      },
+      {
+        "name": "MARANA"
+      },
+      {
+        "name": "MAYATA"
+      },
+      {
+        "name": "NAKHANA"
+      },
+      {
+        "name": "NAKHATA"
+      },
+      {
+        "name": "NAMATA"
+      },
+      {
+        "name": "NAPHANA"
+      },
+      {
+        "name": "NAHSANA"
+      },
+      {
+        "name": "NASANA"
+      },
+      {
+        "name": "NATANA"
+      },
+      {
+        "name": "NYAYANA"
+      },
+      {
+        "name": "PHAKHANA"
+      },
+      {
+        "name": "PALANA"
+      },
+      {
+        "name": "PALATA"
+      },
+      {
+        "name": "PAPAKA"
+      },
+      {
+        "name": "PATAYA"
+      },
+      {
+        "name": "PAWANA"
+      },
+      {
+        "name": "PAYANA"
+      },
+      {
+        "name": "SASANA"
+      },
+      {
+        "name": "TAKANA"
+      },
+      {
+        "name": "TAKHALA"
+      },
+      {
+        "name": "TALANA"
+      },
+      {
+        "name": "TAMANYA"
+      },
+      {
+        "name": "TATANA"
+      },
+      {
+        "name": "TAYANA"
+      },
+      {
+        "name": "THANANA"
+      },
+      {
+        "name": "THAPANA"
+      },
+      {
+        "name": "YANGANA"
+      },
+      {
+        "name": "YASANA"
+      }
+    ]
+  },
+  {
+    "state": "14",
+    "townshipList": [
+      {
+        "name": "KAKAHTA"
+      },
+      {
+        "name": "AHGAPA"
+      },
+      {
+        "name": "AHMANH"
+      },
+      {
+        "name": "AHMATA"
+      },
+      {
+        "name": "BAKALA"
+      },
+      {
+        "name": "DADAYA"
+      },
+      {
+        "name": "DANAPHA"
+      },
+      {
+        "name": "HAKAKA"
+      },
+      {
+        "name": "HATHATA"
+      },
+      {
+        "name": "KAKATA"
+      },
+      {
+        "name": "KAKANA"
+      },
+      {
+        "name": "KAKHANA"
+      },
+      {
+        "name": "KALANA"
+      },
+      {
+        "name": "KAPANA"
+      },
+      {
+        "name": "LAMANA"
+      },
+      {
+        "name": "LAPATA"
+      },
+      {
+        "name": "MAAHNA"
+      },
+      {
+        "name": "MAAHPA"
+      },
+      {
+        "name": "MAMAKA"
+      },
+      {
+        "name": "MAMANA"
+      },
+      {
+        "name": "NGAPATA"
+      },
+      {
+        "name": "NGASANA"
+      },
+      {
+        "name": "NGATHAKHA"
+      },
+      {
+        "name": "NGAYAKA"
+      },
+      {
+        "name": "NYATANA"
+      },
+      {
+        "name": "PASALA"
+      },
+      {
+        "name": "PATANA"
+      },
+      {
+        "name": "PATHANA"
+      },
+      {
+        "name": "PATHAYA"
+      },
+      {
+        "name": "PHAPANA"
+      },
+      {
+        "name": "THAPANA"
+      },
+      {
+        "name": "WAKHAMA"
+      },
+      {
+        "name": "YAKANA"
+      },
+      {
+        "name": "YATHAYA"
+      },
+      {
+        "name": "ZALANA"
+      }
+    ]
+  }
+]
