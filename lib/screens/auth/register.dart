@@ -6,6 +6,7 @@ import 'package:synpitarn/models/login.dart';
 import 'package:synpitarn/models/nrc.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/screens/auth/otp.dart';
 import 'package:synpitarn/screens/home.dart';
 
 import 'package:synpitarn/services/common_service.dart';
@@ -19,8 +20,8 @@ class _RegisterPageState extends State<RegisterPage> {
   CommonService _commonService = CommonService();
 
   final TextEditingController phoneController = TextEditingController();
-  final TextEditingController pinController = TextEditingController();
   final TextEditingController nrcController = TextEditingController();
+  final TextEditingController passportController = TextEditingController();
 
   List<NRC> nrcList = [];
   List<Township> townshipList = [];
@@ -30,33 +31,44 @@ class _RegisterPageState extends State<RegisterPage> {
   String selectedTownship = "";
   String selectedCitizen = "N";
 
-  bool _isObscured = true;
   bool isChecked = false;
 
   String? phoneError;
-  String? pinError;
+  String? nrcError;
+  String? passportError;
 
   bool isPhoneValidate = false;
-  bool isPinValidate = false;
+  bool isNRCValidate = false;
+  bool isPassportValidate = false;
 
   @override
   void initState() {
     super.initState();
     readNRCData();
     phoneController.addListener(_validatePhoneValue);
-    pinController.addListener(_validatePinValue);
+    nrcController.addListener(_validateNRCValue);
+    passportController.addListener(_validatePassportValue);
   }
 
   @override
   void dispose() {
     phoneController.dispose();
-    pinController.dispose();
+    nrcController.dispose();
+    passportController.dispose();
     super.dispose();
   }
 
   Future<void> readNRCData() async {
-    nrcList = await _commonService.readNRCData();
+    setState(() async {
+      nrcList = await _commonService.readNRCData();
+      setTownshipData();
+    });
+  }
+
+  void setTownshipData() {
     townshipList = nrcList.where((nrc) => nrc.state == selectedState).expand((nrc) => nrc.townshipList).toList();
+    townshipList.sort((a, b) => a.name.compareTo(b.name));
+
     selectedTownship = townshipList.first.name;
 
     setState(() {});
@@ -69,32 +81,60 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  void _validatePinValue() {
+  void _validateNRCValue() {
     setState(() {
-      pinError = null;
-      isPinValidate = pinController.text.isNotEmpty && pinController.text.length == 6;
+      nrcError = null;
+      isNRCValidate = nrcController.text.isNotEmpty && nrcController.text.length == 6;
     });
   }
 
-  Future<void> handleLogin() async {
+  void _validatePassportValue() {
+    setState(() {
+      passportError = null;
+      isPassportValidate = passportController.text.isNotEmpty && passportController.text.length == 6;
+    });
+  }
+
+  Future<void> handleRegister() async {
     User user = User.defaultUser();
     user.phoneNumber = phoneController.text;
-    user.code = pinController.text;
+    user.identityNumber = "$selectedState/$selectedTownship($selectedCitizen)${nrcController.text}";
+    user.passport = passportController.text;
+    user.status = "active";
 
-    Login loginResponse = await AuthRepository().login(user);
+    Login registerResponse = await AuthRepository().register(user);
 
-    if (loginResponse.response.code != 200) {
-      String msg = loginResponse.response.message.toLowerCase();
+    if (registerResponse.response.code != 200) {
+      String msg = registerResponse.response.message.toLowerCase();
 
       if (msg.contains("phone")) {
-        phoneError = loginResponse.response.message;
+        phoneError = registerResponse.response.message;
       } else {
-        pinError = loginResponse.response.message;
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5), // Reduce the border radius
+              ),
+              content: Text(registerResponse.response.message),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: Text("Got it"),
+                ),
+              ],
+            );
+          },
+        );
       }
     } else {
+      user.forgetPassword = false;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => OTPPage(loginUser: user)),
       );
     }
 
@@ -153,6 +193,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             onChanged: (String? newValue) {
                               setState(() {
                                 selectedState = newValue!;
+                                setTownshipData();
                               });
                             },
                             items: nrcList.map<DropdownMenuItem<String>>((NRC nrc) {
@@ -167,6 +208,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ),
                         ),
+                        SizedBox(width: 1),
                         Flexible(
                           fit: FlexFit.tight,
                           child: DropdownButtonFormField<String>(
@@ -189,6 +231,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ),
                         ),
+                        SizedBox(width: 1),
                         Flexible(
                           child: DropdownButtonFormField<String>(
                             value: selectedCitizen,
@@ -209,6 +252,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ),
                         ),
+                        SizedBox(width: 1),
                         Flexible(
                           child: TextField(
                             controller: nrcController,
@@ -228,27 +272,16 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   SizedBox(height: 15),
                   TextField(
-                    controller: pinController,
-                    obscureText: _isObscured,
+                    controller: passportController,
                     keyboardType: TextInputType.number,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(6),
                     ],
                     decoration: InputDecoration(
-                      labelText: 'PIN',
+                      labelText: 'Passport',
                       border: OutlineInputBorder(),
-                      errorText: pinError,
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _isObscured ? Icons.visibility : Icons.visibility_off,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _isObscured = !_isObscured;
-                          });
-                        },
-                      ),
+                      errorText: passportError,
                     ),
                   ),
                   SizedBox(height: 20),
@@ -262,19 +295,24 @@ class _RegisterPageState extends State<RegisterPage> {
                           });
                         },
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isChecked = !isChecked;
-                          });
-                        },
-                        child: Text("Accept Terms & Conditions"),
-                      ),
+                      Expanded(child:
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              isChecked = !isChecked;
+                            });
+                          },
+                          child: Text(" I agree to SynPitarn Co. Ltd's terms and conditions",
+                            softWrap: true, maxLines: 2,),
+                        ),
+                      )
                     ],
                   ),
                   SizedBox(height: 20),
+                  Text(" When you click continue you will be asked to agree to our terms. After that you will be sent an OTP to the phone number that you gave us. "),
+                  SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: isPhoneValidate && isPinValidate ? handleLogin : null,
+                    onPressed: isPhoneValidate && isPassportValidate && isNRCValidate && isChecked ? handleRegister : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.indigo,
                       minimumSize: Size(double.infinity, 50),
@@ -283,33 +321,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                     child: Text(
-                      'Login',
+                      'Continue',
                       style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: () {
-                      // Navigate to signup or relevant page
-                    },
-                    child: RichText(
-                      text: TextSpan(
-                        text: "Don't have an account, ",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 14,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: "click here",
-                            style: TextStyle(
-                              color: Colors.black,
-                              decoration: TextDecoration.underline,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                 ],

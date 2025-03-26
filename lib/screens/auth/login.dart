@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:synpitarn/models/login.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/screens/auth/register.dart';
 import 'package:synpitarn/screens/home.dart';
-import 'forget_password.dart';
+import 'package:synpitarn/screens/loan/qa_scan.dart';
+import 'package:synpitarn/screens/auth/forget_password.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -69,7 +71,7 @@ class LoginState extends State<LoginPage> {
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => loginResponse.data.loanApplicationSubmitted ? HomePage() : QRScanPage()),
       );
     }
 
@@ -180,7 +182,10 @@ class LoginState extends State<LoginPage> {
                   SizedBox(height: 20),
                   GestureDetector(
                     onTap: () {
-                      // Navigate to signup or relevant page
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => RegisterPage()),
+                      );
                     },
                     child: RichText(
                       text: TextSpan(

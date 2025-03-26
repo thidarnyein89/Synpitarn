@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:synpitarn/models/otp.dart';
 import 'package:synpitarn/screens/auth/otp.dart';
 import 'package:synpitarn/models/user.dart';
-import 'package:synpitarn/repositories/auth_repository.dart';
 
 class ForgetPasswordPage extends StatefulWidget {
   const ForgetPasswordPage({super.key});
@@ -41,17 +39,10 @@ class ForgetPasswordState extends State<ForgetPasswordPage> {
     user.phoneNumber = phoneController.text;
     user.forgetPassword = true;
 
-    OTP otpResponse = await AuthRepository().getOTP(user);
-
-    if (otpResponse.response.code != 200) {
-      phoneError = otpResponse.response.message;
-    } else {
-      user.code = otpResponse.data;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => OTPPage(loginUser: user)),
-      );
-    }
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => OTPPage(loginUser: user)),
+    );
 
     setState(() {});
   }

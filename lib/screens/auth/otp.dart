@@ -36,9 +36,8 @@ class OTPState extends State<OTPPage> {
   @override
   void initState() {
     super.initState();
-    startTimer();
+    getOTP();
     otpController.addListener(_validateOTPValue);
-    code = widget.loginUser.code;
     setState(() {});
   }
 
@@ -78,7 +77,7 @@ class OTPState extends State<OTPPage> {
     });
   }
 
-  Future<void> resendOtp() async {
+  Future<void> getOTP() async {
     otpError = "";
     code = "";
     otpController.text = "";
@@ -111,6 +110,7 @@ class OTPState extends State<OTPPage> {
     user.code = otpController.text;
     user.forgetPassword = widget.loginUser.forgetPassword;
     user.phoneNumber = widget.loginUser.phoneNumber;
+    user.forgetPassword = widget.loginUser.forgetPassword;
 
     Login loginResponse = await AuthRepository().checkOTP(user);
 
@@ -207,7 +207,7 @@ class OTPState extends State<OTPPage> {
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                resendOtp();
+                                getOTP();
                               },
                           ),
                         ],

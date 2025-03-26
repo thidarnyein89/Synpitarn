@@ -4,7 +4,7 @@ import 'package:synpitarn/models/login.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/home.dart';
-import 'forget_password.dart';
+import 'package:synpitarn/screens/loan/qa_scan.dart';
 
 class SetPasswordPage extends StatefulWidget {
   User loginUser;
@@ -60,7 +60,7 @@ class SetPasswordState extends State<SetPasswordPage> {
     else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => loginResponse.data.loanApplicationSubmitted ? HomePage() : QRScanPage()),
       );
     }
 

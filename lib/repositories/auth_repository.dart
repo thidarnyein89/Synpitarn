@@ -6,6 +6,25 @@ import 'package:synpitarn/config/app_config.dart';
 import 'package:synpitarn/models/login.dart';
 
 class AuthRepository {
+  Future<Login> register(User loginRequest) async {
+    var post_body = {
+      "identity_number": loginRequest.identityNumber,
+      "passport": loginRequest.passport,
+      "phone_number": loginRequest.phoneNumber,
+      "status": "active"
+    };
+
+    String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/auth/register-only-phone-no");
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(post_body),
+    );
+
+    return Login.loginResponseFromJson(response.body);
+  }
+
   Future<Login> login(User loginRequest) async {
     var post_body = {
       "code": loginRequest.code,
