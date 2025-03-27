@@ -57,6 +57,7 @@ class LoginState extends State<LoginPage> {
     User user = User.defaultUser();
     user.phoneNumber = phoneController.text;
     user.code = pinController.text;
+    user.type = "pincode";
 
     Login loginResponse = await AuthRepository().login(user);
 

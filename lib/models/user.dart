@@ -34,6 +34,8 @@ class User {
   String provinceOfResidentText = '';
   String code = ''; //For Password in Login Page
   bool forgetPassword = false; //For Determine Forget OR Confirm in OTP Page
+  String type = ''; //For PinType
+  String authToken = ''; //For Reposet Token from SetPassword
 
   User.defaultUser();
 
@@ -71,6 +73,8 @@ class User {
     required this.provinceOfResidentText,
     required this.code,
     required this.forgetPassword,
+    required this.type,
+    required this.authToken,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -108,6 +112,8 @@ class User {
       provinceOfResidentText: json['province_of_resident_text'] ?? "",
       code: json.containsKey("code") ? json["code"] ?? json["code"] : "",
       forgetPassword: json.containsKey("forget_password") ? json["forget_password"] is bool ?? json["forget_password"] : false,
+      type: json.containsKey("type") ? json["type"] ?? json["type"] : "",
+      authToken: json.containsKey("auth_token") ? json["auth_token"] ?? json["auth_token"] : "",
     );
   }
 
@@ -146,6 +152,8 @@ class User {
       'province_of_resident_text': provinceOfResidentText,
       'code': code,
       'forget_password': forgetPassword,
+      'type': type,
+      'auth_token': authToken,
     };
   }
 }

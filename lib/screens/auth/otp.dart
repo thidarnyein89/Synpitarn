@@ -36,8 +36,9 @@ class OTPState extends State<OTPPage> {
   @override
   void initState() {
     super.initState();
-    getOTP();
     otpController.addListener(_validateOTPValue);
+    startTimer();
+    code = widget.loginUser.code;
     setState(() {});
   }
 

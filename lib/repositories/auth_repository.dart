@@ -11,7 +11,7 @@ class AuthRepository {
       "identity_number": loginRequest.identityNumber,
       "passport": loginRequest.passport,
       "phone_number": loginRequest.phoneNumber,
-      "status": "active"
+      "status": loginRequest.status
     };
 
     String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/auth/register-only-phone-no");
@@ -29,7 +29,7 @@ class AuthRepository {
     var post_body = {
       "code": loginRequest.code,
       "phone_number": loginRequest.phoneNumber,
-      "type": "pincode"
+      "type": loginRequest.type
     };
 
     String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/auth/login");
