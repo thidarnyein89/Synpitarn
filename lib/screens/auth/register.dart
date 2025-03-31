@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:synpitarn/models/login.dart';
-import 'package:synpitarn/models/nrc.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/screens/auth/nrc.dart';
 import 'package:synpitarn/screens/auth/otp.dart';
 import 'package:synpitarn/screens/auth/term_conditions.dart';
-import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/models/otp.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -19,20 +18,9 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-
-  final CommonService _commonService = CommonService();
-
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController nrcController = TextEditingController();
   final TextEditingController passportController = TextEditingController();
-
-  List<NRC> nrcList = [];
-  List<Township> townshipList = [];
-  List<String> citizenList = ["N", "P", "E", "C"];
-
-  String selectedState = "1";
-  String selectedTownship = "";
-  String selectedCitizen = "N";
 
   bool isChecked = false;
 
@@ -44,10 +32,11 @@ class _RegisterPageState extends State<RegisterPage> {
   bool isNRCValidate = false;
   bool isPassportValidate = false;
 
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
-    readNRCData();
     phoneController.addListener(_validatePhoneValue);
     nrcController.addListener(_validateNRCValue);
     passportController.addListener(_validatePassportValue);
@@ -63,63 +52,52 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
-  Future<void> readNRCData() async {
-    setState(() async {
-      nrcList = await _commonService.readNRCData();
-      setTownshipData();
-    });
-  }
-
-  void setTownshipData() {
-    townshipList = nrcList.where((nrc) => nrc.state == selectedState).expand((nrc) => nrc.townshipList).toList();
-    townshipList.sort((a, b) => a.name.compareTo(b.name));
-
-    selectedTownship = townshipList.first.name;
-
-    setState(() {});
-  }
-
   void _validatePhoneValue() {
     setState(() {
       phoneError = null;
-      isPhoneValidate = phoneController.text.isNotEmpty && phoneController.text.length == 10;
+      isPhoneValidate =
+          phoneController.text.isNotEmpty && phoneController.text.length == 10;
     });
   }
 
   void _validateNRCValue() {
     setState(() {
       nrcError = null;
-      isNRCValidate = nrcController.text.isNotEmpty && nrcController.text.length == 6;
+      isNRCValidate = nrcController.text.isNotEmpty;
     });
   }
 
   void _validatePassportValue() {
     setState(() {
       passportError = null;
-      isPassportValidate = passportController.text.isNotEmpty && passportController.text.length == 6;
+      isPassportValidate =
+          passportController.text.isNotEmpty &&
+          passportController.text.length == 6;
     });
   }
 
   Future<void> showTermAndConditions() async {
     bool isShowDialog = true;
 
-    if(isChecked) {
+    if (isChecked) {
       setState(() {
         isChecked = false;
         isShowDialog = false;
       });
     }
 
-    if(isShowDialog) {
+    if (isShowDialog) {
       var result = await showDialog(
         context: context,
         builder: (context) {
           return Dialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: SizedBox(
-                height:  MediaQuery.of(context).size.height * 0.9,
-                width:  MediaQuery.of(context).size.width,
-                child: TermAndConditionsPage()
+              height: MediaQuery.of(context).size.height * 0.9,
+              width: MediaQuery.of(context).size.width,
+              child: TermAndConditionsPage(),
             ),
           );
         },
@@ -133,10 +111,39 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  Future<void> showNRCDialog() async {
+    var result = await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: SizedBox(
+            height: 365,
+            width: MediaQuery.of(context).size.width,
+            child: NRCPage(key: UniqueKey(), nrcValue: nrcController.text),
+          ),
+        );
+      },
+    );
+
+    if (result != null) {
+      setState(() {
+        nrcController.text = result;
+      });
+    }
+  }
+
   Future<void> handleRegister() async {
+    setState(() {
+      isLoading = true;
+    });
+
     User user = User.defaultUser();
     user.phoneNumber = phoneController.text;
-    user.identityNumber = "$selectedState/$selectedTownship($selectedCitizen)${nrcController.text}";
+    user.identityNumber = nrcController.text;
     user.passport = passportController.text;
     user.forgetPassword = false;
     user.status = "active";
@@ -154,7 +161,9 @@ class _RegisterPageState extends State<RegisterPage> {
           builder: (BuildContext context) {
             return AlertDialog(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5), // Reduce the border radius
+                borderRadius: BorderRadius.circular(
+                  5,
+                ), // Reduce the border radius
               ),
               content: Text(registerResponse.response.message),
               actions: [
@@ -172,10 +181,9 @@ class _RegisterPageState extends State<RegisterPage> {
     } else {
       OTP otpResponse = await AuthRepository().getOTP(user);
 
-      if(otpResponse.response.code != 200) {
+      if (otpResponse.response.code != 200) {
         phoneError = otpResponse.response.message;
-      }
-      else {
+      } else {
         user.code = otpResponse.data;
         Navigator.pushReplacement(
           context,
@@ -184,6 +192,7 @@ class _RegisterPageState extends State<RegisterPage> {
       }
     }
 
+    isLoading = false;
     setState(() {});
   }
 
@@ -211,7 +220,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   SizedBox(height: 40),
                   Text(
-                      ' SynPitarn will use this phone number as the primary authentication method. Please fill in the phone number that you always use and is with you. '
+                    'SynPitarn will use this phone number as the primary authentication method. Please fill in the phone number that you always use and is with you. ',
                   ),
                   SizedBox(height: 40),
                   TextField(
@@ -229,94 +238,22 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                   SizedBox(height: 15),
-                  SizedBox(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Flexible(
-                          child: DropdownButtonFormField<String>(
-                            value: selectedState,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectedState = newValue!;
-                                setTownshipData();
-                              });
-                            },
-                            items: nrcList.map<DropdownMenuItem<String>>((NRC nrc) {
-                              return DropdownMenuItem<String>(
-                                value: nrc.state,
-                                child: Text(nrc.state),
-                              );
-                            }).toList(),
-                            decoration: InputDecoration(
-                              labelText: '',
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
+                  GestureDetector(
+                    onTap: () {
+                      showNRCDialog();
+                    },
+                    child: AbsorbPointer(
+                      child: TextField(
+                        controller: nrcController,
+                        decoration: InputDecoration(
+                          labelText: 'NRC',
+                          border: OutlineInputBorder(),
+                          errorText: nrcError,
                         ),
-                        SizedBox(width: 1),
-                        Flexible(
-                          fit: FlexFit.tight,
-                          child: DropdownButtonFormField<String>(
-                            isExpanded: true,
-                            value: selectedTownship,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectedTownship = newValue!;
-                              });
-                            },
-                            items: townshipList.map<DropdownMenuItem<String>>((Township township) {
-                              return DropdownMenuItem<String>(
-                                value: township.name,
-                                child: Text(township.name, overflow: TextOverflow.ellipsis),
-                              );
-                            }).toList(),
-                            decoration: InputDecoration(
-                              labelText: '',
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 1),
-                        Flexible(
-                          child: DropdownButtonFormField<String>(
-                            value: selectedCitizen,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectedCitizen = newValue!;
-                              });
-                            },
-                            items: citizenList.map<DropdownMenuItem<String>>((String citizen) {
-                              return DropdownMenuItem<String>(
-                                value: citizen,
-                                child: Text(citizen),
-                              );
-                            }).toList(),
-                            decoration: InputDecoration(
-                              labelText: '',
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 1),
-                        Flexible(
-                          child: TextField(
-                            controller: nrcController,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(6),
-                            ],
-                            decoration: InputDecoration(
-                              labelText: '',
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        )
-                      ],
+                      ),
                     ),
                   ),
-                  SizedBox(height: 15),
+                  SizedBox(height: 20),
                   TextField(
                     controller: passportController,
                     keyboardType: TextInputType.number,
@@ -339,22 +276,30 @@ class _RegisterPageState extends State<RegisterPage> {
                           showTermAndConditions();
                         },
                       ),
-                      Expanded(child:
-                        GestureDetector(
+                      Expanded(
+                        child: GestureDetector(
                           onTap: () {
                             showTermAndConditions();
                           },
-                          child: Text(" I agree to SynPitarn Co. Ltd's terms and conditions",
-                            softWrap: true, maxLines: 2,),
+                          child: Text(
+                            " I agree to SynPitarn Co. Ltd's terms and conditions",
+                            softWrap: true,
+                            maxLines: 2,
+                          ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                   SizedBox(height: 20),
-                  Text(" When you click continue you will be asked to agree to our terms. After that you will be sent an OTP to the phone number that you gave us. "),
+                  Text(
+                    " When you click continue you will be asked to agree to our terms. After that you will be sent an OTP to the phone number that you gave us. ",
+                  ),
                   SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: isPhoneValidate && isPassportValidate && isNRCValidate && isChecked ? handleRegister : null,
+                    onPressed:
+                        isPhoneValidate && isPassportValidate && isNRCValidate && isChecked && !isLoading
+                            ? handleRegister
+                            : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.indigo,
                       minimumSize: Size(double.infinity, 50),
@@ -362,10 +307,36 @@ class _RegisterPageState extends State<RegisterPage> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Text(
-                      'Continue',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
+                    child:
+                        isLoading
+                            ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 16, // Match text height
+                                  width: 16, // Keep it proportional
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2, // Adjust thickness
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  'Please Wait...',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            )
+                            : Text(
+                              'Continue',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
                   ),
                 ],
               ),

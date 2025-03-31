@@ -1,5 +1,7 @@
 class Township {
-  final String name;
+  String name = "";
+
+  Township.defaultTownship();
 
   Township({required this.name});
 
@@ -13,8 +15,10 @@ class Township {
 }
 
 class NRC {
-  final String state;
-  final List<Township> townshipList;
+  String state = "";
+  List<Township> townshipList = [Township.defaultTownship()];
+
+  NRC.defaultNRC();
 
   NRC({required this.state, required this.townshipList});
 

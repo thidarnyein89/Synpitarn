@@ -21,8 +21,7 @@ class OTPPage extends StatefulWidget {
 }
 
 class OTPState extends State<OTPPage> {
-
-  final TextEditingController otpController  = TextEditingController();
+  final TextEditingController otpController = TextEditingController();
   String code = "";
 
   String? otpError = "";
@@ -32,6 +31,8 @@ class OTPState extends State<OTPPage> {
   int _secondsRemaining = 0; // Countdown Timer
   late Timer _timer;
   bool _canResendOtp = false;
+
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -52,7 +53,8 @@ class OTPState extends State<OTPPage> {
   void _validateOTPValue() {
     setState(() {
       otpError = "";
-      isOTPValidate = otpController.text.isNotEmpty && otpController.text.length == 6;
+      isOTPValidate =
+          otpController.text.isNotEmpty && otpController.text.length == 6;
     });
   }
 
@@ -65,7 +67,7 @@ class OTPState extends State<OTPPage> {
       } else {
         if (_minuteRemaining > 0) {
           setState(() {
-            _minuteRemaining--;  // Decrease minutes
+            _minuteRemaining--; // Decrease minutes
             _secondsRemaining = 59; // Reset seconds to 59
           });
         } else {
@@ -89,10 +91,9 @@ class OTPState extends State<OTPPage> {
 
     OTP otpResponse = await AuthRepository().getOTP(user);
 
-    if(otpResponse.response.code != 200) {
+    if (otpResponse.response.code != 200) {
       otpError = otpResponse.response.message;
-    }
-    else {
+    } else {
       user.code = otpResponse.data;
       code = otpResponse.data;
 
@@ -107,6 +108,10 @@ class OTPState extends State<OTPPage> {
   }
 
   Future<void> handleVerifyOTP() async {
+    setState(() {
+      isLoading = true;
+    });
+
     User user = User.defaultUser();
     user.code = otpController.text;
     user.forgetPassword = widget.loginUser.forgetPassword;
@@ -115,17 +120,20 @@ class OTPState extends State<OTPPage> {
 
     Login loginResponse = await AuthRepository().checkOTP(user);
 
-    if(loginResponse.response.code != 200) {
+    if (loginResponse.response.code != 200) {
       otpError = loginResponse.response.message;
-    }
-    else {
+    } else {
       user.token = loginResponse.data.token;
+      _timer.cancel();
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => SetPasswordPage(loginUser: user)),
+        MaterialPageRoute(
+          builder: (context) => SetPasswordPage(loginUser: user),
+        ),
       );
     }
 
+    isLoading = false;
     setState(() {});
   }
 
@@ -159,6 +167,7 @@ class OTPState extends State<OTPPage> {
                   PinCodeTextField(
                     appContext: context,
                     length: 6,
+                    autoFocus: true,
                     obscureText: false,
                     obscuringCharacter: '●',
                     keyboardType: TextInputType.number,
@@ -174,7 +183,8 @@ class OTPState extends State<OTPPage> {
                       selectedFillColor: Colors.white,
                       activeColor: Colors.grey,
                       selectedColor: MyTheme.primary_color,
-                      errorBorderColor: otpError == null ? Colors.grey : Colors.red,
+                      errorBorderColor:
+                          otpError == null ? Colors.grey : Colors.red,
                       borderWidth: 2,
                     ),
                     onChanged: (value) {},
@@ -185,12 +195,12 @@ class OTPState extends State<OTPPage> {
                       style: TextStyle(color: Colors.red, fontSize: 14),
                     ),
                   SizedBox(height: 20),
-                  if(!_canResendOtp)
+                  if (!_canResendOtp)
                     Text(
                       "OTP Code will expire in ${_minuteRemaining.toString().padLeft(2, '0')}:${_secondsRemaining.toString().padLeft(2, '0')}",
                       style: TextStyle(fontSize: 14, color: Colors.black),
                     ),
-                  if(_canResendOtp)
+                  if (_canResendOtp)
                     RichText(
                       text: TextSpan(
                         text: "OTP not received? ",
@@ -206,17 +216,19 @@ class OTPState extends State<OTPPage> {
                               decoration: TextDecoration.underline,
                               fontWeight: FontWeight.bold,
                             ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                getOTP();
-                              },
+                            recognizer:
+                                TapGestureRecognizer()
+                                  ..onTap = () {
+                                    getOTP();
+                                  },
                           ),
                         ],
                       ),
                     ),
                   SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: isOTPValidate ? handleVerifyOTP : null,
+                    onPressed:
+                        isOTPValidate && !isLoading ? handleVerifyOTP : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.indigo,
                       minimumSize: Size(double.infinity, 50),
@@ -224,21 +236,45 @@ class OTPState extends State<OTPPage> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Text(
-                      'Verify OTP Code',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
+                    child:
+                        isLoading
+                            ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 16, // Match text height
+                                  width: 16, // Keep it proportional
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2, // Adjust thickness
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  'Please Wait...',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            )
+                            : Text(
+                              'Verify OTP Code',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
                   ),
                   SizedBox(height: 20),
-                  Text(
-                      "OTP Code ${code}"
-                  ),
+                  Text("OTP Code ${code}"),
                 ],
               ),
             ),
           ),
-        )
-      )
+        ),
+      ),
     );
   }
 }

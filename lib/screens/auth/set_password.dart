@@ -17,54 +17,89 @@ class SetPasswordPage extends StatefulWidget {
 
 class SetPasswordState extends State<SetPasswordPage> {
   final TextEditingController phoneController = TextEditingController();
-  final TextEditingController pinController = TextEditingController();
+  final TextEditingController pin1Controller = TextEditingController();
+  final TextEditingController pin2Controller = TextEditingController();
 
-  bool _isObscured = true;
-  String? pinError;
-  bool isPinValidate = false;
+  bool _isObscured1 = true;
+  bool _isObscured2 = true;
+  String? pin1Error;
+  String? pin2Error;
+  bool isPin1Validate = false;
+  bool isPin2Validate = false;
+
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     phoneController.text = widget.loginUser.phoneNumber;
-    pinController.addListener(_validatePinValue);
+    pin1Controller.addListener(_validatePin1Value);
+    pin2Controller.addListener(_validatePin2Value);
   }
 
   @override
   void dispose() {
     phoneController.dispose();
-    pinController.dispose();
+    pin1Controller.dispose();
+    pin2Controller.dispose();
     super.dispose();
   }
 
-  void _validatePinValue() {
+  void _validatePin1Value() {
     setState(() {
-      pinError = null;
-      isPinValidate = pinController.text.isNotEmpty && pinController.text.length == 6;
+      pin1Error = null;
+      isPin1Validate =
+          pin1Controller.text.isNotEmpty &&
+          pin1Controller.text.length == 6;
+    });
+  }
+
+  void _validatePin2Value() {
+    setState(() {
+      pin2Error = null;
+      isPin2Validate =
+          pin2Controller.text.isNotEmpty &&
+          pin2Controller.text.length == 6;
     });
   }
 
   Future<void> handleSetPassowrd() async {
-
-    User user = User.defaultUser();
-    user.token = widget.loginUser.token;
-    user.forgetPassword = widget.loginUser.forgetPassword;
-    user.phoneNumber = phoneController.text;
-    user.code = pinController.text;
-
-    Login loginResponse = await AuthRepository().setPassword(user);
-
-    if(loginResponse.response.code != 200) {
-      pinError = loginResponse.response.message;
+    if(pin1Controller.text != pin2Controller.text) {
+      pin2Error = "PIN code must be identical";
+      isPin2Validate = false;
+      setState(() {});
     }
     else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => loginResponse.data.loanApplicationSubmitted ? HomePage() : QRScanPage()),
-      );
-    }
+      setState(() {
+        isLoading = true;
+      });
 
-    setState(() {});
+      User user = User.defaultUser();
+      user.token = widget.loginUser.token;
+      user.forgetPassword = widget.loginUser.forgetPassword;
+      user.phoneNumber = phoneController.text;
+      user.code = pin1Controller.text;
+
+      Login loginResponse = await AuthRepository().setPassword(user);
+
+      if (loginResponse.response.code != 200) {
+        pin1Error = loginResponse.response.message;
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) =>
+            loginResponse.data.loanApplicationSubmitted
+                ? HomePage()
+                : QRScanPage(),
+          ),
+        );
+      }
+
+      isLoading = false;
+      setState(() {});
+    }
   }
 
   @override
@@ -100,23 +135,57 @@ class SetPasswordState extends State<SetPasswordPage> {
                   ),
                   SizedBox(height: 15),
                   TextField(
-                    controller: pinController,
-                    obscureText: _isObscured,
-                    keyboardType: TextInputType.phone,inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly, // Allow only digits
-                    LengthLimitingTextInputFormatter(6), // Limit to 10 digits
-                  ],
+                    controller: pin1Controller,
+                    obscureText: _isObscured1,
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      // Allow only digits
+                      LengthLimitingTextInputFormatter(6),
+                      // Limit to 10 digits
+                    ],
                     decoration: InputDecoration(
                       labelText: 'PIN',
                       border: OutlineInputBorder(),
-                      errorText: pinError,
+                      errorText: pin1Error,
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _isObscured ? Icons.visibility : Icons.visibility_off,
+                          _isObscured1
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                         ),
                         onPressed: () {
                           setState(() {
-                            _isObscured = !_isObscured;
+                            _isObscured1 = !_isObscured1;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  TextField(
+                    controller: pin2Controller,
+                    obscureText: _isObscured2,
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      // Allow only digits
+                      LengthLimitingTextInputFormatter(6),
+                      // Limit to 10 digits
+                    ],
+                    decoration: InputDecoration(
+                      labelText: 'Confirm PIN',
+                      border: OutlineInputBorder(),
+                      errorText: pin2Error,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isObscured2
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isObscured2 = !_isObscured2;
                           });
                         },
                       ),
@@ -124,7 +193,10 @@ class SetPasswordState extends State<SetPasswordPage> {
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: isPinValidate ? handleSetPassowrd : null, // Disable when fields are empty
+                    onPressed:
+                        isPin1Validate && isPin2Validate && !isLoading
+                            ? handleSetPassowrd
+                            : null, // Disable when fields are empty
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.indigo,
                       minimumSize: Size(double.infinity, 50),
@@ -132,17 +204,43 @@ class SetPasswordState extends State<SetPasswordPage> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Text(
-                      'Set New Password',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
+                    child:
+                        isLoading
+                            ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 16, // Match text height
+                                  width: 16, // Keep it proportional
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2, // Adjust thickness
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  'Please Wait...',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            )
+                            : Text(
+                              'Set New Password',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
                   ),
                 ],
               ),
             ),
           ),
-        )
-      )
+        ),
+      ),
     );
   }
 }

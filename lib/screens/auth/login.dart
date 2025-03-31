@@ -25,6 +25,8 @@ class LoginState extends State<LoginPage> {
   bool isPhoneValidate = false;
   bool isPinValidate = false;
 
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -42,18 +44,24 @@ class LoginState extends State<LoginPage> {
   void _validatePhoneValue() {
     setState(() {
       phoneError = null;
-      isPhoneValidate = phoneController.text.isNotEmpty && phoneController.text.length == 10;
+      isPhoneValidate =
+          phoneController.text.isNotEmpty && phoneController.text.length == 10;
     });
   }
 
   void _validatePinValue() {
     setState(() {
       pinError = null;
-      isPinValidate = pinController.text.isNotEmpty && pinController.text.length == 6;
+      isPinValidate =
+          pinController.text.isNotEmpty && pinController.text.length == 6;
     });
   }
 
   Future<void> handleLogin() async {
+    setState(() {
+      isLoading = true;
+    });
+
     User user = User.defaultUser();
     user.phoneNumber = phoneController.text;
     user.code = pinController.text;
@@ -72,10 +80,17 @@ class LoginState extends State<LoginPage> {
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => loginResponse.data.loanApplicationSubmitted ? HomePage() : QRScanPage()),
+        MaterialPageRoute(
+          builder:
+              (context) =>
+                  loginResponse.data.loanApplicationSubmitted
+                      ? HomePage()
+                      : QRScanPage(),
+        ),
       );
     }
 
+    isLoading = false;
     setState(() {});
   }
 
@@ -93,10 +108,7 @@ class LoginState extends State<LoginPage> {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'assets/images/synpitarn.jpg',
-                    height: 180,
-                  ),
+                  Image.asset('assets/images/synpitarn.jpg', height: 180),
                   SizedBox(height: 10),
                   Text(
                     'Welcome from Synpitarn',
@@ -151,23 +163,25 @@ class LoginState extends State<LoginPage> {
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => ForgetPasswordPage()),
+                        MaterialPageRoute(
+                          builder: (context) => ForgetPasswordPage(),
+                        ),
                       );
                     },
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Text(
                         "Forgot PIN code",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: Colors.black, fontSize: 14),
                       ),
                     ),
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: isPhoneValidate && isPinValidate ? handleLogin : null,
+                    onPressed:
+                        isPhoneValidate && isPinValidate && !isLoading
+                            ? handleLogin
+                            : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.indigo,
                       minimumSize: Size(double.infinity, 50),
@@ -175,10 +189,36 @@ class LoginState extends State<LoginPage> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Text(
-                      'Login',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
+                    child:
+                        isLoading
+                            ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 16, // Match text height
+                                  width: 16, // Keep it proportional
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2, // Adjust thickness
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  'Please Wait...',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            )
+                            : Text(
+                              'Login',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
                   ),
                   SizedBox(height: 20),
                   GestureDetector(
@@ -191,10 +231,7 @@ class LoginState extends State<LoginPage> {
                     child: RichText(
                       text: TextSpan(
                         text: "Don't have an account, ",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: Colors.black, fontSize: 14),
                         children: [
                           TextSpan(
                             text: "click here",

@@ -17,6 +17,7 @@ class ForgetPasswordState extends State<ForgetPasswordPage> {
   final TextEditingController phoneController = TextEditingController();
   String? phoneError = null;
   bool isPhoneValidate = false;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -33,21 +34,25 @@ class ForgetPasswordState extends State<ForgetPasswordPage> {
   void _validatePhoneValue() {
     setState(() {
       phoneError = null;
-      isPhoneValidate = phoneController.text.isNotEmpty && phoneController.text.length == 10;
+      isPhoneValidate =
+          phoneController.text.isNotEmpty && phoneController.text.length == 10;
     });
   }
 
   Future<void> handleResetPin() async {
+    setState(() {
+      isLoading = true;
+    });
+
     User user = User.defaultUser();
     user.phoneNumber = phoneController.text;
     user.forgetPassword = true;
 
     OTP otpResponse = await AuthRepository().getOTP(user);
 
-    if(otpResponse.response.code != 200) {
+    if (otpResponse.response.code != 200) {
       phoneError = otpResponse.response.message;
-    }
-    else {
+    } else {
       user.code = otpResponse.data;
       Navigator.pushReplacement(
         context,
@@ -55,6 +60,7 @@ class ForgetPasswordState extends State<ForgetPasswordPage> {
       );
     }
 
+    isLoading = false;
     setState(() {});
   }
 
@@ -96,7 +102,8 @@ class ForgetPasswordState extends State<ForgetPasswordPage> {
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: isPhoneValidate ? handleResetPin : null,
+                    onPressed:
+                        isPhoneValidate && !isLoading ? handleResetPin : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.indigo,
                       minimumSize: Size(double.infinity, 50),
@@ -104,10 +111,36 @@ class ForgetPasswordState extends State<ForgetPasswordPage> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Text(
-                      'Reset PIN code',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
+                    child:
+                        isLoading
+                            ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 16, // Match text height
+                                  width: 16, // Keep it proportional
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2, // Adjust thickness
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  'Please Wait...',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            )
+                            : Text(
+                              'Reset PIN code',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
                   ),
                 ],
               ),
