@@ -1,0 +1,38 @@
+[
+  {
+    "icon": "feed",
+    "title_mm": "အွန်လိုင်းမှ လျှောက်လွှာပုံစံကိုဖြည့်ပါ + လိုအပ်သော စာရွက်စာတမ်းများ တင်သွင်းခြင်း",
+    "title_en": "Fill in online application form + Upload documents",
+    "title_thai": "กรอกใบสมัครออนไลน์ + อัพโหลด/ นำเข้า เอกสาร",
+    "step_mm": "အဆင့်-၁",
+    "step_en": "Step 1",
+    "step_thai": "ขั้นตอนที่ 1",
+    "description_mm": "<div><ul><li>စာရင်းသွင်းရန် <a href=\"/register\" class=\"text-underline\">ဤနေရာတွင်  နှိပ်ပါ။</a></li><li>OTP ကုဒ်နံပါတ်အား သင့်ထံပို့ပေးမည်ဖြစ်ပါသည်။</li><li>အကောင့်အသစ်ပြုလုပ်ရန် မှတ်မိလွယ်သော ဂဏန်း ၆ လုံးဖြင့် Pin code ပြုလုပ်ရန် လိုအပ်ပါသည်။</li><li>သင်၏ မိုဘိုင်းဖုန်းနံပါတ်သည် သင့်၏ Username အဖြစ် အလိုအလျောက် အသုံးပြုသွားမည် ဖြစ်ပါသည်။</li></ul><p>အကောင့်အသစ်ပြုလုပ်ပြီးလျှင် သင်၏အချက်အလက်များအား သင့်မိုဘိုင်းဖုန်းမှတဆင့် ဖြည့်သွင်းပေးရန် လိုအပ်ပါသည်။</p><ul><li>လျှောက်လွာပုံစံတွင် ဖြည့်ပြီးပါက လိုအပ်သောစာရွက်စာတမ်းများအား သင့်မိုဘိုင်းဖုန်းဖြင့် ဓာတ်ပုံရိုက်၍ တင်သွင်းရမည်ဖြစ်ပါသည်။ ဥပမာ- ထိုင်းနိုင်ငံတွင်တရားဝင်အလုပ်လုပ်ခွင့် ပန်းရောင်ကဒ်၊ လစာရငွေဖြတ်ပိုင်းများ</li><div>- တရားဝင် အလုပ်လုပ်ခွင့်လက်မှတ်: ပန်းရောင်ကဒ် သို့မဟုတ် MOU </div><div>- နိုင်ငံသားကဒ် သို့မဟုတ် နိုင်ငံကူးလက်မှတ်</div><div>- လစာလက်ခံစာရွက် သို့မဟုတ် ဘဏ်စာအုပ်</div></ul><p>လျှောက်လွှာပုံစံမဖြည့်သွင်းခင် ထိုစာရွက်စာတမ်းများအား&nbsp; ကြိုတင်ပြင်ဆင်ထားရန် အကြံပြုပါသည်။</p></div>",
+    "description_en": "<div><ul><li>Click <a href=\"/register\" class=\"text-underline\">link</a> to register</li><li>You will be sent an OTP to the registered mobile number</li><li>Create an account – for this you will need to set a pin code. This will be a 6 digit number that you can remember.</li><li>Your mobile phone number is automatically set as your username</li><li>Once you have created the account you need to provide us with information in the form on your phone</li></ul><ul><li>After you have finished filling in the form you will need to upload documents by taking a picture of some documents such as your pink card and pay slip <div>- Work Permit Document: Pink Card or MOU</div> <div>- NRC or Passport</div> <div>- Payslip or Bank Book</div></li><li>We suggest you prepare these before completing the form</li></ul></div>",
+    "description_thai": "<div><ul><li> <a href=\"/register\" class=\"text-underline\">คลิกที่นี่เพื่อลงทะเบียน&nbsp;</a></li><li>คุณจะได้รับรหัสผ่านแบบใช้ครั้งเดียว (OTP) ทางข้อความทางเบอร์โทรศัพท์ที่คุณลงทะเบียน&nbsp;</li><li>สร้างบัญชีผู้ใช้งาน - คุณสามารถตั้งรหัสเป็นตัวเลข 6 หลักเพื่อเข้าใช้งาน ต้องเป็นตัวเลขที่คุณจำได้&nbsp;</li><li>เบอร์โทรศัพท์ของคุณจะถูกตั้งเป็นชื่อผู้ใช้งาน โดยอัตโนมัติ&nbsp;</li><li>หลังจากคุณสร้างบัญชีผู้ใช้งานสำเร็จ ระบบจะให้คุณกรอกข้อมูลเกี่ยวกับคุณ (ผู้ขอกู้)&nbsp;</li></ul><ul><li>หลังจากกรอกแบบฟอร์มออนไลน์เรียบร้อย ให้ผู้ขอกู้อัพโหลด/ นำเข้า รูปเอกสารที่ต้องใช้ เช่น ใบอนุญาตทำงาน (บัตรชมพู) และ เอกสารรับเงินเดือน&nbsp;</li><div>- หน้าเซลฟี่</div><div>- กรณีไม่ใช่คนไทย ใบอนุญาตทำงาน (บัตรชมพู หรือ  MOU)</div><div>- หน้าบัญชีเงินฝากธนาคาร หรือ หนังสือรับรองเงินเดือน</div><div>- บัตรประชาชน</div><li>ขอแนะนำให้ผู้ขอกู้ถ่ายรูปเอกสารเตรียมไว้ก่อนเริ่มกรอกฟอร์มออนไลน์ ในขั้นตอนที่ 1&nbsp;</li></ul></div>"
+  },
+  {
+    "icon": "calendar",
+    "title_mm": "အွန်လိုင်း အင်တာဗျူးအတွက် ရက်ချိန်းယူခြင်း",
+    "title_en": "Book online interview",
+    "title_thai": "จองเวลาสัมภาษณ์",
+    "step_mm": "အဆင့်-၂",
+    "step_en": "Step 2",
+    "step_thai": "ขั้นตอนที่ 2",
+    "description_mm": "<div><ul><li>ကျွန်ုပ်တို့ဆီသို့ သင့်ထံမှ ပြည့်စုံစွာဖြည့်ထားသော ချေးငွေလျှောက်လွှာပုံစံ လက်ခံရရှိပြီးပါက ကျွန်ုပ်တို့၏ မြန်မာချေးငွေတာဝန်ခံမှ Video Call ဆက်သွယ်မည်ဖြစ်ပါသည်။ </li><li>ထို Video Call သည် မိနစ် ၂၀ခန့် ကြာနိုင်ပါသည်။</li><li>ထိုကဲ့သို့ ဆက်သွယ်ပြီးပါက မိုဘိုင်းဖုန်းဖြင့် လျှောက်လွှာတင်ခြင်းလုပ်ဆောင်မှုများ ပြီးဆုံးပြီဖြစ်ပါသည်။</li><li>ကျွန်ုပ်တို့၏ဝန်ထမ်းဖြင့် ဆက်သွယ်ရန် သင်အဆင်ပြေသော နေ့ရက်၊ အချိန်ကို ရွေးရန်လိုအပ်ပါသည်။</li></ul></div>",
+    "description_en": "<ul><li>After we have received your loan application our Myanmar loan officer will speak with you</li><li>This will be done on your phone and will take around 20 minutes </li><li>You will need to select a convenient time to speak to our staff</li></ul>",
+    "description_thai": "<div><ul><li>หลังจากสินพิธานได้รับข้อมูลผู้ขอกู้แล้ว หน่วยงานพิจารณาอนุมัติเงินกู้จะขอสัมภาษณ์ผู้ขอกู้ในภาษาที่ผู้ขอกู้สื่อสารได้&nbsp;</li><li>ขั้นตอนนี้เป็นการสัมภาษณ์ผ่านวิดีโอคอลสามารถทำทางโทรศัพท์มือถือได้</li><li>(ใช้เวลาประมาณ 20 นาที)</li><li>ขั้นตอนนี้สามารถทำผ่านโทรศัพท์มือถือได้&nbsp;</li><li>ผู้ขอกู้ต้องเลือกวันและเวลาที่สะดวกเพื่อพูดคุยและให้สัมภาษณ์กับหน่วยงานพิจารณาอนุมัติเงินกู้ (ใช้เวลาไม่เกิน 30 นาที)&nbsp;</li></ul></div>"
+  },
+  {
+    "icon": "business",
+    "title_mm": "နီးစပ်ရာရုံးဌာနခွဲသို့သွားရောက်ခြင်း + ချေးငွေလက်ခံရရှိခြင်း",
+    "title_en": "Visit branch + Receive funds",
+    "title_thai": "ทำสัญญาที่สาขา (สำหรับการกู้ครั้งแรกเท่านั้น)  + รับเงินกู้",
+    "step_mm": "အဆင့်-၃",
+    "step_en": "Step 3",
+    "step_thai": "ขั้นตอนที่ 3",
+    "description_mm": "<div><ul><li>သင်၏ ချေးငွေ လျှောက်ထားမှုအား အတည်ပြုမှု ရရှိပြီးပါက လိုအပ်သည့်အဆင့်များ ဆက်လက်လုပ်ဆောင်နိုင်ရန် ဆင်ပိတန် ရုံးခွဲသို့ သွားရောက်ရန် လိုအပ်ပါသည်။</li><li>ဆင်ပိတန်ရုံးခွဲသို့ သင်လာရောက်နိုင်မည့် နေ့ရက်နှင့် အချိန်အား ဖြည့်ပါ။</li><li>ပထမဆုံးအကြိမ် ချေးငွေ ရယူချိန်နှင့် လွန်ခဲ့သည့် ၆လအတွင်း ချေးငွေမရှိပါကဆင်ပိတန်ရုံးခွဲသို့ လာရောက်ရန်လိုအပ်ပါသည်။</li><li>ကျန် ချေးငွေ ရယူချိန်များတွင် မိမိတို့ မိုဘိုင်းဖုန်းများမှ တဆင့် လွယ်လင့်တကူ လျှောက်ထားရယူနိုင်ပါသည်။</li><li>ဆင်ပိတန်ရုံးခွဲများအား ချေးငွေ လျှောက်ထားသူများ အဆင်ပြေစေရန်အတွက် တနင်္လာမှ သောကြာအတွင်း ညနေပိုင်း အချိန်များအပြင် စနေ၊ တနင်္ဂနွေနေ့များတွင်ပါ ဖွင့်လှစ်ပေးထားပါသည်။</li><li>သင်လျှောက်ထားသောချေးငွေအား ချေးငွေစာချုပ်လက်မှတ်ထိုးသည့်နေ့တွင် သင်၏ထိုင်းဘဏ်အကောင့်သို့ လွှဲပေးမည်ဖြစ်ပါသည်။</li></ul></div>",
+    "description_en": "<ul><li>When your loan is approved you will need to visit our branch to complete the process</li><li>Please book a time convenient to you</li><li>This is only required for the first loan or if you have not borrowed for more than 6 months. </li><li>For you second loan everything can be done through your mobile phone</li><li>We have convenient opening hours including weekends and evenings</li><li>Your loan will be transferred to your bank account on the same day that you sign your loan agreement. </li></ul>",
+    "description_thai": "<div><ul><li>เมื่อวงเงินกู้ได้รับการอนุมัติผู้ขอกู้ต้องเดินทางไปทำสัญญาที่สำนักงานของสินพิธาน&nbsp;</li><li>ให้ผู้ขอกู้เลือกวันที่และช่วงเวลาที่สะดวกในการเข้าไปที่สำนักงาน (ขั้นตอนนี้จำเป็นสำหรับการกู้เงินครั้งแรกหรือการกู้เงินที่มากกว่า [10,000] บาท เท่านั้น)&nbsp;</li><li>เงินกู้ก้อนต่อไปผู้ขอกู้สามารถทำทุกขั้นตอนผ่านทางออนไลน์ในโทรศัพท์มือถือได้&nbsp;</li><li>เรามีเวลาให้เลือกในวันเสาร์ - อาทิตย์ หรือช่วงเย็นเพื่ออำนวยความสะดวกให้ผู้ขอกู้&nbsp;</li><li>หลังจากลงชื่อในสัญญาเงินกู้ ผู้ขอกู้จะได้รับเงินกู้โอนเข้าบัญชีภายในวันเดียวกัน </li></ul></div>"
+  }
+]

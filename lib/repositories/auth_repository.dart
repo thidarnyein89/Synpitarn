@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:synpitarn/models/otp.dart';
 import 'package:synpitarn/models/user.dart';
-import 'package:synpitarn/config/app_config.dart';
+import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/models/login.dart';
 
 class AuthRepository {

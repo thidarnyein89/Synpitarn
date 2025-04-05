@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class QRScanPage extends StatefulWidget {
-  const QRScanPage({super.key});
+class InterviewAppointmentPage extends StatefulWidget {
+  const InterviewAppointmentPage({super.key});
 
   @override
-  QRScanState createState() => QRScanState();
+  InterviewAppointmentState createState() => InterviewAppointmentState();
 }
 
-class QRScanState extends State<QRScanPage> {
+class InterviewAppointmentState extends State<InterviewAppointmentPage> {
 
   @override
   void initState() {
@@ -30,7 +30,7 @@ class QRScanState extends State<QRScanPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'QRScan',
+                'InterviewAppointment',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/screens/auth/otp.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 
 import 'package:synpitarn/models/otp.dart';
+import 'package:synpitarn/screens/components/app_bar.dart';
+import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 
 class ForgetPasswordPage extends StatefulWidget {
   const ForgetPasswordPage({super.key});
@@ -15,7 +18,8 @@ class ForgetPasswordPage extends StatefulWidget {
 
 class ForgetPasswordState extends State<ForgetPasswordPage> {
   final TextEditingController phoneController = TextEditingController();
-  String? phoneError = null;
+
+  String? phoneError;
   bool isPhoneValidate = false;
   bool isLoading = false;
 
@@ -68,85 +72,92 @@ class ForgetPasswordState extends State<ForgetPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Forgot PIN code',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.indigo,
-                    ),
-                  ),
-                  SizedBox(height: 40),
-                  TextField(
-                    controller: phoneController,
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(10),
-                    ],
-                    decoration: InputDecoration(
-                      labelText: 'Phone number',
-                      prefixText: '+66 ',
-                      border: OutlineInputBorder(),
-                      errorText: phoneError,
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed:
-                        isPhoneValidate && !isLoading ? handleResetPin : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.indigo,
-                      minimumSize: Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: IntrinsicHeight(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Forgot PIN code',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.indigo,
+                        ),
                       ),
-                    ),
-                    child:
-                        isLoading
-                            ? Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  height: 16, // Match text height
-                                  width: 16, // Keep it proportional
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2, // Adjust thickness
-                                  ),
-                                ),
-                                SizedBox(width: 10),
-                                Text(
-                                  'Please Wait...',
+                      SizedBox(height: 40),
+                      TextField(
+                        controller: phoneController,
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(10),
+                        ],
+                        decoration: InputDecoration(
+                          labelText: 'Phone number',
+                          prefixText: '+66 ',
+                          border: OutlineInputBorder(),
+                          errorText: phoneError,
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed:
+                            isPhoneValidate && !isLoading
+                                ? handleResetPin
+                                : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.indigo,
+                          minimumSize: Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child:
+                            isLoading
+                                ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 16, // Match text height
+                                      width: 16, // Keep it proportional
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2, // Adjust thickness
+                                      ),
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      'Please Wait...',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                                : Text(
+                                  'Reset PIN code',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
                                   ),
                                 ),
-                              ],
-                            )
-                            : Text(
-                              'Reset PIN code',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
-                            ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

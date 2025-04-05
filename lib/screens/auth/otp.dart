@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/models/login.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/my_theme.dart';
@@ -10,6 +11,8 @@ import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/screens/auth/set_password.dart';
 
 import 'package:synpitarn/models/otp.dart';
+import 'package:synpitarn/screens/components/app_bar.dart';
+import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 
 class OTPPage extends StatefulWidget {
   User loginUser;
@@ -141,139 +144,146 @@ class OTPState extends State<OTPPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Verify OTP code',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.indigo,
-                    ),
-                  ),
-                  SizedBox(height: 100),
-                  Text(
-                    "Please enter the 6 digits number that we have sent to you here then click \"Verify OTP Code\" below.",
-                    style: TextStyle(fontSize: 14),
-                  ),
-                  SizedBox(height: 20),
-                  PinCodeTextField(
-                    appContext: context,
-                    length: 6,
-                    autoFocus: true,
-                    obscureText: false,
-                    obscuringCharacter: '●',
-                    keyboardType: TextInputType.number,
-                    controller: otpController,
-                    pinTheme: PinTheme(
-                      shape: PinCodeFieldShape.box,
-                      borderRadius: BorderRadius.circular(8),
-                      fieldHeight: 50,
-                      fieldWidth: 45,
-                      activeFillColor: Colors.white,
-                      inactiveFillColor: Colors.white,
-                      inactiveColor: Colors.grey,
-                      selectedFillColor: Colors.white,
-                      activeColor: Colors.grey,
-                      selectedColor: MyTheme.primary_color,
-                      errorBorderColor:
-                          otpError == null ? Colors.grey : Colors.red,
-                      borderWidth: 2,
-                    ),
-                    onChanged: (value) {},
-                  ),
-                  if (otpError != null)
-                    Text(
-                      otpError!,
-                      style: TextStyle(color: Colors.red, fontSize: 14),
-                    ),
-                  SizedBox(height: 20),
-                  if (!_canResendOtp)
-                    Text(
-                      "OTP Code will expire in ${_minuteRemaining.toString().padLeft(2, '0')}:${_secondsRemaining.toString().padLeft(2, '0')}",
-                      style: TextStyle(fontSize: 14, color: Colors.black),
-                    ),
-                  if (_canResendOtp)
-                    RichText(
-                      text: TextSpan(
-                        text: "OTP not received? ",
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: IntrinsicHeight(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Verify OTP code',
                         style: TextStyle(
-                          color: Colors.black, // Normal text color
-                          fontSize: 14,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.indigo,
                         ),
-                        children: [
-                          TextSpan(
-                            text: "Resend OTP Code",
+                      ),
+                      SizedBox(height: 40),
+                      Text(
+                        "Please enter the 6 digits number that we have sent to you here then click \"Verify OTP Code\" below.",
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      SizedBox(height: 20),
+                      PinCodeTextField(
+                        appContext: context,
+                        length: 6,
+                        autoFocus: true,
+                        obscureText: false,
+                        obscuringCharacter: '●',
+                        keyboardType: TextInputType.number,
+                        controller: otpController,
+                        pinTheme: PinTheme(
+                          shape: PinCodeFieldShape.box,
+                          borderRadius: BorderRadius.circular(8),
+                          fieldHeight: 50,
+                          fieldWidth: 45,
+                          activeFillColor: Colors.white,
+                          inactiveFillColor: Colors.white,
+                          inactiveColor: Colors.grey,
+                          selectedFillColor: Colors.white,
+                          activeColor: Colors.grey,
+                          selectedColor: MyTheme.primary_color,
+                          errorBorderColor:
+                              otpError == null ? Colors.grey : Colors.red,
+                          borderWidth: 2,
+                        ),
+                        onChanged: (value) {},
+                      ),
+                      if (otpError != null)
+                        Text(
+                          otpError!,
+                          style: TextStyle(color: Colors.red, fontSize: 14),
+                        ),
+                      SizedBox(height: 20),
+                      if (!_canResendOtp)
+                        Text(
+                          "OTP Code will expire in ${_minuteRemaining.toString().padLeft(2, '0')}:${_secondsRemaining.toString().padLeft(2, '0')}",
+                          style: TextStyle(fontSize: 14, color: Colors.black),
+                        ),
+                      if (_canResendOtp)
+                        RichText(
+                          text: TextSpan(
+                            text: "OTP not received? ",
                             style: TextStyle(
-                              color: Colors.black,
-                              decoration: TextDecoration.underline,
-                              fontWeight: FontWeight.bold,
+                              color: Colors.black, // Normal text color
+                              fontSize: 14,
                             ),
-                            recognizer:
-                                TapGestureRecognizer()
-                                  ..onTap = () {
-                                    getOTP();
-                                  },
-                          ),
-                        ],
-                      ),
-                    ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed:
-                        isOTPValidate && !isLoading ? handleVerifyOTP : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.indigo,
-                      minimumSize: Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child:
-                        isLoading
-                            ? Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  height: 16, // Match text height
-                                  width: 16, // Keep it proportional
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2, // Adjust thickness
-                                  ),
+                            children: [
+                              TextSpan(
+                                text: "Resend OTP Code",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  decoration: TextDecoration.underline,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                SizedBox(width: 10),
-                                Text(
-                                  'Please Wait...',
+                                recognizer:
+                                    TapGestureRecognizer()
+                                      ..onTap = () {
+                                        getOTP();
+                                      },
+                              ),
+                            ],
+                          ),
+                        ),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed:
+                            isOTPValidate && !isLoading
+                                ? handleVerifyOTP
+                                : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.indigo,
+                          minimumSize: Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child:
+                            isLoading
+                                ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 16, // Match text height
+                                      width: 16, // Keep it proportional
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2, // Adjust thickness
+                                      ),
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      'Please Wait...',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                                : Text(
+                                  'Verify OTP Code',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
                                   ),
                                 ),
-                              ],
-                            )
-                            : Text(
-                              'Verify OTP Code',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
-                            ),
+                      ),
+                      SizedBox(height: 20),
+                      Text("OTP Code $code"),
+                    ],
                   ),
-                  SizedBox(height: 20),
-                  Text("OTP Code ${code}"),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
