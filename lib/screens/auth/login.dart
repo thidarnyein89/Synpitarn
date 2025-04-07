@@ -6,6 +6,7 @@ import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/login.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/repositories/route_repository.dart';
 import 'package:synpitarn/screens/auth/register.dart';
 import 'package:synpitarn/screens/components/app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
@@ -83,15 +84,7 @@ class LoginState extends State<LoginPage> {
         pinError = loginResponse.response.message;
       }
     } else {
-      await setLoginUser(loginResponse.data);
-      await setLoginStatus(true);
-
-      setState(() {});
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
+      RouteRepository.login(context, loginResponse.data);
     }
 
     isLoading = false;
@@ -115,10 +108,8 @@ class LoginState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Image.asset('assets/images/synpitarn.jpg', height: 180),
-                      CustomWidget.verticalSpacing(),
                       Text(
-                        'Welcome from Synpitarn',
+                        'Welcome to Synpitarn',
                         style: CustomStyle.titleBold(),
                       ),
                       CustomWidget.verticalSpacing(),

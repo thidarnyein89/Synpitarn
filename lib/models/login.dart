@@ -19,21 +19,10 @@ class Login {
   factory Login.loginResponseFromJson(String str) => Login.fromJson(json.decode(str));
 
   factory Login.fromJson(Map<String, dynamic> json) {
-    var userData = json["data"];
-
-    if(json["data"] is Map<String, dynamic>) {
-      return Login(
-        response: Response.fromJson(json["response"]),
-        meta: Meta.fromJson(json["meta"]),
-        data: User.fromJson(userData),
-      );
-    }
-    else {
-      return Login(
-        response: Response.fromJson(json["response"]),
-        meta: Meta.fromJson(json["meta"]),
-        data: new User.defaultUser(),
-      );
-    }
+    return Login(
+      response: Response.fromJson(json["response"]),
+      meta: Meta.fromJson(json["meta"]),
+      data: json["data"] is Map<String, dynamic> ? User.fromJson(json["data"]) : new User.defaultUser(),
+    );
   }
 }

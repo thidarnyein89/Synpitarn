@@ -111,7 +111,7 @@ class User {
       provinceOfWorkText: json['province_of_work_text'] ?? "",
       provinceOfResidentText: json['province_of_resident_text'] ?? "",
       code: json.containsKey("code") ? json["code"] ?? json["code"] : "",
-      forgetPassword: json.containsKey("forget_password") ? json["forget_password"] is bool ?? json["forget_password"] : false,
+      forgetPassword: json.containsKey("forget_password") ? json["forget_password"] is bool ? json["forget_password"] : false : false,
       type: json.containsKey("type") ? json["type"] ?? json["type"] : "",
       authToken: json.containsKey("auth_token") ? json["auth_token"] ?? json["auth_token"] : "",
     );

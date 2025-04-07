@@ -111,7 +111,7 @@ class HomeState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: AppConfig.CURRENT_INDEX,
+        selectedIndex: AppConfig.HOME_INDEX,
         onItemTapped: (index) {
           setState(() {
             AppConfig.CURRENT_INDEX = index;

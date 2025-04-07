@@ -30,7 +30,7 @@ class Information2State extends State<Information2Page> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'BasicInformation',
+                'Information2',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

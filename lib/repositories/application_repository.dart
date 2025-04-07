@@ -1,11 +1,12 @@
 import 'package:http/http.dart' as http;
-import 'package:synpitarn/models/notification.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/data/app_config.dart';
 
-class NotificationRepository {
-  Future<Notification> getNotificationCount(User loginRequest) async {
-    String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/count/notification");
+import '../models/application.dart';
+
+class ApplicationRepository {
+  Future<Application> getApplication(User loginRequest) async {
+    String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/loan/application");
 
     final response = await http.get(
       Uri.parse(url),
@@ -16,6 +17,6 @@ class NotificationRepository {
       },
     );
 
-    return Notification.notificationResponseFromJson(response.body);
+    return Application.applicationResponseFromJson(response.body);
   }
 }

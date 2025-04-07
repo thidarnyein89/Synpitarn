@@ -18,19 +18,10 @@ class OTP {
 
   factory OTP.fromJson(Map<String, dynamic> json) {
 
-    if(json["data"] is int) {
-      return OTP(
-        response: Response.fromJson(json["response"]),
-        meta: Meta.fromJson(json["meta"]),
-        data: json["data"].toString(),
-      );
-    }
-    else {
-      return OTP(
-        response: Response.fromJson(json["response"]),
-        meta: Meta.fromJson(json["meta"]),
-        data: "",
-      );
-    }
+    return OTP(
+      response: Response.fromJson(json["response"]),
+      meta: Meta.fromJson(json["meta"]),
+      data: json["data"] is int ? json["data"].toString() : "",
+    );
   }
 }
