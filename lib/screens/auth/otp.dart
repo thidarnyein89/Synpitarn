@@ -3,16 +3,15 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:synpitarn/data/app_config.dart';
+import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/models/login.dart';
 import 'package:synpitarn/models/user.dart';
-import 'package:synpitarn/my_theme.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/screens/auth/set_password.dart';
-
 import 'package:synpitarn/models/otp.dart';
 import 'package:synpitarn/screens/components/app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
+import 'package:synpitarn/data/app_config.dart';
 
 class OTPPage extends StatefulWidget {
   User loginUser;
@@ -144,6 +143,7 @@ class OTPState extends State<OTPPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: CustomAppBar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -188,7 +188,7 @@ class OTPState extends State<OTPPage> {
                           inactiveColor: Colors.grey,
                           selectedFillColor: Colors.white,
                           activeColor: Colors.grey,
-                          selectedColor: MyTheme.primary_color,
+                          selectedColor: CustomStyle.primary_color,
                           errorBorderColor:
                               otpError == null ? Colors.grey : Colors.red,
                           borderWidth: 2,
@@ -283,6 +283,14 @@ class OTPState extends State<OTPPage> {
               ),
             ),
           );
+        },
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: AppConfig.PROFILE_INDEX,
+        onItemTapped: (index) {
+          setState(() {
+            AppConfig.CURRENT_INDEX = index;
+          });
         },
       ),
     );

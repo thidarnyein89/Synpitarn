@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/data/custom_widget.dart';
+import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/login.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
@@ -80,7 +83,9 @@ class LoginState extends State<LoginPage> {
         pinError = loginResponse.response.message;
       }
     } else {
-      AppConfig.LOGIN_IN_USER = loginResponse.data;
+      await setLoginUser(loginResponse.data);
+      await setLoginStatus(true);
+
       setState(() {});
 
       Navigator.pushReplacement(
@@ -97,31 +102,27 @@ class LoginState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: CustomAppBar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
             child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: constraints.maxHeight,
-              ),
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
               child: IntrinsicHeight(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
+                  padding: CustomStyle.pagePadding(),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Image.asset('assets/images/synpitarn.jpg', height: 180),
-                      SizedBox(height: 10),
+                      CustomWidget.verticalSpacing(),
                       Text(
                         'Welcome from Synpitarn',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.indigo,
-                        ),
+                        style: CustomStyle.titleBold(),
                       ),
-                      SizedBox(height: 40),
+                      CustomWidget.verticalSpacing(),
+                      CustomWidget.verticalSpacing(),
                       TextField(
                         controller: phoneController,
                         keyboardType: TextInputType.phone,
@@ -136,7 +137,7 @@ class LoginState extends State<LoginPage> {
                           errorText: phoneError,
                         ),
                       ),
-                      SizedBox(height: 15),
+                      CustomWidget.verticalSpacing(),
                       TextField(
                         controller: pinController,
                         obscureText: _isObscured,
@@ -163,7 +164,7 @@ class LoginState extends State<LoginPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
+                      CustomWidget.verticalSpacing(),
                       GestureDetector(
                         onTap: () {
                           Navigator.pushReplacement(
@@ -177,54 +178,46 @@ class LoginState extends State<LoginPage> {
                           alignment: Alignment.centerRight,
                           child: Text(
                             "Forgot PIN code",
-                            style: TextStyle(color: Colors.black, fontSize: 14),
+                            style: CustomStyle.body(),
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
+                      CustomWidget.verticalSpacing(),
                       ElevatedButton(
                         onPressed:
                             isPhoneValidate && isPinValidate && !isLoading
                                 ? handleLogin
                                 : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.indigo,
+                          backgroundColor: CustomStyle.primary_color,
                           minimumSize: Size(double.infinity, 50),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: isLoading
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    height: 16,
-                                    width: 16,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2,
+                        child:
+                            isLoading
+                                ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 16,
+                                      width: 16,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    'Please Wait...',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
+                                    SizedBox(width: 10),
+                                    Text(
+                                      'Please Wait...',
+                                      style: CustomStyle.bodyWhiteColor(),
                                     ),
-                                  ),
-                                ],
-                              )
-                            : Text(
-                                'Login',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                              ),
+                                  ],
+                                )
+                                : Text('Login', style: CustomStyle.bodyWhiteColor()),
                       ),
-                      SizedBox(height: 20),
+                      CustomWidget.verticalSpacing(),
                       GestureDetector(
                         onTap: () {
                           Navigator.pushReplacement(
@@ -237,26 +230,31 @@ class LoginState extends State<LoginPage> {
                         child: RichText(
                           text: TextSpan(
                             text: "Don't have an account, ",
-                            style: TextStyle(color: Colors.black, fontSize: 14),
+                            style: CustomStyle.body(),
                             children: [
                               TextSpan(
                                 text: "click here",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  decoration: TextDecoration.underline,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: CustomStyle.bodyUnderline(),
                               ),
                             ],
                           ),
                         ),
                       ),
+                      CustomWidget.verticalSpacing(),
                     ],
                   ),
                 ),
               ),
             ),
           );
+        },
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: AppConfig.PROFILE_INDEX,
+        onItemTapped: (index) {
+          setState(() {
+            AppConfig.CURRENT_INDEX = index;
+          });
         },
       ),
     );

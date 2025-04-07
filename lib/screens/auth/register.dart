@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'dart:io';
 import 'package:flutter/services.dart';
-import 'package:synpitarn/data/app_config.dart';
+import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/models/login.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
@@ -10,8 +9,10 @@ import 'package:synpitarn/screens/auth/nrc.dart';
 import 'package:synpitarn/screens/auth/otp.dart';
 import 'package:synpitarn/screens/auth/term_conditions.dart';
 import 'package:synpitarn/models/otp.dart';
+import 'package:synpitarn/data/custom_widget.dart';
 import 'package:synpitarn/screens/components/app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
+import 'package:synpitarn/data/app_config.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -203,6 +204,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: CustomAppBar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -210,24 +212,21 @@ class _RegisterPageState extends State<RegisterPage> {
               constraints: BoxConstraints(minHeight: constraints.maxHeight),
               child: IntrinsicHeight(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
+                  padding: CustomStyle.pagePadding(),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         'Welcome to SynPitarn',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.indigo,
-                        ),
+                        style: CustomStyle.titleBold(),
                       ),
-                      SizedBox(height: 40),
+                      CustomWidget.verticalSpacing(),
+                      CustomWidget.verticalSpacing(),
                       Text(
                         'SynPitarn will use this phone number as the primary authentication method. Please fill in the phone number that you always use and is with you. ',
                       ),
-                      SizedBox(height: 40),
+                      CustomWidget.verticalSpacing(),
                       TextField(
                         controller: phoneController,
                         keyboardType: TextInputType.phone,
@@ -242,7 +241,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           errorText: phoneError,
                         ),
                       ),
-                      SizedBox(height: 15),
+                      CustomWidget.verticalSpacing(),
                       GestureDetector(
                         onTap: () {
                           showNRCDialog();
@@ -258,7 +257,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
+                      CustomWidget.verticalSpacing(),
                       TextField(
                         controller: passportController,
                         keyboardType: TextInputType.number,
@@ -272,7 +271,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           errorText: passportError,
                         ),
                       ),
-                      SizedBox(height: 20),
+                      CustomWidget.verticalSpacing(),
                       Row(
                         children: [
                           Checkbox(
@@ -295,11 +294,11 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 20),
+                      CustomWidget.verticalSpacing(),
                       Text(
                         " When you click continue you will be asked to agree to our terms. After that you will be sent an OTP to the phone number that you gave us. ",
                       ),
-                      SizedBox(height: 20),
+                      CustomWidget.verticalSpacing(),
                       ElevatedButton(
                         onPressed:
                             isPhoneValidate &&
@@ -310,7 +309,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 ? handleRegister
                                 : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.indigo,
+                          backgroundColor: CustomStyle.primary_color,
                           minimumSize: Size(double.infinity, 50),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -332,19 +331,13 @@ class _RegisterPageState extends State<RegisterPage> {
                                     SizedBox(width: 10),
                                     Text(
                                       'Please Wait...',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                      ),
+                                      style: CustomStyle.bodyWhiteColor(),
                                     ),
                                   ],
                                 )
                                 : Text(
                                   'Continue',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  ),
+                                  style: CustomStyle.bodyWhiteColor(),
                                 ),
                       ),
                     ],
@@ -353,6 +346,14 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ),
           );
+        },
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: AppConfig.PROFILE_INDEX,
+        onItemTapped: (index) {
+          setState(() {
+            AppConfig.CURRENT_INDEX = index;
+          });
         },
       ),
     );

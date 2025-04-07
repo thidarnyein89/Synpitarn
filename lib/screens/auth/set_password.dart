@@ -8,6 +8,8 @@ import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/screens/home.dart';
 import 'package:synpitarn/data/app_config.dart';
 
+import '../../data/shared_value.dart';
+
 class SetPasswordPage extends StatefulWidget {
   User loginUser;
 
@@ -84,7 +86,9 @@ class SetPasswordState extends State<SetPasswordPage> {
       if (loginResponse.response.code != 200) {
         pin1Error = loginResponse.response.message;
       } else {
-        AppConfig.LOGIN_IN_USER = loginResponse.data;
+        await setLoginUser(loginResponse.data);
+        await setLoginStatus(true);
+
         setState(() {});
 
         Navigator.pushReplacement(
@@ -102,6 +106,7 @@ class SetPasswordState extends State<SetPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: CustomAppBar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -240,6 +245,14 @@ class SetPasswordState extends State<SetPasswordPage> {
               ),
             ),
           );
+        },
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: AppConfig.PROFILE_INDEX,
+        onItemTapped: (index) {
+          setState(() {
+            AppConfig.CURRENT_INDEX = index;
+          });
         },
       ),
     );

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/app_config.dart';
-import 'package:synpitarn/my_theme.dart';
-import 'package:synpitarn/navigations/home_navigator.dart';
-import 'package:synpitarn/navigations/profile_navigator.dart';
+import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/screens/auth/login.dart';
+import 'package:synpitarn/screens/loan/pending.dart';
+import 'package:synpitarn/screens/home.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget
     implements PreferredSizeWidget {
@@ -38,12 +39,25 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
 
   void _onItemTapped(int index) {
     widget.onItemTapped(index);
+    setState(() { });
 
     if(index == AppConfig.HOME_INDEX) {
-      HomeNavigatorState().resetToInitialRoute();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
     }
     else if(index == AppConfig.PROFILE_INDEX) {
-      ProfileNavigatorState().resetToInitialRoute();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    }
+    else if(index == AppConfig.LOAN_INDEX) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => PendingPage()),
+      );
     }
   }
 
@@ -52,15 +66,13 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     return BottomNavigationBar(
       currentIndex: widget.selectedIndex,
       onTap: _onItemTapped,
-      selectedItemColor: MyTheme.primary_color,
-      // Active icon color
+      selectedItemColor: CustomStyle.primary_color,
       unselectedItemColor: Colors.grey,
-      // Inactive icon color
       type: BottomNavigationBarType.fixed,
-      // Prevents shifting effect
       items: [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+        BottomNavigationBarItem(icon: Icon(Icons.article_outlined), label: "Loan"),
         BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Setting"),
       ],
     );

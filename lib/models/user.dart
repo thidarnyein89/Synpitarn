@@ -156,4 +156,8 @@ class User {
       'auth_token': authToken,
     };
   }
+
+  String toJsonForShare() => json.encode(toJson());
+
+  factory User.fromJsonForShare(String source) => User.fromJson(json.decode(source));
 }
