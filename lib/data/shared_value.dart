@@ -19,7 +19,7 @@ Future<bool> getLoginStatus() async {
 
 Future<void> setLoginUser(User loginUser) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString('loginUser', loginUser.toJsonForShare());
+  await prefs.setString('loginUser', loginUser.userResponseToJson());
 }
 
 Future<void> removeLoginUser() async {
@@ -31,7 +31,7 @@ Future<User> getLoginUser() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? userJson = prefs.getString('loginUser');
   if (userJson != null) {
-    return User.fromJsonForShare(userJson);
+    return User.userResponseFromJson(userJson);
   } else {
     return User.defaultUser();
   }

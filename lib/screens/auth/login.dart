@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/custom_widget.dart';
-import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/login.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
-import 'package:synpitarn/repositories/route_repository.dart';
+import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/screens/auth/register.dart';
 import 'package:synpitarn/screens/components/app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
-import 'package:synpitarn/screens/home.dart';
 import 'package:synpitarn/screens/auth/forget_password.dart';
 import 'package:synpitarn/data/app_config.dart';
 
@@ -84,7 +82,7 @@ class LoginState extends State<LoginPage> {
         pinError = loginResponse.response.message;
       }
     } else {
-      RouteRepository.login(context, loginResponse.data);
+      RouteService.login(context, loginResponse.data);
     }
 
     isLoading = false;

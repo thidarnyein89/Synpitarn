@@ -21,6 +21,7 @@ class NRCState extends State<NRCPage> {
   final CommonService _commonService = CommonService();
 
   final TextEditingController nrcController = TextEditingController();
+  final FocusNode _nrcFocusNode = FocusNode();
 
   List<NRC> nrcList = [];
   List<Township> townshipList = [];
@@ -43,6 +44,7 @@ class NRCState extends State<NRCPage> {
 
   @override
   void dispose() {
+    _nrcFocusNode.dispose();
     nrcController.dispose();
     super.dispose();
   }
@@ -191,6 +193,7 @@ class NRCState extends State<NRCPage> {
                 ),
                 CustomWidget.verticalSpacing(),
                 TextField(
+                  focusNode: _nrcFocusNode,
                   controller: nrcController,
                   keyboardType: TextInputType.number,
                   inputFormatters: [

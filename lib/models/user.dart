@@ -157,7 +157,7 @@ class User {
     };
   }
 
-  String toJsonForShare() => json.encode(toJson());
+  String userResponseToJson() => json.encode(toJson());
 
-  factory User.fromJsonForShare(String source) => User.fromJson(json.decode(source));
+  factory User.userResponseFromJson(String source) => User.fromJson(json.decode(source));
 }

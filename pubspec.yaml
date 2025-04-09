@@ -44,6 +44,8 @@ dependencies:
   dashed_circle: ^0.0.2
   remixicon: ^1.4.1
   shared_preferences: ^2.0.11
+  mobile_scanner: ^6.0.7
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

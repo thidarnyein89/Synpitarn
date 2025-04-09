@@ -55,12 +55,14 @@ class CustomStyle {
   static TextStyle body() {
     return TextStyle(
       fontSize: 14,
+      color: Colors.black,
     );
   }
 
   static TextStyle bodyUnderline() {
     return TextStyle(
       fontSize: body().fontSize,
+      color: Colors.black,
       decoration: TextDecoration.underline,
     );
   }

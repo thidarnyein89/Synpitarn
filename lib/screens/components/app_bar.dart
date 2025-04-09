@@ -4,7 +4,6 @@ import 'package:synpitarn/data/custom_widget.dart';
 import 'package:synpitarn/models/notification.dart' as model;
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/repositories/notification_repository.dart';
-import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/models/user.dart';
 
 class CustomAppBar  extends StatefulWidget implements PreferredSizeWidget {

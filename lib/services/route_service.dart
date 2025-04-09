@@ -13,7 +13,7 @@ import 'package:synpitarn/screens/profile/information1.dart';
 import 'package:synpitarn/screens/profile/information2.dart';
 import 'package:synpitarn/screens/profile/work_permit.dart';
 
-class RouteRepository {
+class RouteService {
   static late BuildContext context;
   static late User loginUser;
 
