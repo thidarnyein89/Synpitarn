@@ -4,8 +4,9 @@ import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:synpitarn/data/register_step.dart';
+import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/components/app_bar.dart';
+import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/screens/components/scanner_error_widget.dart';
 import 'package:synpitarn/screens/components/toggle_flashlight_button.dart';
 import 'package:synpitarn/screens/components/scan_window_overlay.dart';
@@ -17,7 +18,6 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/models/workpermit.dart';
 import 'package:synpitarn/repositories/application_repository.dart';
 import 'package:synpitarn/screens/profile/information1.dart';
-import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/components/switch_camera_button.dart';
 
 class WorkPermitPage extends StatefulWidget {
@@ -87,61 +87,14 @@ class WorkPermitState extends State<WorkPermitPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: CustomAppBar(),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: EasyStepper(
-              activeStep: activeStep,
-              maxReachedStep: RegisterStep.getCustomTab().length - 1,
-              stepShape: StepShape.circle,
-              stepBorderRadius: 15,
-              borderThickness: 3,
-              stepRadius: 28,
-              finishedStepBorderColor: CustomStyle.secondary_color,
-              finishedStepBackgroundColor: Colors.white,
-              finishedStepIconColor: CustomStyle.icon_color,
-              activeStepBorderColor: CustomStyle.primary_color,
-              activeStepBackgroundColor: Colors.white,
-              unreachedStepBorderColor: CustomStyle.icon_color,
-              showLoadingAnimation: false,
-              lineStyle: LineStyle(
-                lineType: LineType.dashed,
-                defaultLineColor: CustomStyle.secondary_color,
-                lineLength: 30,
-                lineThickness: 2,
-                lineSpace: 0.5,
-              ),
-              steps: RegisterStep.getCustomTab().map((step) {
-                return EasyStep(
-                  icon: Icon(step.icon, color: CustomStyle.icon_color),
-                );
-              }).toList(),
-              onStepReached: (index) {
-                setState(() {
-                  activeStep = index;
-                });
-              },
-            ),
-          ),
-          SizedBox(height: 50),
-          Text('Current Step: ${activeStep + 1}'),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed:
-                    activeStep > 0 ? () => setState(() => activeStep--) : null,
-                child: Text('Back'),
-              ),
-              ElevatedButton(
-                onPressed:
-                    activeStep < 2 ? () => setState(() => activeStep++) : null,
-                child: Text('Next'),
-              ),
-            ],
-          )
+          RegisterTabBar(activeStep: 0),
+          Expanded(child: qrScannerWidget())
         ],
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
@@ -179,7 +132,7 @@ class WorkPermitState extends State<WorkPermitPage> {
             controller: controller,
           ),
         Align(
-          alignment: Alignment.bottomCenter,
+          alignment: Alignment.topCenter,
           child: Container(
             alignment: Alignment.bottomCenter,
             height: 200,
