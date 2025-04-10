@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:synpitarn/data/register_step.dart';
 import 'package:synpitarn/screens/components/app_bar.dart';
 import 'package:synpitarn/screens/components/scanner_error_widget.dart';
 import 'package:synpitarn/screens/components/toggle_flashlight_button.dart';
@@ -15,8 +17,8 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/models/workpermit.dart';
 import 'package:synpitarn/repositories/application_repository.dart';
 import 'package:synpitarn/screens/profile/information1.dart';
-
-import '../components/switch_camera_button.dart';
+import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/screens/components/switch_camera_button.dart';
 
 class WorkPermitPage extends StatefulWidget {
   const WorkPermitPage({super.key});
@@ -29,6 +31,9 @@ class WorkPermitState extends State<WorkPermitPage> {
   static const useScanWindow = true;
 
   late MobileScannerController controller = initController();
+
+  //For EasyStepper
+  int activeStep = 0;
 
   Size desiredCameraResolution = const Size(1920, 1080);
   DetectionSpeed detectionSpeed = DetectionSpeed.unrestricted;
@@ -64,7 +69,7 @@ class WorkPermitState extends State<WorkPermitPage> {
 
   void _onDetect(BarcodeCapture barCode) {
     isLoading = true;
-    setState(() { });
+    setState(() {});
 
     final scannedBarcodes = barCode.barcodes ?? [];
 
@@ -75,59 +80,68 @@ class WorkPermitState extends State<WorkPermitPage> {
     } else if (values.isEmpty) {
       print("No display value");
     } else {
-      checkWorkpermit();
+      checkWorkpermit(values);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    late final scanWindow = Rect.fromCenter(
-      center: MediaQuery.sizeOf(context).center(const Offset(0, -100)),
-      width: 300,
-      height: 200,
-    );
-
     return Scaffold(
       appBar: CustomAppBar(),
-      backgroundColor: Colors.white,
-      body: Stack(
+      body: Column(
         children: [
-          MobileScanner(
-            scanWindow: useScanWindow ? scanWindow : null,
-            controller: controller,
-            errorBuilder: (context, error, child) {
-              return ScannerErrorWidget(error: error);
-            },
-            fit: boxFit,
-            onDetect: _onDetect,
-          ),
-          if (!kIsWeb && useScanWindow)
-            ScanWindowOverlay(
-              scanWindow: scanWindow,
-              controller: controller,
-            ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              alignment: Alignment.bottomCenter,
-              height: 200,
-              color: const Color.fromRGBO(0, 0, 0, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ToggleFlashlightButton(controller: controller),
-                      SwitchCameraButton(controller: controller),
-                      AnalyzeImageButton(),
-                    ],
-                  ),
-                ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: EasyStepper(
+              activeStep: activeStep,
+              maxReachedStep: RegisterStep.getCustomTab().length - 1,
+              stepShape: StepShape.circle,
+              stepBorderRadius: 15,
+              borderThickness: 3,
+              stepRadius: 28,
+              finishedStepBorderColor: CustomStyle.secondary_color,
+              finishedStepBackgroundColor: Colors.white,
+              finishedStepIconColor: CustomStyle.icon_color,
+              activeStepBorderColor: CustomStyle.primary_color,
+              activeStepBackgroundColor: Colors.white,
+              unreachedStepBorderColor: CustomStyle.icon_color,
+              showLoadingAnimation: false,
+              lineStyle: LineStyle(
+                lineType: LineType.dashed,
+                defaultLineColor: CustomStyle.secondary_color,
+                lineLength: 30,
+                lineThickness: 2,
+                lineSpace: 0.5,
               ),
+              steps: RegisterStep.getCustomTab().map((step) {
+                return EasyStep(
+                  icon: Icon(step.icon, color: CustomStyle.icon_color),
+                );
+              }).toList(),
+              onStepReached: (index) {
+                setState(() {
+                  activeStep = index;
+                });
+              },
             ),
           ),
-          if (isLoading) loadingScreen()
+          SizedBox(height: 50),
+          Text('Current Step: ${activeStep + 1}'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed:
+                    activeStep > 0 ? () => setState(() => activeStep--) : null,
+                child: Text('Back'),
+              ),
+              ElevatedButton(
+                onPressed:
+                    activeStep < 2 ? () => setState(() => activeStep++) : null,
+                child: Text('Next'),
+              ),
+            ],
+          )
         ],
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
@@ -138,6 +152,55 @@ class WorkPermitState extends State<WorkPermitPage> {
           });
         },
       ),
+    );
+  }
+
+  Widget qrScannerWidget() {
+    late final scanWindow = Rect.fromCenter(
+      center: MediaQuery.sizeOf(context).center(const Offset(0, -100)),
+      width: 300,
+      height: 200,
+    );
+
+    return Stack(
+      children: [
+        MobileScanner(
+          scanWindow: useScanWindow ? scanWindow : null,
+          controller: controller,
+          errorBuilder: (context, error, child) {
+            return ScannerErrorWidget(error: error);
+          },
+          fit: boxFit,
+          onDetect: _onDetect,
+        ),
+        if (!kIsWeb && useScanWindow)
+          ScanWindowOverlay(
+            scanWindow: scanWindow,
+            controller: controller,
+          ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            alignment: Alignment.bottomCenter,
+            height: 200,
+            color: const Color.fromRGBO(0, 0, 0, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ToggleFlashlightButton(controller: controller),
+                    SwitchCameraButton(controller: controller),
+                    AnalyzeImageButton(),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (isLoading) loadingScreen()
+      ],
     );
   }
 
@@ -163,7 +226,7 @@ class WorkPermitState extends State<WorkPermitPage> {
 
   Future<void> _onPressedImageButton() async {
     isLoading = true;
-    setState(() { });
+    setState(() {});
 
     if (kIsWeb) {
       showErrorDialog('Analyze image is not supported on web');
@@ -189,23 +252,29 @@ class WorkPermitState extends State<WorkPermitPage> {
       return;
     }
 
-    barcodes != null && barcodes.barcodes.isNotEmpty
-        ? checkWorkpermit()
+    barcodes != null &&
+            barcodes.barcodes.isNotEmpty &&
+            barcodes.barcodes.firstOrNull != null &&
+            barcodes.barcodes.firstOrNull?.displayValue != null
+        ? checkWorkpermit(barcodes.barcodes.firstOrNull!.displayValue)
         : showErrorDialog('Your QR code is wrong. Please make clear QR.');
   }
 
-  Future<void> checkWorkpermit() async {
+  Future<void> checkWorkpermit(String? barcodeValue) async {
     bool isLoggedIn = await getLoginStatus();
     if (isLoggedIn) {
       User loginUser = await getLoginUser();
+      loginUser.workPermitUrl = barcodeValue;
 
-      Workpermit workpermitResponse = await ApplicationRepository()
-          .checkWorkpermit(loginUser);
+      await ApplicationRepository().saveWorkpermit(loginUser);
 
-      if (workpermitResponse.message != "" && !workpermitResponse.message.contains("successfully")) {
+      Workpermit workpermitResponse =
+          await ApplicationRepository().checkWorkpermit(loginUser);
+
+      if (workpermitResponse.message != "" &&
+          !workpermitResponse.message.contains("successfully")) {
         showErrorDialog(workpermitResponse.message);
-      }
-      else {
+      } else {
         isLoading = false;
         setState(() {});
 
