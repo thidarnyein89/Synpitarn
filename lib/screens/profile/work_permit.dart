@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/data/custom_widget.dart';
 import 'package:synpitarn/screens/components/app_bar.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/screens/components/scanner_error_widget.dart';
@@ -93,7 +94,6 @@ class WorkPermitState extends State<WorkPermitPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          RegisterTabBar(activeStep: 0),
           Expanded(child: qrScannerWidget())
         ],
       ),
@@ -108,11 +108,18 @@ class WorkPermitState extends State<WorkPermitPage> {
     );
   }
 
+  void handleNext() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => Information1Page()),
+    );
+  }
+
   Widget qrScannerWidget() {
     late final scanWindow = Rect.fromCenter(
       center: MediaQuery.sizeOf(context).center(const Offset(0, -100)),
-      width: 300,
-      height: 200,
+      width: 250,
+      height: 250,
     );
 
     return Stack(
@@ -132,13 +139,13 @@ class WorkPermitState extends State<WorkPermitPage> {
             controller: controller,
           ),
         Align(
-          alignment: Alignment.topCenter,
+          alignment: Alignment.bottomCenter,
           child: Container(
             alignment: Alignment.bottomCenter,
             height: 200,
             color: const Color.fromRGBO(0, 0, 0, 0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -147,6 +154,22 @@ class WorkPermitState extends State<WorkPermitPage> {
                     SwitchCameraButton(controller: controller),
                     AnalyzeImageButton(),
                   ],
+                ),
+                CustomWidget.verticalSpacing(),
+                ElevatedButton(
+                  onPressed: isLoading ? null : handleNext,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    minimumSize: Size(200, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: const BorderSide(
+                        color: Colors.white,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                  child: Text('Manual Fill', style: CustomStyle.bodyWhiteColor())
                 ),
               ],
             ),

@@ -14,36 +14,44 @@ import 'package:synpitarn/screens/profile/information2.dart';
 import 'package:synpitarn/screens/profile/work_permit.dart';
 
 class RouteService {
-  static late BuildContext context;
-  static late User loginUser;
+  static late BuildContext _context;
+  static late User _loginUser;
 
-  static Future<void> login(BuildContext para1, User para2) async {
-    context = para1;
-    loginUser = para2;
+  static final Map<String, Widget> pageMap = {
+    "null": WorkPermitPage(),
+    "qr_scan": Information1Page(),
+    "customer_information": DocumentFilePage(),
+    "required_documents": Information2Page(),
+    "additional_information": LoanTypePage(),
+    "choose_loan_type": InterviewAppointmentPage(),
+  };
+
+  static Future<void> login(BuildContext context, User loginUser) async {
+    _context = context;
+    _loginUser = loginUser;
 
     await setLoginUser(loginUser);
     await setLoginStatus(true);
 
-    final Map<String, Widget> pageMap = {
-      "null": WorkPermitPage(),
-      "qr_scan": Information1Page(),
-      "customer_information": DocumentFilePage(),
-      "required_documents": Information2Page(),
-      "additional_information": LoanTypePage(),
-      "choose_loan_type": InterviewAppointmentPage(),
-    };
+    checkLoginUserData(loginUser);
+  }
 
-    if (loginUser.loanApplicationSubmitted) {
+  static Future<void> checkLoginUserData(User loginUser) async {
+    await setLoginUser(loginUser);
+
+    _loginUser = loginUser;
+
+    if (_loginUser.loanApplicationSubmitted) {
       checkApplication();
     } else {
-      Widget page = pageMap[loginUser.loanFormState] ?? WorkPermitPage();
+      Widget page = pageMap[_loginUser.loanFormState] ?? WorkPermitPage();
       goToNavigator(page);
     }
   }
 
   static Future<void> checkApplication() async {
     Application applicationResponse = await ApplicationRepository()
-        .getApplication(loginUser);
+        .getApplication(_loginUser);
 
     if (applicationResponse.data.appointmentStatus ==
         APPOINTMENT_STATUS.pending.toString().split('.').last) {
@@ -55,7 +63,7 @@ class RouteService {
 
   static void goToNavigator(Widget page) {
     Navigator.pushReplacement(
-      context,
+      _context,
       MaterialPageRoute(builder: (context) => page),
     );
   }
