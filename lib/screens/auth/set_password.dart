@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:synpitarn/models/login.dart';
+import 'package:synpitarn/models/login_response.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/services/route_service.dart';
@@ -78,7 +78,7 @@ class SetPasswordState extends State<SetPasswordPage> {
       user.phoneNumber = phoneController.text;
       user.code = pin1Controller.text;
 
-      Login loginResponse = await AuthRepository().setPassword(user);
+      LoginResponse loginResponse = await AuthRepository().setPassword(user);
 
       if (loginResponse.response.code != 200) {
         pin1Error = loginResponse.response.message;

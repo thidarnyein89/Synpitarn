@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/models/login.dart';
+import 'package:synpitarn/models/login_response.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/auth/nrc.dart';
 import 'package:synpitarn/screens/auth/otp.dart';
 import 'package:synpitarn/screens/auth/term_conditions.dart';
-import 'package:synpitarn/models/otp.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -116,7 +115,10 @@ class _RegisterPageState extends State<RegisterPage> {
       context: context,
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.zero,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(4),
+          topRight: Radius.circular(4),
+        ),
       ),
       builder: (context) {
         return Padding(
@@ -148,7 +150,7 @@ class _RegisterPageState extends State<RegisterPage> {
     user.forgetPassword = false;
     user.status = "active";
 
-    Login registerResponse = await AuthRepository().register(user);
+    LoginResponse registerResponse = await AuthRepository().register(user);
 
     if (registerResponse.response.code != 200) {
       String msg = registerResponse.response.message.toLowerCase();
@@ -179,12 +181,12 @@ class _RegisterPageState extends State<RegisterPage> {
         );
       }
     } else {
-      OTP otpResponse = await AuthRepository().getOTP(user);
+      LoginResponse otpResponse = await AuthRepository().getOTP(user);
 
       if (otpResponse.response.code != 200) {
         phoneError = otpResponse.response.message;
       } else {
-        user.code = otpResponse.data;
+        user.code = otpResponse.data.code;
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => OTPPage(loginUser: user)),

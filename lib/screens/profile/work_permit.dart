@@ -7,8 +7,8 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/models/loan_application.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:synpitarn/models/application.dart';
-import 'package:synpitarn/models/login.dart';
+import 'package:synpitarn/models/application_response.dart';
+import 'package:synpitarn/models/login_response.dart';
 import 'package:synpitarn/screens/components/app_bar.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/screens/components/scanner_error_widget.dart';
@@ -19,7 +19,7 @@ import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/user.dart';
-import 'package:synpitarn/models/workpermit.dart';
+import 'package:synpitarn/models/workpermit_response.dart';
 import 'package:synpitarn/repositories/application_repository.dart';
 import 'package:synpitarn/screens/profile/information1.dart';
 import 'package:synpitarn/screens/components/switch_camera_button.dart';
@@ -152,7 +152,7 @@ class WorkPermitState extends State<WorkPermitPage> {
                 ),
                 CustomWidget.verticalSpacing(),
                 ElevatedButton(
-                    onPressed: isLoading ? null : saveWorkpermitNull,
+                    onPressed: isLoading ? null : saveWorkPermitStep,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.transparent,
                       minimumSize: Size(200, 50),
@@ -237,7 +237,7 @@ class WorkPermitState extends State<WorkPermitPage> {
 
     await ApplicationRepository().saveWorkpermit(loginUser);
 
-    Workpermit workpermitResponse =
+    WorkPermitResponse workpermitResponse =
         await ApplicationRepository().checkWorkpermit(loginUser);
 
     if (workpermitResponse.message != "" &&
@@ -254,7 +254,7 @@ class WorkPermitState extends State<WorkPermitPage> {
     }
   }
 
-  void saveWorkpermitNull() async {
+  void saveWorkPermitStep() async {
     isLoading = true;
 
     User loginUser = await getLoginUser();
@@ -262,8 +262,8 @@ class WorkPermitState extends State<WorkPermitPage> {
 
     LoanApplication loanApplication = LoanApplication.defaultLoanApplication();
 
-    Application workpermitResponse =
-        await ApplicationRepository().saveWorkpermitNull(loanApplication, loginUser);
+    ApplicationResponse workpermitResponse =
+        await ApplicationRepository().saveWorkPermitStep(loanApplication, loginUser);
     if (workpermitResponse.response.code != 200) {
       showErrorDialog('Error is occur, please contact admin');
     } else {

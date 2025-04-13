@@ -62,7 +62,7 @@ class CustomWidget {
       required String label,
       bool readOnly = false,
       String? errorText,
-       FocusNode? focusNode,
+      FocusNode? focusNode,
       VoidCallback? onTap}) {
     return Column(
       children: [
@@ -192,42 +192,54 @@ class CustomWidget {
       {required bool disabled,
       required bool isLoading,
       required String text,
+      Icon? icon,
       required void Function() onPressed}) {
     return Column(
       children: [
         ElevatedButton(
-          onPressed: disabled && !isLoading ? onPressed : null,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: CustomStyle.primary_color,
-            minimumSize: Size(double.infinity, 50),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+            onPressed: disabled && !isLoading ? onPressed : null,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: CustomStyle.primary_color,
+              minimumSize: Size(double.infinity, 50),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
-          ),
-          child: isLoading
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 16,
-                      width: 16,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
+            child: isLoading
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 10),
-                    Text(
-                      'Please Wait...',
-                      style: CustomStyle.bodyWhiteColor(),
-                    ),
-                  ],
-                )
-              : Text(
-                  text,
-                  style: CustomStyle.bodyWhiteColor(),
-                ),
-        ),
+                      SizedBox(width: 10),
+                      Text(
+                        'Please Wait...',
+                        style: CustomStyle.bodyWhiteColor(),
+                      ),
+                    ],
+                  )
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        text,
+                        style: CustomStyle.bodyWhiteColor(),
+                      ),
+                      if (icon != null) ...[
+                        horizontalSpacing(),
+                        Icon(
+                          Icons.image_outlined,
+                          color: Colors.white,
+                        ),
+                      ]
+                    ],
+                  )),
         verticalSpacing()
       ],
     );
@@ -292,7 +304,7 @@ class CustomWidget {
             datePickerTheme: DatePickerThemeData(
               headerBackgroundColor: CustomStyle.primary_color,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.zero,
+                borderRadius: BorderRadius.circular(4.0),
               ),
             ),
           ),
@@ -304,5 +316,39 @@ class CustomWidget {
     if (picked != null) {
       controller.text = DateFormat('yyyy-MM-dd').format(picked);
     }
+  }
+
+  Future<void> showConfirmDialog({
+    required BuildContext context,
+    required String content,
+    required VoidCallback onConfirmed,
+  }) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4.0),
+          ),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                onConfirmed();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

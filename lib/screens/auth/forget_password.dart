@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/models/login_response.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/auth/otp.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
-import 'package:synpitarn/models/otp.dart';
 import 'package:synpitarn/screens/components/app_bar.dart';
 import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
@@ -53,12 +53,12 @@ class ForgetPasswordState extends State<ForgetPasswordPage> {
     user.phoneNumber = phoneController.text;
     user.forgetPassword = true;
 
-    OTP otpResponse = await AuthRepository().getOTP(user);
+    LoginResponse loginResponse = await AuthRepository().getOTP(user);
 
-    if (otpResponse.response.code != 200) {
-      phoneError = otpResponse.response.message;
+    if (loginResponse.response.code != 200) {
+      phoneError = loginResponse.response.message;
     } else {
-      user.code = otpResponse.data;
+      user.code = loginResponse.data.code;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => OTPPage(loginUser: user)),

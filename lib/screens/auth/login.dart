@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/models/default/default_response.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:synpitarn/models/login.dart';
+import 'package:synpitarn/models/login_response.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/screens/auth/register.dart';
 import 'package:synpitarn/screens/auth/forget_password.dart';
@@ -68,7 +70,7 @@ class LoginState extends State<LoginPage> {
     user.code = pinController.text;
     user.type = "pincode";
 
-    Login loginResponse = await AuthRepository().login(user);
+    LoginResponse loginResponse = await AuthRepository().login(user);
 
     if (loginResponse.response.code != 200) {
       String msg = loginResponse.response.message.toLowerCase();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:synpitarn/models/notification.dart' as model;
+import 'package:synpitarn/models/notification_response.dart' as model;
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/repositories/notification_repository.dart';
 import 'package:synpitarn/models/user.dart';
@@ -35,7 +35,7 @@ class CustomAppBarState extends State<CustomAppBar> {
     if (isLoggedIn) {
       User loginUser = await getLoginUser();
 
-      model.Notification notificationResponse =
+      model.NotificationResponse notificationResponse =
           await NotificationRepository().getNotificationCount(loginUser);
 
       if (notificationResponse.response.code == 200) {

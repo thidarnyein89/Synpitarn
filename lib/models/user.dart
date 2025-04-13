@@ -35,7 +35,7 @@ class User {
   String code = ''; //For Password in Login Page
   bool forgetPassword = false; //For Determine Forget OR Confirm in OTP Page
   String type = ''; //For PinType
-  String authToken = ''; //For Reposet Token from SetPassword
+  String authToken = ''; //For Token from SetPassword
 
   User.defaultUser();
 

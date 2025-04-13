@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:synpitarn/models/language.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
-import 'package:synpitarn/models/application.dart';
+import 'package:synpitarn/models/application_response.dart';
 import 'package:synpitarn/models/loan_application.dart';
 import 'package:synpitarn/repositories/application_repository.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
@@ -31,7 +32,10 @@ class Information1State extends State<Information1Page> {
     'testing': TextEditingController(),
   };
 
-  final List<String> genderList = ['Male', 'Female', 'Other'];
+  final List<Language> genderList = [
+    Language(en: "Male", mm: "ကျား", th: "ชาย"),
+    Language(en: "Female", mm: "မ", th: "หญิง"),
+  ];
 
   final List<String> maritalStatusList = [
     'Single',
@@ -122,7 +126,7 @@ class Information1State extends State<Information1Page> {
     loanApplication.nationality = controllers['nationality']!.text;
     loanApplication.testing = controllers['testing']!.text;
 
-    Application loanApplicationResponse = await ApplicationRepository()
+    ApplicationResponse loanApplicationResponse = await ApplicationRepository()
         .saveCustomerInformation(loanApplication, loginUser);
     if (loanApplicationResponse.response.code != 200) {
       showErrorDialog('Error is occur, please contact admin');
@@ -193,7 +197,7 @@ class Information1State extends State<Information1Page> {
                         CustomWidget.dropdownButtonFormField(
                           label: 'Gender',
                           selectedValue: selectedGender,
-                          items: genderList,
+                          items: genderList.map((gender) => gender.en).toList(),
                           onChanged: (value) {
                             setState(() {
                               inValidFields.remove('gender');

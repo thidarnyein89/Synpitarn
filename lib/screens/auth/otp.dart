@@ -4,11 +4,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/models/login.dart';
+import 'package:synpitarn/models/login_response.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/screens/auth/set_password.dart';
-import 'package:synpitarn/models/otp.dart';
 import 'package:synpitarn/screens/components/app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/data/app_config.dart';
@@ -92,13 +91,13 @@ class OTPState extends State<OTPPage> {
     user.phoneNumber = widget.loginUser.phoneNumber;
     user.forgetPassword = widget.loginUser.forgetPassword;
 
-    OTP otpResponse = await AuthRepository().getOTP(user);
+    LoginResponse loginResponse = await AuthRepository().getOTP(user);
 
-    if (otpResponse.response.code != 200) {
-      otpError = otpResponse.response.message;
+    if (loginResponse.response.code != 200) {
+      otpError = loginResponse.response.message;
     } else {
-      user.code = otpResponse.data;
-      code = otpResponse.data;
+      user.code = loginResponse.data.code;
+      code = loginResponse.data.code;
 
       _minuteRemaining = 3;
       _secondsRemaining = 0;
@@ -121,7 +120,7 @@ class OTPState extends State<OTPPage> {
     user.phoneNumber = widget.loginUser.phoneNumber;
     user.forgetPassword = widget.loginUser.forgetPassword;
 
-    Login loginResponse = await AuthRepository().checkOTP(user);
+    LoginResponse loginResponse = await AuthRepository().checkOTP(user);
 
     if (loginResponse.response.code != 200) {
       otpError = loginResponse.response.message;

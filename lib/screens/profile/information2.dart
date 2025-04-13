@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:synpitarn/models/default/default_data.dart';
+import 'package:synpitarn/models/default/default_response.dart';
+import 'package:synpitarn/repositories/default_repository.dart';
 
 class Information2Page extends StatefulWidget {
   const Information2Page({super.key});

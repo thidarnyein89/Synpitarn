@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:synpitarn/models/otp.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/data/app_config.dart';
-import 'package:synpitarn/models/login.dart';
+import 'package:synpitarn/models/login_response.dart';
 
 class AuthRepository {
-  Future<Login> register(User loginRequest) async {
+  Future<LoginResponse> register(User loginRequest) async {
     var post_body = {
       "identity_number": loginRequest.identityNumber,
       "passport": loginRequest.passport,
@@ -22,10 +21,10 @@ class AuthRepository {
       body: jsonEncode(post_body),
     );
 
-    return Login.loginResponseFromJson(response.body);
+    return LoginResponse.loginResponseFromJson(response.body);
   }
 
-  Future<Login> login(User loginRequest) async {
+  Future<LoginResponse> login(User loginRequest) async {
     var post_body = {
       "code": loginRequest.code,
       "phone_number": loginRequest.phoneNumber,
@@ -40,10 +39,10 @@ class AuthRepository {
       body: jsonEncode(post_body),
     );
 
-    return Login.loginResponseFromJson(response.body);
+    return LoginResponse.loginResponseFromJson(response.body);
   }
 
-  Future<OTP> getOTP(User loginRequest) async {
+  Future<LoginResponse> getOTP(User loginRequest) async {
     var post_body = {
       "forget_password": loginRequest.forgetPassword,
       "phone_number": loginRequest.phoneNumber
@@ -57,10 +56,10 @@ class AuthRepository {
       body: jsonEncode(post_body),
     );
 
-    return OTP.otpResponseFromJson(response.body);
+    return LoginResponse.loginResponseFromJson(response.body);
   }
 
-  Future<Login> checkOTP(User loginRequest) async {
+  Future<LoginResponse> checkOTP(User loginRequest) async {
     var post_body = {
       "code": loginRequest.code,
       "forget_password": loginRequest.forgetPassword,
@@ -75,10 +74,10 @@ class AuthRepository {
       body: jsonEncode(post_body),
     );
 
-    return Login.loginResponseFromJson(response.body);
+    return LoginResponse.loginResponseFromJson(response.body);
   }
 
-  Future<Login> setPassword(User loginRequest) async {
+  Future<LoginResponse> setPassword(User loginRequest) async {
     var post_body = {
       "auth_token": loginRequest.token,
       "forget_password": loginRequest.forgetPassword,
@@ -94,6 +93,6 @@ class AuthRepository {
       body: jsonEncode(post_body),
     );
 
-    return Login.loginResponseFromJson(response.body);
+    return LoginResponse.loginResponseFromJson(response.body);
   }
 }

@@ -6,21 +6,21 @@ import 'package:synpitarn/models/loan.dart';
 import 'package:synpitarn/models/response.dart';
 import 'package:synpitarn/models/meta.dart';
 
-class Application {
+class ApplicationResponse {
   final Response response;
   final Meta meta;
   final Loan data;
 
-  Application({
+  ApplicationResponse({
     required this.response,
     required this.meta,
     required this.data,
   });
 
-  factory Application.applicationResponseFromJson(String str) => Application.fromJson(json.decode(str));
+  factory ApplicationResponse.applicationResponseFromJson(String str) => ApplicationResponse.fromJson(json.decode(str));
 
-  factory Application.fromJson(Map<String, dynamic> json) {
-    return Application(
+  factory ApplicationResponse.fromJson(Map<String, dynamic> json) {
+    return ApplicationResponse(
       response: Response.fromJson(json["response"]),
       meta: Meta.fromJson(json["meta"]),
       data: json["data"] is Map<String, dynamic> ? Loan.fromJson(json["data"]) : new Loan.defaultLoan(new User.defaultUser(), new Admin.defaultAdmin()),

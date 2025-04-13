@@ -3,7 +3,7 @@ import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/repositories/application_repository.dart';
-import 'package:synpitarn/models/application.dart';
+import 'package:synpitarn/models/application_response.dart';
 import 'package:synpitarn/screens/home.dart';
 import 'package:synpitarn/screens/loan/interview_appointment.dart';
 import 'package:synpitarn/screens/loan/loan_type.dart';
@@ -45,7 +45,7 @@ class RouteService {
   }
 
   static Future<void> checkApplication(BuildContext context) async {
-    Application applicationResponse =
+    ApplicationResponse applicationResponse =
         await ApplicationRepository().getApplication(_loginUser);
 
     if (applicationResponse.data.appointmentStatus ==
