@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/data/custom_widget.dart';
+import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/models/guide.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:synpitarn/screens/components/dashed_circle_painter.dart';

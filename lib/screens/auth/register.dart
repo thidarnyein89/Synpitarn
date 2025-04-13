@@ -9,10 +9,7 @@ import 'package:synpitarn/screens/auth/nrc.dart';
 import 'package:synpitarn/screens/auth/otp.dart';
 import 'package:synpitarn/screens/auth/term_conditions.dart';
 import 'package:synpitarn/models/otp.dart';
-import 'package:synpitarn/data/custom_widget.dart';
-import 'package:synpitarn/screens/components/app_bar.dart';
-import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
-import 'package:synpitarn/data/app_config.dart';
+import 'package:synpitarn/screens/components/custom_widget.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -74,8 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
   void _validatePassportValue() {
     setState(() {
       passportError = null;
-      isPassportValidate =
-          passportController.text.isNotEmpty &&
+      isPassportValidate = passportController.text.isNotEmpty &&
           passportController.text.length == 6;
     });
   }
@@ -116,19 +112,18 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> showNRCDialog() async {
-    var result = await showDialog(
+    var result = await showModalBottomSheet(
       context: context,
-      barrierDismissible: false,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.zero,
+      ),
       builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
-          child: SizedBox(
-            height: 365,
-            width: MediaQuery.of(context).size.width,
-            child: NRCPage(key: UniqueKey(), nrcValue: nrcController.text),
-          ),
+          child: NRCPage(nrcValue: nrcController.text),
         );
       },
     );
@@ -136,6 +131,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (result != null) {
       setState(() {
         nrcController.text = result;
+        _validateNRCValue();
       });
     }
   }
@@ -189,7 +185,7 @@ class _RegisterPageState extends State<RegisterPage> {
         phoneError = otpResponse.response.message;
       } else {
         user.code = otpResponse.data;
-        Navigator.pushReplacement(
+        Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => OTPPage(loginUser: user)),
         );
@@ -204,7 +200,6 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -217,6 +212,10 @@ class _RegisterPageState extends State<RegisterPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      Image.asset(
+                        'assets/images/synpitarn.jpg',
+                        height: 180,
+                      ),
                       Text(
                         'Welcome to SynPitarn',
                         style: CustomStyle.titleBold(),
@@ -227,51 +226,25 @@ class _RegisterPageState extends State<RegisterPage> {
                         'SynPitarn will use this phone number as the primary authentication method. Please fill in the phone number that you always use and is with you. ',
                       ),
                       CustomWidget.verticalSpacing(),
-                      TextField(
-                        controller: phoneController,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(10),
-                        ],
-                        decoration: InputDecoration(
-                          labelText: 'Phone number',
-                          prefixText: '+66 ',
-                          border: OutlineInputBorder(),
-                          errorText: phoneError,
-                        ),
-                      ),
-                      CustomWidget.verticalSpacing(),
+                      CustomWidget.phoneTextField(
+                          controller: phoneController,
+                          label: 'Phone number',
+                          errorText: phoneError),
                       GestureDetector(
                         onTap: () {
                           showNRCDialog();
                         },
                         child: AbsorbPointer(
-                          child: TextField(
-                            controller: nrcController,
-                            decoration: InputDecoration(
-                              labelText: 'NRC',
-                              border: OutlineInputBorder(),
-                              errorText: nrcError,
-                            ),
-                          ),
+                          child: CustomWidget.textField(
+                              controller: nrcController,
+                              label: 'NRC',
+                              errorText: nrcError),
                         ),
                       ),
-                      CustomWidget.verticalSpacing(),
-                      TextField(
-                        controller: passportController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(6),
-                        ],
-                        decoration: InputDecoration(
-                          labelText: 'Passport',
-                          border: OutlineInputBorder(),
-                          errorText: passportError,
-                        ),
-                      ),
-                      CustomWidget.verticalSpacing(),
+                      CustomWidget.textField(
+                          controller: passportController,
+                          label: 'Passport',
+                          errorText: passportError),
                       Row(
                         children: [
                           Checkbox(
@@ -299,61 +272,20 @@ class _RegisterPageState extends State<RegisterPage> {
                         " When you click continue you will be asked to agree to our terms. After that you will be sent an OTP to the phone number that you gave us. ",
                       ),
                       CustomWidget.verticalSpacing(),
-                      ElevatedButton(
-                        onPressed:
-                            isPhoneValidate &&
-                                    isPassportValidate &&
-                                    isNRCValidate &&
-                                    isChecked &&
-                                    !isLoading
-                                ? handleRegister
-                                : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: CustomStyle.primary_color,
-                          minimumSize: Size(double.infinity, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child:
-                            isLoading
-                                ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height: 16, // Match text height
-                                      width: 16, // Keep it proportional
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2, // Adjust thickness
-                                      ),
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      'Please Wait...',
-                                      style: CustomStyle.bodyWhiteColor(),
-                                    ),
-                                  ],
-                                )
-                                : Text(
-                                  'Continue',
-                                  style: CustomStyle.bodyWhiteColor(),
-                                ),
-                      ),
+                      CustomWidget.elevatedButton(
+                          disabled: isPhoneValidate &&
+                              isPassportValidate &&
+                              isNRCValidate &&
+                              isChecked,
+                          isLoading: isLoading,
+                          text: 'Continue',
+                          onPressed: handleRegister),
                     ],
                   ),
                 ),
               ),
             ),
           );
-        },
-      ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: AppConfig.PROFILE_INDEX,
-        onItemTapped: (index) {
-          setState(() {
-            AppConfig.CURRENT_INDEX = index;
-          });
         },
       ),
     );

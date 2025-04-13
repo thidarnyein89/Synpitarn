@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'package:synpitarn/models/user.dart';
-import 'response.dart';
-import 'meta.dart';
 
 class Workpermit {
   final User client;

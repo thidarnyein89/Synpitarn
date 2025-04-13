@@ -18,13 +18,6 @@ class RegisterStep {
     List<RegisterStep> stepList = [];
 
     stepList.add(RegisterStep(
-      icon: Icons.qr_code_scanner_outlined,
-      text: 'WorkPermit QR',
-      canEntry: true,
-      canSkip: true,
-    ));
-
-    stepList.add(RegisterStep(
         icon: Icons.person_2_outlined,
         text: 'Customer Info 1',
         canEntry: true,

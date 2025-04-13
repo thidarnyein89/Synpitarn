@@ -3,12 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:synpitarn/models/login.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
-import 'package:synpitarn/screens/components/app_bar.dart';
-import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
-import 'package:synpitarn/screens/home.dart';
-import 'package:synpitarn/data/app_config.dart';
-
-import '../../data/shared_value.dart';
+import 'package:synpitarn/services/route_service.dart';
+import 'package:synpitarn/screens/components/custom_widget.dart';
+import 'package:synpitarn/data/custom_style.dart';
 
 class SetPasswordPage extends StatefulWidget {
   User loginUser;
@@ -86,15 +83,7 @@ class SetPasswordState extends State<SetPasswordPage> {
       if (loginResponse.response.code != 200) {
         pin1Error = loginResponse.response.message;
       } else {
-        await setLoginUser(loginResponse.data);
-        await setLoginStatus(true);
-
-        setState(() {});
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
+        RouteService.login(context, loginResponse.data);
       }
 
       isLoading = false;
@@ -106,7 +95,6 @@ class SetPasswordState extends State<SetPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -114,11 +102,15 @@ class SetPasswordState extends State<SetPasswordPage> {
               constraints: BoxConstraints(minHeight: constraints.maxHeight),
               child: IntrinsicHeight(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
+                  padding: CustomStyle.pagePadding(),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      Image.asset(
+                        'assets/images/synpitarn.jpg',
+                        height: 180,
+                      ),
                       Text(
                         'Set Your Pin Code',
                         style: TextStyle(
@@ -127,132 +119,42 @@ class SetPasswordState extends State<SetPasswordPage> {
                           color: Colors.indigo,
                         ),
                       ),
-                      SizedBox(height: 40),
-                      TextField(
-                        controller: phoneController,
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          labelText: 'Phone number',
-                          prefixText: '+66 ',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      TextField(
-                        controller: pin1Controller,
-                        obscureText: _isObscured1,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          // Allow only digits
-                          LengthLimitingTextInputFormatter(6),
-                          // Limit to 10 digits
-                        ],
-                        decoration: InputDecoration(
-                          labelText: 'PIN',
-                          border: OutlineInputBorder(),
+                      CustomWidget.verticalSpacing(),
+                      CustomWidget.phoneTextField(
+                          controller: phoneController,
+                          label: 'Phone number',
+                          readOnly: true),
+                      CustomWidget.pinTextField(
+                          controller: pin1Controller,
+                          label: 'PIN',
                           errorText: pin1Error,
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _isObscured1
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _isObscured1 = !_isObscured1;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      TextField(
-                        controller: pin2Controller,
-                        obscureText: _isObscured2,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          // Allow only digits
-                          LengthLimitingTextInputFormatter(6),
-                          // Limit to 10 digits
-                        ],
-                        decoration: InputDecoration(
-                          labelText: 'Confirm PIN',
-                          border: OutlineInputBorder(),
+                          isObscured: _isObscured1,
+                          onPressed: () {
+                            setState(() {
+                              _isObscured1 = !_isObscured1;
+                            });
+                          }),
+                      CustomWidget.pinTextField(
+                          controller: pin2Controller,
+                          label: 'Confirm PIN',
                           errorText: pin2Error,
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _isObscured2
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _isObscured2 = !_isObscured2;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed:
-                            isPin1Validate && isPin2Validate && !isLoading
-                                ? handleSetPassowrd
-                                : null, // Disable when fields are empty
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.indigo,
-                          minimumSize: Size(double.infinity, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child:
-                            isLoading
-                                ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height: 16, // Match text height
-                                      width: 16, // Keep it proportional
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2, // Adjust thickness
-                                      ),
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      'Please Wait...',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ],
-                                )
-                                : Text(
-                                  'Set New Password',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                      ),
+                          isObscured: _isObscured2,
+                          onPressed: () {
+                            setState(() {
+                              _isObscured2 = !_isObscured2;
+                            });
+                          }),
+                      CustomWidget.elevatedButton(
+                          disabled: isPin1Validate && isPin2Validate,
+                          isLoading: isLoading,
+                          text: 'Set New Password',
+                          onPressed: handleSetPassowrd),
                     ],
                   ),
                 ),
               ),
             ),
           );
-        },
-      ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: AppConfig.PROFILE_INDEX,
-        onItemTapped: (index) {
-          setState(() {
-            AppConfig.CURRENT_INDEX = index;
-          });
         },
       ),
     );

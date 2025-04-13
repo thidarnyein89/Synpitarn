@@ -4,6 +4,8 @@ import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/auth/login.dart';
 import 'package:synpitarn/screens/loan/pending.dart';
 import 'package:synpitarn/screens/home.dart';
+import 'package:synpitarn/screens/profile/information1.dart';
+import 'package:synpitarn/services/route_service.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget
     implements PreferredSizeWidget {
@@ -42,19 +44,24 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     setState(() { });
 
     if(index == AppConfig.HOME_INDEX) {
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
       );
     }
     else if(index == AppConfig.PROFILE_INDEX) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
-      );
+      RouteService.checkLoginUserData(context);
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => LoginPage()),
+      // );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => Information1Page()),
+      // );
     }
     else if(index == AppConfig.LOAN_INDEX) {
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => PendingPage()),
       );

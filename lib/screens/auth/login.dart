@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/data/custom_widget.dart';
+import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/models/login.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/screens/auth/register.dart';
-import 'package:synpitarn/screens/components/app_bar.dart';
-import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/screens/auth/forget_password.dart';
-import 'package:synpitarn/data/app_config.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -93,7 +90,6 @@ class LoginState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -106,57 +102,33 @@ class LoginState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      Image.asset(
+                        'assets/images/synpitarn.jpg',
+                        height: 180,
+                      ),
                       Text(
                         'Welcome to Synpitarn',
                         style: CustomStyle.titleBold(),
                       ),
                       CustomWidget.verticalSpacing(),
                       CustomWidget.verticalSpacing(),
-                      TextField(
-                        controller: phoneController,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(10),
-                        ],
-                        decoration: InputDecoration(
-                          labelText: 'Phone number',
-                          prefixText: '+66 ',
-                          border: OutlineInputBorder(),
-                          errorText: phoneError,
-                        ),
-                      ),
-                      CustomWidget.verticalSpacing(),
-                      TextField(
-                        controller: pinController,
-                        obscureText: _isObscured,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(6),
-                        ],
-                        decoration: InputDecoration(
-                          labelText: 'PIN',
-                          border: OutlineInputBorder(),
+                      CustomWidget.phoneTextField(
+                          controller: phoneController,
+                          label: 'Phone number',
+                          errorText: phoneError),
+                      CustomWidget.pinTextField(
+                          controller: pinController,
+                          label: 'PIN',
+                          isObscured: _isObscured,
                           errorText: pinError,
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _isObscured
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _isObscured = !_isObscured;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      CustomWidget.verticalSpacing(),
+                          onPressed: () {
+                            setState(() {
+                              _isObscured = !_isObscured;
+                            });
+                          }),
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => ForgetPasswordPage(),
@@ -172,44 +144,14 @@ class LoginState extends State<LoginPage> {
                         ),
                       ),
                       CustomWidget.verticalSpacing(),
-                      ElevatedButton(
-                        onPressed:
-                            isPhoneValidate && isPinValidate && !isLoading
-                                ? handleLogin
-                                : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: CustomStyle.primary_color,
-                          minimumSize: Size(double.infinity, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child:
-                            isLoading
-                                ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height: 16,
-                                      width: 16,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2,
-                                      ),
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      'Please Wait...',
-                                      style: CustomStyle.bodyWhiteColor(),
-                                    ),
-                                  ],
-                                )
-                                : Text('Login', style: CustomStyle.bodyWhiteColor()),
-                      ),
-                      CustomWidget.verticalSpacing(),
+                      CustomWidget.elevatedButton(
+                          disabled: isPhoneValidate && isPinValidate,
+                          isLoading: isLoading,
+                          text: 'Continue',
+                          onPressed: handleLogin),
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => RegisterPage(),
@@ -236,14 +178,6 @@ class LoginState extends State<LoginPage> {
               ),
             ),
           );
-        },
-      ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: AppConfig.PROFILE_INDEX,
-        onItemTapped: (index) {
-          setState(() {
-            AppConfig.CURRENT_INDEX = index;
-          });
         },
       ),
     );

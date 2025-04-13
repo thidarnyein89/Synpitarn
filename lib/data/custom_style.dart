@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class CustomStyle {
-
   static const Color primary_color = const Color(0xFF2E3097);
 
   static const Color secondary_color = const Color(0xFFEAD86C);
@@ -12,31 +11,22 @@ class CustomStyle {
 
   static TextStyle appTitle() {
     return TextStyle(
-        fontSize: 18,
-        color: Colors.white,
-        fontWeight: FontWeight.bold
-    );
+        fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold);
   }
 
   static TextStyle appSubTitle() {
     return TextStyle(
-        fontSize: 16,
-        color: Colors.white,
-        fontWeight: FontWeight.bold
-    );
+        fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold);
   }
 
   static TextStyle title() {
     return TextStyle(
-        fontSize: 18,
+      fontSize: 18,
     );
   }
 
   static TextStyle titleBold() {
-    return TextStyle(
-      fontSize: title().fontSize,
-      fontWeight: FontWeight.bold
-    );
+    return TextStyle(fontSize: title().fontSize, fontWeight: FontWeight.bold);
   }
 
   static TextStyle subTitle() {
@@ -47,9 +37,7 @@ class CustomStyle {
 
   static TextStyle subTitleBold() {
     return TextStyle(
-        fontSize: subTitle().fontSize,
-        fontWeight: FontWeight.bold
-    );
+        fontSize: subTitle().fontSize, fontWeight: FontWeight.bold);
   }
 
   static TextStyle body() {
@@ -93,4 +81,12 @@ class CustomStyle {
     return EdgeInsets.symmetric(vertical: 20);
   }
 
+  static EdgeInsetsGeometry pageWithoutTopPadding() {
+    final padding = pagePadding() as EdgeInsets;
+    return EdgeInsets.only(
+        top: 0,
+        right: padding.right,
+        bottom: padding.bottom,
+        left: padding.left);
+  }
 }

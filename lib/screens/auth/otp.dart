@@ -12,6 +12,7 @@ import 'package:synpitarn/models/otp.dart';
 import 'package:synpitarn/screens/components/app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/data/app_config.dart';
+import 'package:synpitarn/screens/components/custom_widget.dart';
 
 class OTPPage extends StatefulWidget {
   User loginUser;
@@ -143,7 +144,6 @@ class OTPState extends State<OTPPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -222,60 +222,20 @@ class OTPState extends State<OTPPage> {
                                   decoration: TextDecoration.underline,
                                   fontWeight: FontWeight.bold,
                                 ),
-                                recognizer:
-                                    TapGestureRecognizer()
-                                      ..onTap = () {
-                                        getOTP();
-                                      },
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    getOTP();
+                                  },
                               ),
                             ],
                           ),
                         ),
                       SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed:
-                            isOTPValidate && !isLoading
-                                ? handleVerifyOTP
-                                : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.indigo,
-                          minimumSize: Size(double.infinity, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child:
-                            isLoading
-                                ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height: 16, // Match text height
-                                      width: 16, // Keep it proportional
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2, // Adjust thickness
-                                      ),
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      'Please Wait...',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ],
-                                )
-                                : Text(
-                                  'Verify OTP Code',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                      ),
-                      SizedBox(height: 20),
+                      CustomWidget.elevatedButton(
+                          disabled: isOTPValidate,
+                          isLoading: isLoading,
+                          text: 'Verify OTP Code',
+                          onPressed: handleVerifyOTP),
                       Text("OTP Code $code"),
                     ],
                   ),
@@ -283,14 +243,6 @@ class OTPState extends State<OTPPage> {
               ),
             ),
           );
-        },
-      ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: AppConfig.PROFILE_INDEX,
-        onItemTapped: (index) {
-          setState(() {
-            AppConfig.CURRENT_INDEX = index;
-          });
         },
       ),
     );

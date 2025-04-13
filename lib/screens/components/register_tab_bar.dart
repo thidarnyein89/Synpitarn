@@ -26,35 +26,34 @@ class RegisterTabBarState extends State<RegisterTabBar> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: EasyStepper(
-        activeStep: widget.activeStep,
-        maxReachedStep: RegisterStep.getCustomTab().length - 1,
-        stepShape: StepShape.circle,
-        stepBorderRadius: 15,
-        borderThickness: 3,
-        stepRadius: 28,
-        finishedStepBorderColor: CustomStyle.secondary_color,
-        finishedStepBackgroundColor: Colors.white,
-        finishedStepIconColor: CustomStyle.icon_color,
-        activeStepBorderColor: CustomStyle.primary_color,
-        activeStepBackgroundColor: Colors.white,
-        unreachedStepBorderColor: CustomStyle.icon_color,
-        showLoadingAnimation: false,
-        lineStyle: LineStyle(
-          lineType: LineType.dashed,
-          defaultLineColor: CustomStyle.secondary_color,
-          lineLength: 30,
-          lineThickness: 2,
-          lineSpace: 0.5,
-        ),
-        steps: RegisterStep.getCustomTab().map((step) {
-          return EasyStep(
-            icon: Icon(step.icon, color: CustomStyle.icon_color),
-          );
-        }).toList(),
+    return EasyStepper(
+      showScrollbar: false,
+      padding: EdgeInsets.zero,
+      activeStep: widget.activeStep,
+      maxReachedStep: RegisterStep.getCustomTab().length - 1,
+      stepShape: StepShape.circle,
+      stepBorderRadius: 15,
+      borderThickness: 3,
+      stepRadius: 28,
+      finishedStepBorderColor: CustomStyle.secondary_color,
+      finishedStepBackgroundColor: Colors.white,
+      finishedStepIconColor: CustomStyle.icon_color,
+      activeStepBorderColor: CustomStyle.primary_color,
+      activeStepBackgroundColor: Colors.white,
+      unreachedStepBorderColor: CustomStyle.icon_color,
+      showLoadingAnimation: false,
+      lineStyle: LineStyle(
+        lineType: LineType.dashed,
+        defaultLineColor: CustomStyle.secondary_color,
+        lineLength: 30,
+        lineThickness: 2,
+        lineSpace: 0.5,
       ),
+      steps: RegisterStep.getCustomTab().map((step) {
+        return EasyStep(
+          icon: Icon(step.icon, color: CustomStyle.icon_color),
+        );
+      }).toList(),
     );
   }
 }

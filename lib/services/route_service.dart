@@ -14,7 +14,6 @@ import 'package:synpitarn/screens/profile/information2.dart';
 import 'package:synpitarn/screens/profile/work_permit.dart';
 
 class RouteService {
-  static late BuildContext _context;
   static late User _loginUser;
 
   static final Map<String, Widget> pageMap = {
@@ -27,44 +26,48 @@ class RouteService {
   };
 
   static Future<void> login(BuildContext context, User loginUser) async {
-    _context = context;
     _loginUser = loginUser;
 
     await setLoginUser(loginUser);
     await setLoginStatus(true);
 
-    checkLoginUserData(loginUser);
+    goToHome(context);
   }
 
-  static Future<void> checkLoginUserData(User loginUser) async {
-    await setLoginUser(loginUser);
-
-    _loginUser = loginUser;
-
+  static Future<void> checkLoginUserData(BuildContext context) async {
+    _loginUser = await getLoginUser();
     if (_loginUser.loanApplicationSubmitted) {
-      checkApplication();
+      checkApplication(context);
     } else {
       Widget page = pageMap[_loginUser.loanFormState] ?? WorkPermitPage();
-      goToNavigator(page);
+      goToNavigator(context, page);
     }
   }
 
-  static Future<void> checkApplication() async {
-    Application applicationResponse = await ApplicationRepository()
-        .getApplication(_loginUser);
+  static Future<void> checkApplication(BuildContext context) async {
+    Application applicationResponse =
+        await ApplicationRepository().getApplication(_loginUser);
 
     if (applicationResponse.data.appointmentStatus ==
         APPOINTMENT_STATUS.pending.toString().split('.').last) {
-      goToNavigator(PendingPage());
+      goToNavigator(context, PendingPage());
     } else {
-      goToNavigator(HomePage());
+      goToNavigator(context, HomePage());
     }
   }
 
-  static void goToNavigator(Widget page) {
+  static void goToNavigator(BuildContext context, Widget page) {
     Navigator.pushReplacement(
-      _context,
+      context,
       MaterialPageRoute(builder: (context) => page),
+    );
+  }
+
+  static void goToHome(BuildContext context) {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage()),
+      (Route<dynamic> route) => false,
     );
   }
 }

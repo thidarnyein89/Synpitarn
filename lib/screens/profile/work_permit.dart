@@ -5,7 +5,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/data/custom_widget.dart';
+import 'package:synpitarn/models/loan_application.dart';
+import 'package:synpitarn/screens/components/custom_widget.dart';
+import 'package:synpitarn/models/application.dart';
+import 'package:synpitarn/models/login.dart';
 import 'package:synpitarn/screens/components/app_bar.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/screens/components/scanner_error_widget.dart';
@@ -20,6 +23,7 @@ import 'package:synpitarn/models/workpermit.dart';
 import 'package:synpitarn/repositories/application_repository.dart';
 import 'package:synpitarn/screens/profile/information1.dart';
 import 'package:synpitarn/screens/components/switch_camera_button.dart';
+import 'package:synpitarn/services/route_service.dart';
 
 class WorkPermitPage extends StatefulWidget {
   const WorkPermitPage({super.key});
@@ -93,9 +97,7 @@ class WorkPermitState extends State<WorkPermitPage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(child: qrScannerWidget())
-        ],
+        children: [Expanded(child: qrScannerWidget())],
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: AppConfig.PROFILE_INDEX,
@@ -105,13 +107,6 @@ class WorkPermitState extends State<WorkPermitPage> {
           });
         },
       ),
-    );
-  }
-
-  void handleNext() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => Information1Page()),
     );
   }
 
@@ -157,20 +152,20 @@ class WorkPermitState extends State<WorkPermitPage> {
                 ),
                 CustomWidget.verticalSpacing(),
                 ElevatedButton(
-                  onPressed: isLoading ? null : handleNext,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    minimumSize: Size(200, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: const BorderSide(
-                        color: Colors.white,
-                        width: 2,
+                    onPressed: isLoading ? null : saveWorkpermitNull,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      minimumSize: Size(200, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: const BorderSide(
+                          color: Colors.white,
+                          width: 2,
+                        ),
                       ),
                     ),
-                  ),
-                  child: Text('Manual Fill', style: CustomStyle.bodyWhiteColor())
-                ),
+                    child: Text('Manual Fill',
+                        style: CustomStyle.bodyWhiteColor())),
               ],
             ),
           ),
@@ -237,52 +232,52 @@ class WorkPermitState extends State<WorkPermitPage> {
   }
 
   Future<void> checkWorkpermit(String? barcodeValue) async {
-    bool isLoggedIn = await getLoginStatus();
-    if (isLoggedIn) {
-      User loginUser = await getLoginUser();
-      loginUser.workPermitUrl = barcodeValue;
+    User loginUser = await getLoginUser();
+    loginUser.workPermitUrl = barcodeValue;
 
-      await ApplicationRepository().saveWorkpermit(loginUser);
+    await ApplicationRepository().saveWorkpermit(loginUser);
 
-      Workpermit workpermitResponse =
-          await ApplicationRepository().checkWorkpermit(loginUser);
+    Workpermit workpermitResponse =
+        await ApplicationRepository().checkWorkpermit(loginUser);
 
-      if (workpermitResponse.message != "" &&
-          !workpermitResponse.message.contains("successfully")) {
-        showErrorDialog(workpermitResponse.message);
-      } else {
-        isLoading = false;
-        setState(() {});
+    if (workpermitResponse.message != "" &&
+        !workpermitResponse.message.contains("successfully")) {
+      showErrorDialog(workpermitResponse.message);
+    } else {
+      loginUser.loanFormState = "qr_scan";
+      await setLoginUser(loginUser);
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => Information1Page()),
-        );
-      }
+      isLoading = false;
+      setState(() {});
+
+      RouteService.checkLoginUserData(context);
     }
   }
 
-  void showErrorDialog(String msg) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5), // Reduce the border radius
-          ),
-          content: Text(msg),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text("Ok"),
-            ),
-          ],
-        );
-      },
-    );
+  void saveWorkpermitNull() async {
+    isLoading = true;
 
+    User loginUser = await getLoginUser();
+    setState(() {});
+
+    LoanApplication loanApplication = LoanApplication.defaultLoanApplication();
+
+    Application workpermitResponse =
+        await ApplicationRepository().saveWorkpermitNull(loanApplication, loginUser);
+    if (workpermitResponse.response.code != 200) {
+      showErrorDialog('Error is occur, please contact admin');
+    } else {
+      loginUser.loanFormState = "qr_scan";
+      await setLoginUser(loginUser);
+      isLoading = false;
+      setState(() {});
+
+      RouteService.checkLoginUserData(context);
+    }
+  }
+
+  void showErrorDialog(String errorMessage) {
+    CustomWidget.showErrorDialog(context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }

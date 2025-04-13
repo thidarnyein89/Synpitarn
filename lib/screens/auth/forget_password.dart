@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/data/custom_widget.dart';
+import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/auth/otp.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
@@ -73,7 +73,6 @@ class ForgetPasswordState extends State<ForgetPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -86,75 +85,28 @@ class ForgetPasswordState extends State<ForgetPasswordPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      Image.asset(
+                        'assets/images/synpitarn.jpg',
+                        height: 180,
+                      ),
                       Text('Forgot PIN code', style: CustomStyle.titleBold()),
                       CustomWidget.verticalSpacing(),
                       CustomWidget.verticalSpacing(),
-                      TextField(
-                        controller: phoneController,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(10),
-                        ],
-                        decoration: InputDecoration(
-                          labelText: 'Phone number',
-                          prefixText: '+66 ',
-                          border: OutlineInputBorder(),
-                          errorText: phoneError,
-                        ),
-                      ),
-                      CustomWidget.verticalSpacing(),
-                      ElevatedButton(
-                        onPressed:
-                            isPhoneValidate && !isLoading
-                                ? handleResetPin
-                                : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: CustomStyle.primary_color,
-                          minimumSize: Size(double.infinity, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child:
-                            isLoading
-                                ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height: 16, // Match text height
-                                      width: 16, // Keep it proportional
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2, // Adjust thickness
-                                      ),
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      'Please Wait...',
-                                      style: CustomStyle.bodyWhiteColor(),
-                                    ),
-                                  ],
-                                )
-                                : Text(
-                                  'Reset PIN code',
-                                  style: CustomStyle.bodyWhiteColor(),
-                                ),
-                      ),
+                      CustomWidget.phoneTextField(
+                          controller: phoneController,
+                          label: 'Phone number',
+                          errorText: phoneError),
+                      CustomWidget.elevatedButton(
+                          disabled: isPhoneValidate,
+                          isLoading: isLoading,
+                          text: 'Reset PIN code',
+                          onPressed: handleResetPin),
                     ],
                   ),
                 ),
               ),
             ),
           );
-        },
-      ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: AppConfig.PROFILE_INDEX,
-        onItemTapped: (index) {
-          setState(() {
-            AppConfig.CURRENT_INDEX = index;
-          });
         },
       ),
     );

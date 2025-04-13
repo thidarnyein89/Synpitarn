@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/data/custom_widget.dart';
+import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/models/guide.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/screens/setting/guide.dart';
@@ -93,7 +93,7 @@ class GuideHeaderState extends State<GuideHeaderPage> {
                 activeStep = index;
               });
 
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => GuidePage(activeStep: activeStep),

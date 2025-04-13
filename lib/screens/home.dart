@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:synpitarn/data/custom_widget.dart';
+import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/setting/about_us.dart';
 import 'package:synpitarn/screens/setting/guide.dart';
 import 'package:synpitarn/screens/setting/guide_header.dart';
@@ -166,7 +166,7 @@ class HomeState extends State<HomePage> {
   Widget gridItem(int index) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushReplacement(
+        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => AboutUsPage(activeIndex: index),
