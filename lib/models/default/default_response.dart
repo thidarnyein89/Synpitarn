@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:synpitarn/models/default/default_data.dart';
-import 'package:synpitarn/models/document.dart';
 import 'package:synpitarn/models/meta.dart';
 import 'package:synpitarn/models/response.dart';
 
@@ -19,8 +18,7 @@ class DefaultResponse {
       DefaultResponse.fromJson(json.decode(str));
 
   factory DefaultResponse.fromJson(Map<String, dynamic> json) {
-    DefaultData data =
-        DefaultData.defaultDefaultData();
+    DefaultData data = new DefaultData.defaultDefaultData();
 
     if (json.containsKey("data") && json["data"] is! List<dynamic>) {
       data = DefaultData.fromJson(json["data"]);

@@ -166,4 +166,26 @@ class LoanApplication {
 
     return json.encode(allData);
   }
+
+  String toJsonForAdditionalInformation() {
+    final customerInfo = json.decode(toJsonForCustomerInformation());
+
+    final allData = {
+      ...customerInfo,
+      'year_working_in_thailand': yearWorkingInThailand,
+      'month_working_in_thailand': monthWorkingInThailand,
+      'type_of_work': typeOfWork,
+      'industry': industry,
+      'debit': debit,
+      'monthly_repayment_for_debit': monthlyRepaymentForDebit,
+      'salary': salary,
+      'loan_amount': loanAmount,
+      'loan_term_year': loanTermYear,
+      'loan_term_month': loanTermMonth,
+      'social_links': socialLinks,
+      'referral_code': referralCode
+    };
+
+    return json.encode(allData);
+  }
 }

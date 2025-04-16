@@ -12,6 +12,7 @@ import 'package:synpitarn/screens/profile/document_file.dart';
 import 'package:synpitarn/screens/profile/information1.dart';
 import 'package:synpitarn/screens/profile/information2.dart';
 import 'package:synpitarn/screens/profile/work_permit.dart';
+import 'package:synpitarn/services/common_service.dart';
 
 class RouteService {
   static late User _loginUser;

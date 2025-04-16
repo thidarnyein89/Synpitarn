@@ -20,7 +20,7 @@ class AboutUS {
     "file": RemixIcons.file_paper_2_line,
   };
 
-  AboutUS.defaultGuide();
+  AboutUS.defaultAboutUs();
 
   AboutUS({
     required this.icon,

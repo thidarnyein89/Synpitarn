@@ -3,8 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/models/data.dart';
 
 class CustomWidget {
+  static Widget loading() {
+    return Positioned.fill(
+      child: Container(
+        color: Colors.white,
+        child: Center(
+          child: CircularProgressIndicator(
+            color: CustomStyle.primary_color,
+          ),
+        ),
+      ),
+    );
+  }
+
   static Widget textField(
       {required TextEditingController controller,
       required String label,
@@ -16,7 +30,6 @@ class CustomWidget {
         TextField(
           readOnly: readOnly,
           controller: controller,
-          keyboardType: TextInputType.phone,
           decoration: InputDecoration(
             labelText: label,
             border: OutlineInputBorder(),
@@ -144,23 +157,23 @@ class CustomWidget {
     );
   }
 
-  static Widget dropdownButtonFormField<T>({
+  static Widget dropdownButtonFormField({
     required String label,
-    required T? selectedValue,
-    required List<T> items,
+    required Item? selectedValue,
+    required List<Item> items,
     String key = "",
-    required void Function(T?) onChanged,
+    required void Function(Item?) onChanged,
   }) {
     return Column(
       children: [
-        DropdownButtonFormField<T>(
+        DropdownButtonFormField<Item>(
           value: selectedValue,
           onChanged: onChanged,
-          items: items.map<DropdownMenuItem<T>>((T value) {
-            return DropdownMenuItem<T>(
-              value: value,
+          items: items.map<DropdownMenuItem<Item>>((Item item) {
+            return DropdownMenuItem<Item>(
+              value: item,
               child: Text(
-                value.toString(),
+                item.text?.en ?? '',
                 overflow: TextOverflow.ellipsis,
                 softWrap: false,
                 maxLines: 1,
@@ -168,9 +181,53 @@ class CustomWidget {
             );
           }).toList(),
           selectedItemBuilder: (BuildContext context) {
-            return items.map<Widget>((T value) {
+            return items.map<Widget>((Item item) {
               return Text(
-                value.toString(),
+                item.text?.en ?? '',
+                overflow: TextOverflow.ellipsis,
+                softWrap: false,
+                maxLines: 1,
+              );
+            }).toList();
+          },
+          decoration: InputDecoration(
+            labelText: label,
+            border: OutlineInputBorder(),
+          ),
+          isExpanded: true,
+        ),
+        verticalSpacing()
+      ],
+    );
+  }
+
+  static Widget dropdownButtonFormField2({
+    required String label,
+    required String? selectedValue,
+    required List<Item> items,
+    String key = "",
+    required void Function(String?) onChanged,
+  }) {
+    return Column(
+      children: [
+        DropdownButtonFormField<String>(
+          value: selectedValue,
+          onChanged: onChanged,
+          items: items.map<DropdownMenuItem<String>>((Item item) {
+            return DropdownMenuItem<String>(
+              value: selectedValue,
+              child: Text(
+                item.text?.en ?? '',
+                overflow: TextOverflow.ellipsis,
+                softWrap: false,
+                maxLines: 1,
+              ),
+            );
+          }).toList(),
+          selectedItemBuilder: (BuildContext context) {
+            return items.map<Widget>((Item item) {
+              return Text(
+                item.text?.en ?? '',
                 overflow: TextOverflow.ellipsis,
                 softWrap: false,
                 maxLines: 1,
@@ -189,7 +246,7 @@ class CustomWidget {
   }
 
   static Widget elevatedButton(
-      {required bool disabled,
+      {required bool enabled,
       required bool isLoading,
       required String text,
       Icon? icon,
@@ -197,7 +254,7 @@ class CustomWidget {
     return Column(
       children: [
         ElevatedButton(
-            onPressed: disabled && !isLoading ? onPressed : null,
+            onPressed: enabled && !isLoading ? onPressed : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: CustomStyle.primary_color,
               minimumSize: Size(double.infinity, 50),
@@ -206,23 +263,26 @@ class CustomWidget {
               ),
             ),
             child: isLoading
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: 16,
-                        width: 16,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
+                ? FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 16,
+                          width: 16,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        'Please Wait...',
-                        style: CustomStyle.bodyWhiteColor(),
-                      ),
-                    ],
+                        SizedBox(width: 10),
+                        Text(
+                          'Please Wait...',
+                          style: CustomStyle.bodyWhiteColor(),
+                        ),
+                      ],
+                    ),
                   )
                 : Row(
                     mainAxisSize: MainAxisSize.min,
@@ -243,6 +303,39 @@ class CustomWidget {
         verticalSpacing()
       ],
     );
+  }
+
+  static Widget checkbox(
+      List<Item> selectedDataList, Item data, void Function() onTap) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Transform.scale(
+                  scale: 1.0,
+                  child: Padding(
+                    padding: EdgeInsets.zero,
+                    child: Checkbox(
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      visualDensity:
+                          VisualDensity(horizontal: -4.0, vertical: -4.0),
+                      value: selectedDataList.contains(data),
+                      onChanged: (bool? value) => onTap,
+                    ),
+                  ),
+                ),
+                horizontalSpacing(),
+                Expanded(
+                  child: Text(data.text!.en),
+                ),
+              ],
+            ),
+            verticalSpacing(),
+          ],
+        ));
   }
 
   static SizedBox horizontalSpacing() {

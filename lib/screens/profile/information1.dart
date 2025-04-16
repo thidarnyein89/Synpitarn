@@ -1,10 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:synpitarn/models/language.dart';
+import 'package:synpitarn/models/data_response.dart';
+import 'package:synpitarn/models/default/default_data.dart';
+import 'package:synpitarn/models/default/default_response.dart';
+import 'package:synpitarn/repositories/default_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
-import 'package:synpitarn/models/application_response.dart';
-import 'package:synpitarn/models/loan_application.dart';
 import 'package:synpitarn/repositories/application_repository.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/models/user.dart';
@@ -18,6 +21,9 @@ class Information1Page extends StatefulWidget {
 }
 
 class Information1State extends State<Information1Page> {
+  User loginUser = User.defaultUser();
+  DefaultData defaultData = new DefaultData.defaultDefaultData();
+
   final Map<String, TextEditingController> controllers = {
     'name': TextEditingController(),
     'dob': TextEditingController(),
@@ -32,10 +38,7 @@ class Information1State extends State<Information1Page> {
     'testing': TextEditingController(),
   };
 
-  final List<Language> genderList = [
-    Language(en: "Male", mm: "ကျား", th: "ชาย"),
-    Language(en: "Female", mm: "မ", th: "หญิง"),
-  ];
+  final List<String> genderList = ['Male', 'Female'];
 
   final List<String> maritalStatusList = [
     'Single',
@@ -78,21 +81,39 @@ class Information1State extends State<Information1Page> {
   String? selectedEduction;
   String? selectedBranch;
 
+  String stepName = "customer_information";
   bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
+
     controllers.forEach((key, controller) {
       inValidFields.add(key);
       controller.addListener(() => _inValidateField(key));
     });
+
+    getDefaultData();
   }
 
   @override
   void dispose() {
     controllers.values.forEach((controller) => controller.dispose());
     super.dispose();
+  }
+
+  Future<void> getDefaultData() async {
+    loginUser = await getLoginUser();
+    setState(() {});
+
+    DefaultResponse defaultResponse =
+    await DefaultRepository().getDefaultData(loginUser);
+
+    if (defaultResponse.response.code == 200) {
+      defaultData = defaultResponse.data;
+    }
+
+    setState(() {});
   }
 
   void _inValidateField(String key) {
@@ -111,27 +132,31 @@ class Information1State extends State<Information1Page> {
       isLoading = true;
     });
 
-    User loginUser = await getLoginUser();
+    final Map<String, dynamic> customerInformation = {
+      'name': controllers['name']!.text,
+      'martial_status': selectedMaritalStatus,
+      'residence': controllers['residence']!.text,
+      'name_of_employment': controllers['employmentName']!.text,
+      'office_location': controllers['officeLocation']!.text,
+      'dob': controllers['dob']!.text,
+      'branch': selectedBranch,
+      'education': selectedEduction,
+      'gender': selectedGender,
+      'nationality': controllers['nationality']!.text,
+      'testing': controllers['testing']!.text
+    };
 
-    LoanApplication loanApplication = LoanApplication.defaultLoanApplication();
-    loanApplication.name = controllers['name']!.text;
-    loanApplication.martialStatus = controllers['maritalStatus']!.text;
-    loanApplication.residence = controllers['residence']!.text;
-    loanApplication.nameOfEmployment = controllers['employmentName']!.text;
-    loanApplication.officeLocation = controllers['officeLocation']!.text;
-    loanApplication.dob = controllers['dob']!.text;
-    loanApplication.branch = controllers['branch']!.text;
-    loanApplication.education = controllers['education']!.text;
-    loanApplication.gender = controllers['gender']!.text;
-    loanApplication.nationality = controllers['nationality']!.text;
-    loanApplication.testing = controllers['testing']!.text;
+    final Map<String, dynamic> postBody = {
+      'version_id': defaultData.versionId,
+      'input_data': jsonEncode(customerInformation)
+    };
 
-    ApplicationResponse loanApplicationResponse = await ApplicationRepository()
-        .saveCustomerInformation(loanApplication, loginUser);
-    if (loanApplicationResponse.response.code != 200) {
+    DataResponse saveResponse =
+    await ApplicationRepository().saveLoanApplicationStep(postBody, loginUser, stepName);
+    if (saveResponse.response.code != 200) {
       showErrorDialog('Error is occur, please contact admin');
     } else {
-      loginUser.loanFormState = "customer_information";
+      loginUser.loanFormState = stepName;
       await setLoginUser(loginUser);
       isLoading = false;
       setState(() {});
@@ -184,88 +209,88 @@ class Information1State extends State<Information1Page> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CustomWidget.textField(
-                            controller: controllers['name']!,
-                            label: 'Name (in English)'),
-                        CustomWidget.datePicker(
-                            context: context,
-                            controller: controllers['dob']!,
-                            label: 'Date of Birth',
-                            readOnly: true,
-                            maxDate: maxDate,
-                            minDate: minDate),
-                        CustomWidget.dropdownButtonFormField(
-                          label: 'Gender',
-                          selectedValue: selectedGender,
-                          items: genderList.map((gender) => gender.en).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              inValidFields.remove('gender');
-                              selectedGender = value!;
-                            });
-                          },
-                        ),
-                        CustomWidget.dropdownButtonFormField(
-                          label: 'Marital Status',
-                          selectedValue: selectedMaritalStatus,
-                          items: maritalStatusList,
-                          onChanged: (value) {
-                            setState(() {
-                              inValidFields.remove('maritalStatus');
-                              selectedMaritalStatus = value!;
-                            });
-                          },
-                        ),
-                        CustomWidget.dropdownButtonFormField(
-                          label: 'Nationality',
-                          selectedValue: selectedNationality,
-                          items: nationalityList,
-                          onChanged: (value) {
-                            setState(() {
-                              inValidFields.remove('nationality');
-                              selectedNationality = value!;
-                            });
-                          },
-                        ),
-                        CustomWidget.dropdownButtonFormField(
-                          label: 'Education',
-                          selectedValue: selectedEduction,
-                          items: educationList,
-                          onChanged: (value) {
-                            setState(() {
-                              inValidFields.remove('education');
-                              selectedEduction = value!;
-                            });
-                          },
-                        ),
-                        CustomWidget.textField(
-                            controller: controllers['residence']!,
-                            label: 'Residence'),
-                        CustomWidget.textField(
-                            controller: controllers['employmentName']!,
-                            label: 'Name of Employment'),
-                        CustomWidget.textField(
-                            controller: controllers['officeLocation']!,
-                            label: 'Current Work Address'),
-                        CustomWidget.dropdownButtonFormField(
-                          label: 'Branch',
-                          selectedValue: selectedBranch,
-                          items: branchList,
-                          onChanged: (value) {
-                            setState(() {
-                              inValidFields.remove('branch');
-                              selectedBranch = value!;
-                            });
-                          },
-                        ),
-                        CustomWidget.textField(
-                            controller: controllers['testing']!,
-                            label: 'Testing'),
-                        CustomWidget.elevatedButton(
-                            disabled: inValidFields.isEmpty,
-                            isLoading: isLoading,
-                            text: 'Continue',
-                            onPressed: handleContinue)
+                        // CustomWidget.textField(
+                        //     controller: controllers['name']!,
+                        //     label: 'Name (in English)'),
+                        // CustomWidget.datePicker(
+                        //     context: context,
+                        //     controller: controllers['dob']!,
+                        //     label: 'Date of Birth',
+                        //     readOnly: true,
+                        //     maxDate: maxDate,
+                        //     minDate: minDate),
+                        // CustomWidget.dropdownButtonFormField(
+                        //   label: 'Gender',
+                        //   selectedValue: selectedGender,
+                        //   items: genderList.map((gender) => gender).toList(),
+                        //   onChanged: (value) {
+                        //     setState(() {
+                        //       inValidFields.remove('gender');
+                        //       selectedGender = value!;
+                        //     });
+                        //   },
+                        // ),
+                        // CustomWidget.dropdownButtonFormField(
+                        //   label: 'Marital Status',
+                        //   selectedValue: selectedMaritalStatus,
+                        //   items: maritalStatusList,
+                        //   onChanged: (value) {
+                        //     setState(() {
+                        //       inValidFields.remove('maritalStatus');
+                        //       selectedMaritalStatus = value!;
+                        //     });
+                        //   },
+                        // ),
+                        // CustomWidget.dropdownButtonFormField(
+                        //   label: 'Nationality',
+                        //   selectedValue: selectedNationality,
+                        //   items: nationalityList,
+                        //   onChanged: (value) {
+                        //     setState(() {
+                        //       inValidFields.remove('nationality');
+                        //       selectedNationality = value!;
+                        //     });
+                        //   },
+                        // ),
+                        // CustomWidget.dropdownButtonFormField(
+                        //   label: 'Education',
+                        //   selectedValue: selectedEduction,
+                        //   items: educationList,
+                        //   onChanged: (value) {
+                        //     setState(() {
+                        //       inValidFields.remove('education');
+                        //       selectedEduction = value!;
+                        //     });
+                        //   },
+                        // ),
+                        // CustomWidget.textField(
+                        //     controller: controllers['residence']!,
+                        //     label: 'Residence'),
+                        // CustomWidget.textField(
+                        //     controller: controllers['employmentName']!,
+                        //     label: 'Name of Employment'),
+                        // CustomWidget.textField(
+                        //     controller: controllers['officeLocation']!,
+                        //     label: 'Current Work Address'),
+                        // CustomWidget.dropdownButtonFormField(
+                        //   label: 'Branch',
+                        //   selectedValue: selectedBranch,
+                        //   items: branchList,
+                        //   onChanged: (value) {
+                        //     setState(() {
+                        //       inValidFields.remove('branch');
+                        //       selectedBranch = value!;
+                        //     });
+                        //   },
+                        // ),
+                        // CustomWidget.textField(
+                        //     controller: controllers['testing']!,
+                        //     label: 'Testing'),
+                        // CustomWidget.elevatedButton(
+                        //     enabled: inValidFields.isEmpty,
+                        //     isLoading: isLoading,
+                        //     text: 'Continue',
+                        //     onPressed: handleContinue)
                       ],
                     ),
                   ),

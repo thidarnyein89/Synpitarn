@@ -1,11 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/shared_value.dart';
+import 'package:synpitarn/models/data_response.dart';
 import 'package:synpitarn/models/default/default_data.dart';
 import 'package:synpitarn/models/default/default_response.dart';
 import 'package:synpitarn/models/document_response.dart';
 import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/repositories/application_repository.dart';
 import 'package:synpitarn/repositories/default_repository.dart';
 import 'package:synpitarn/repositories/document_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
@@ -41,13 +44,16 @@ class DocumentFileState extends State<DocumentFilePage> {
   final ImagePicker _picker = ImagePicker();
 
   User loginUser = User.defaultUser();
-  DefaultData defaultData = DefaultData.defaultDefaultData();
-  
+  DefaultData defaultData = new DefaultData.defaultDefaultData();
+
+  String stepName = "required_documents";
   bool isLoading = false;
+  bool isEnabled = true;
 
   @override
   void initState() {
     super.initState();
+    getDefaultData();
   }
 
   @override
@@ -61,6 +67,7 @@ class DocumentFileState extends State<DocumentFilePage> {
 
     DefaultResponse defaultResponse = await DefaultRepository().getDefaultData(
         loginUser);
+
     if (defaultResponse.response.code == 200) {
       defaultData = defaultResponse.data;
     }
@@ -70,8 +77,7 @@ class DocumentFileState extends State<DocumentFilePage> {
 
   Future<void> uploadImage(ImageFile imageFile, ImageSource imageSource) async {
     imageFile.isLoading = true;
-    loginUser = await getLoginUser();
-
+    isEnabled = false;
     setState(() {});
 
     Navigator.pop(context);
@@ -80,17 +86,25 @@ class DocumentFileState extends State<DocumentFilePage> {
     if (image != null) {
       File file = File(image.path);
 
+      final Map<String, dynamic> postBody = {
+        'version_id': defaultData.versionId,
+        'unique_id': imageFile.uniqueId,
+        'file_path': file.path
+      };
+
       DocumentResponse documentResponse = await DocumentRepository()
-          .uploadDocument(imageFile.uniqueId, file, loginUser);
+          .uploadDocument(postBody, loginUser);
       if (documentResponse.response.code != 200) {
         showErrorDialog('Error is occur, please contact admin');
 
         setState(() {
           imageFile.isLoading = false;
+          isEnabled = true;
         });
       } else {
         setState(() {
           imageFile.isLoading = false;
+          isEnabled = true;
           imageFile.id = documentResponse.data.id;
           imageFile.file = file;
         });
@@ -98,6 +112,7 @@ class DocumentFileState extends State<DocumentFilePage> {
     } else {
       setState(() {
         imageFile.isLoading = false;
+        isEnabled = true;
       });
     }
   }
@@ -143,22 +158,29 @@ class DocumentFileState extends State<DocumentFilePage> {
       content: 'Are you sure to delete this image?',
       onConfirmed: () async {
         imageFile.isDeleteLoading = true;
-        loginUser = await getLoginUser();
-
+        isEnabled = false;
         setState(() {});
 
+        final Map<String, dynamic> postBody = {
+          'id': imageFile.id,
+          'unique_id': imageFile.uniqueId,
+          'version_id': defaultData.versionId,
+        };
+
         DocumentResponse documentResponse =
-            await DocumentRepository().deleteDocument(imageFile, loginUser);
+            await DocumentRepository().deleteDocument(postBody, loginUser);
         if (documentResponse.response.code != 200) {
           showErrorDialog('Error is occur, please contact admin');
 
           setState(() {
             imageFile.isDeleteLoading = false;
+            isEnabled = true;
           });
         } else {
           setState(() {
             imageFile.file = null;
             imageFile.isDeleteLoading = false;
+            isEnabled = true;
           });
         }
       },
@@ -166,17 +188,24 @@ class DocumentFileState extends State<DocumentFilePage> {
   }
 
   Future<void> handleContinue() async {
-    loginUser = await getLoginUser();
     isLoading = true;
+    isEnabled = false;
     setState(() { });
 
-    DocumentResponse documentResponse = await DocumentRepository().saveDocumentStep(defaultData, loginUser);
-    if (documentResponse.response.code != 200) {
+    final Map<String, dynamic> postBody = {
+      'version_id': defaultData.versionId,
+      'input_data': jsonEncode(defaultData.inputData),
+    };
+
+    DataResponse saveResponse = await ApplicationRepository()
+        .saveLoanApplicationStep(postBody, loginUser, stepName);
+    if (saveResponse.response.code != 200) {
       showErrorDialog('Error is occur, please contact admin');
     } else {
       loginUser.loanFormState = "required_documents";
       await setLoginUser(loginUser);
       isLoading = false;
+      isEnabled = true;
       setState(() {});
 
       RouteService.checkLoginUserData(context);
@@ -238,7 +267,7 @@ class DocumentFileState extends State<DocumentFilePage> {
         ),
         CustomWidget.verticalSpacing(),
         CustomWidget.elevatedButton(
-          disabled: imageFile?.file == null,
+          enabled: imageFile?.file == null,
           isLoading: imageFile!.isLoading ?? false,
           text: 'Upload',
           icon: Icon(
@@ -298,26 +327,26 @@ class DocumentFileState extends State<DocumentFilePage> {
                         CustomWidget.verticalSpacing(),
                         Row(
                           children: [
-                            Flexible(child: Expanded(
+                            Expanded(
                               child: CustomWidget.elevatedButton(
-                                disabled: true,
+                                enabled: true,
                                 isLoading: false,
                                 text: 'Previous',
                                 onPressed: handlePrevious,
                               ),
-                            ),),
+                            ),
                             CustomWidget.horizontalSpacing(),
-                            Flexible(child: Expanded(
-                                child: CustomWidget.elevatedButton(
-                                  disabled: true,
-                                  isLoading: isLoading,
-                                  text: 'Continue',
-                                  onPressed: handleContinue,
-                                ),
+                            Expanded(
+                              child: CustomWidget.elevatedButton(
+                                enabled: isEnabled,
+                                isLoading: isLoading,
+                                text: 'Continue',
+                                onPressed: handleContinue,
                               ),
-                            )
+                            ),
                           ],
-                        ),
+                        )
+
                       ],
                     ),
                   ),

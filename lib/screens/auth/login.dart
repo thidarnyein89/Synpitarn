@@ -147,7 +147,7 @@ class LoginState extends State<LoginPage> {
                       ),
                       CustomWidget.verticalSpacing(),
                       CustomWidget.elevatedButton(
-                          disabled: isPhoneValidate && isPinValidate,
+                          enabled: isPhoneValidate && isPinValidate,
                           isLoading: isLoading,
                           text: 'Continue',
                           onPressed: handleLogin),

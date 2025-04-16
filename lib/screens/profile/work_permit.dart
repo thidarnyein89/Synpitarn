@@ -1,16 +1,15 @@
 import 'dart:async';
 
-import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/models/loan_application.dart';
+import 'package:synpitarn/models/data_response.dart';
+import 'package:synpitarn/models/default/default_data.dart';
+import 'package:synpitarn/models/default/default_response.dart';
+import 'package:synpitarn/repositories/default_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:synpitarn/models/application_response.dart';
-import 'package:synpitarn/models/login_response.dart';
 import 'package:synpitarn/screens/components/app_bar.dart';
-import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/screens/components/scanner_error_widget.dart';
 import 'package:synpitarn/screens/components/toggle_flashlight_button.dart';
 import 'package:synpitarn/screens/components/scan_window_overlay.dart';
@@ -21,7 +20,6 @@ import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/models/workpermit_response.dart';
 import 'package:synpitarn/repositories/application_repository.dart';
-import 'package:synpitarn/screens/profile/information1.dart';
 import 'package:synpitarn/screens/components/switch_camera_button.dart';
 import 'package:synpitarn/services/route_service.dart';
 
@@ -33,6 +31,9 @@ class WorkPermitPage extends StatefulWidget {
 }
 
 class WorkPermitState extends State<WorkPermitPage> {
+  User loginUser = User.defaultUser();
+  DefaultData defaultData = new DefaultData.defaultDefaultData();
+
   static const useScanWindow = true;
 
   late MobileScannerController controller = initController();
@@ -58,18 +59,34 @@ class WorkPermitState extends State<WorkPermitPage> {
         formats: selectedFormats,
       );
 
+  String stepName = "qr_scan";
   bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     unawaited(controller.start());
+    getDefaultData();
   }
 
   @override
   Future<void> dispose() async {
     super.dispose();
     await controller.dispose();
+  }
+
+  Future<void> getDefaultData() async {
+    defaultData = new DefaultData.defaultDefaultData();
+    loginUser = await getLoginUser();
+
+    DefaultResponse defaultResponse =
+        await DefaultRepository().getDefaultData(loginUser);
+
+    if (defaultResponse.response.code == 200) {
+      defaultData = defaultResponse.data;
+    }
+
+    setState(() {});
   }
 
   void _onDetect(BarcodeCapture barCode) {
@@ -232,13 +249,12 @@ class WorkPermitState extends State<WorkPermitPage> {
   }
 
   Future<void> checkWorkpermit(String? barcodeValue) async {
-    User loginUser = await getLoginUser();
     loginUser.workPermitUrl = barcodeValue;
 
     await ApplicationRepository().saveWorkpermit(loginUser);
 
-    WorkPermitResponse workpermitResponse =
-        await ApplicationRepository().checkWorkpermit(loginUser);
+    WorkPermitResponse workpermitResponse = await ApplicationRepository()
+        .checkWorkpermit(defaultData.versionId, loginUser);
 
     if (workpermitResponse.message != "" &&
         !workpermitResponse.message.contains("successfully")) {
@@ -256,18 +272,19 @@ class WorkPermitState extends State<WorkPermitPage> {
 
   void saveWorkPermitStep() async {
     isLoading = true;
-
-    User loginUser = await getLoginUser();
     setState(() {});
 
-    LoanApplication loanApplication = LoanApplication.defaultLoanApplication();
+    final Map<String, dynamic> postBody = {
+      'version_id': defaultData.versionId,
+      'input_data': "",
+    };
 
-    ApplicationResponse workpermitResponse =
-        await ApplicationRepository().saveWorkPermitStep(loanApplication, loginUser);
-    if (workpermitResponse.response.code != 200) {
+    DataResponse saveResponse = await ApplicationRepository()
+        .saveLoanApplicationStep(postBody, loginUser, stepName);
+    if (saveResponse.response.code != 200) {
       showErrorDialog('Error is occur, please contact admin');
     } else {
-      loginUser.loanFormState = "qr_scan";
+      loginUser.loanFormState = stepName;
       await setLoginUser(loginUser);
       isLoading = false;
       setState(() {});

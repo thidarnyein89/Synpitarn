@@ -1,3 +1,4 @@
+import 'package:synpitarn/models/default/item.dart';
 import 'package:synpitarn/models/default/validation_rule.dart';
 
 class FormWidget {
@@ -15,6 +16,12 @@ class FormWidget {
   final String defaultValue;
   final List<ValidationRule> validations;
   final String typeAttribute;
+  final String dataMode;
+  final bool multiple;
+  final List<Item> items;
+  final String apiURL;
+  final String apiTextKey;
+  final String apiValueKey;
 
   FormWidget({
     required this.uniqueId,
@@ -31,26 +38,40 @@ class FormWidget {
     required this.defaultValue,
     required this.validations,
     required this.typeAttribute,
+    required this.dataMode,
+    required this.multiple,
+    required this.items,
+    required this.apiURL,
+    required this.apiTextKey,
+    required this.apiValueKey,
   });
 
   factory FormWidget.fromJson(Map<String, dynamic> json) {
     return FormWidget(
-      uniqueId: json['uniqueId'],
-      type: json['type'],
-      name: json['name'],
-      label: json['label'],
-      subLabel: json['subLabel'],
-      isShowLabel: json['isShowLabel'],
-      placeholderText: json['placeholderText'],
-      containerClass: json['containerClass'],
-      additionalContainerClass: json['additionalContainerClass'],
-      additionalFieldClass: json['additionalFieldClass'],
-      additionalLabelClass: json['additionalLabelClass'],
-      defaultValue: json['defaultValue'],
+      uniqueId: json['uniqueId'] ?? "",
+      type: json['type'] ?? "",
+      name: json['name'] ?? "",
+      label: json['label'] ?? "",
+      subLabel: json['subLabel'] ?? "",
+      isShowLabel: json['isShowLabel'] ?? "",
+      placeholderText: json['placeholderText'] ?? "",
+      containerClass: json['containerClass'] ?? "",
+      additionalContainerClass: json['additionalContainerClass'] ?? "",
+      additionalFieldClass: json['additionalFieldClass'] ?? "",
+      additionalLabelClass: json['additionalLabelClass'] ?? "",
+      defaultValue: json['defaultValue'] ?? "",
       validations: (json['validations'] as List)
           .map((v) => ValidationRule.fromJson(v))
           .toList(),
-      typeAttribute: json['typeAttribute'],
+      typeAttribute: json['typeAttribute'] ?? "",
+      dataMode: json['dataMode'] ?? "",
+      multiple: json['multiple'] ?? false,
+      items: json.containsKey('items')
+          ? (json['items'] as List).map((item) => Item.fromJson(item)).toList()
+          : [],
+      apiURL: json['apiURL'] ?? "",
+      apiTextKey: json['apiTextKey'] ?? "",
+      apiValueKey: json['apiValueKey'] ?? "",
     );
   }
 
@@ -70,6 +91,12 @@ class FormWidget {
       'defaultValue': defaultValue,
       'validations': validations.map((v) => v.toJson()).toList(),
       'typeAttribute': typeAttribute,
+      'dataMode': dataMode,
+      'multiple': multiple,
+      'items': items.map((item) => item.toJson()).toList(),
+      'apiURL': apiURL,
+      'apiTextKey': apiTextKey,
+      'apiValueKey': apiValueKey,
     };
   }
 }

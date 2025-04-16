@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:synpitarn/models/loan_application.dart';
+import 'package:synpitarn/models/data_response.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/models/application_response.dart';
@@ -42,9 +42,9 @@ class ApplicationRepository {
     return WorkPermitResponse.workPermitResponseFromJson(response.body);
   }
 
-  Future<WorkPermitResponse> checkWorkpermit(User loginUser) async {
+  Future<WorkPermitResponse> checkWorkpermit(int versionId, User loginUser) async {
     String url =
-        "${AppConfig.BASE_URL}/${AppConfig.PATH}/e-workpermit-extractor?url=${Uri.encodeComponent(loginUser.workPermitUrl!)}&version_id=${AppConfig.VERSION_ID}";
+        "${AppConfig.BASE_URL}/${AppConfig.PATH}/e-workpermit-extractor?url=${Uri.encodeComponent(loginUser.workPermitUrl!)}&version_id=$versionId";
 
     final response = await http.get(
       Uri.parse(url),
@@ -58,15 +58,11 @@ class ApplicationRepository {
     return WorkPermitResponse.workPermitResponseFromJson(response.body);
   }
 
-  Future<ApplicationResponse> saveWorkPermitStep(
-      LoanApplication loanApplication, User loginUser) async {
-    var post_body = {
-      "version_id": AppConfig.VERSION_ID,
-      "input_data": loanApplication.toJsonForCustomerInformation()
-    };
+  Future<DataResponse> saveLoanApplicationStep(
+      Map<String, dynamic> postBody, User loginUser, String stepName) async {
 
     String url =
-        ("${AppConfig.BASE_URL}/${AppConfig.PATH}/form/type/default/step/qr_scan");
+    ("${AppConfig.BASE_URL}/${AppConfig.PATH}/form/type/default/step/$stepName");
 
     final response = await http.post(
       Uri.parse(url),
@@ -75,32 +71,9 @@ class ApplicationRepository {
         "Authorization": "Bearer ${loginUser.token}",
         "x-user-id": loginUser.id.toString(),
       },
-      body: jsonEncode(post_body),
+      body: jsonEncode(postBody),
     );
 
-    return ApplicationResponse.applicationResponseFromJson(response.body);
-  }
-
-  Future<ApplicationResponse> saveCustomerInformation(
-      LoanApplication loanApplication, User loginUser) async {
-    var post_body = {
-      "version_id": AppConfig.VERSION_ID,
-      "input_data": loanApplication.toJsonForCustomerInformation()
-    };
-
-    String url =
-        ("${AppConfig.BASE_URL}/${AppConfig.PATH}/form/type/default/step/customer_information");
-
-    final response = await http.post(
-      Uri.parse(url),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer ${loginUser.token}",
-        "x-user-id": loginUser.id.toString(),
-      },
-      body: jsonEncode(post_body),
-    );
-
-    return ApplicationResponse.applicationResponseFromJson(response.body);
+    return DataResponse.dataResponseFromJson(response.body);
   }
 }

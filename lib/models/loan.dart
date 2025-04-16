@@ -162,7 +162,7 @@ class Loan {
 
   Loan.defaultLoan(this.client, this.user);
 
-  factory Loan.applicationResponseFromJson(String str) =>
+  factory Loan.loanResponseFromJson(String str) =>
       Loan.fromJson(json.decode(str));
 
   factory Loan.fromJson(Map<String, dynamic> json) {

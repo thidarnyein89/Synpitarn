@@ -30,14 +30,14 @@ class RegisterStep {
         canSkip: false));
 
     stepList.add(RegisterStep(
-        icon: Icons.category_outlined,
-        text: 'Loan Type',
-        canEntry: false,
+        icon: Icons.assignment_outlined,
+        text: 'Customer Info 2',
+        canEntry: true,
         canSkip: false));
 
     stepList.add(RegisterStep(
-        icon: Icons.calendar_month_outlined,
-        text: 'Interview Appointment',
+        icon: Icons.category_outlined,
+        text: 'Loan Type',
         canEntry: false,
         canSkip: false));
 

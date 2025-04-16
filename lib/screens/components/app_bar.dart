@@ -42,7 +42,9 @@ class CustomAppBarState extends State<CustomAppBar> {
         _notificationCount = notificationResponse.data;
       }
 
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 

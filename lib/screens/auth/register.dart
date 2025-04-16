@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter/services.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/models/login_response.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
@@ -275,7 +274,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       CustomWidget.verticalSpacing(),
                       CustomWidget.elevatedButton(
-                          disabled: isPhoneValidate &&
+                          enabled: isPhoneValidate &&
                               isPassportValidate &&
                               isNRCValidate &&
                               isChecked,

@@ -10,8 +10,6 @@ class AppConfig {
   static int LOAN_INDEX = 2;
   static int SETTING_INDEX = 3;
   static int CURRENT_INDEX = 0;
-
-  static int VERSION_ID = 2;
 }
 
 enum APPOINTMENT_STATUS { pending, approve, reject }

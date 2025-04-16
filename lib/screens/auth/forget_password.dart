@@ -97,7 +97,7 @@ class ForgetPasswordState extends State<ForgetPasswordPage> {
                           label: 'Phone number',
                           errorText: phoneError),
                       CustomWidget.elevatedButton(
-                          disabled: isPhoneValidate,
+                          enabled: isPhoneValidate,
                           isLoading: isLoading,
                           text: 'Reset PIN code',
                           onPressed: handleResetPin),

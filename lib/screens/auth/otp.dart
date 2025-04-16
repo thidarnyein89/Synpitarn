@@ -8,9 +8,6 @@ import 'package:synpitarn/models/login_response.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/screens/auth/set_password.dart';
-import 'package:synpitarn/screens/components/app_bar.dart';
-import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
-import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 
 class OTPPage extends StatefulWidget {
@@ -231,7 +228,7 @@ class OTPState extends State<OTPPage> {
                         ),
                       SizedBox(height: 20),
                       CustomWidget.elevatedButton(
-                          disabled: isOTPValidate,
+                          enabled: isOTPValidate,
                           isLoading: isLoading,
                           text: 'Verify OTP Code',
                           onPressed: handleVerifyOTP),
