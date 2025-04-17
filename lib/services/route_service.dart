@@ -51,14 +51,15 @@ class RouteService {
 
     if (applicationResponse.data.appointmentStatus ==
         APPOINTMENT_STATUS.pending.toString().split('.').last) {
-      goToNavigator(context, PendingPage());
+      goToNavigator(
+          context, PendingPage(applicationData: applicationResponse.data));
     } else {
       goToNavigator(context, HomePage());
     }
   }
 
   static void goToNavigator(BuildContext context, Widget page) {
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => page),
     );

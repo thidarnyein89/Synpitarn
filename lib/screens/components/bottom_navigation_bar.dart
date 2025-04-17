@@ -49,22 +49,8 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         MaterialPageRoute(builder: (context) => HomePage()),
       );
     }
-    else if(index == AppConfig.PROFILE_INDEX) {
+    else {
       RouteService.checkLoginUserData(context);
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => LoginPage()),
-      // );
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => Information1Page()),
-      // );
-    }
-    else if(index == AppConfig.LOAN_INDEX) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PendingPage()),
-      );
     }
   }
 

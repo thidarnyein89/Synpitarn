@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/data_response.dart';
 import 'package:synpitarn/models/default/default_data.dart';
 import 'package:synpitarn/models/default/default_response.dart';
+import 'package:synpitarn/models/document.dart';
 import 'package:synpitarn/models/document_response.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/application_repository.dart';
@@ -45,8 +47,10 @@ class DocumentFileState extends State<DocumentFilePage> {
 
   User loginUser = User.defaultUser();
   DefaultData defaultData = new DefaultData.defaultDefaultData();
+  List<Document> documentList = [];
 
   String stepName = "required_documents";
+  bool isPageLoading = true;
   bool isLoading = false;
   bool isEnabled = true;
 
@@ -62,16 +66,45 @@ class DocumentFileState extends State<DocumentFilePage> {
   }
 
   Future<void> getDefaultData() async {
+    isPageLoading = true;
     loginUser = await getLoginUser();
     setState(() {});
 
-    DefaultResponse defaultResponse = await DefaultRepository().getDefaultData(
-        loginUser);
+    DefaultResponse defaultResponse =
+        await DefaultRepository().getDefaultData(loginUser);
 
     if (defaultResponse.response.code == 200) {
       defaultData = defaultResponse.data;
+      setState(() {});
     }
 
+    getUploadDocumentData();
+  }
+
+  Future<void> getUploadDocumentData() async {
+    DocumentResponse documentResponse = await DocumentRepository()
+        .getUploadDocumentData(loginUser, defaultData.versionId);
+
+    if (documentResponse.response.code == 200) {
+      documentList = documentResponse.data;
+
+      imageList.forEach((key, imageFile) async {
+        Document? document = documentList
+            .where((document) => document.uniqueId == imageFile?.uniqueId)
+            .firstOrNull;
+        if (document != null) {
+          imageFile?.isDeleteLoading = true;
+          setState(() {});
+
+          imageFile?.id = document.id;
+          imageFile?.filePath = document.docUrl;
+          imageFile?.isDeleteLoading = false;
+          setState(() {});
+        }
+      });
+    }
+
+    isPageLoading = false;
     setState(() {});
   }
 
@@ -92,10 +125,11 @@ class DocumentFileState extends State<DocumentFilePage> {
         'file_path': file.path
       };
 
-      DocumentResponse documentResponse = await DocumentRepository()
-          .uploadDocument(postBody, loginUser);
+      DocumentResponse documentResponse =
+          await DocumentRepository().uploadDocument(postBody, loginUser);
       if (documentResponse.response.code != 200) {
-        showErrorDialog('Error is occur, please contact admin');
+        showErrorDialog(
+            documentResponse.response.message ?? AppConfig.ERR_MESSAGE);
 
         setState(() {
           imageFile.isLoading = false;
@@ -105,8 +139,9 @@ class DocumentFileState extends State<DocumentFilePage> {
         setState(() {
           imageFile.isLoading = false;
           isEnabled = true;
-          imageFile.id = documentResponse.data.id;
+          imageFile.id = documentResponse.data.firstOrNull!.id;
           imageFile.file = file;
+          imageFile.filePath = file.path;
         });
       }
     } else {
@@ -170,7 +205,8 @@ class DocumentFileState extends State<DocumentFilePage> {
         DocumentResponse documentResponse =
             await DocumentRepository().deleteDocument(postBody, loginUser);
         if (documentResponse.response.code != 200) {
-          showErrorDialog('Error is occur, please contact admin');
+          showErrorDialog(
+              documentResponse.response.message ?? AppConfig.ERR_MESSAGE);
 
           setState(() {
             imageFile.isDeleteLoading = false;
@@ -179,6 +215,7 @@ class DocumentFileState extends State<DocumentFilePage> {
         } else {
           setState(() {
             imageFile.file = null;
+            imageFile.filePath = null;
             imageFile.isDeleteLoading = false;
             isEnabled = true;
           });
@@ -190,7 +227,7 @@ class DocumentFileState extends State<DocumentFilePage> {
   Future<void> handleContinue() async {
     isLoading = true;
     isEnabled = false;
-    setState(() { });
+    setState(() {});
 
     final Map<String, dynamic> postBody = {
       'version_id': defaultData.versionId,
@@ -200,7 +237,7 @@ class DocumentFileState extends State<DocumentFilePage> {
     DataResponse saveResponse = await ApplicationRepository()
         .saveLoanApplicationStep(postBody, loginUser, stepName);
     if (saveResponse.response.code != 200) {
-      showErrorDialog('Error is occur, please contact admin');
+      showErrorDialog(saveResponse.response.message ?? AppConfig.ERR_MESSAGE);
     } else {
       loginUser.loanFormState = "required_documents";
       await setLoginUser(loginUser);
@@ -225,11 +262,18 @@ class DocumentFileState extends State<DocumentFilePage> {
           height: 120,
           width: double.infinity,
           color: Colors.grey[300],
-          child: (imageFile?.file != null)
+          child: (imageFile?.filePath != null)
               ? Stack(
                   children: [
                     Positioned.fill(
-                      child: Image.file(imageFile!.file!, fit: BoxFit.cover),
+                      child: (imageFile?.file != null)
+                          ? Image.file(imageFile!.file!, fit: BoxFit.cover)
+                          : Image.network(
+                              imageFile!.filePath!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Icon(Icons.broken_image),
+                            ),
                     ),
                     if (imageFile.isDeleteLoading ?? false)
                       Positioned.fill(
@@ -242,13 +286,13 @@ class DocumentFileState extends State<DocumentFilePage> {
                           ),
                         ),
                       ),
-                    if (!(imageFile.isDeleteLoading ?? false))
+                    if (!(imageFile?.isDeleteLoading ?? false))
                       Positioned(
                         top: 4,
                         right: 4,
                         child: GestureDetector(
                           onTap: () {
-                            deleteImage(imageFile);
+                            deleteImage(imageFile!);
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -282,11 +326,11 @@ class DocumentFileState extends State<DocumentFilePage> {
   }
 
   void handlePrevious() {
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => Information1Page()),
     );
-  }  
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -294,66 +338,69 @@ class DocumentFileState extends State<DocumentFilePage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: CustomStyle.primary_color,
-        title: Text('Required Documents', style: CustomStyle.appTitle()),
-        iconTheme: IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            RouteService.goToHome(context);
-          },
+        title: Text(
+          'Required Documents',
+          style: CustomStyle.appTitle(),
         ),
+        iconTheme: IconThemeData(color: Colors.white),
+        automaticallyImplyLeading: true,
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: IntrinsicHeight(
-                  child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RegisterTabBar(activeStep: 1),
-                  Padding(
-                    padding: CustomStyle.pageWithoutTopPadding(),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ...imageList.keys
-                            .map((docType) => buildUploadImageSection(docType))
-                            .toList(),
-                        CustomWidget.verticalSpacing(),
-                        Row(
+          return Stack(children: [
+            if (isPageLoading)
+              CustomWidget.loading()
+            else
+              SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: IntrinsicHeight(
+                      child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RegisterTabBar(activeStep: 1),
+                      Padding(
+                        padding: CustomStyle.pageWithoutTopPadding(),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: CustomWidget.elevatedButton(
-                                enabled: true,
-                                isLoading: false,
-                                text: 'Previous',
-                                onPressed: handlePrevious,
-                              ),
-                            ),
-                            CustomWidget.horizontalSpacing(),
-                            Expanded(
-                              child: CustomWidget.elevatedButton(
-                                enabled: isEnabled,
-                                isLoading: isLoading,
-                                text: 'Continue',
-                                onPressed: handleContinue,
-                              ),
-                            ),
+                            ...imageList.keys
+                                .map((docType) =>
+                                    buildUploadImageSection(docType))
+                                .toList(),
+                            CustomWidget.verticalSpacing(),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: CustomWidget.elevatedButton(
+                                    enabled: true,
+                                    isLoading: false,
+                                    text: 'Previous',
+                                    onPressed: handlePrevious,
+                                  ),
+                                ),
+                                CustomWidget.horizontalSpacing(),
+                                Expanded(
+                                  child: CustomWidget.elevatedButton(
+                                    enabled: isEnabled,
+                                    isLoading: isLoading,
+                                    text: 'Continue',
+                                    onPressed: handleContinue,
+                                  ),
+                                ),
+                              ],
+                            )
                           ],
-                        )
-
-                      ],
-                    ),
-                  ),
-                ],
-              )),
-            ),
-          );
+                        ),
+                      ),
+                    ],
+                  )),
+                ),
+              )
+          ]);
         },
       ),
     );

@@ -157,7 +157,7 @@ class CustomWidget {
     );
   }
 
-  static Widget dropdownButtonFormField({
+  static Widget dropdownButtonDiffValue({
     required String label,
     required Item? selectedValue,
     required List<Item> items,
@@ -201,23 +201,23 @@ class CustomWidget {
     );
   }
 
-  static Widget dropdownButtonFormField2({
+  static Widget dropdownButtonSameValue<T>({
     required String label,
-    required String? selectedValue,
-    required List<Item> items,
+    required T? selectedValue,
+    required List<T> items,
     String key = "",
-    required void Function(String?) onChanged,
+    required void Function(T?) onChanged,
   }) {
     return Column(
       children: [
-        DropdownButtonFormField<String>(
+        DropdownButtonFormField<T>(
           value: selectedValue,
           onChanged: onChanged,
-          items: items.map<DropdownMenuItem<String>>((Item item) {
-            return DropdownMenuItem<String>(
-              value: selectedValue,
+          items: items.map<DropdownMenuItem<T>>((T value) {
+            return DropdownMenuItem<T>(
+              value: value,
               child: Text(
-                item.text?.en ?? '',
+                value.toString(),
                 overflow: TextOverflow.ellipsis,
                 softWrap: false,
                 maxLines: 1,
@@ -225,9 +225,9 @@ class CustomWidget {
             );
           }).toList(),
           selectedItemBuilder: (BuildContext context) {
-            return items.map<Widget>((Item item) {
+            return items.map<Widget>((T value) {
               return Text(
-                item.text?.en ?? '',
+                value.toString(),
                 overflow: TextOverflow.ellipsis,
                 softWrap: false,
                 maxLines: 1,
@@ -374,9 +374,12 @@ class CustomWidget {
       TextEditingController controller,
       DateTime maxDate,
       DateTime minDate) async {
+    final now = DateTime.now();
+    final initialDate = now.isAfter(maxDate) ? maxDate : now;
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: maxDate,
+      initialDate: initialDate,
       firstDate: minDate,
       lastDate: maxDate,
       builder: (context, child) {

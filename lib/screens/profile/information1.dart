@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:synpitarn/data/app_config.dart';
+import 'package:synpitarn/models/data.dart';
 import 'package:synpitarn/models/data_response.dart';
 import 'package:synpitarn/models/default/default_data.dart';
 import 'package:synpitarn/models/default/default_response.dart';
@@ -24,102 +26,115 @@ class Information1State extends State<Information1Page> {
   User loginUser = User.defaultUser();
   DefaultData defaultData = new DefaultData.defaultDefaultData();
 
-  final Map<String, TextEditingController> controllers = {
+  final Map<String, TextEditingController> textControllers = {
     'name': TextEditingController(),
-    'dob': TextEditingController(),
-    'gender': TextEditingController(),
-    'maritalStatus': TextEditingController(),
-    'nationality': TextEditingController(),
-    'education': TextEditingController(),
     'residence': TextEditingController(),
-    'employmentName': TextEditingController(),
-    'officeLocation': TextEditingController(),
-    'branch': TextEditingController(),
+    'name_of_employment': TextEditingController(),
+    'office_location': TextEditingController(),
+    'dob': TextEditingController(),
     'testing': TextEditingController(),
   };
 
-  final List<String> genderList = ['Male', 'Female'];
+  Map<String, dynamic> dropdownControllers = {
+    'martial_status': null,
+    'branch': null,
+    'education': null,
+    'gender': null,
+    'nationality': null,
+  };
 
-  final List<String> maritalStatusList = [
-    'Single',
-    'Married',
-    'Divorced',
-    'Widowed',
-    'Other',
-  ];
-
-  final List<String> nationalityList = [
-    'Thai',
-    'Myanmar',
-    'Khmer',
-    'Laotian',
-    'Other'
-  ];
-
-  final List<String> educationList = [
-    'Basic',
-    'Middle',
-    'High',
-    'Graduated',
-    'No formal Education'
-  ];
-
-  final List<String> branchList = [
-    'Pathumthani',
-    'Lad Lum Kaeo Temporary service Center',
-    'Bang Bon',
-    'Lat Krabang'
-  ];
+  Map<String, dynamic> itemDataList = {
+    'martial_status': [Item.defaultItem()],
+    'branch': [Item.defaultItem()],
+    'education': [Item.defaultItem()],
+    'gender': [Item.defaultItem()],
+    'nationality': [Item.defaultItem()],
+  };
 
   final Set<String> inValidFields = {};
 
-  String? _error;
-
-  String? selectedGender;
-  String? selectedMaritalStatus;
-  String? selectedNationality;
-  String? selectedEduction;
-  String? selectedBranch;
-
+  int pageIndex = 0;
   String stepName = "customer_information";
   bool isLoading = false;
+  bool isPageLoading = true;
 
   @override
   void initState() {
     super.initState();
-
-    controllers.forEach((key, controller) {
-      inValidFields.add(key);
-      controller.addListener(() => _inValidateField(key));
-    });
-
     getDefaultData();
   }
 
   @override
   void dispose() {
-    controllers.values.forEach((controller) => controller.dispose());
+    textControllers.values.forEach((controller) => controller.dispose());
     super.dispose();
   }
 
   Future<void> getDefaultData() async {
-    loginUser = await getLoginUser();
+    isPageLoading = true;
     setState(() {});
 
+    defaultData = new DefaultData.defaultDefaultData();
+    loginUser = await getLoginUser();
+
     DefaultResponse defaultResponse =
-    await DefaultRepository().getDefaultData(loginUser);
+        await DefaultRepository().getDefaultData(loginUser);
 
     if (defaultResponse.response.code == 200) {
       defaultData = defaultResponse.data;
+      Map<String, dynamic> inputData = defaultData.inputData;
+
+      var controls = defaultData.pages[pageIndex].formData.controls;
+
+      setItemDataList(controls);
+      setSavedData(inputData);
     }
+
+    inValidFieldsAdd();
+
+    isPageLoading = false;
+    setState(() {});
+  }
+
+  void setItemDataList(var controls) {
+    itemDataList.forEach((key, item) {
+      var control = controls.firstWhere((control) => control.name == key);
+
+      if (control.items != null) {
+        itemDataList[key] = control.items!
+            .where((item) => item.value != "")
+            .map<Item>((item) => Item.named(value: item.value, text: item.text))
+            .toList();
+        setState(() {});
+      }
+    });
+  }
+
+  void inValidFieldsAdd() {
+    textControllers.forEach((key, controller) {
+      _inValidateField(key);
+      controller.addListener(() => _inValidateField(key));
+    });
+
+    dropdownControllers.forEach((key, item) {
+      inValidFields.remove(key);
+      if (dropdownControllers[key] is Item &&
+          dropdownControllers[key].value.isEmpty) {
+        inValidFields.add(key);
+      } else if (dropdownControllers[key] is List<Item> &&
+          dropdownControllers[key].isEmpty) {
+        inValidFields.add(key);
+      }
+    });
 
     setState(() {});
   }
 
   void _inValidateField(String key) {
     setState(() {
-      _error = null;
-      if (controllers[key]!.text.isEmpty) {
+      inValidFields.remove(key);
+
+      if (textControllers[key]!.text.isEmpty) {
         inValidFields.add(key);
       } else {
         inValidFields.remove(key);
@@ -127,34 +142,53 @@ class Information1State extends State<Information1Page> {
     });
   }
 
+  void setSavedData(Map<String, dynamic> inputData) {
+    textControllers.forEach((key, TextEditingController) {
+      if(inputData.containsKey(key)) {
+        textControllers[key]!.text = inputData[key];
+      }
+    });
+
+    dropdownControllers.forEach((key, dynamic) {
+      if(inputData.containsKey(key)) {
+        dropdownControllers[key] =
+            findMatchData(itemDataList[key]!, inputData[key]);
+      }
+    });
+  }
+
+  Item? findMatchData(List<Item> itemList, String value) {
+    Iterable<Item> matchingItems =
+        itemList.where((item) => item.value == value);
+    return matchingItems.isNotEmpty ? matchingItems.first : null;
+  }
+
   Future<void> handleContinue() async {
     setState(() {
       isLoading = true;
     });
 
-    final Map<String, dynamic> customerInformation = {
-      'name': controllers['name']!.text,
-      'martial_status': selectedMaritalStatus,
-      'residence': controllers['residence']!.text,
-      'name_of_employment': controllers['employmentName']!.text,
-      'office_location': controllers['officeLocation']!.text,
-      'dob': controllers['dob']!.text,
-      'branch': selectedBranch,
-      'education': selectedEduction,
-      'gender': selectedGender,
-      'nationality': controllers['nationality']!.text,
-      'testing': controllers['testing']!.text
+    final Map<String, dynamic> additionalInformation = {
+      ...defaultData.inputData
     };
+
+    textControllers.forEach((key, controller) {
+      additionalInformation[key] = textControllers[key]!.text;
+    });
+
+    dropdownControllers.forEach((key, dynamic) {
+      additionalInformation[key] = dropdownControllers[key]!.value;
+    });
 
     final Map<String, dynamic> postBody = {
       'version_id': defaultData.versionId,
-      'input_data': jsonEncode(customerInformation)
+      'input_data': jsonEncode(additionalInformation),
     };
 
-    DataResponse saveResponse =
-    await ApplicationRepository().saveLoanApplicationStep(postBody, loginUser, stepName);
+    DataResponse saveResponse = await ApplicationRepository()
+        .saveLoanApplicationStep(postBody, loginUser, stepName);
     if (saveResponse.response.code != 200) {
-      showErrorDialog('Error is occur, please contact admin');
+      showErrorDialog(saveResponse.response.message ?? AppConfig.ERR_MESSAGE);
     } else {
       loginUser.loanFormState = stepName;
       await setLoginUser(loginUser);
@@ -181,123 +215,126 @@ class Information1State extends State<Information1Page> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: CustomStyle.primary_color,
-        title: Text('Customer Information', style: CustomStyle.appTitle()),
-        iconTheme: IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            RouteService.goToHome(context);
-          },
+        title: Text(
+          'Customer Information',
+          style: CustomStyle.appTitle(),
         ),
+        iconTheme: IconThemeData(color: Colors.white),
+        automaticallyImplyLeading: true,
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: IntrinsicHeight(
-                  child: Column(
-                spacing: 0,
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RegisterTabBar(activeStep: 0),
-                  Padding(
-                    padding: CustomStyle.pageWithoutTopPadding(),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // CustomWidget.textField(
-                        //     controller: controllers['name']!,
-                        //     label: 'Name (in English)'),
-                        // CustomWidget.datePicker(
-                        //     context: context,
-                        //     controller: controllers['dob']!,
-                        //     label: 'Date of Birth',
-                        //     readOnly: true,
-                        //     maxDate: maxDate,
-                        //     minDate: minDate),
-                        // CustomWidget.dropdownButtonFormField(
-                        //   label: 'Gender',
-                        //   selectedValue: selectedGender,
-                        //   items: genderList.map((gender) => gender).toList(),
-                        //   onChanged: (value) {
-                        //     setState(() {
-                        //       inValidFields.remove('gender');
-                        //       selectedGender = value!;
-                        //     });
-                        //   },
-                        // ),
-                        // CustomWidget.dropdownButtonFormField(
-                        //   label: 'Marital Status',
-                        //   selectedValue: selectedMaritalStatus,
-                        //   items: maritalStatusList,
-                        //   onChanged: (value) {
-                        //     setState(() {
-                        //       inValidFields.remove('maritalStatus');
-                        //       selectedMaritalStatus = value!;
-                        //     });
-                        //   },
-                        // ),
-                        // CustomWidget.dropdownButtonFormField(
-                        //   label: 'Nationality',
-                        //   selectedValue: selectedNationality,
-                        //   items: nationalityList,
-                        //   onChanged: (value) {
-                        //     setState(() {
-                        //       inValidFields.remove('nationality');
-                        //       selectedNationality = value!;
-                        //     });
-                        //   },
-                        // ),
-                        // CustomWidget.dropdownButtonFormField(
-                        //   label: 'Education',
-                        //   selectedValue: selectedEduction,
-                        //   items: educationList,
-                        //   onChanged: (value) {
-                        //     setState(() {
-                        //       inValidFields.remove('education');
-                        //       selectedEduction = value!;
-                        //     });
-                        //   },
-                        // ),
-                        // CustomWidget.textField(
-                        //     controller: controllers['residence']!,
-                        //     label: 'Residence'),
-                        // CustomWidget.textField(
-                        //     controller: controllers['employmentName']!,
-                        //     label: 'Name of Employment'),
-                        // CustomWidget.textField(
-                        //     controller: controllers['officeLocation']!,
-                        //     label: 'Current Work Address'),
-                        // CustomWidget.dropdownButtonFormField(
-                        //   label: 'Branch',
-                        //   selectedValue: selectedBranch,
-                        //   items: branchList,
-                        //   onChanged: (value) {
-                        //     setState(() {
-                        //       inValidFields.remove('branch');
-                        //       selectedBranch = value!;
-                        //     });
-                        //   },
-                        // ),
-                        // CustomWidget.textField(
-                        //     controller: controllers['testing']!,
-                        //     label: 'Testing'),
-                        // CustomWidget.elevatedButton(
-                        //     enabled: inValidFields.isEmpty,
-                        //     isLoading: isLoading,
-                        //     text: 'Continue',
-                        //     onPressed: handleContinue)
-                      ],
-                    ),
-                  ),
-                ],
-              )),
-            ),
-          );
+          return Stack(children: [
+            if (isPageLoading)
+              CustomWidget.loading()
+            else
+              SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: IntrinsicHeight(
+                      child: Column(
+                    spacing: 0,
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RegisterTabBar(activeStep: 0),
+                      Padding(
+                        padding: CustomStyle.pageWithoutTopPadding(),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomWidget.textField(
+                                controller: textControllers['name']!,
+                                label: 'Name (in English)'),
+                            CustomWidget.datePicker(
+                                context: context,
+                                controller: textControllers['dob']!,
+                                label: 'Date of Birth',
+                                readOnly: true,
+                                maxDate: maxDate,
+                                minDate: minDate),
+                            CustomWidget.dropdownButtonDiffValue(
+                              label: 'Gender',
+                              selectedValue: dropdownControllers['gender'],
+                              items: itemDataList['gender']!,
+                              onChanged: (value) {
+                                setState(() {
+                                  inValidFields.remove('gender');
+                                  dropdownControllers['gender'] = value!;
+                                });
+                              },
+                            ),
+                            CustomWidget.dropdownButtonDiffValue(
+                              label: 'Marital Status',
+                              selectedValue: dropdownControllers['martial_status'],
+                              items: itemDataList['martial_status']!,
+                              onChanged: (value) {
+                                setState(() {
+                                  inValidFields.remove('martial_status');
+                                  dropdownControllers['martial_status'] = value!;
+                                });
+                              },
+                            ),
+                            CustomWidget.dropdownButtonDiffValue(
+                              label: 'Nationality',
+                              selectedValue: dropdownControllers['nationality'],
+                              items: itemDataList['nationality']!,
+                              onChanged: (value) {
+                                setState(() {
+                                  inValidFields.remove('nationality');
+                                  dropdownControllers['nationality'] = value!;
+                                });
+                              },
+                            ),
+                            CustomWidget.dropdownButtonDiffValue(
+                              label: 'Education',
+                              selectedValue: dropdownControllers['education'],
+                              items: itemDataList['education']!,
+                              onChanged: (value) {
+                                setState(() {
+                                  inValidFields.remove('education');
+                                  dropdownControllers['education'] = value!;
+                                });
+                              },
+                            ),
+                            CustomWidget.textField(
+                                controller: textControllers['residence']!,
+                                label: 'Residence'),
+                            CustomWidget.textField(
+                                controller: textControllers['name_of_employment']!,
+                                label: 'Name of Employment'),
+                            CustomWidget.textField(
+                                controller: textControllers['office_location']!,
+                                label: 'Current Work Address'),
+                            CustomWidget.dropdownButtonDiffValue(
+                              label: 'Branch',
+                              selectedValue: dropdownControllers['branch'],
+                              items: itemDataList['branch']!,
+                              onChanged: (value) {
+                                setState(() {
+                                  inValidFields.remove('branch');
+                                  dropdownControllers['branch'] = value!;
+                                });
+                              },
+                            ),
+                            CustomWidget.textField(
+                                controller: textControllers['testing']!,
+                                label: 'Testing'),
+                            CustomWidget.elevatedButton(
+                                enabled: inValidFields.isEmpty,
+                                isLoading: isLoading,
+                                text: 'Continue',
+                                onPressed: handleContinue)
+                          ],
+                        ),
+                      ),
+                    ],
+                  )),
+                ),
+              )
+          ]);
         },
       ),
     );

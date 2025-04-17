@@ -242,8 +242,8 @@ class Loan {
       branchSectionTimeSlot: json["branch_section_time_slot"],
       toAppointmentBranch: json["to_appointment_branch"] ?? false,
       loanId: json["loan_id"] ?? "",
-      client: User.fromJson(json["client"]),
-      user: Admin.fromJson(json["user"]),
+      client: json.containsKey('client') ? User.fromJson(json["client"]) : User.defaultUser(),
+      user: json.containsKey('user') ? Admin.fromJson(json["user"]) : Admin.defaultAdmin(),
     );
   }
 }

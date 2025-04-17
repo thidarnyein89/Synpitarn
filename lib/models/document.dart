@@ -2,24 +2,18 @@ import 'dart:convert';
 
 class Document {
   int id = 0;
-  String clientId = "";
-  String versionId = "";
-  String oldVersionId = "";
+  int clientId = 0;
+  int versionId = 0;
+  int oldVersionId = 0;
   String uniqueId = "";
   String oldUniqueId = "";
   String docType = "";
   String docName = "";
-  String docPath = "";
+  String docUrl = "";
   String status = "";
   String type = "";
   String createdAt = "";
   String updatedAt = "";
-  String inputData = "";
-  String loanApplicationId = "";
-  String loanTypeId = "";
-  String oldInputData = "";
-  String timesPerMonth = "";
-  String workPermitUrl = "";
 
   Document.defaultDocument();
 
@@ -32,39 +26,28 @@ class Document {
       required this.oldUniqueId,
       required this.docType,
       required this.docName,
-      required this.docPath,
+      required this.docUrl,
       required this.status,
       required this.type,
       required this.createdAt,
-      required this.updatedAt,
-      required this.inputData,
-      required this.loanApplicationId,
-      required this.loanTypeId,
-      required this.oldInputData,
-      required this.timesPerMonth,
-      required this.workPermitUrl});
+      required this.updatedAt});
 
   factory Document.fromJson(Map<String, dynamic> json) {
     return Document(
-        id: json['id'] ?? 0,
-        clientId: json['client_id'] ?? "",
-        versionId: json['version_id'] ?? "",
-        oldVersionId: json['old_version_id'] ?? "",
-        uniqueId: json['unique_id'] ?? "",
-        oldUniqueId: json['old_unique_id'] ?? "",
-        docType: json['doc_type'] ?? "",
-        docName: json['doc_name'] ?? "",
-        docPath: json['doc_path'] ?? "",
-        status: json['status'] ?? "",
-        type: json['type'] ?? "",
-        createdAt: json['created_at'] ?? "",
-        updatedAt: json['updated_at'] ?? "",
-        inputData: json['input_data'] ?? "",
-        loanApplicationId: json['loan_application_id'] ?? "",
-        loanTypeId: json['loan_type_id'] ?? "",
-        oldInputData: json['old_input_data'] ?? "",
-        timesPerMonth: json['times_per_month'] ?? "",
-        workPermitUrl: json['work_permit_url'] ?? "");
+      id: json['id'] ?? 0,
+      clientId: int.tryParse(json['client_id'].toString()) ?? 0,
+      versionId: int.tryParse(json['version_id'].toString()) ?? 0,
+      oldVersionId: int.tryParse(json['old_version_id'].toString()) ?? 0,
+      uniqueId: json['unique_id'] ?? "",
+      oldUniqueId: json['old_unique_id'] ?? "",
+      docType: json['doc_type'] ?? "",
+      docName: json['doc_name'] ?? "",
+      docUrl: json['doc_url'] ?? "",
+      status: json['status'] ?? "",
+      type: json['type'] ?? "",
+      createdAt: json['created_at'] ?? "",
+      updatedAt: json['updated_at'] ?? "",
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -77,17 +60,11 @@ class Document {
       'old_unique_id': oldUniqueId,
       'doc_type': docType,
       'doc_name': docName,
-      'doc_path': docPath,
+      'doc_url': docUrl,
       'status': status,
       'type': type,
       'created_at': createdAt,
-      'updated_at': updatedAt,
-      'input_data': inputData,
-      'loan_application_id': loanApplicationId,
-      'loan_type_id': loanTypeId,
-      'old_input_data': oldInputData,
-      'times_per_month': timesPerMonth,
-      'work_permit_url': workPermitUrl
+      'updated_at': updatedAt
     };
   }
 

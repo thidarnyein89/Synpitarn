@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/models/loan.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/data/app_config.dart';
+import 'package:intl/intl.dart';
 
 class PendingPage extends StatefulWidget {
-  const PendingPage({super.key});
+  Loan applicationData;
+
+  PendingPage({super.key, required this.applicationData});
 
   @override
   PendingState createState() => PendingState();
@@ -24,6 +28,16 @@ class PendingState extends State<PendingPage> {
   }
 
   void handleReSubmit() {}
+
+  String formatDate(String rawDate) {
+    DateTime parsedDate = DateTime.parse(rawDate);
+    return DateFormat("dd MMM yyyy").format(parsedDate);
+  }
+
+  String formatTime(String rawTime) {
+    DateTime parsedTime = DateFormat("HH:mm:ss").parse(rawTime);
+    return DateFormat("hh:mm a").format(parsedTime); // 12-hour with AM/PM
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +62,22 @@ class PendingState extends State<PendingPage> {
                       ),
                       CustomWidget.verticalSpacing(),
                       CustomWidget.verticalSpacing(),
-                      _buildRow("Contract No", "202503310015"),
-                      _buildRow("Loan Applied Date", "31 Mar 2025"),
-                      _buildRow("Request Interview Date", "02 Apr 2025"),
-                      _buildRow("Request Interview Time", "8:00 AM"),
-                      _buildRow("Loan Status", "Pending"),
+                      _buildRow("Contract No",
+                          widget.applicationData.contractNo.toString()),
+                      _buildRow(
+                          "Loan Applied Date",
+                          formatDate(
+                              widget.applicationData.createdAt.toString())),
+                      _buildRow(
+                          "Request Interview Date",
+                          formatDate(widget.applicationData.appointmentDate
+                              .toString())),
+                      _buildRow(
+                          "Request Interview Time",
+                          formatTime(widget.applicationData.appointmentTime
+                              .toString())),
+                      _buildRow("Loan Status",
+                          widget.applicationData.appointmentStatus.toString()),
                       CustomWidget.verticalSpacing(),
                       Text(
                         "Your need to take interview appointment again",

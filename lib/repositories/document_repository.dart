@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:ui';
 
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -44,6 +42,21 @@ class DocumentRepository {
         "x-user-id": loginUser.id.toString(),
       },
       body: jsonEncode(postBody),
+    );
+
+    return DocumentResponse.documentResponseFromJson(response.body);
+  }
+
+  Future<DocumentResponse> getUploadDocumentData(User loginRequest, int versionId) async {
+    String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/form/type/default/upload-file?version_id=$versionId");
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer ${loginRequest.token}",
+        "x-user-id": loginRequest.id.toString(),
+      },
     );
 
     return DocumentResponse.documentResponseFromJson(response.body);

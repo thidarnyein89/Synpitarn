@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/data.dart';
@@ -25,140 +26,42 @@ class Information2State extends State<Information2Page> {
   User loginUser = User.defaultUser();
   DefaultData defaultData = new DefaultData.defaultDefaultData();
 
-  final Map<String, TextEditingController> controllers = {
+  final Map<String, TextEditingController> textControllers = {
     'debit': TextEditingController(),
-    'monthlyRepaymentForDebit': TextEditingController(),
+    'monthly_repayment_for_debit': TextEditingController(),
     'salary': TextEditingController(),
-    'loanAmount': TextEditingController(),
-    'socialLinks': TextEditingController(),
-    'referralCode': TextEditingController(),
-    'otherReason': TextEditingController(),
+    'loan_amount': TextEditingController(),
+    'social_links': TextEditingController(),
+    'referral_code': TextEditingController(),
+    'other_reason_for_main_purpose_of_loan': TextEditingController(),
   };
 
-  Map<String, dynamic> selectedFormData = {
-    'selectedWorkingYear': Item.defaultItem(),
-    'selectedWorkingMonth': Item.defaultItem(),
-    'selectedLoanTermMonth': Item.defaultItem(),
-    'selectedLoanTermYear': Item.defaultItem(),
-    'selectedWorkType': Item.defaultItem(),
-    'selectedIndustry': Item.defaultItem(),
-    'selectedPurposes': [Item.defaultItem()]
+  Map<String, dynamic> dropdownControllers = {
+    'year_working_in_thailand': null,
+    'month_working_in_thailand': null,
+    'loan_term_month': null,
+    'loan_term_year': null,
+    'type_of_work': null,
+    'industry': null,
+    'main_purpose_of_loan': [Item.defaultItem()]
+  };
+
+  Map<String, List<Item>> itemDataList = {
+    "year_working_in_thailand": [Item.defaultItem()],
+    "month_working_in_thailand": [Item.defaultItem()],
+    "type_of_work": [Item.defaultItem()],
+    "industry": [Item.defaultItem()],
+    "loan_term_year": [Item.defaultItem()],
+    "loan_term_month": [Item.defaultItem()],
+    "main_purpose_of_loan": [Item.defaultItem()]
   };
 
   final Set<String> inValidFields = {};
 
-  final List<Item> yearList = [
-    Item.named(value: "0", text: "0"),
-    Item.named(value: "1", text: "1"),
-    Item.named(value: "2", text: "2"),
-    Item.named(value: "3", text: "3"),
-    Item.named(value: "4", text: "4"),
-    Item.named(value: "5", text: "5"),
-    Item.named(value: "6", text: "6"),
-    Item.named(value: "7", text: "7"),
-    Item.named(value: "8", text: "8"),
-    Item.named(value: "9", text: "9"),
-    Item.named(value: "10", text: "10"),
-    Item.named(value: "10+", text: "10+"),
-    Item.named(value: "20+", text: "20+"),
-  ];
-
-  final List<Item> monthList = [
-    Item.named(value: "0", text: "0"),
-    Item.named(value: "1", text: "1"),
-    Item.named(value: "2", text: "2"),
-    Item.named(value: "3", text: "3"),
-    Item.named(value: "4", text: "4"),
-    Item.named(value: "5", text: "5"),
-    Item.named(value: "6", text: "6"),
-    Item.named(value: "7", text: "7"),
-    Item.named(value: "8", text: "8"),
-    Item.named(value: "9", text: "9"),
-    Item.named(value: "10", text: "10"),
-  ];
-
-  final List<Item> workTypeList = [
-    Item.named(
-        value: "factory",
-        text: "စက်ရုံဝန်ထမ်း | Factory Worker | พนักงานโรงงาน"),
-    Item.named(
-        value: "office",
-        text: "ကုမ္ပဏီဝန်ထမ်း | Office worker | พนักงานสำนักงานบริษัทเอก"),
-    Item.named(
-        value: "labourer",
-        text: "အလုပ်သမား | Labourer | แรงงาน (ที่ไม่ได้ทำงานในโรง"),
-    Item.named(value: "other_2", text: "အခြား | Other | อื่")
-  ];
-
-  final List<Item> industryList = [
-    Item.named(
-        value: "agriculture_&_forestry",
-        text:
-            "စိုက်ပျိုးရေးနှင့်သစ်တော | Agriculture & forestry | เกษตรกรรม และการป่าไ"),
-    Item.named(value: "fishery", text: " ငါးလုပ်ငန်း | Fishery | การประมง "),
-    Item.named(
-        value: "mining",
-        text: "သတ္တုတွင်း | Mining | การทำเหมืองแร่และเหมืองหิน "),
-    Item.named(
-        value: "manufacturing",
-        text: "ကုန်ထုတ်လုပ်မှု | Manufacturing | การผลิต "),
-    Item.named(
-        value: "construction",
-        text: "ဆောက်လုပ်ရေး | Construction | การก่อสร้าง "),
-    Item.named(
-        value: "retail", text: "အရောင်းအဝယ် | Retail | การขายส่ง การขายปลีก"),
-    Item.named(
-        value: "transportation & warehousing",
-        text:
-            "သယ်ယူပို့ဆောင်ရေးနှင့်သိုလှောင်ရုံ | Transportation & warehousing | การขนส่ง สถานที่เก็บสินค้าและการคมนาคม"),
-    Item.named(
-        value: "automotive services",
-        text:
-            "မော်တော်ယာဉ် ဝန်ဆောင်မှု | Automotive services | บริการด้าน ยานยนต์ "),
-    Item.named(
-        value: "health & education",
-        text:
-            "ကျန်းမာရေးနှင့်ပညာရေး | Health & Education | การบริการด้านสุขภาพและการศึกษา "),
-    Item.named(
-        value: "community services",
-        text:
-            "လူမှု၀န်ဆောင်မှု | Community services | บริการชุมชน สังคมและบริการส่วนบุคคลอื่นๆ"),
-    Item.named(
-        value: "housemaid",
-        text: "အိမ်အကူ | Housemaid | ลูกจ้างในครัวเรือนส่วนบุคคล"),
-    Item.named(value: "other_4", text: "အခြား | Other | อื่น ๆ")
-  ];
-
-  final List<Item> loanPurposes = [
-    Item.named(
-        value: "send_home", text: "အိမ်ပြန်ပို့ရန် | Send home | ส่งกลับบ้"),
-    Item.named(
-        value: "repay_loan_shark",
-        text: "တခြားချေးငွေ ပြန်ဆပ်ရန် | Repay loan shark | ชำระคืนเงินกู้นอก"),
-    Item.named(
-        value: "personal_consumption",
-        text:
-            "ကိုယ်ပိုင်သုံးစွဲရန် (နေထိုင်စရိပ်) | Personal consumption (Living Expense) | ใช้จ่ายส่วนตัว (ใช้จ่ายปร)"),
-    Item.named(
-        value: "personal_consumption_purchase",
-        text:
-            "ကိုယ်ပိုင်သုံးစွဲရန် (ပိုင်ဆိုင်မှုပစ္စည်းဝယ်ရန်, ဥပမာ ဖုန်း, TV) | Personal consumption (To purchase capital goods, e.g., mobile phone or TV) | ใช้จ่ายส่วนตัว (ซื้อทรัพย์สิน เช่น โทรศัพท์มือถือ ทีวี)"),
-    Item.named(
-        value: "personal_medical",
-        text: "ကိုယ်ပိုင်ဆေးကုသရန် | Personal medical | ค่ารักษาพยาบาล"),
-    Item.named(
-        value: "document_extension",
-        text:
-            "စာရွက်စာတမ်း သက်တမ်းတိုးရန် (‌ဝေါ့ပါမစ်၊ ဗီဇာ.,) | Document Extension ( Work Permit, Visa., ) | เอกสารที่ใช้ในการการต่ออายุวีซ่าและใบอนุญาตทำงาน "),
-    Item.named(
-        value: "other_reasons",
-        text: "အခြားအကြောင်းပြချက် | Other reasons | อื่นๆ "),
-  ];
-
+  int pageIndex = 2;
   String stepName = "additional_information";
   bool isLoading = false;
   bool isPageLoading = true;
-  String? _error;
 
   @override
   void initState() {
@@ -169,12 +72,7 @@ class Information2State extends State<Information2Page> {
   @override
   void dispose() {
     super.dispose();
-    controllers.values.forEach((controller) => controller.dispose());
-  }
-
-  Item? findMatchData(List<Item> itemList, String data) {
-    Iterable<Item> matchingItems = itemList.where((item) => item.value == data);
-    return matchingItems.isNotEmpty ? matchingItems.first : null;
+    textControllers.values.forEach((controller) => controller.dispose());
   }
 
   Future<void> getDefaultData() async {
@@ -191,52 +89,10 @@ class Information2State extends State<Information2Page> {
       defaultData = defaultResponse.data;
       Map<String, dynamic> inputData = defaultData.inputData;
 
-      selectedFormData['selectedWorkingYear'] =
-          findMatchData(yearList, inputData['year_working_in_thailand']);
-      selectedFormData['selectedWorkingMonth'] =
-          findMatchData(monthList, inputData['month_working_in_thailand']);
-      selectedFormData['selectedWorkType'] =
-          findMatchData(workTypeList, inputData['type_of_work']);
-      selectedFormData['selectedIndustry'] =
-          findMatchData(industryList, inputData['industry']);
+      var controls = defaultData.pages[pageIndex].formData.controls;
 
-      controllers['debit']!.text =
-          inputData.containsKey('debit') ? inputData['debit'] : null;
-
-      controllers['monthlyRepaymentForDebit']!.text =
-          inputData.containsKey('monthly_repayment_for_debit')
-              ? inputData['monthly_repayment_for_debit']
-              : null;
-
-      controllers['salary']!.text =
-          inputData.containsKey('salary') ? inputData['salary'] : null;
-
-      controllers['loanAmount']!.text = inputData.containsKey('loan_amount')
-          ? inputData['loan_amount']
-          : null;
-
-      selectedFormData['selectedLoanTermYear'] =
-          findMatchData(yearList, inputData['loan_term_year']);
-      selectedFormData['selectedLoanTermMonth'] =
-          findMatchData(monthList, inputData['loan_term_month']);
-
-      controllers['socialLinks']!.text = inputData.containsKey('social_links')
-          ? inputData['social_links']
-          : null;
-
-      controllers['referralCode']!.text = inputData.containsKey('referral_code')
-          ? inputData['referral_code']
-          : null;
-
-      selectedFormData['selectedPurposes'] = loanPurposes
-          .where(
-              (item) => inputData['main_purpose_of_loan'].contains(item.value))
-          .toList();
-
-      controllers['otherReason']!.text =
-          inputData.containsKey('other_reason_for_main_purpose_of_loan')
-              ? inputData['other_reason_for_main_purpose_of_loan']
-              : null;
+      setItemDataList(controls);
+      setSavedData(inputData);
     }
 
     inValidFieldsAdd();
@@ -245,35 +101,81 @@ class Information2State extends State<Information2Page> {
     setState(() {});
   }
 
-  void inValidFieldsAdd() {
-    controllers.forEach((key, controller) {
-      inValidFields.add(key);
-      _inValidateField(key, 'controller');
-      controller.addListener(() => _inValidateField(key, 'controller'));
-    });
+  void setItemDataList(var controls) {
+    itemDataList.forEach((key, item) {
+      var control = controls.firstWhere((control) => control.name == key);
 
-    inValidFields.remove("otherReason");
-
-    selectedFormData.forEach((key, item) {
-      inValidFields.add(key);
-      _inValidateField(key, 'item');
+      if (control.items != null) {
+        itemDataList[key] = control.items!
+            .where((item) => item.value != "")
+            .map<Item>((item) => Item.named(value: item.value, text: item.text))
+            .toList();
+        setState(() {});
+      }
     });
   }
 
-  void _inValidateField(String key, String type) {
-    setState(() {
-      _error = null;
-      inValidFields.remove(key);
-      if (type == 'controller' && controllers[key]!.text.isEmpty) {
-        inValidFields.add(key);
-      } else if (type == 'item') {
-        if (selectedFormData[key] is Item &&
-            selectedFormData[key].value.isEmpty) {
-          inValidFields.add(key);
-        } else if (selectedFormData[key] is List<Item> &&
-            selectedFormData[key].isEmpty) {
-          inValidFields.add(key);
+  void setSavedData(Map<String, dynamic> inputData) {
+    textControllers.forEach((key, TextEditingController) {
+      if(inputData.containsKey(key)) {
+        textControllers[key]!.text = inputData[key];
+      }
+    });
+
+    dropdownControllers.forEach((key, dynamic) {
+      if(inputData.containsKey(key)) {
+        if (key == 'main_purpose_of_loan') {
+          List<String> values = (inputData[key] as List).cast<String>();
+          dropdownControllers[key] =
+              findMultipleMatchData(itemDataList[key]!, values);
+        } else {
+          dropdownControllers[key] =
+              findMatchData(itemDataList[key]!, inputData[key]);
         }
+      }
+    });
+  }
+
+  Item? findMatchData(List<Item> itemList, String value) {
+    Iterable<Item> matchingItems =
+        itemList.where((item) => item.value == value);
+    return matchingItems.isNotEmpty ? matchingItems.first : null;
+  }
+
+  List<Item> findMultipleMatchData(List<Item> itemList, List<String> values) {
+    return itemList.where((item) => values.contains(item.value)).toList();
+  }
+
+  void inValidFieldsAdd() {
+    textControllers.forEach((key, controller) {
+      _inValidateField(key);
+      controller.addListener(() => _inValidateField(key));
+    });
+
+    inValidFields.remove("other_reason_for_main_purpose_of_loan");
+
+    dropdownControllers.forEach((key, item) {
+      inValidFields.remove(key);
+      if (dropdownControllers[key] is Item &&
+          dropdownControllers[key].value.isEmpty) {
+        inValidFields.add(key);
+      } else if (dropdownControllers[key] is List<Item> &&
+          dropdownControllers[key].isEmpty) {
+        inValidFields.add(key);
+      }
+    });
+
+    setState(() {});
+  }
+
+  void _inValidateField(String key) {
+    setState(() {
+      inValidFields.remove(key);
+
+      if (textControllers[key]!.text.isEmpty) {
+        inValidFields.add(key);
+      } else {
+        inValidFields.remove(key);
       }
     });
   }
@@ -283,27 +185,21 @@ class Information2State extends State<Information2Page> {
     setState(() {});
 
     final Map<String, dynamic> additionalInformation = {
-      ...defaultData.inputData,
-      'year_working_in_thailand':
-          selectedFormData['selectedWorkingYear']?.value,
-      'month_working_in_thailand':
-          selectedFormData['selectedWorkingMonth']?.value,
-      'type_of_work': selectedFormData['selectedWorkType']?.value,
-      'industry': selectedFormData['selectedIndustry']?.value,
-      'debit': controllers['debit']!.text,
-      'monthly_repayment_for_debit':
-          controllers['monthlyRepaymentForDebit']!.text,
-      'salary': controllers['salary']!.text,
-      'loan_amount': controllers['loanAmount']!.text,
-      'loan_term_year': selectedFormData['selectedLoanTermYear']?.value,
-      'loan_term_month': selectedFormData['selectedLoanTermMonth']?.value,
-      'social_links': controllers['socialLinks']!.text,
-      'referral_code': controllers['referralCode']!.text,
-      'main_purpose_of_loan': selectedFormData['selectedPurposes']
-          .map((item) => item.value)
-          .toList(),
-      'other_reason_for_main_purpose_of_loan': controllers['otherReason']!.text
+      ...defaultData.inputData
     };
+
+    textControllers.forEach((key, controller) {
+      additionalInformation[key] = textControllers[key]!.text;
+    });
+
+    dropdownControllers.forEach((key, dynamic) {
+      if (key == 'main_purpose_of_loan') {
+        additionalInformation[key] =
+            dropdownControllers[key]!.map((item) => item.value).toList();
+      } else {
+        additionalInformation[key] = dropdownControllers[key]!.value;
+      }
+    });
 
     final Map<String, dynamic> postBody = {
       'version_id': defaultData.versionId,
@@ -313,7 +209,7 @@ class Information2State extends State<Information2Page> {
     DataResponse saveResponse = await ApplicationRepository()
         .saveLoanApplicationStep(postBody, loginUser, stepName);
     if (saveResponse.response.code != 200) {
-      showErrorDialog('Error is occur, please contact admin');
+      showErrorDialog(saveResponse.response.message ?? AppConfig.ERR_MESSAGE);
     } else {
       loginUser.loanFormState = stepName;
       await setLoginUser(loginUser);
@@ -325,7 +221,7 @@ class Information2State extends State<Information2Page> {
   }
 
   void handlePrevious() {
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => DocumentFilePage()),
     );
@@ -343,14 +239,12 @@ class Information2State extends State<Information2Page> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: CustomStyle.primary_color,
-        title: Text('Additional Information', style: CustomStyle.appTitle()),
-        iconTheme: IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            RouteService.goToHome(context);
-          },
+        title: Text(
+          'Additional Information',
+          style: CustomStyle.appTitle(),
         ),
+        iconTheme: IconThemeData(color: Colors.white),
+        automaticallyImplyLeading: true,
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -379,105 +273,98 @@ class Information2State extends State<Information2Page> {
                                 style: CustomStyle.subTitleBold(),
                               ),
                               CustomWidget.verticalSpacing(),
-                              CustomWidget.dropdownButtonFormField(
+                              CustomWidget.dropdownButtonDiffValue(
                                 label: 'Year',
-                                selectedValue:
-                                    selectedFormData['selectedWorkingYear'],
-                                items: yearList,
+                                selectedValue: dropdownControllers[
+                                    'year_working_in_thailand'],
+                                items:
+                                    itemDataList['year_working_in_thailand']!,
                                 onChanged: (value) {
                                   setState(() {
-                                    controllers['workingYear']?.text =
-                                        value!.value;
-                                    selectedFormData['selectedWorkingYear'] =
-                                        value!;
+                                    inValidFields
+                                        .remove('year_working_in_thailand');
+                                    dropdownControllers[
+                                        'year_working_in_thailand'] = value!;
                                   });
                                 },
                               ),
-                              CustomWidget.dropdownButtonFormField(
+                              CustomWidget.dropdownButtonDiffValue(
                                 label: 'Month',
-                                selectedValue:
-                                    selectedFormData['selectedWorkingMonth'],
-                                items: monthList,
+                                selectedValue: dropdownControllers[
+                                    'month_working_in_thailand'],
+                                items:
+                                    itemDataList['month_working_in_thailand']!,
                                 onChanged: (value) {
                                   setState(() {
-                                    controllers['workingMonth']?.text =
-                                        value!.value;
-                                    selectedFormData['selectedWorkingMonth'] =
-                                        value!;
+                                    inValidFields
+                                        .remove('month_working_in_thailand');
+                                    dropdownControllers[
+                                        'month_working_in_thailand'] = value!;
                                   });
                                 },
                               ),
-                              CustomWidget.dropdownButtonFormField(
+                              CustomWidget.dropdownButtonDiffValue(
                                 label: 'Type of Work',
-                                selectedValue:
-                                    selectedFormData['selectedWorkType'],
-                                items: workTypeList,
+                                selectedValue: dropdownControllers['type_of_work'],
+                                items: itemDataList['type_of_work']!,
                                 onChanged: (Item? value) {
                                   setState(() {
-                                    controllers['workType']?.text =
-                                        value!.value;
-                                    selectedFormData['selectedWorkType'] =
-                                        value!;
+                                    inValidFields.remove('type_of_work');
+                                    dropdownControllers['type_of_work'] = value!;
                                   });
                                 },
                               ),
-                              CustomWidget.dropdownButtonFormField(
+                              CustomWidget.dropdownButtonDiffValue(
                                 label: 'Industry',
-                                selectedValue:
-                                    selectedFormData['selectedIndustry'],
-                                items: industryList,
+                                selectedValue: dropdownControllers['industry'],
+                                items: itemDataList['industry']!,
                                 onChanged: (value) {
                                   setState(() {
-                                    controllers['industry']?.text =
-                                        value!.value;
-                                    selectedFormData['selectedIndustry'] =
-                                        value!;
+                                    inValidFields.remove('industry');
+                                    dropdownControllers['industry'] = value!;
                                   });
                                 },
                               ),
                               CustomWidget.textField(
-                                  controller: controllers['debit']!,
+                                  controller: textControllers['debit']!,
                                   label:
                                       'How much debit do you owe currently?'),
                               CustomWidget.numberTextField(
-                                  controller:
-                                      controllers['monthlyRepaymentForDebit']!,
+                                  controller: textControllers[
+                                      'monthly_repayment_for_debit']!,
                                   label: 'Monthly repayment for debit'),
                               CustomWidget.numberTextField(
-                                  controller: controllers['salary']!,
+                                  controller: textControllers['salary']!,
                                   label: 'Salary'),
                               CustomWidget.numberTextField(
-                                  controller: controllers['loanAmount']!,
+                                  controller: textControllers['loan_amount']!,
                                   label: 'Loan amount'),
                               Text(
                                 "Loan Term",
                                 style: CustomStyle.subTitleBold(),
                               ),
                               CustomWidget.verticalSpacing(),
-                              CustomWidget.dropdownButtonFormField(
+                              CustomWidget.dropdownButtonDiffValue(
                                 label: 'Year',
                                 selectedValue:
-                                    selectedFormData['selectedLoanTermYear'],
-                                items: yearList,
+                                    dropdownControllers['loan_term_year'],
+                                items: itemDataList['loan_term_year']!,
                                 onChanged: (value) {
                                   setState(() {
-                                    controllers['loanTermYear']?.text =
-                                        value!.value;
-                                    selectedFormData['selectedLoanTermYear'] =
-                                        value!;
+                                    inValidFields.remove('loan_term_year');
+                                    dropdownControllers['loan_term_year'] = value!;
                                   });
                                 },
                               ),
-                              CustomWidget.dropdownButtonFormField(
+                              CustomWidget.dropdownButtonDiffValue(
                                 label: 'Month',
                                 selectedValue:
-                                    selectedFormData['selectedLoanTermMonth'],
-                                items: monthList,
+                                    dropdownControllers['loan_term_month'],
+                                items: itemDataList['loan_term_month']!,
                                 onChanged: (value) {
                                   setState(() {
-                                    controllers['loanTermMonth']?.text =
-                                        value!.value;
-                                    selectedFormData['selectedLoanTermMonth'] =
+                                    inValidFields.remove('loan_term_month');
+                                    dropdownControllers['loan_term_month'] =
                                         value!;
                                   });
                                 },
@@ -491,69 +378,76 @@ class Information2State extends State<Information2Page> {
                                     style: CustomStyle.subTitleBold(),
                                   ),
                                   CustomWidget.verticalSpacing(),
-                                  ...loanPurposes.map((purpose) =>
-                                      CustomWidget.checkbox(
-                                          selectedFormData['selectedPurposes'],
-                                          purpose, () {
-                                        setState(() {
-                                          if (selectedFormData[
-                                                  'selectedPurposes']
-                                              .any((item) =>
-                                                  item.value ==
-                                                  purpose.value)) {
-                                            selectedFormData['selectedPurposes']
-                                                .removeWhere((item) =>
-                                                    item.value ==
-                                                    purpose.value);
-                                          } else {
-                                            selectedFormData['selectedPurposes']
-                                                .add(purpose);
-                                          }
-
-                                          if (selectedFormData[
-                                                  'selectedPurposes']
-                                              .isNotEmpty) {
-                                            inValidFields.remove("mainPurpose");
-                                          } else {
-                                            inValidFields.add("mainPurpose");
-                                          }
-
-                                          if (purpose.value ==
-                                              'other_reasons') {
-                                            controllers['otherReason']?.text =
-                                                "";
-
-                                            bool isOtherSelected =
-                                                selectedFormData[
-                                                        'selectedPurposes']
-                                                    .any((item) =>
+                                  ...itemDataList['main_purpose_of_loan']!.map(
+                                      (purpose) => CustomWidget.checkbox(
+                                              dropdownControllers[
+                                                  'main_purpose_of_loan'],
+                                              purpose, () {
+                                            setState(() {
+                                              if (dropdownControllers[
+                                                      'main_purpose_of_loan']
+                                                  .any((item) =>
+                                                      item.value ==
+                                                      purpose.value)) {
+                                                dropdownControllers[
+                                                        'main_purpose_of_loan']
+                                                    .removeWhere((item) =>
                                                         item.value ==
-                                                        'other_reasons');
+                                                        purpose.value);
+                                              } else {
+                                                dropdownControllers[
+                                                        'main_purpose_of_loan']
+                                                    .add(purpose);
+                                              }
 
-                                            if (isOtherSelected) {
-                                              inValidFields.add("otherReason");
-                                            } else {
-                                              inValidFields
-                                                  .remove("otherReason");
-                                            }
-                                          }
-                                        });
-                                      })),
+                                              if (dropdownControllers[
+                                                      'main_purpose_of_loan']
+                                                  .isNotEmpty) {
+                                                inValidFields.remove(
+                                                    "main_purpose_of_loan");
+                                              } else {
+                                                inValidFields.add(
+                                                    "main_purpose_of_loan");
+                                              }
+
+                                              if (purpose.value ==
+                                                  'other_reasons') {
+                                                textControllers[
+                                                        'other_reason_for_main_purpose_of_loan']
+                                                    ?.text = "";
+
+                                                bool isOtherSelected =
+                                                    dropdownControllers[
+                                                            'main_purpose_of_loan']
+                                                        .any((item) =>
+                                                            item.value ==
+                                                            'other_reasons');
+
+                                                if (isOtherSelected) {
+                                                  inValidFields.add(
+                                                      "other_reason_for_main_purpose_of_loan");
+                                                } else {
+                                                  inValidFields.remove(
+                                                      "other_reason_for_main_purpose_of_loan");
+                                                }
+                                              }
+                                            });
+                                          })),
                                 ],
                               ),
-                              if (selectedFormData['selectedPurposes']
+                              if (dropdownControllers['main_purpose_of_loan']
                                   .any((item) => item.value == 'other_reasons'))
                                 CustomWidget.textField(
-                                    controller: controllers['otherReason']!,
+                                    controller: textControllers[
+                                        'other_reason_for_main_purpose_of_loan']!,
                                     label: 'Other reasons'),
                               CustomWidget.verticalSpacing(),
                               CustomWidget.textField(
-                                  controller: controllers['socialLinks']!,
+                                  controller: textControllers['social_links']!,
                                   label: 'Facebook account profile link'),
                               CustomWidget.textField(
-                                  controller: controllers['referralCode']!,
+                                  controller: textControllers['referral_code']!,
                                   label: 'Referral Code'),
-                              Text(inValidFields.join(', ')),
                               Row(
                                 children: [
                                   Expanded(

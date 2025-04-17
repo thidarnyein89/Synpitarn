@@ -111,50 +111,50 @@ class NRCState extends State<NRCPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // CustomWidget.dropdownButtonFormField(
-              //   label: 'State',
-              //   selectedValue: selectedState,
-              //   items: nrcList.map((nrc) => nrc.state).toList(),
-              //   onChanged: (value) {
-              //     setState(() {
-              //       selectedState = value.toString();
-              //       setTownshipData();
-              //     });
-              //   },
-              // ),
-              // CustomWidget.dropdownButtonFormField(
-              //   label: 'Township',
-              //   selectedValue: selectedTownship,
-              //   items: townshipList.map((township) => township.name).toList(),
-              //   onChanged: (value) {
-              //     setState(() {
-              //       selectedTownship = value.toString();
-              //     });
-              //   },
-              // ),
-              // CustomWidget.dropdownButtonFormField(
-              //   label: 'Citizen',
-              //   selectedValue: selectedCitizen,
-              //   items: citizenList,
-              //   onChanged: (value) {
-              //     setState(() {
-              //       selectedCitizen = value.toString();
-              //     });
-              //   },
-              // ),
-              // CustomWidget.numberTextField(
-              //   controller: nrcController,
-              //   label: 'NRC Number',
-              //   focusNode: _nrcFocusNode,
-              // ),
-              // CustomWidget.elevatedButton(
-              //     enabled: selectedState != null &&
-              //         selectedTownship != null &&
-              //         selectedCitizen != null &&
-              //         (isNRCValidate),
-              //     isLoading: false,
-              //     text: 'Continue',
-              //     onPressed: handleNRC),
+              CustomWidget.dropdownButtonSameValue(
+                label: 'State',
+                selectedValue: selectedState,
+                items: nrcList.map((nrc) => nrc.state).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedState = value.toString();
+                    setTownshipData();
+                  });
+                },
+              ),
+              CustomWidget.dropdownButtonSameValue(
+                label: 'Township',
+                selectedValue: selectedTownship,
+                items: townshipList.map((township) => township.name).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedTownship = value.toString();
+                  });
+                },
+              ),
+              CustomWidget.dropdownButtonSameValue(
+                label: 'Citizen',
+                selectedValue: selectedCitizen,
+                items: citizenList,
+                onChanged: (value) {
+                  setState(() {
+                    selectedCitizen = value.toString();
+                  });
+                },
+              ),
+              CustomWidget.numberTextField(
+                controller: nrcController,
+                label: 'NRC Number',
+                focusNode: _nrcFocusNode,
+              ),
+              CustomWidget.elevatedButton(
+                  enabled: selectedState != null &&
+                      selectedTownship != null &&
+                      selectedCitizen != null &&
+                      (isNRCValidate),
+                  isLoading: false,
+                  text: 'Continue',
+                  onPressed: handleNRC),
             ],
           ),
         ),

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
-import 'package:synpitarn/models/application_response.dart';
 import 'package:synpitarn/models/data.dart';
 import 'package:synpitarn/models/data_response.dart';
 import 'package:synpitarn/models/default/default_data.dart';
@@ -28,30 +27,29 @@ class LoanTypeState extends State<LoanTypePage> {
   User loginUser = User.defaultUser();
   DefaultData defaultData = new DefaultData.defaultDefaultData();
 
-  List<Data> loanTypeList = [];
-  List<Data> loanTermList = [];
-  List<Data> provinceList = [];
+  Map<String, dynamic> selectedFormData = {
+    'loan_type_id': null,
+    'times_per_month': null,
+    'province_work': null,
+    'province_resident': null
+  };
 
-  String? selectedLoanType;
-  String? selectedLoanTerm;
-  String? selectedProvinceWork;
-  String? selectedProvinceResidence;
+  Map<String, List<Item>> itemDataList = {
+    "loan_type": [Item.defaultItem()],
+    "times_per_month": [Item.defaultItem()],
+    "province": [Item.defaultItem()],
+  };
 
   final Set<String> inValidFields = {};
 
   String stepName = "choose_loan_type";
   bool isLoading = false;
+  bool isPageLoading = true;
 
   @override
   void initState() {
     super.initState();
-
-    inValidFields.add("loanType");
-    inValidFields.add("loanTerm");
-    inValidFields.add("provinceWork");
-    inValidFields.add("provinceResidence");
-    setState(() {});
-
+    inValidFieldsAdd();
     getDefaultData();
     getData();
   }
@@ -61,7 +59,15 @@ class LoanTypeState extends State<LoanTypePage> {
     super.dispose();
   }
 
+  void inValidFieldsAdd() {
+    selectedFormData.forEach((key, item) {
+      inValidFields.add(key);
+    });
+    setState(() {});
+  }
+
   Future<void> getDefaultData() async {
+    isPageLoading = true;
     loginUser = await getLoginUser();
     setState(() {});
 
@@ -72,27 +78,53 @@ class LoanTypeState extends State<LoanTypePage> {
       defaultData = defaultResponse.data;
     }
 
+    isPageLoading = false;
     setState(() {});
   }
 
   Future<void> getData() async {
+    isPageLoading = true;
+    setState(() {});
+
     DataResponse dataResponse;
 
     dataResponse = await DataRepository().getLoanTypes();
     if (dataResponse.response.code == 200) {
-      loanTypeList = dataResponse.data;
+      final loanTypeItems = dataResponse.data.map<Item>((data) {
+        return Item.named(
+          value: data.id.toString(),
+          text: data.en,
+        );
+      }).toList();
+
+      itemDataList["loan_type"] = loanTypeItems;
     }
 
     dataResponse = await DataRepository().getTimesPerMonth();
     if (dataResponse.response.code == 200) {
-      loanTermList = dataResponse.data;
+      final timesPerMonth = dataResponse.data.map<Item>((data) {
+        return Item.named(
+          value: data.id.toString(),
+          text: data.en,
+        );
+      }).toList();
+
+      itemDataList["times_per_month"] = timesPerMonth;
     }
 
     dataResponse = await DataRepository().getProvinces();
     if (dataResponse.response.code == 200) {
-      provinceList = dataResponse.data;
+      final province = dataResponse.data.map<Item>((data) {
+        return Item.named(
+          value: data.id.toString(),
+          text: data.en,
+        );
+      }).toList();
+
+      itemDataList["province"] = province;
     }
 
+    isPageLoading = false;
     setState(() {});
   }
 
@@ -104,19 +136,14 @@ class LoanTypeState extends State<LoanTypePage> {
     final Map<String, dynamic> postBody = {
       'version_id': defaultData.versionId,
       'input_data': jsonEncode(defaultData.inputData),
-      'loan_type_id':
-          loanTypeList.firstWhere((item) => item.en == selectedLoanType).id,
-      'times_per_month':
-          loanTermList.firstWhere((item) => item.en == selectedLoanTerm).id,
-      'province_work':
-          provinceList.firstWhere((item) => item.en == selectedProvinceWork).id,
-      'province_resident': provinceList
-          .firstWhere((item) => item.en == selectedProvinceResidence)
-          .id,
+      'loan_type_id': selectedFormData['loan_type_id']!.value,
+      'times_per_month': selectedFormData['times_per_month']!.value,
+      'province_work': selectedFormData['province_work']!.value,
+      'province_resident': selectedFormData['province_resident']!.value,
     };
 
-    DataResponse saveResponse =
-        await ApplicationRepository().saveLoanApplicationStep(postBody, loginUser, stepName);
+    DataResponse saveResponse = await ApplicationRepository()
+        .saveLoanApplicationStep(postBody, loginUser, stepName);
     if (saveResponse.response.code != 200) {
       showErrorDialog('Error is occur, please contact admin');
     } else {
@@ -130,7 +157,7 @@ class LoanTypeState extends State<LoanTypePage> {
   }
 
   void handlePrevious() {
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => Information2Page()),
     );
@@ -148,117 +175,112 @@ class LoanTypeState extends State<LoanTypePage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: CustomStyle.primary_color,
-        title: Text('Loan Application', style: CustomStyle.appTitle()),
-        iconTheme: IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            RouteService.goToHome(context);
-          },
+        title: Text(
+          'Loan Application',
+          style: CustomStyle.appTitle(),
         ),
+        iconTheme: IconThemeData(color: Colors.white),
+        automaticallyImplyLeading: true,
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: Column(
-                  spacing: 0,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // RegisterTabBar(activeStep: 3),
-                    // Padding(
-                    //   padding: CustomStyle.pageWithoutTopPadding(),
-                    //   child: Column(
-                    //     mainAxisAlignment: MainAxisAlignment.start,
-                    //     crossAxisAlignment: CrossAxisAlignment.start,
-                    //     children: [
-                    //       CustomWidget.dropdownButtonFormField(
-                    //         label: 'Loan Type',
-                    //         selectedValue: selectedLoanType,
-                    //         items: loanTypeList
-                    //             .map((loanType) => loanType.en)
-                    //             .toList(),
-                    //         onChanged: (value) {
-                    //           setState(() {
-                    //             inValidFields.remove('loanType');
-                    //             selectedLoanType = value!;
-                    //           });
-                    //         },
-                    //       ),
-                    //       CustomWidget.dropdownButtonFormField(
-                    //         label: 'Repayment Term',
-                    //         selectedValue: selectedLoanTerm,
-                    //         items: loanTermList
-                    //             .map((loanTerm) => loanTerm.en)
-                    //             .toList(),
-                    //         onChanged: (value) {
-                    //           setState(() {
-                    //             inValidFields.remove('loanTerm');
-                    //             selectedLoanTerm = value!;
-                    //           });
-                    //         },
-                    //       ),
-                    //       CustomWidget.dropdownButtonFormField(
-                    //         label: 'Province of work',
-                    //         selectedValue: selectedProvinceWork,
-                    //         items: provinceList
-                    //             .map((province) => province.en)
-                    //             .toList(),
-                    //         onChanged: (value) {
-                    //           setState(() {
-                    //             inValidFields.remove('provinceWork');
-                    //             selectedProvinceWork = value!;
-                    //           });
-                    //         },
-                    //       ),
-                    //       CustomWidget.dropdownButtonFormField(
-                    //         label: 'Province of residence',
-                    //         selectedValue: selectedProvinceResidence,
-                    //         items: provinceList
-                    //             .map((province) => province.en)
-                    //             .toList(),
-                    //         onChanged: (value) {
-                    //           setState(() {
-                    //             inValidFields.remove('provinceResidence');
-                    //             selectedProvinceResidence = value!;
-                    //           });
-                    //         },
-                    //       ),
-                    //       Row(
-                    //         children: [
-                    //           Expanded(
-                    //             child: CustomWidget.elevatedButton(
-                    //               enabled: true,
-                    //               isLoading: false,
-                    //               text: 'Previous',
-                    //               onPressed: handlePrevious,
-                    //             ),
-                    //           ),
-                    //           CustomWidget.horizontalSpacing(),
-                    //           Expanded(
-                    //             child: CustomWidget.elevatedButton(
-                    //               enabled: inValidFields.isEmpty,
-                    //               isLoading: isLoading,
-                    //               text: 'Apply Loan',
-                    //               onPressed: handleApplyLoan,
-                    //             ),
-                    //           ),
-                    //         ],
-                    //       )
-                    //     ],
-                    //   ),
-                    // ),
-                    CustomWidget.elevatedButton(
-                      enabled: true,
-                      isLoading: false,
-                      text: 'Previous',
-                      onPressed: handlePrevious,
-                    )
-                  ],
-                )),
-          );
+          return Stack(children: [
+            if (isPageLoading)
+              CustomWidget.loading()
+            else
+              SingleChildScrollView(
+                child: ConstrainedBox(
+                    constraints:
+                        BoxConstraints(minHeight: constraints.maxHeight),
+                    child: Column(
+                      spacing: 0,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RegisterTabBar(activeStep: 3),
+                        Padding(
+                          padding: CustomStyle.pageWithoutTopPadding(),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomWidget.dropdownButtonDiffValue(
+                                label: 'Loan Type',
+                                selectedValue: selectedFormData['loan_type_id'],
+                                items: itemDataList['loan_type']!,
+                                onChanged: (value) {
+                                  setState(() {
+                                    inValidFields.remove('loan_type_id');
+                                    selectedFormData['loan_type_id'] = value!;
+                                  });
+                                },
+                              ),
+                              CustomWidget.dropdownButtonDiffValue(
+                                label: 'Repayment Term',
+                                selectedValue:
+                                    selectedFormData['times_per_month'],
+                                items: itemDataList['times_per_month']!,
+                                onChanged: (value) {
+                                  setState(() {
+                                    inValidFields.remove('times_per_month');
+                                    selectedFormData['times_per_month'] =
+                                        value!;
+                                  });
+                                },
+                              ),
+                              CustomWidget.dropdownButtonDiffValue(
+                                label: 'Province of work',
+                                selectedValue:
+                                    selectedFormData['province_work'],
+                                items: itemDataList['province']!,
+                                onChanged: (value) {
+                                  setState(() {
+                                    inValidFields.remove('province_work');
+                                    selectedFormData['province_work'] = value!;
+                                  });
+                                },
+                              ),
+                              CustomWidget.dropdownButtonDiffValue(
+                                label: 'Province of residence',
+                                selectedValue:
+                                    selectedFormData['province_resident'],
+                                items: itemDataList['province']!,
+                                onChanged: (value) {
+                                  setState(() {
+                                    inValidFields.remove('province_resident');
+                                    selectedFormData['province_resident'] =
+                                        value!;
+                                  });
+                                },
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: CustomWidget.elevatedButton(
+                                      enabled: true,
+                                      isLoading: false,
+                                      text: 'Previous',
+                                      onPressed: handlePrevious,
+                                    ),
+                                  ),
+                                  CustomWidget.horizontalSpacing(),
+                                  Expanded(
+                                    child: CustomWidget.elevatedButton(
+                                      enabled: inValidFields.isEmpty,
+                                      isLoading: isLoading,
+                                      text: 'Apply Loan',
+                                      onPressed: handleApplyLoan,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    )),
+              )
+          ]);
         },
       ),
     );

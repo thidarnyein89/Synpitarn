@@ -22,9 +22,7 @@ class LoginResponse {
     if(json.containsKey("data")) {
       if(json["data"] is int) {
         user.code = json["data"].toString();
-      }
-
-      if (json["data"] is! List<dynamic>) {
+      } else if (json["data"] is! List<dynamic>) {
         user = User.fromJson(json["data"]);
       }
     }

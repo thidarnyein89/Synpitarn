@@ -76,4 +76,23 @@ class ApplicationRepository {
 
     return DataResponse.dataResponseFromJson(response.body);
   }
+
+  Future<DataResponse> saveInterviewAppointment(
+      Map<String, dynamic> postBody, User loginUser) async {
+
+    String url =
+    ("${AppConfig.BASE_URL}/${AppConfig.PATH}/appointment/submit");
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer ${loginUser.token}",
+        "x-user-id": loginUser.id.toString(),
+      },
+      body: jsonEncode(postBody),
+    );
+
+    return DataResponse.dataResponseFromJson(response.body);
+  }
 }

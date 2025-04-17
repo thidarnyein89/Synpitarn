@@ -7,7 +7,7 @@ import 'meta.dart';
 class DocumentResponse {
   final Response response;
   final Meta meta;
-  final Document data;
+  final List<Document> data;
 
   DocumentResponse({
     required this.response,
@@ -19,15 +19,23 @@ class DocumentResponse {
       DocumentResponse.fromJson(json.decode(str));
 
   factory DocumentResponse.fromJson(Map<String, dynamic> json) {
-    Document document = Document.defaultDocument();
-    if (json.containsKey("data") && json["data"] is! List<dynamic>) {
-      document = Document.fromJson(json["data"]);
+    List<Document> documentList = [];
+
+    if (json['data'] != null) {
+      if(json['data'] is List) {
+        for (var data in json['data']) {
+          documentList.add(Document.fromJson(data));
+        }
+      }
+      else {
+        documentList.add(Document.fromJson(json["data"]));
+      }
     }
 
     return DocumentResponse(
       response: Response.fromJson(json["response"]),
       meta: Meta.fromJson(json["meta"]),
-      data: document,
+      data: documentList,
     );
   }
 }

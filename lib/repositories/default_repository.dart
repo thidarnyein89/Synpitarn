@@ -18,4 +18,5 @@ class DefaultRepository {
 
     return DefaultResponse.defaultResponseFromJson(response.body);
   }
+
 }

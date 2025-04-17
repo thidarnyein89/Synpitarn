@@ -23,7 +23,7 @@ class ApplicationResponse {
     return ApplicationResponse(
       response: Response.fromJson(json["response"]),
       meta: Meta.fromJson(json["meta"]),
-      data: json["data"] is Map<String, dynamic> ? Loan.fromJson(json["data"]) : new Loan.defaultLoan(new User.defaultUser(), new Admin.defaultAdmin()),
+      data: json["data"] is Map<String, dynamic> ? Loan.fromJson(json["data"]) : Loan.defaultLoan(User.defaultUser(), Admin.defaultAdmin()),
     );
   }
 }
