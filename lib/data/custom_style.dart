@@ -47,6 +47,13 @@ class CustomStyle {
     );
   }
 
+  static TextStyle bodyOpacity() {
+    return TextStyle(
+      fontSize: 14,
+      color: Colors.black.withAlpha((0.3 * 255).toInt()),
+    );
+  }
+
   static TextStyle bodyUnderline() {
     return TextStyle(
       fontSize: body().fontSize,
@@ -62,6 +69,13 @@ class CustomStyle {
     );
   }
 
+  static TextStyle bodyBold() {
+    return TextStyle(
+      fontSize: body().fontSize,
+      fontWeight: FontWeight.bold
+    );
+  }
+
   static TextStyle bodyWhiteColor() {
     return TextStyle(
       fontSize: 16,
@@ -69,11 +83,22 @@ class CustomStyle {
     );
   }
 
+  static TextStyle bodyGreenColor() {
+    return TextStyle(
+      fontSize: body().fontSize,
+      color: Colors.green,
+    );
+  }
+
   static EdgeInsetsGeometry pagePadding() {
     return EdgeInsets.symmetric(horizontal: 20.0, vertical: 20);
   }
 
-  static EdgeInsetsGeometry sliderPadding() {
+  static EdgeInsetsGeometry pagePaddingMedium() {
+    return EdgeInsets.symmetric(horizontal: 15.0, vertical: 15);
+  }
+
+  static EdgeInsetsGeometry pagePaddingSmall() {
     return EdgeInsets.symmetric(horizontal: 10.0, vertical: 10);
   }
 

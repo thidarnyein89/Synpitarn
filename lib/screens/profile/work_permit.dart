@@ -294,7 +294,7 @@ class WorkPermitState extends State<WorkPermitPage> {
   }
 
   void showErrorDialog(String errorMessage) {
-    CustomWidget.showErrorDialog(context: context, msg: errorMessage);
+    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }

@@ -164,7 +164,7 @@ class LoanTypeState extends State<LoanTypePage> {
   }
 
   void showErrorDialog(String errorMessage) {
-    CustomWidget.showErrorDialog(context: context, msg: errorMessage);
+    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }

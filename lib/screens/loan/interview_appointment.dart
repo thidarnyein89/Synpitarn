@@ -4,15 +4,17 @@ import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/data_response.dart';
 import 'package:synpitarn/models/default/default_data.dart';
+import 'package:synpitarn/models/loan.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/application_repository.dart';
 import 'package:synpitarn/repositories/data_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/loan/appointment-success.dart';
-import 'package:synpitarn/services/route_service.dart';
 
 class InterviewAppointmentPage extends StatefulWidget {
-  const InterviewAppointmentPage({super.key});
+  Loan? applicationData;
+
+  InterviewAppointmentPage({super.key, required this.applicationData});
 
   @override
   InterviewAppointmentState createState() => InterviewAppointmentState();
@@ -33,7 +35,7 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
   };
 
   Map<String, dynamic> itemDataList = {
-    'time': [],
+    'time': <String>[],
     'channel': ['FB Messenger', 'Viber', 'Line'],
   };
 
@@ -84,22 +86,46 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
       }
     });
 
-    if(key == "date") {
+    if (key == "date") {
       inValidFields.add('time');
       dropdownControllers['time'] = null;
       setState(() {});
 
-      getApiTimeList();
+      getDefaultTimeList();
     }
   }
 
   void getDefaultTimeList() {
+    if(textControllers['date']!.text == "") {
+      return;
+    }
+
+    DateTime chooseDate = DateTime.parse(textControllers['date']!.text);
     itemDataList["time"] = <String>[];
 
-    DateTime start = DateTime(0, 1, 1, 7, 0);
-    DateTime end = DateTime(0, 1, 1, 20, 0);
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(now.year, now.month, now.day);
+    DateTime selected =
+        DateTime(chooseDate.year, chooseDate.month, chooseDate.day);
 
-    while (start.isBefore(end) || start.isAtSameMomentAs(end)) {
+    DateTime earliestTime = DateTime(0, 1, 1, 7, 0);
+    DateTime latestTime = DateTime(0, 1, 1, 20, 0);
+
+    DateTime start;
+
+    if (selected.isAtSameMomentAs(today)) {
+      DateTime current =
+          DateTime(0, 1, 1, now.hour, now.minute).add(Duration(minutes: 30));
+      int remainder = current.minute % 30;
+      if (remainder != 0) {
+        current = current.add(Duration(minutes: 30 - remainder));
+      }
+      start = current.isAfter(earliestTime) ? current : earliestTime;
+    } else {
+      start = earliestTime;
+    }
+
+    while (start.isBefore(latestTime) || start.isAtSameMomentAs(latestTime)) {
       final hour = start.hour > 12 ? start.hour - 12 : start.hour;
       final minute = start.minute.toString().padLeft(2, '0');
       final period = start.hour >= 12 ? 'PM' : 'AM';
@@ -124,7 +150,8 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
     if (dataResponse.response.code != 200) {
       showErrorDialog(dataResponse.response.message ?? AppConfig.ERR_MESSAGE);
     } else {
-      itemDataList["time"] = dataResponse.data.map((d) => d.toString()).toList();
+      itemDataList["time"] =
+          dataResponse.data.map((d) => d.toString()).toList();
     }
 
     setState(() {});
@@ -142,10 +169,17 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
       'url': textControllers['url']?.text,
     };
 
-    DataResponse saveResponse = await ApplicationRepository()
-        .saveInterviewAppointment(postBody, loginUser);
-    if (saveResponse.response.code != 200) {
-      showErrorDialog(saveResponse.response.message ?? AppConfig.ERR_MESSAGE);
+    DataResponse response;
+    if (widget.applicationData == null) {
+      response = await ApplicationRepository()
+          .saveInterviewAppointment(postBody, loginUser);
+    } else {
+      response = await ApplicationRepository().updateInterviewAppointment(
+          widget.applicationData!.id, postBody, loginUser);
+    }
+
+    if (response.response.code != 200) {
+      showErrorDialog(response.response.message ?? AppConfig.ERR_MESSAGE);
     } else {
       loginUser.loanApplicationSubmitted = true;
       setLoginUser(loginUser);
@@ -161,7 +195,7 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
   }
 
   void showErrorDialog(String errorMessage) {
-    CustomWidget.showErrorDialog(context: context, msg: errorMessage);
+    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }
@@ -170,7 +204,12 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
   Widget build(BuildContext context) {
     final today = DateTime.now();
     final maxDate = DateTime(today.year, today.month, today.day + 14);
-    final minDate = DateTime(today.year, today.month, today.day);
+    DateTime minDate;
+    if (widget.applicationData == null) {
+      minDate = DateTime(today.year, today.month, today.day);
+    } else {
+      minDate = DateTime(today.year, today.month, today.day + 1);
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,

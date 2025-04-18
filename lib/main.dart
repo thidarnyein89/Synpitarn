@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/auth/login.dart';
 import 'package:synpitarn/screens/auth/register.dart';
+import 'package:synpitarn/screens/home.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       home: Banner(
         message: 'Synpitarn',
         location: BannerLocation.bottomStart,
-        child: MainPage(),
+        child: HomePage(),
       ),
     );
   }

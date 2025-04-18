@@ -5,157 +5,157 @@ import 'package:synpitarn/models/admin.dart';
 
 class Loan {
   int id = 0;
-  String? contractDate = "";
-  String? contractEnd = "";
-  String? contractStart = "";
-  String? contractNo = "";
-  String? contractNoRef = "";
+  String? appointmentBranchDate = "";
+  String? appointmentBranchTime = "";
+  String? appointmentChannel = "";
+  bool appointmentResubmit = false;
   String? appointmentDate = "";
+  String? appointmentStatus = "";
+  List<dynamic> branchSectionTimeSlot = [];
   String? appointmentTime = "";
   String? appointmentUrl = "";
-  String? appointmentChannel = "";
-  String? appointmentStatus = "";
-  String? branch = "";
-  int provinceId = 0;
-  int branchId = 0;
-  String? step = "";
-  String? status = "";
-  String? collectionFee = "";
   String? appliedAmount = "";
   String? approvedAmount = "";
-  String? disbursedAmount = "";
-  String? loanType = "";
-  int isFirstToan = 0;
-  String? loanTerm = "";
-  String? timesPerMonth = "";
-  String? loanInterestRate = "";
-  int clientId = 0;
-  int userId = 0;
-  String? createdAt = "";
-  String? updatedAt = "";
-  String? deletedAt = "";
-  int borrowerId = 0;
-  int borrowerCode = 0;
-  String? borrowerName = "";
+  String? assigneeName = "";
+  String? bankAccountNo = "";
+  int bankId = 0;
+  String? bankMobileNo = "";
+  String? bankType = "";
   String? borrowerAge = "";
-  String? borrowerTel = "";
-  String? borrowerRegistrationAddress = "";
+  int borrowerCode = 0;
   String? borrowerContactAddress = "";
-  String? contractType = "";
+  int borrowerId = 0;
+  String? borrowerName = "";
+  String? borrowerRegistrationAddress = "";
+  String? borrowerTel = "";
+  String? branch = "";
+  int branchId = 0;
   String? branchCode = "";
-  String? loanLateInRate = "";
-  String? loanFineRate = "";
-  String? loanCollectionFee = "";
-  String? repaymentAmountPerPeriod = "";
-  int numberCutoff = 0;
+  int clientId = 0;
+  String? collectionFee = "";
+  String? contractDate = "";
+  String? contractEnd = "";
+  String? contractNo = "";
+  String? contractNoRef = "";
+  String? contractStart = "";
+  String? contractType = "";
+  int currentLoanPlace = 0;
+  String? createdAt = "";
+  String? deletedAt = "";
+  String? disbursedAmount = "";
+  String? disbursementDate = "";
+  String? disbursementDocument = "";
   int dueOn1 = 0;
   int dueOn2 = 0;
   int ect2Rate = 0;
   int ect3Rate = 0;
-  String? disbursementDate = "";
   String? firstCutoffDate = "";
   String? firstDueonDate = "";
-  String? policyDate = "";
-  int bankId = 0;
-  String? bankType = "";
-  String? bankAccountNo = "";
-  String? bankMobileNo = "";
-  String? rejectCode = "";
-  String? documentsRequest = "";
-  String? loanAgreementDocument = "";
-  String? disbursementDocument = "";
-  String? repaymentDocument = "";
   String? invoiceDocument = "";
-  String? receiptDocument = "";
-  String? appointmentBranchDate = "";
-  String? appointmentBranchTime = "";
-  String? rejectDate = "";
-  int currentLoanPlace = 0;
-  String? thLanguageSkill = "";
-  String? synpitarnAppointmentUpdateApiResponse = "";
-  bool appointmentResubmit = false;
-  String? assigneeName = "";
-  List<dynamic> branchSectionTimeSlot = [];
-  bool toAppointmentBranch = false;
+  int isFirstToan = 0;
+  String? loanAgreementDocument = "";
+  String? loanCollectionFee = "";
+  String? loanFineRate = "";
   String? loanId = "";
+  String? loanInterestRate = "";
+  String? loanLateInRate = "";
+  String? loanTerm = "";
+  String? loanType = "";
+  int numberCutoff = 0;
+  String? policyDate = "";
+  int provinceId = 0;
+  String? rejectCode = "";
+  String? rejectDate = "";
+  String? repaymentAmountPerPeriod = "";
+  String? repaymentDocument = "";
+  String? receiptDocument = "";
+  String? status = "";
+  String? step = "";
+  String? synpitarnAppointmentUpdateApiResponse = "";
+  String? thLanguageSkill = "";
+  String? timesPerMonth = "";
+  bool toAppointmentBranch = false;
+  String? updatedAt = "";
+  int userId = 0;
+  String? documentsRequest = "";
   User client;
   Admin user;
 
   Loan({
     required this.id,
-    required this.contractDate,
-    required this.contractEnd,
-    required this.contractStart,
-    required this.contractNo,
-    required this.contractNoRef,
+    required this.appointmentBranchDate,
+    required this.appointmentBranchTime,
+    required this.appointmentChannel,
+    required this.appointmentResubmit,
     required this.appointmentDate,
+    required this.appointmentStatus,
     required this.appointmentTime,
     required this.appointmentUrl,
-    required this.appointmentChannel,
-    required this.appointmentStatus,
-    required this.branch,
-    required this.provinceId,
-    required this.branchId,
-    required this.step,
-    required this.status,
-    required this.collectionFee,
     required this.appliedAmount,
     required this.approvedAmount,
-    required this.disbursedAmount,
-    required this.loanType,
-    required this.isFirstToan,
-    required this.loanTerm,
-    required this.timesPerMonth,
-    required this.loanInterestRate,
-    required this.clientId,
-    required this.userId,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.deletedAt,
-    required this.borrowerId,
-    required this.borrowerCode,
-    required this.borrowerName,
+    required this.assigneeName,
+    required this.bankAccountNo,
+    required this.bankId,
+    required this.bankMobileNo,
+    required this.bankType,
     required this.borrowerAge,
-    required this.borrowerTel,
-    required this.borrowerRegistrationAddress,
+    required this.borrowerCode,
     required this.borrowerContactAddress,
-    required this.contractType,
+    required this.borrowerId,
+    required this.borrowerName,
+    required this.borrowerRegistrationAddress,
+    required this.borrowerTel,
+    required this.branch,
+    required this.branchId,
     required this.branchCode,
-    required this.loanLateInRate,
-    required this.loanFineRate,
-    required this.loanCollectionFee,
-    required this.repaymentAmountPerPeriod,
-    required this.numberCutoff,
+    required this.branchSectionTimeSlot,
+    required this.clientId,
+    required this.collectionFee,
+    required this.contractDate,
+    required this.contractEnd,
+    required this.contractNo,
+    required this.contractNoRef,
+    required this.contractStart,
+    required this.contractType,
+    required this.createdAt,
+    required this.currentLoanPlace,
+    required this.deletedAt,
+    required this.disbursedAmount,
+    required this.disbursementDate,
+    required this.disbursementDocument,
+    required this.documentsRequest,
     required this.dueOn1,
     required this.dueOn2,
     required this.ect2Rate,
     required this.ect3Rate,
-    required this.disbursementDate,
     required this.firstCutoffDate,
     required this.firstDueonDate,
-    required this.policyDate,
-    required this.bankId,
-    required this.bankType,
-    required this.bankAccountNo,
-    required this.bankMobileNo,
-    required this.rejectCode,
-    required this.documentsRequest,
-    required this.loanAgreementDocument,
-    required this.disbursementDocument,
-    required this.repaymentDocument,
     required this.invoiceDocument,
-    required this.receiptDocument,
-    required this.appointmentBranchDate,
-    required this.appointmentBranchTime,
-    required this.rejectDate,
-    required this.currentLoanPlace,
-    required this.thLanguageSkill,
-    required this.synpitarnAppointmentUpdateApiResponse,
-    required this.appointmentResubmit,
-    required this.assigneeName,
-    required this.branchSectionTimeSlot,
-    required this.toAppointmentBranch,
+    required this.isFirstToan,
+    required this.loanAgreementDocument,
+    required this.loanCollectionFee,
+    required this.loanFineRate,
     required this.loanId,
+    required this.loanInterestRate,
+    required this.loanLateInRate,
+    required this.loanTerm,
+    required this.loanType,
+    required this.numberCutoff,
+    required this.policyDate,
+    required this.provinceId,
+    required this.receiptDocument,
+    required this.rejectCode,
+    required this.rejectDate,
+    required this.repaymentAmountPerPeriod,
+    required this.repaymentDocument,
+    required this.status,
+    required this.step,
+    required this.synpitarnAppointmentUpdateApiResponse,
+    required this.thLanguageSkill,
+    required this.timesPerMonth,
+    required this.toAppointmentBranch,
+    required this.updatedAt,
+    required this.userId,
     required this.client,
     required this.user,
   });
@@ -168,82 +168,87 @@ class Loan {
   factory Loan.fromJson(Map<String, dynamic> json) {
     return Loan(
       id: json["id"] ?? 0,
-      contractDate: json["contract_date"] ?? "",
-      contractEnd: json["contract_end"] ?? "",
-      contractStart: json["contract_start"] ?? "",
-      contractNo: json["contract_no"] ?? "",
-      contractNoRef: json["contract_no_ref"] ?? "",
+      appointmentBranchDate: json["appointment_branch_date"] ?? "",
+      appointmentBranchTime: json["appointment_branch_time"] ?? "",
+      appointmentChannel: json["appointment_channel"] ?? "",
+      appointmentResubmit: json["appointment_resubmit"] ?? false,
       appointmentDate: json["appointment_date"] ?? "",
+      appointmentStatus: json["appointment_status"] ?? "",
       appointmentTime: json["appointment_time"] ?? "",
       appointmentUrl: json["appointment_url"] ?? "",
-      appointmentChannel: json["appointment_channel"] ?? "",
-      appointmentStatus: json["appointment_status"] ?? "",
-      branch: json["branch"] ?? "",
-      provinceId: json["province_id"] ?? 0,
-      branchId: json["branch_id"] ?? 0,
-      step: json["step"] ?? "",
-      status: json["status"] ?? "",
-      collectionFee: json["collection_fee"] ?? "",
       appliedAmount: json["applied_amount"] ?? "",
       approvedAmount: json["approved_amount"] ?? "",
-      disbursedAmount: json["disbursed_amount"] ?? "",
-      loanType: json["loan_type"] ?? "",
-      isFirstToan: json["is_first_loan"] ?? 0,
-      loanTerm: json["loan_term"] ?? "",
-      timesPerMonth: json["times_per_month"] ?? "",
-      loanInterestRate: json["loan_interest_rate"] ?? "",
-      clientId: json["client_id"] ?? 0,
-      userId: json["user_id"] ?? 0,
-      createdAt: json["created_at"] ?? "",
-      updatedAt: json["updated_at"] ?? "",
-      deletedAt: json["deleted_at"] ?? "",
-      borrowerId: json["borrower_id"] ?? 0,
-      borrowerCode: json["borrower_code"] ?? 0,
-      borrowerName: json["borrower_name"] ?? "",
+      assigneeName: json["assignee_name"] ?? "",
+      bankAccountNo: json["bank_account_no"] ?? "",
+      bankId: json["bank_id"] ?? 0,
+      bankMobileNo: json["bank_mobile_no"] ?? "",
+      bankType: json["bank_type"] ?? "",
       borrowerAge: json["borrower_age"] ?? "",
-      borrowerTel: json["borrower_tel"] ?? "",
-      borrowerRegistrationAddress: json["borrower_registration_address"] ?? "",
+      borrowerCode: json["borrower_code"] ?? 0,
       borrowerContactAddress: json["borrower_contact_address"] ?? "",
-      contractType: json["contract_type"] ?? "",
+      borrowerId: json["borrower_id"] ?? 0,
+      borrowerName: json["borrower_name"] ?? "",
+      borrowerRegistrationAddress: json["borrower_registration_address"] ?? "",
+      borrowerTel: json["borrower_tel"] ?? "",
+      branch: json["branch"] ?? "",
+      branchId: json["branch_id"] ?? 0,
       branchCode: json["branch_code"] ?? "",
-      loanLateInRate: json["loan_latein_rate"] ?? "",
-      loanFineRate: json["loan_fine_rate"] ?? "",
-      loanCollectionFee: json["loan_collection_fee"] ?? "",
-      repaymentAmountPerPeriod: json["repayment_amount_per_period"] ?? "",
-      numberCutoff: json["number_cutoff"] ?? 0,
+      branchSectionTimeSlot: json["branch_section_time_slot"],
+      clientId: json["client_id"] ?? 0,
+      collectionFee: json["collection_fee"] ?? "",
+      contractDate: json["contract_date"] ?? "",
+      contractEnd: json["contract_end"] ?? "",
+      contractNo: json["contract_no"] ?? "",
+      contractNoRef: json["contract_no_ref"] ?? "",
+      contractStart: json["contract_start"] ?? "",
+      contractType: json["contract_type"] ?? "",
+      createdAt: json["created_at"] ?? "",
+      currentLoanPlace: json["current_loan_place"] ?? 0,
+      deletedAt: json["deleted_at"] ?? "",
+      disbursedAmount: json["disbursed_amount"] ?? "",
+      disbursementDate: json["disbursement_date"] ?? "",
+      disbursementDocument: json["disbursement_document"] ?? "",
+      documentsRequest: json["documents_request"] ?? "",
       dueOn1: json["due_on_1"] ?? 0,
       dueOn2: json["due_on_2"] ?? 0,
       ect2Rate: json["ect2_rate"] ?? 0,
       ect3Rate: json["ect3_rate"] ?? 0,
-      disbursementDate: json["disbursement_date"] ?? "",
       firstCutoffDate: json["first_cutoff_date"] ?? "",
       firstDueonDate: json["first_dueon_date"] ?? "",
-      policyDate: json["policy_date"] ?? "",
-      bankId: json["bank_id"] ?? 0,
-      bankType: json["bank_type"] ?? "",
-      bankAccountNo: json["bank_account_no"] ?? "",
-      bankMobileNo: json["bank_mobile_no"] ?? "",
-      rejectCode: json["reject_code"] ?? "",
-      documentsRequest: json["documents_request"] ?? "",
-      loanAgreementDocument: json["loan_agreement_document"] ?? "",
-      disbursementDocument: json["disbursement_document"] ?? "",
-      repaymentDocument: json["repayment_document"] ?? "",
       invoiceDocument: json["invoice_document"] ?? "",
-      receiptDocument: json["receipt_document"] ?? "",
-      appointmentBranchDate: json["appointment_branch_date"] ?? "",
-      appointmentBranchTime: json["appointment_branch_time"] ?? "",
-      rejectDate: json["reject_date"] ?? "",
-      currentLoanPlace: json["current_loan_place"] ?? 0,
-      thLanguageSkill: json["th_language_skill"] ?? "",
-      synpitarnAppointmentUpdateApiResponse:
-          json["synpitarn_appointment_update_api_response"] ?? "",
-      appointmentResubmit: json["appointment_resubmit"] ?? false,
-      assigneeName: json["assignee_name"] ?? "",
-      branchSectionTimeSlot: json["branch_section_time_slot"],
-      toAppointmentBranch: json["to_appointment_branch"] ?? false,
+      isFirstToan: json["is_first_loan"] ?? 0,
+      loanAgreementDocument: json["loan_agreement_document"] ?? "",
+      loanCollectionFee: json["loan_collection_fee"] ?? "",
+      loanFineRate: json["loan_fine_rate"] ?? "",
       loanId: json["loan_id"] ?? "",
-      client: json.containsKey('client') ? User.fromJson(json["client"]) : User.defaultUser(),
-      user: json.containsKey('user') ? Admin.fromJson(json["user"]) : Admin.defaultAdmin(),
+      loanInterestRate: json["loan_interest_rate"] ?? "",
+      loanLateInRate: json["loan_latein_rate"] ?? "",
+      loanTerm: json["loan_term"] ?? "",
+      loanType: json["loan_type"] ?? "",
+      numberCutoff: json["number_cutoff"] ?? 0,
+      policyDate: json["policy_date"] ?? "",
+      provinceId: json["province_id"] ?? 0,
+      receiptDocument: json["receipt_document"] ?? "",
+      rejectCode: json["reject_code"] ?? "",
+      rejectDate: json["reject_date"] ?? "",
+      repaymentAmountPerPeriod: json["repayment_amount_per_period"] ?? "",
+      repaymentDocument: json["repayment_document"] ?? "",
+      status: json["status"] ?? "",
+      step: json["step"] ?? "",
+      synpitarnAppointmentUpdateApiResponse:
+      json["synpitarn_appointment_update_api_response"] ?? "",
+      thLanguageSkill: json["th_language_skill"] ?? "",
+      timesPerMonth: json["times_per_month"] ?? "",
+      toAppointmentBranch: json["to_appointment_branch"] ?? false,
+      updatedAt: json["updated_at"] ?? "",
+      userId: json["user_id"] ?? 0,
+      client: json.containsKey('client')
+          ? User.fromJson(json["client"])
+          : User.defaultUser(),
+      user: json.containsKey('user')
+          ? Admin.fromJson(json["user"])
+          : Admin.defaultAdmin(),
     );
   }
+
 }

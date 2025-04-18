@@ -23,7 +23,7 @@ class RouteService {
     "customer_information": DocumentFilePage(),
     "required_documents": Information2Page(),
     "additional_information": LoanTypePage(),
-    "choose_loan_type": InterviewAppointmentPage(),
+    "choose_loan_type": InterviewAppointmentPage(applicationData: null,),
   };
 
   static Future<void> login(BuildContext context, User loginUser) async {

@@ -200,7 +200,7 @@ class Information1State extends State<Information1Page> {
   }
 
   void showErrorDialog(String errorMessage) {
-    CustomWidget.showErrorDialog(context: context, msg: errorMessage);
+    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }

@@ -95,4 +95,23 @@ class ApplicationRepository {
 
     return DataResponse.dataResponseFromJson(response.body);
   }
+
+  Future<DataResponse> updateInterviewAppointment(
+     int id, Map<String, dynamic> postBody, User loginUser) async {
+
+    String url =
+    ("${AppConfig.BASE_URL}/${AppConfig.PATH}/appointment/update/$id");
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer ${loginUser.token}",
+        "x-user-id": loginUser.id.toString(),
+      },
+      body: jsonEncode(postBody),
+    );
+
+    return DataResponse.dataResponseFromJson(response.body);
+  }
 }

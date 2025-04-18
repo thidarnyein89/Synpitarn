@@ -6,8 +6,8 @@ class AppConfig {
 
   // For Bottom Navigation Bar Index
   static int HOME_INDEX = 0;
-  static int PROFILE_INDEX = 1;
-  static int LOAN_INDEX = 2;
+  static int LOAN_INDEX = 1;
+  static int PROFILE_INDEX = 2;
   static int SETTING_INDEX = 3;
   static int CURRENT_INDEX = 0;
 

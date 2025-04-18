@@ -6,6 +6,7 @@ import 'package:synpitarn/screens/components/app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/data/app_config.dart';
 import 'package:intl/intl.dart';
+import 'package:synpitarn/screens/loan/interview_appointment.dart';
 
 class PendingPage extends StatefulWidget {
   Loan applicationData;
@@ -27,7 +28,14 @@ class PendingState extends State<PendingPage> {
     super.dispose();
   }
 
-  void handleReSubmit() {}
+  void handleReSubmit() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => InterviewAppointmentPage(
+              applicationData: widget.applicationData)),
+    );
+  }
 
   String formatDate(String rawDate) {
     DateTime parsedDate = DateTime.parse(rawDate);
@@ -44,16 +52,14 @@ class PendingState extends State<PendingPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: IntrinsicHeight(
-                child: Padding(
-                  padding: CustomStyle.pagePadding(),
+      body: SafeArea(
+        child: Padding(
+          padding: CustomStyle.pagePadding(),
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
@@ -79,32 +85,24 @@ class PendingState extends State<PendingPage> {
                       _buildRow("Loan Status",
                           widget.applicationData.appointmentStatus.toString()),
                       CustomWidget.verticalSpacing(),
-                      Text(
-                        "Your need to take interview appointment again",
-                        style: CustomStyle.bodyRedColor(),
-                      ),
-                      CustomWidget.verticalSpacing(),
-                      ElevatedButton(
-                        onPressed: handleReSubmit,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: CustomStyle.primary_color,
-                          minimumSize: Size(double.infinity, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text(
-                          'Resubmit Interview Appointment',
-                          style: CustomStyle.bodyWhiteColor(),
-                        ),
-                      ),
                     ],
                   ),
                 ),
               ),
-            ),
-          );
-        },
+              if (widget.applicationData.appointmentResubmit) ...[
+                Text(
+                  "Your need to take interview appointment again",
+                  style: CustomStyle.bodyRedColor(),
+                ),
+                CustomWidget.verticalSpacing(),
+                CustomWidget.elevatedButton(
+                  text: 'Resubmit Interview Appointment',
+                  onPressed: handleReSubmit,
+                ),
+              ]
+            ],
+          ),
+        ),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: AppConfig.LOAN_INDEX,
@@ -123,9 +121,9 @@ class PendingState extends State<PendingPage> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(width: 200, child: Text(label, style: CustomStyle.body())),
+            Expanded(child: Text(label, style: CustomStyle.body())),
             Text(" : "),
-            Expanded(child: Text(value, style: CustomStyle.body())),
+            SizedBox(width: 120, child: Text(value, style: CustomStyle.body())),
           ],
         ),
         CustomWidget.verticalSpacing(),

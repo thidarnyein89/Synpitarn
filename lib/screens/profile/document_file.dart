@@ -407,6 +407,6 @@ class DocumentFileState extends State<DocumentFilePage> {
   }
 
   void showErrorDialog(String errorMessage) {
-    CustomWidget.showErrorDialog(context: context, msg: errorMessage);
+    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
   }
 }

@@ -83,7 +83,30 @@ class SetPasswordState extends State<SetPasswordPage> {
       if (loginResponse.response.code != 200) {
         pin1Error = loginResponse.response.message;
       } else {
-        RouteService.login(context, loginResponse.data);
+        List<Map<String, dynamic>> msg = [];
+
+        msg.add({
+          "text": "Please remember your phone number which is your username ",
+          "style": null
+        });
+        msg.add({
+          "text": user.phoneNumber,
+          "style": TextStyle(fontWeight: FontWeight.bold)
+        });
+        msg.add({"text": " and your PIN code ", "style": null});
+        msg.add({
+          "text": user.code,
+          "style": TextStyle(fontWeight: FontWeight.bold)
+        });
+        msg.add(
+            {"text": " to login to your account at any time.", "style": null});
+
+        CustomWidget.showDialogWithStyle(
+          context: context,
+          msg: msg,
+        ).then((_) {
+          RouteService.login(context, loginResponse.data);
+        });
       }
 
       isLoading = false;

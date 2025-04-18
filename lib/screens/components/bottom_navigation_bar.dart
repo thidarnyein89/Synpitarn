@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/screens/auth/login.dart';
-import 'package:synpitarn/screens/loan/pending.dart';
 import 'package:synpitarn/screens/home.dart';
-import 'package:synpitarn/screens/profile/information1.dart';
 import 'package:synpitarn/services/route_service.dart';
+import 'package:remixicon/remixicon.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget
     implements PreferredSizeWidget {
@@ -63,9 +61,9 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       unselectedItemColor: Colors.grey,
       type: BottomNavigationBarType.fixed,
       items: [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
-        BottomNavigationBarItem(icon: Icon(Icons.article_outlined), label: "Loan"),
+        BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "Home"),
+        BottomNavigationBarItem(icon: Icon(RemixIcons.hand_coin_line), label: "Loan"),
+        BottomNavigationBarItem(icon: Icon(RemixIcons.file_copy_2_line), label: "Profile"),
         BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Setting"),
       ],
     );

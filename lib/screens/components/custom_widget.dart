@@ -246,61 +246,63 @@ class CustomWidget {
   }
 
   static Widget elevatedButton(
-      {required bool enabled,
-      required bool isLoading,
-      required String text,
+      {bool? enabled = true,
+      bool isLoading = false,
+      String? text,
       Icon? icon,
+      bool? isSmall = false,
       required void Function() onPressed}) {
     return Column(
       children: [
         ElevatedButton(
-            onPressed: enabled && !isLoading ? onPressed : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: CustomStyle.primary_color,
-              minimumSize: Size(double.infinity, 50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+          onPressed: enabled! && !isLoading! ? onPressed : null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: CustomStyle.primary_color,
+            minimumSize: isSmall == false ? Size(double.infinity, 50) : Size(120, 50),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
             ),
-            child: isLoading
-                ? FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: 16,
-                          width: 16,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
+          ),
+          child: isLoading
+              ? FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
                         ),
-                        SizedBox(width: 10),
-                        Text(
-                          'Please Wait...',
-                          style: CustomStyle.bodyWhiteColor(),
-                        ),
-                      ],
-                    ),
-                  )
-                : Row(
-                    mainAxisSize: MainAxisSize.min,
+                      ),
+                      SizedBox(width: 10),
+                      Text(
+                        'Please Wait...',
+                        style: CustomStyle.bodyWhiteColor(),
+                      ),
+                    ],
+                  ),
+                )
+              : FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        text,
+                        text ?? "",
                         style: CustomStyle.bodyWhiteColor(),
                       ),
                       if (icon != null) ...[
                         horizontalSpacing(),
-                        Icon(
-                          Icons.image_outlined,
-                          color: Colors.white,
-                        ),
+                        Icon(Icons.image_outlined, color: Colors.white),
                       ]
                     ],
-                  )),
-        verticalSpacing()
+                  ),
+                ),
+        ),
+        if (!isSmall!) verticalSpacing()
       ],
     );
   }
@@ -346,10 +348,13 @@ class CustomWidget {
     return SizedBox(height: 20);
   }
 
-  static void showErrorDialog(
-      {required BuildContext context, required String msg}) {
-    showDialog(
+  static Future<void> showDialogWithoutStyle({
+    required BuildContext context,
+    required String msg,
+  }) async {
+    return showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
@@ -369,13 +374,50 @@ class CustomWidget {
     );
   }
 
+  static Future<void> showDialogWithStyle({
+    required BuildContext context,
+    required List<Map<String, dynamic>> msg,
+  }) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
+          content: RichText(
+            text: TextSpan(
+              children: msg.map((item) {
+                return TextSpan(
+                  text: item['text'].toString(),
+                  style: item['style'] as TextStyle?,
+                );
+              }).toList(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Ok"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   static Future<void> selectDate(
       BuildContext context,
       TextEditingController controller,
       DateTime maxDate,
       DateTime minDate) async {
     final now = DateTime.now();
-    final initialDate = now.isAfter(maxDate) ? maxDate : now;
+    final today = DateTime(now.year, now.month, now.day);
+    final initial = minDate.isAfter(today) ? minDate : today;
+    final initialDate = initial.isAfter(maxDate) ? maxDate : initial;
 
     final picked = await showDatePicker(
       context: context,
