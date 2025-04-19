@@ -2,28 +2,17 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/data/shared_value.dart';
-import 'package:synpitarn/models/data.dart';
-import 'package:synpitarn/models/data_response.dart';
-import 'package:synpitarn/models/default/default_data.dart';
-import 'package:synpitarn/models/default/default_response.dart';
-import 'package:synpitarn/models/user.dart';
-import 'package:synpitarn/repositories/application_repository.dart';
-import 'package:synpitarn/repositories/data_repository.dart';
-import 'package:synpitarn/repositories/default_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:synpitarn/screens/profile/information2.dart';
 import 'package:synpitarn/services/route_service.dart';
-import 'package:synpitarn/screens/components/register_tab_bar.dart';
 
-class AppointmentSuccessPage extends StatefulWidget {
-  const AppointmentSuccessPage({super.key});
+class SuccessPage extends StatefulWidget {
+  const SuccessPage({super.key});
 
   @override
-  AppointmentSuccessState createState() => AppointmentSuccessState();
+  SuccessState createState() => SuccessState();
 }
 
-class AppointmentSuccessState extends State<AppointmentSuccessPage> {
+class SuccessState extends State<SuccessPage> {
   @override
   void initState() {
     super.initState();

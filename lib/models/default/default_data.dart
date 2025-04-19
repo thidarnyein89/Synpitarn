@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:synpitarn/models/default/pages.dart';
 
 class DefaultData {
-  Map<String, dynamic> inputData = {};
+  Map<String, dynamic>? inputData;
   int versionId = 0;
   List<Pages> pages = [];
 
@@ -26,6 +26,9 @@ class DefaultData {
     if (json['input_data'] != null && json['input_data']['input_data'] != null) {
       tempInputData = json['input_data'];
     }
+    else {
+      tempInputData["version_id"] = json['pages'][0]['version_id'];
+    }
 
     if (json['pages'] != null && json['pages'] is List) {
       for (var item in json['pages']) {
@@ -34,7 +37,7 @@ class DefaultData {
     }
 
     return DefaultData(
-      inputData: jsonDecode(tempInputData["input_data"]),
+      inputData: json['input_data'] == null ? {} : jsonDecode(tempInputData["input_data"]),
       versionId: tempInputData["version_id"],
       pages: tempPages
     );

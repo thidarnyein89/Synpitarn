@@ -87,12 +87,12 @@ class Information2State extends State<Information2Page> {
 
     if (defaultResponse.response.code == 200) {
       defaultData = defaultResponse.data;
-      Map<String, dynamic> inputData = defaultData.inputData;
+      Map<String, dynamic>? inputData = defaultData.inputData;
 
       var controls = defaultData.pages[pageIndex].formData.controls;
 
       setItemDataList(controls);
-      setSavedData(inputData);
+      setSavedData(inputData!);
     }
 
     inValidFieldsAdd();
@@ -185,7 +185,7 @@ class Information2State extends State<Information2Page> {
     setState(() {});
 
     final Map<String, dynamic> additionalInformation = {
-      ...defaultData.inputData
+      ...?defaultData.inputData
     };
 
     textControllers.forEach((key, controller) {
@@ -216,7 +216,7 @@ class Information2State extends State<Information2Page> {
       isLoading = false;
       setState(() {});
 
-      RouteService.checkLoginUserData(context);
+      RouteService.profile(context);
     }
   }
 

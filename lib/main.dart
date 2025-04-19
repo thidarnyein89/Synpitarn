@@ -3,21 +3,49 @@ import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/auth/login.dart';
 import 'package:synpitarn/screens/auth/register.dart';
 import 'package:synpitarn/screens/home.dart';
+import 'package:synpitarn/data/shared_value.dart';
+
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late Future<bool> _loginStatusFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _loginStatusFuture = getLoginStatus();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorObservers: [routeObserver],
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Poppins'),
-      home: Banner(
-        message: 'Synpitarn',
-        location: BannerLocation.bottomStart,
-        child: HomePage(),
+      home: FutureBuilder<bool>(
+        future: _loginStatusFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text('Something went wrong.'));
+          } else {
+            return Banner(
+              message: 'Synpitarn',
+              location: BannerLocation.bottomStart,
+              child: snapshot.data! ? HomePage() : MainPage(),
+            );
+          }
+        },
       ),
     );
   }

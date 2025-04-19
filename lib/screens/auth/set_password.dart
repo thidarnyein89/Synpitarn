@@ -87,19 +87,24 @@ class SetPasswordState extends State<SetPasswordPage> {
 
         msg.add({
           "text": "Please remember your phone number which is your username ",
-          "style": null
+          "style": TextStyle(color: Colors.black)
         });
         msg.add({
           "text": user.phoneNumber,
-          "style": TextStyle(fontWeight: FontWeight.bold)
+          "style": TextStyle(color: Colors.black, fontWeight: FontWeight.bold)
         });
-        msg.add({"text": " and your PIN code ", "style": null});
+        msg.add({
+          "text": " and your PIN code ",
+          "style": TextStyle(color: Colors.black)
+        });
         msg.add({
           "text": user.code,
-          "style": TextStyle(fontWeight: FontWeight.bold)
+          "style": TextStyle(color: Colors.black, fontWeight: FontWeight.bold)
         });
-        msg.add(
-            {"text": " to login to your account at any time.", "style": null});
+        msg.add({
+          "text": " to login to your account at any time.",
+          "style": TextStyle(color: Colors.black)
+        });
 
         CustomWidget.showDialogWithStyle(
           context: context,

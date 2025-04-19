@@ -15,7 +15,7 @@ class AppConfig {
   static String DROPDOWN_TYPE = "dropDown";
 
   static String ERR_MESSAGE = "Error is occur, please contact admin";
-
+  static String NO_CURRENT_LOAN = "There is no apply loan";
 }
 
 enum APPOINTMENT_STATUS { pending, approve, reject }

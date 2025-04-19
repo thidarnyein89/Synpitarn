@@ -386,6 +386,7 @@ class CustomWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5),
           ),
+          backgroundColor: Colors.white,
           content: RichText(
             text: TextSpan(
               children: msg.map((item) {

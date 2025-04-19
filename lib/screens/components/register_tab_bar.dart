@@ -14,14 +14,25 @@ class RegisterTabBar extends StatefulWidget {
 }
 
 class RegisterTabBarState extends State<RegisterTabBar> {
+  List<StepData> registerSteps = [];
+
   @override
   void initState() {
     super.initState();
+    getRegisterSteps();
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  Future<void> getRegisterSteps() async {
+    registerSteps = StepData.getRegisterSteps()
+        .where((step) => step.isForCard == false)
+        .toList();
+
+    setState(() {});
   }
 
   @override
@@ -30,7 +41,7 @@ class RegisterTabBarState extends State<RegisterTabBar> {
       showScrollbar: false,
       padding: EdgeInsets.zero,
       activeStep: widget.activeStep,
-      maxReachedStep: RegisterStep.getCustomTab().length - 1,
+      maxReachedStep: registerSteps.length - 1,
       stepShape: StepShape.circle,
       stepBorderRadius: 15,
       borderThickness: 3,
@@ -49,7 +60,7 @@ class RegisterTabBarState extends State<RegisterTabBar> {
         lineThickness: 2,
         lineSpace: 0.5,
       ),
-      steps: RegisterStep.getCustomTab().map((step) {
+      steps: registerSteps.map((step) {
         return EasyStep(
           icon: Icon(step.icon, color: CustomStyle.icon_color),
         );

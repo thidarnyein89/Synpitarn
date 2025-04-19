@@ -1,26 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/data/shared_value.dart';
+import 'package:synpitarn/models/admin.dart';
+import 'package:synpitarn/models/application_response.dart';
 import 'package:synpitarn/models/loan.dart';
+import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/repositories/application_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/data/app_config.dart';
 import 'package:intl/intl.dart';
+import 'package:synpitarn/screens/home.dart';
 import 'package:synpitarn/screens/loan/interview_appointment.dart';
+import 'package:synpitarn/services/route_service.dart';
 
 class PendingPage extends StatefulWidget {
-  Loan applicationData;
-
-  PendingPage({super.key, required this.applicationData});
+  PendingPage({super.key});
 
   @override
   PendingState createState() => PendingState();
 }
 
 class PendingState extends State<PendingPage> {
+  Loan applicationData =
+      Loan.defaultLoan(User.defaultUser(), Admin.defaultAdmin());
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
+    getApplicationData();
   }
 
   @override
@@ -28,81 +38,90 @@ class PendingState extends State<PendingPage> {
     super.dispose();
   }
 
+  Future<void> getApplicationData() async {
+    isLoading = true;
+    setState(() {});
+
+    User loginUser = await getLoginUser();
+
+    ApplicationResponse applicationResponse =
+        await ApplicationRepository().getApplication(loginUser);
+
+    if (applicationResponse.response.code != 200) {
+      showErrorDialog(
+          applicationResponse.response.message ?? AppConfig.ERR_MESSAGE);
+    } else {
+      applicationData = applicationResponse.data;
+
+      isLoading = false;
+      setState(() {});
+    }
+  }
+
   void handleReSubmit() {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => InterviewAppointmentPage(
-              applicationData: widget.applicationData)),
+          builder: (context) =>
+              InterviewAppointmentPage(applicationData: applicationData)),
     );
   }
 
   String formatDate(String rawDate) {
-    DateTime parsedDate = DateTime.parse(rawDate);
-    return DateFormat("dd MMM yyyy").format(parsedDate);
+    if (rawDate != "") {
+      DateTime parsedDate = DateTime.parse(rawDate);
+      return DateFormat("dd MMM yyyy").format(parsedDate);
+    }
+    return "";
   }
 
   String formatTime(String rawTime) {
-    DateTime parsedTime = DateFormat("HH:mm:ss").parse(rawTime);
-    return DateFormat("hh:mm a").format(parsedTime); // 12-hour with AM/PM
+    if (rawTime != "") {
+      DateTime parsedTime = DateFormat("HH:mm:ss").parse(rawTime);
+      return DateFormat("hh:mm a").format(parsedTime);
+    }
+    return "";
+  }
+
+  void showErrorDialog(String errorMessage) {
+    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+    isLoading = false;
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: CustomAppBar(),
-      body: SafeArea(
-        child: Padding(
-          padding: CustomStyle.pagePadding(),
-          child: Column(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return Stack(
             children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Pending Loan Application',
-                        style: CustomStyle.titleBold(),
+              if (isLoading)
+                CustomWidget.loading()
+              else
+                SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints:
+                        BoxConstraints(minHeight: constraints.maxHeight),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        spacing: 0,
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                              padding: CustomStyle.pagePadding(),
+                              child: createLoanStatusWidget()),
+                        ],
                       ),
-                      CustomWidget.verticalSpacing(),
-                      CustomWidget.verticalSpacing(),
-                      _buildRow("Contract No",
-                          widget.applicationData.contractNo.toString()),
-                      _buildRow(
-                          "Loan Applied Date",
-                          formatDate(
-                              widget.applicationData.createdAt.toString())),
-                      _buildRow(
-                          "Request Interview Date",
-                          formatDate(widget.applicationData.appointmentDate
-                              .toString())),
-                      _buildRow(
-                          "Request Interview Time",
-                          formatTime(widget.applicationData.appointmentTime
-                              .toString())),
-                      _buildRow("Loan Status",
-                          widget.applicationData.appointmentStatus.toString()),
-                      CustomWidget.verticalSpacing(),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-              if (widget.applicationData.appointmentResubmit) ...[
-                Text(
-                  "Your need to take interview appointment again",
-                  style: CustomStyle.bodyRedColor(),
-                ),
-                CustomWidget.verticalSpacing(),
-                CustomWidget.elevatedButton(
-                  text: 'Resubmit Interview Appointment',
-                  onPressed: handleReSubmit,
-                ),
-              ]
             ],
-          ),
-        ),
+          );
+        },
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: AppConfig.LOAN_INDEX,
@@ -127,6 +146,89 @@ class PendingState extends State<PendingPage> {
           ],
         ),
         CustomWidget.verticalSpacing(),
+      ],
+    );
+  }
+
+  Widget createLoanStatusWidget() {
+    if (applicationData.id <= 0) {
+      return noApplyLoanWidget();
+    }
+
+    if (applicationData.appointmentStatus ==
+        APPOINTMENT_STATUS.pending.toString().split('.').last) {
+      return pendingWidget();
+    }
+
+    return Container();
+  }
+
+  Widget noApplyLoanWidget() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Pending Loan Application',
+          style: CustomStyle.titleBold(),
+        ),
+        CustomWidget.verticalSpacing(),
+        CustomWidget.verticalSpacing(),
+        _buildRow("Contract No", applicationData.contractNo.toString()),
+        _buildRow("Loan Applied Date",
+            formatDate(applicationData.createdAt.toString())),
+        _buildRow("Request Interview Date",
+            formatDate(applicationData.appointmentDate.toString())),
+        _buildRow("Request Interview Time",
+            formatTime(applicationData.appointmentTime.toString())),
+        _buildRow("Loan Status", applicationData.appointmentStatus.toString()),
+        CustomWidget.verticalSpacing(),
+        if (applicationData.appointmentResubmit) ...[
+          Text(
+            "You need to take interview appointment again",
+            style: CustomStyle.bodyRedColor(),
+          ),
+          CustomWidget.verticalSpacing(),
+          CustomWidget.elevatedButton(
+            text: 'Resubmit Interview Appointment',
+            onPressed: handleReSubmit,
+          ),
+        ]
+      ],
+    );
+  }
+
+  Widget pendingWidget() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Pending Loan Application',
+          style: CustomStyle.titleBold(),
+        ),
+        CustomWidget.verticalSpacing(),
+        CustomWidget.verticalSpacing(),
+        _buildRow("Contract No", applicationData.contractNo.toString()),
+        _buildRow("Loan Applied Date",
+            formatDate(applicationData.createdAt.toString())),
+        _buildRow("Request Interview Date",
+            formatDate(applicationData.appointmentDate.toString())),
+        _buildRow("Request Interview Time",
+            formatTime(applicationData.appointmentTime.toString())),
+        _buildRow("Loan Status", applicationData.appointmentStatus.toString()),
+        CustomWidget.verticalSpacing(),
+        if (applicationData.appointmentResubmit) ...[
+          Text(
+            "You need to take interview appointment again",
+            style: CustomStyle.bodyRedColor(),
+          ),
+          CustomWidget.verticalSpacing(),
+          CustomWidget.elevatedButton(
+            text: 'Resubmit Interview Appointment',
+            onPressed: handleReSubmit,
+          ),
+        ]
       ],
     );
   }

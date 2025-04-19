@@ -74,6 +74,7 @@ class ApplicationRepository {
       body: jsonEncode(postBody),
     );
 
+    print(response.body);
     return DataResponse.dataResponseFromJson(response.body);
   }
 

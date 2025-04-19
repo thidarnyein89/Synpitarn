@@ -1,45 +1,97 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:synpitarn/screens/loan/interview_appointment.dart';
+import 'package:synpitarn/screens/profile/loan_type.dart';
+import 'package:synpitarn/screens/profile/document_file.dart';
+import 'package:synpitarn/screens/profile/information1.dart';
+import 'package:synpitarn/screens/profile/information2.dart';
+import 'package:synpitarn/screens/profile/work_permit.dart';
 
-class RegisterStep {
+class StepData {
+
+  String? loanFormState;
   IconData icon = Icons.qr_code_scanner_outlined;
   String text = "";
-  bool canEntry = false;
-  bool canSkip = false;
+  Widget page;
+  bool? isFinish = false;
+  bool? isCurrent = false;
+  bool? isForCard = false;
 
-  RegisterStep({
-    required this.icon,
-    required this.text,
-    required this.canEntry,
-    required this.canSkip,
-  });
+  StepData(
+      {this.loanFormState,
+      required this.icon,
+      required this.text,
+      required this.page,
+      this.isFinish,
+      this.isCurrent,
+      this.isForCard});
 
-  static List<RegisterStep> getCustomTab() {
-    List<RegisterStep> stepList = [];
+  static List<StepData> getRegisterSteps() {
+    List<StepData> stepList = [];
 
-    stepList.add(RegisterStep(
+    stepList.add(
+      StepData(
+          icon: Icons.qr_code_scanner_outlined,
+          text: 'Work Permit',
+          page: WorkPermitPage()),
+    );
+
+    stepList.add(StepData(
+        loanFormState: 'qr_scan',
         icon: Icons.person_2_outlined,
-        text: 'Customer Info 1',
-        canEntry: true,
-        canSkip: false));
+        text: 'Customer Information',
+        page: Information1Page()));
 
-    stepList.add(RegisterStep(
+    stepList.add(StepData(
+        loanFormState: 'customer_information',
         icon: Icons.upload_file_outlined,
-        text: 'Documents',
-        canEntry: false,
-        canSkip: false));
+        text: 'Required Documents',
+        page: DocumentFilePage()));
 
-    stepList.add(RegisterStep(
+    stepList.add(StepData(
+        loanFormState: 'required_documents',
         icon: Icons.assignment_outlined,
-        text: 'Customer Info 2',
-        canEntry: true,
-        canSkip: false));
+        text: 'Additional Information',
+        page: Information2Page()));
 
-    stepList.add(RegisterStep(
+    stepList.add(StepData(
+        loanFormState: 'additional_information',
         icon: Icons.category_outlined,
         text: 'Loan Type',
-        canEntry: false,
-        canSkip: false));
+        page: LoanTypePage()));
+
+    stepList.add(StepData(
+        loanFormState: 'choose_loan_type',
+        icon: Icons.calendar_month_outlined,
+        text: 'Interview Appointment',
+        page: InterviewAppointmentPage(applicationData: null)));
+
+    return stepList;
+  }
+
+  static List<StepData> getProfileSteps() {
+    List<StepData> stepList = [];
+
+    stepList.add(
+      StepData(
+          icon: Icons.person_2_outlined,
+          text: 'Basic Information',
+          page: Information1Page()),
+    );
+
+    stepList.add(
+      StepData(
+          icon: Icons.upload_file_outlined,
+          text: 'Documents',
+          page: DocumentFilePage()),
+    );
+
+    stepList.add(
+      StepData(
+          icon: Icons.upload_file_outlined,
+          text: 'Additional Documents',
+          page: DocumentFilePage()),
+    );
 
     return stepList;
   }

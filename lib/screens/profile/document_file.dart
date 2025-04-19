@@ -245,7 +245,7 @@ class DocumentFileState extends State<DocumentFilePage> {
       isEnabled = true;
       setState(() {});
 
-      RouteService.checkLoginUserData(context);
+      RouteService.profile(context);
     }
   }
 

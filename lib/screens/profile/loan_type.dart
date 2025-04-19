@@ -152,7 +152,7 @@ class LoanTypeState extends State<LoanTypePage> {
       isLoading = false;
       setState(() {});
 
-      RouteService.checkLoginUserData(context);
+      RouteService.profile(context);
     }
   }
 

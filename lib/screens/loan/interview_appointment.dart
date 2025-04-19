@@ -9,7 +9,7 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/application_repository.dart';
 import 'package:synpitarn/repositories/data_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:synpitarn/screens/loan/appointment-success.dart';
+import 'package:synpitarn/screens/loan/success.dart';
 
 class InterviewAppointmentPage extends StatefulWidget {
   Loan? applicationData;
@@ -189,7 +189,7 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => AppointmentSuccessPage()),
+        MaterialPageRoute(builder: (context) => SuccessPage()),
       );
     }
   }

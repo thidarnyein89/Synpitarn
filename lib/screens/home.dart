@@ -1,6 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:synpitarn/data/shared_value.dart';
+import 'package:synpitarn/models/login_response.dart';
+import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/setting/about_us.dart';
 import 'package:synpitarn/screens/setting/guide.dart';
@@ -168,7 +172,7 @@ class HomeState extends State<HomePage> {
                       Icon(
                         item['icon'],
                         size: 30,
-                        color: Colors.black87,
+                        color: CustomStyle.primary_color,
                       ),
                       const SizedBox(height: 8),
                       Text(

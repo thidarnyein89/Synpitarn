@@ -168,21 +168,15 @@ class WorkPermitState extends State<WorkPermitPage> {
                   ],
                 ),
                 CustomWidget.verticalSpacing(),
-                ElevatedButton(
-                    onPressed: isLoading ? null : saveWorkPermitStep,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      minimumSize: Size(200, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        side: const BorderSide(
-                          color: Colors.white,
-                          width: 2,
-                        ),
-                      ),
-                    ),
-                    child: Text('Manual Fill',
-                        style: CustomStyle.bodyWhiteColor())),
+                Padding(
+                  padding: CustomStyle.pagePadding(),
+                  child: CustomWidget.elevatedButton(
+                    enabled: !isLoading,
+                    isLoading: false,
+                    text: 'Manual Fill',
+                    onPressed: saveWorkPermitStep,
+                  ),
+                )
               ],
             ),
           ),
@@ -266,7 +260,7 @@ class WorkPermitState extends State<WorkPermitPage> {
       isLoading = false;
       setState(() {});
 
-      RouteService.checkLoginUserData(context);
+      RouteService.profile(context);
     }
   }
 
@@ -276,20 +270,21 @@ class WorkPermitState extends State<WorkPermitPage> {
 
     final Map<String, dynamic> postBody = {
       'version_id': defaultData.versionId,
-      'input_data': "",
+      'input_data': "{}",
     };
 
     DataResponse saveResponse = await ApplicationRepository()
         .saveLoanApplicationStep(postBody, loginUser, stepName);
     if (saveResponse.response.code != 200) {
-      showErrorDialog('Error is occur, please contact admin');
+      showErrorDialog(saveResponse.response.message ??
+          'Error is occur, please contact admin');
     } else {
       loginUser.loanFormState = stepName;
       await setLoginUser(loginUser);
       isLoading = false;
       setState(() {});
 
-      RouteService.checkLoginUserData(context);
+      RouteService.profile(context);
     }
   }
 
