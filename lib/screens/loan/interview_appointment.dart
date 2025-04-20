@@ -6,7 +6,7 @@ import 'package:synpitarn/models/data_response.dart';
 import 'package:synpitarn/models/default/default_data.dart';
 import 'package:synpitarn/models/loan.dart';
 import 'package:synpitarn/models/user.dart';
-import 'package:synpitarn/repositories/application_repository.dart';
+import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/repositories/data_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/loan/success.dart';
@@ -171,10 +171,10 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
 
     DataResponse response;
     if (widget.applicationData == null) {
-      response = await ApplicationRepository()
+      response = await LoanRepository()
           .saveInterviewAppointment(postBody, loginUser);
     } else {
-      response = await ApplicationRepository().updateInterviewAppointment(
+      response = await LoanRepository().updateInterviewAppointment(
           widget.applicationData!.id, postBody, loginUser);
     }
 

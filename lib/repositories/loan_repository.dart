@@ -2,13 +2,14 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:synpitarn/models/data_response.dart';
+import 'package:synpitarn/models/loan_response.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/data/app_config.dart';
-import 'package:synpitarn/models/application_response.dart';
+import 'package:synpitarn/models/loan_application_response.dart';
 import 'package:synpitarn/models/workpermit_response.dart';
 
-class ApplicationRepository {
-  Future<ApplicationResponse> getApplication(User loginUser) async {
+class LoanRepository {
+  Future<LoanApplicationResponse> getApplication(User loginUser) async {
     String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/loan/application");
 
     final response = await http.get(
@@ -20,7 +21,22 @@ class ApplicationRepository {
       },
     );
 
-    return ApplicationResponse.applicationResponseFromJson(response.body);
+    return LoanApplicationResponse.loanApplicationResponseFromJson(response.body);
+  }
+
+  Future<LoanResponse> getLoanHistory(User loginUser) async {
+    String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/loan-history?page=1");
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer ${loginUser.token}",
+        "x-user-id": loginUser.id.toString(),
+      },
+    );
+
+    return LoanResponse.loanResponseFromJson(response.body);
   }
 
   Future<WorkPermitResponse> saveWorkpermit(User loginUser) async {

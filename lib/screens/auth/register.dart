@@ -157,27 +157,7 @@ class _RegisterPageState extends State<RegisterPage> {
       if (msg.contains("phone")) {
         phoneError = registerResponse.response.message;
       } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(
-                  5,
-                ), // Reduce the border radius
-              ),
-              content: Text(registerResponse.response.message),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
-                  },
-                  child: Text("Got it"),
-                ),
-              ],
-            );
-          },
-        );
+        showErrorDialog(msg);
       }
     } else {
       LoginResponse otpResponse = await AuthRepository().getOTP(user);
@@ -193,6 +173,12 @@ class _RegisterPageState extends State<RegisterPage> {
       }
     }
 
+    isLoading = false;
+    setState(() {});
+  }
+
+  void showErrorDialog(String errorMessage) {
+    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }

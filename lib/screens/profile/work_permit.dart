@@ -19,7 +19,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/models/workpermit_response.dart';
-import 'package:synpitarn/repositories/application_repository.dart';
+import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/switch_camera_button.dart';
 import 'package:synpitarn/services/route_service.dart';
 
@@ -245,9 +245,9 @@ class WorkPermitState extends State<WorkPermitPage> {
   Future<void> checkWorkpermit(String? barcodeValue) async {
     loginUser.workPermitUrl = barcodeValue;
 
-    await ApplicationRepository().saveWorkpermit(loginUser);
+    await LoanRepository().saveWorkpermit(loginUser);
 
-    WorkPermitResponse workpermitResponse = await ApplicationRepository()
+    WorkPermitResponse workpermitResponse = await LoanRepository()
         .checkWorkpermit(defaultData.versionId, loginUser);
 
     if (workpermitResponse.message != "" &&
@@ -273,7 +273,7 @@ class WorkPermitState extends State<WorkPermitPage> {
       'input_data': "{}",
     };
 
-    DataResponse saveResponse = await ApplicationRepository()
+    DataResponse saveResponse = await LoanRepository()
         .saveLoanApplicationStep(postBody, loginUser, stepName);
     if (saveResponse.response.code != 200) {
       showErrorDialog(saveResponse.response.message ??

@@ -77,13 +77,21 @@ class LoginState extends State<LoginPage> {
 
       if (msg.contains("phone")) {
         phoneError = loginResponse.response.message;
-      } else {
+      } else if (msg.contains("pin")) {
         pinError = loginResponse.response.message;
+      } else {
+        showErrorDialog(msg);
       }
     } else {
       RouteService.login(context, loginResponse.data);
     }
 
+    isLoading = false;
+    setState(() {});
+  }
+
+  void showErrorDialog(String errorMessage) {
+    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }

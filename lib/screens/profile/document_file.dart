@@ -10,7 +10,7 @@ import 'package:synpitarn/models/default/default_response.dart';
 import 'package:synpitarn/models/document.dart';
 import 'package:synpitarn/models/document_response.dart';
 import 'package:synpitarn/models/user.dart';
-import 'package:synpitarn/repositories/application_repository.dart';
+import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/repositories/default_repository.dart';
 import 'package:synpitarn/repositories/document_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
@@ -234,7 +234,7 @@ class DocumentFileState extends State<DocumentFilePage> {
       'input_data': jsonEncode(defaultData.inputData),
     };
 
-    DataResponse saveResponse = await ApplicationRepository()
+    DataResponse saveResponse = await LoanRepository()
         .saveLoanApplicationStep(postBody, loginUser, stepName);
     if (saveResponse.response.code != 200) {
       showErrorDialog(saveResponse.response.message ?? AppConfig.ERR_MESSAGE);

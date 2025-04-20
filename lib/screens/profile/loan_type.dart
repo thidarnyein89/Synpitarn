@@ -8,7 +8,7 @@ import 'package:synpitarn/models/data_response.dart';
 import 'package:synpitarn/models/default/default_data.dart';
 import 'package:synpitarn/models/default/default_response.dart';
 import 'package:synpitarn/models/user.dart';
-import 'package:synpitarn/repositories/application_repository.dart';
+import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/repositories/data_repository.dart';
 import 'package:synpitarn/repositories/default_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
@@ -142,10 +142,10 @@ class LoanTypeState extends State<LoanTypePage> {
       'province_resident': selectedFormData['province_resident']!.value,
     };
 
-    DataResponse saveResponse = await ApplicationRepository()
+    DataResponse saveResponse = await LoanRepository()
         .saveLoanApplicationStep(postBody, loginUser, stepName);
     if (saveResponse.response.code != 200) {
-      showErrorDialog('Error is occur, please contact admin');
+      showErrorDialog(saveResponse.response.message ?? 'Error is occur, please contact admin');
     } else {
       loginUser.loanFormState = "choose_loan_type";
       await setLoginUser(loginUser);

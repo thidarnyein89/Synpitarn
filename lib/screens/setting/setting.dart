@@ -11,7 +11,7 @@ import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
-import 'package:synpitarn/repositories/application_repository.dart';
+import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/services/route_service.dart';

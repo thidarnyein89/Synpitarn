@@ -8,7 +8,7 @@ import 'package:synpitarn/models/data_response.dart';
 import 'package:synpitarn/models/default/default_data.dart';
 import 'package:synpitarn/models/default/default_response.dart';
 import 'package:synpitarn/models/user.dart';
-import 'package:synpitarn/repositories/application_repository.dart';
+import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/repositories/default_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/profile/document_file.dart';
@@ -206,7 +206,7 @@ class Information2State extends State<Information2Page> {
       'input_data': jsonEncode(additionalInformation),
     };
 
-    DataResponse saveResponse = await ApplicationRepository()
+    DataResponse saveResponse = await LoanRepository()
         .saveLoanApplicationStep(postBody, loginUser, stepName);
     if (saveResponse.response.code != 200) {
       showErrorDialog(saveResponse.response.message ?? AppConfig.ERR_MESSAGE);

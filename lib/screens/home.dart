@@ -2,8 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/shared_value.dart';
+import 'package:synpitarn/models/loan.dart';
+import 'package:synpitarn/models/loan_response.dart';
 import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
+import 'package:synpitarn/screens/loan/loan_status.dart';
 import 'package:synpitarn/screens/setting/about_us.dart';
 import 'package:synpitarn/screens/setting/guide_header.dart';
 import 'package:synpitarn/services/common_service.dart';
@@ -70,15 +74,18 @@ class HomeState extends State<HomePage> {
   ];
 
   int _currentIndex = 0;
+  bool isLoading = false;
 
   List<AboutUS> aboutList = [];
+  List<Loan> loanList = [];
 
   @override
   void initState() {
     super.initState();
-    getInitData();
     slideImage();
     readAboutUsData();
+
+    getLoanHistory();
 
     if (loginUser.loanApplicationSubmitted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -94,8 +101,23 @@ class HomeState extends State<HomePage> {
     super.dispose();
   }
 
-  Future<void> getInitData() async {
+  Future<void> getLoanHistory() async {
+    setState(() {
+      isLoading = true;
+    });
+
     loginUser = await getLoginUser();
+
+    LoanResponse loanResponse =
+        await LoanRepository().getLoanHistory(loginUser);
+    if (loanResponse.response.code != 200) {
+      showErrorDialog(loanResponse.response.message ??
+          'Error is occur, please contact admin');
+    } else {
+      loanList = loanResponse.data;
+    }
+
+    isLoading = false;
     setState(() {});
   }
 
@@ -121,6 +143,12 @@ class HomeState extends State<HomePage> {
     setState(() {});
   }
 
+  void showErrorDialog(String errorMessage) {
+    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+    isLoading = false;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,8 +160,12 @@ class HomeState extends State<HomePage> {
                   createSliderSection(),
                   createFeatureSection(),
                   CustomWidget.verticalSpacing(),
-                  createLoanSection(),
-                  createRepaymentSection(),
+                  if (loanList.isNotEmpty) ...[
+                    createLoanSection(),
+                    createRepaymentSection(),
+                  ]
+                  else
+                    LoanStatusPage()
                 ],
               )
             : Column(
