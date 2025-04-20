@@ -236,10 +236,8 @@ class LoanStatusState extends State<LoanStatusPage> {
         _buildRow(
             "Loan Size", "${applicationData.approvedAmount.toString()} Baht"),
         _buildRow("Loan Term", "${applicationData.loanTerm.toString()} Months"),
-        _buildRow("Request Interview Time",
-            applicationData.appointmentBranchTime.toString()),
         _buildRow("Branch Appointment Date",
-            formatTime(applicationData.appointmentBranchDate.toString())),
+            formatDate(applicationData.appointmentBranchDate.toString())),
         _buildRow("Branch Appointment Time",
             applicationData.appointmentBranchTime.toString()),
       ],
