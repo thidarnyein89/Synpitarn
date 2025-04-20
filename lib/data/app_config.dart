@@ -16,6 +16,11 @@ class AppConfig {
 
   static String ERR_MESSAGE = "Error is occur, please contact admin";
   static String NO_CURRENT_LOAN = "There is no apply loan";
+
+  static List<String> PENDING_STATUS = ["pending", "complete-review"];
+  static List<String> PRE_APPROVE_STATUS = ["pre-approved", "agree"];
+  static List<String> APPROVE_STATUS = ["disbursed"];
+  static List<String> REJECT_STATUS = ["reject"];
+
 }
 
-enum APPOINTMENT_STATUS { pending, approve, reject }

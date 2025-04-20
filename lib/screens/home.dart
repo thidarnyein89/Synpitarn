@@ -2,12 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/shared_value.dart';
-import 'package:synpitarn/models/login_response.dart';
 import 'package:synpitarn/models/user.dart';
-import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/setting/about_us.dart';
-import 'package:synpitarn/screens/setting/guide.dart';
 import 'package:synpitarn/screens/setting/guide_header.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/models/aboutUs.dart';
@@ -28,6 +25,8 @@ class HomeState extends State<HomePage> {
   final ScrollController _scrollController = ScrollController();
   final CommonService _commonService = CommonService();
   final PageController _pageController = PageController();
+
+  User loginUser = User.defaultUser();
 
   final List<String> images = [
     'assets/images/slider1.jpeg',
@@ -77,12 +76,15 @@ class HomeState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    getInitData();
     slideImage();
     readAboutUsData();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      scrollToActiveStep();
-    });
+    if (loginUser.loanApplicationSubmitted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        scrollToActiveStep();
+      });
+    }
   }
 
   @override
@@ -92,7 +94,12 @@ class HomeState extends State<HomePage> {
     super.dispose();
   }
 
-  void slideImage() {
+  Future<void> getInitData() async {
+    loginUser = await getLoginUser();
+    setState(() {});
+  }
+
+  Future<void> slideImage() async {
     Timer.periodic(Duration(seconds: 3), (timer) {
       if (_currentIndex < images.length - 1) {
         _currentIndex++;
@@ -119,17 +126,23 @@ class HomeState extends State<HomePage> {
     return Scaffold(
       appBar: CustomAppBar(),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            createSliderSection(),
-            createFeatureSection(),
-            CustomWidget.verticalSpacing(),
-            createLoanSection(),
-            createRepaymentSection(),
-            // GuideHeaderPage(),
-            // createAboutUs(),
-          ],
-        ),
+        child: (loginUser.loanApplicationSubmitted)
+            ? Column(
+                children: [
+                  createSliderSection(),
+                  createFeatureSection(),
+                  CustomWidget.verticalSpacing(),
+                  createLoanSection(),
+                  createRepaymentSection(),
+                ],
+              )
+            : Column(
+                children: [
+                  createSliderSection(),
+                  GuideHeaderPage(),
+                  createAboutUs(),
+                ],
+              ),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: AppConfig.HOME_INDEX,

@@ -11,18 +11,18 @@ import 'package:synpitarn/screens/components/app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/data/app_config.dart';
 import 'package:intl/intl.dart';
-import 'package:synpitarn/screens/home.dart';
 import 'package:synpitarn/screens/loan/interview_appointment.dart';
+import 'package:synpitarn/screens/profile/profile_home.dart';
 import 'package:synpitarn/services/route_service.dart';
 
-class PendingPage extends StatefulWidget {
-  PendingPage({super.key});
+class LoanStatusPage extends StatefulWidget {
+  LoanStatusPage({super.key});
 
   @override
-  PendingState createState() => PendingState();
+  LoanStatusState createState() => LoanStatusState();
 }
 
-class PendingState extends State<PendingPage> {
+class LoanStatusState extends State<LoanStatusPage> {
   Loan applicationData =
       Loan.defaultLoan(User.defaultUser(), Admin.defaultAdmin());
   bool isLoading = false;
@@ -155,9 +155,13 @@ class PendingState extends State<PendingPage> {
       return noApplyLoanWidget();
     }
 
-    if (applicationData.appointmentStatus ==
-        APPOINTMENT_STATUS.pending.toString().split('.').last) {
+    if (AppConfig.PENDING_STATUS.contains(applicationData.status)) {
       return pendingWidget();
+    }
+
+    if (AppConfig.PRE_APPROVE_STATUS
+        .contains(applicationData.status)) {
+      return preApproveWidget();
     }
 
     return Container();
@@ -169,31 +173,15 @@ class PendingState extends State<PendingPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Pending Loan Application',
+          AppConfig.NO_CURRENT_LOAN,
           style: CustomStyle.titleBold(),
         ),
-        CustomWidget.verticalSpacing(),
-        CustomWidget.verticalSpacing(),
-        _buildRow("Contract No", applicationData.contractNo.toString()),
-        _buildRow("Loan Applied Date",
-            formatDate(applicationData.createdAt.toString())),
-        _buildRow("Request Interview Date",
-            formatDate(applicationData.appointmentDate.toString())),
-        _buildRow("Request Interview Time",
-            formatTime(applicationData.appointmentTime.toString())),
-        _buildRow("Loan Status", applicationData.appointmentStatus.toString()),
-        CustomWidget.verticalSpacing(),
-        if (applicationData.appointmentResubmit) ...[
-          Text(
-            "You need to take interview appointment again",
-            style: CustomStyle.bodyRedColor(),
-          ),
-          CustomWidget.verticalSpacing(),
-          CustomWidget.elevatedButton(
-            text: 'Resubmit Interview Appointment',
-            onPressed: handleReSubmit,
-          ),
-        ]
+        CustomWidget.elevatedButton(
+          text: 'Apply Loan',
+          onPressed: () {
+            RouteService.goToNavigator(context, ProfileHomePage());
+          },
+        ),
       ],
     );
   }
@@ -229,6 +217,31 @@ class PendingState extends State<PendingPage> {
             onPressed: handleReSubmit,
           ),
         ]
+      ],
+    );
+  }
+
+  Widget preApproveWidget() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Pre Approved Loan',
+          style: CustomStyle.titleBold(),
+        ),
+        CustomWidget.verticalSpacing(),
+        CustomWidget.verticalSpacing(),
+        _buildRow("Contract No", applicationData.contractNo.toString()),
+        _buildRow(
+            "Loan Size", "${applicationData.approvedAmount.toString()} Baht"),
+        _buildRow("Loan Term", "${applicationData.loanTerm.toString()} Months"),
+        _buildRow("Request Interview Time",
+            applicationData.appointmentBranchTime.toString()),
+        _buildRow("Branch Appointment Date",
+            formatTime(applicationData.appointmentBranchDate.toString())),
+        _buildRow("Branch Appointment Time",
+            applicationData.appointmentBranchTime.toString()),
       ],
     );
   }

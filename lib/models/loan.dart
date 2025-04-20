@@ -22,9 +22,9 @@ class Loan {
   String? bankMobileNo = "";
   String? bankType = "";
   String? borrowerAge = "";
-  int borrowerCode = 0;
+  String? borrowerCode = "";
   String? borrowerContactAddress = "";
-  int borrowerId = 0;
+  String? borrowerId = "";
   String? borrowerName = "";
   String? borrowerRegistrationAddress = "";
   String? borrowerTel = "";
@@ -56,10 +56,10 @@ class Loan {
   String? loanAgreementDocument = "";
   String? loanCollectionFee = "";
   String? loanFineRate = "";
-  String? loanId = "";
+  int loanId = 0;
   String? loanInterestRate = "";
   String? loanLateInRate = "";
-  String? loanTerm = "";
+  int loanTerm = 0;
   String? loanType = "";
   int numberCutoff = 0;
   String? policyDate = "";
@@ -72,7 +72,7 @@ class Loan {
   String? status = "";
   String? step = "";
   String? synpitarnAppointmentUpdateApiResponse = "";
-  String? thLanguageSkill = "";
+  int thLanguageSkill = 0;
   String? timesPerMonth = "";
   bool toAppointmentBranch = false;
   String? updatedAt = "";
@@ -184,9 +184,9 @@ class Loan {
       bankMobileNo: json["bank_mobile_no"] ?? "",
       bankType: json["bank_type"] ?? "",
       borrowerAge: json["borrower_age"] ?? "",
-      borrowerCode: json["borrower_code"] ?? 0,
+      borrowerCode: json["borrower_code"] ?? "",
       borrowerContactAddress: json["borrower_contact_address"] ?? "",
-      borrowerId: json["borrower_id"] ?? 0,
+      borrowerId: json["borrower_id"] ?? "",
       borrowerName: json["borrower_name"] ?? "",
       borrowerRegistrationAddress: json["borrower_registration_address"] ?? "",
       borrowerTel: json["borrower_tel"] ?? "",
@@ -220,10 +220,10 @@ class Loan {
       loanAgreementDocument: json["loan_agreement_document"] ?? "",
       loanCollectionFee: json["loan_collection_fee"] ?? "",
       loanFineRate: json["loan_fine_rate"] ?? "",
-      loanId: json["loan_id"] ?? "",
+      loanId: json["loan_id"] ?? 0,
       loanInterestRate: json["loan_interest_rate"] ?? "",
       loanLateInRate: json["loan_latein_rate"] ?? "",
-      loanTerm: json["loan_term"] ?? "",
+      loanTerm: json["loan_term"] ?? 0,
       loanType: json["loan_type"] ?? "",
       numberCutoff: json["number_cutoff"] ?? 0,
       policyDate: json["policy_date"] ?? "",
@@ -237,7 +237,7 @@ class Loan {
       step: json["step"] ?? "",
       synpitarnAppointmentUpdateApiResponse:
       json["synpitarn_appointment_update_api_response"] ?? "",
-      thLanguageSkill: json["th_language_skill"] ?? "",
+      thLanguageSkill: json["th_language_skill"] ?? 0,
       timesPerMonth: json["times_per_month"] ?? "",
       toAppointmentBranch: json["to_appointment_branch"] ?? false,
       updatedAt: json["updated_at"] ?? "",

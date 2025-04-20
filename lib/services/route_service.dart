@@ -8,7 +8,7 @@ import 'package:synpitarn/models/application_response.dart';
 import 'package:synpitarn/screens/home.dart';
 import 'package:synpitarn/screens/loan/interview_appointment.dart';
 import 'package:synpitarn/screens/profile/loan_type.dart';
-import 'package:synpitarn/screens/loan/pending.dart';
+import 'package:synpitarn/screens/loan/loan_status.dart';
 import 'package:synpitarn/screens/profile/document_file.dart';
 import 'package:synpitarn/screens/profile/information1.dart';
 import 'package:synpitarn/screens/profile/information2.dart';
