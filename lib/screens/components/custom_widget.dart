@@ -11,20 +11,19 @@ class CustomWidget {
       child: Container(
         color: Colors.white,
         child: Center(
-          child: CircularProgressIndicator(
-            color: CustomStyle.primary_color,
-          ),
+          child: CircularProgressIndicator(color: CustomStyle.primary_color),
         ),
       ),
     );
   }
 
-  static Widget textField(
-      {required TextEditingController controller,
-      required String label,
-      bool readOnly = false,
-      String? errorText,
-      VoidCallback? onTap}) {
+  static Widget textField({
+    required TextEditingController controller,
+    required String label,
+    bool readOnly = false,
+    String? errorText,
+    VoidCallback? onTap,
+  }) {
     return Column(
       children: [
         TextField(
@@ -36,18 +35,19 @@ class CustomWidget {
             errorText: errorText,
           ),
         ),
-        verticalSpacing()
+        verticalSpacing(),
       ],
     );
   }
 
-  static Widget phoneTextField(
-      {required TextEditingController controller,
-      required String label,
-      bool readOnly = false,
-      String prefixText = '+66',
-      String? errorText,
-      VoidCallback? onTap}) {
+  static Widget phoneTextField({
+    required TextEditingController controller,
+    required String label,
+    bool readOnly = false,
+    String prefixText = '+66',
+    String? errorText,
+    VoidCallback? onTap,
+  }) {
     return Column(
       children: [
         TextField(
@@ -65,18 +65,19 @@ class CustomWidget {
             errorText: errorText,
           ),
         ),
-        verticalSpacing()
+        verticalSpacing(),
       ],
     );
   }
 
-  static Widget numberTextField(
-      {required TextEditingController controller,
-      required String label,
-      bool readOnly = false,
-      String? errorText,
-      FocusNode? focusNode,
-      VoidCallback? onTap}) {
+  static Widget numberTextField({
+    required TextEditingController controller,
+    required String label,
+    bool readOnly = false,
+    String? errorText,
+    FocusNode? focusNode,
+    VoidCallback? onTap,
+  }) {
     return Column(
       children: [
         TextField(
@@ -94,17 +95,18 @@ class CustomWidget {
             errorText: errorText,
           ),
         ),
-        verticalSpacing()
+        verticalSpacing(),
       ],
     );
   }
 
-  static Widget pinTextField(
-      {required TextEditingController controller,
-      required String label,
-      required bool isObscured,
-      String? errorText,
-      VoidCallback? onPressed}) {
+  static Widget pinTextField({
+    required TextEditingController controller,
+    required String label,
+    required bool isObscured,
+    String? errorText,
+    VoidCallback? onPressed,
+  }) {
     return Column(
       children: [
         TextField(
@@ -120,25 +122,24 @@ class CustomWidget {
             border: OutlineInputBorder(),
             errorText: errorText,
             suffixIcon: IconButton(
-              icon: Icon(
-                isObscured ? Icons.visibility : Icons.visibility_off,
-              ),
+              icon: Icon(isObscured ? Icons.visibility : Icons.visibility_off),
               onPressed: onPressed,
             ),
           ),
         ),
-        verticalSpacing()
+        verticalSpacing(),
       ],
     );
   }
 
-  static Widget datePicker(
-      {required BuildContext context,
-      required TextEditingController controller,
-      required String label,
-      required DateTime maxDate,
-      required DateTime minDate,
-      bool readOnly = false}) {
+  static Widget datePicker({
+    required BuildContext context,
+    required TextEditingController controller,
+    required String label,
+    required DateTime maxDate,
+    required DateTime minDate,
+    bool readOnly = false,
+  }) {
     return Column(
       children: [
         TextField(
@@ -152,7 +153,7 @@ class CustomWidget {
             selectDate(context, controller, maxDate, minDate);
           },
         ),
-        verticalSpacing()
+        verticalSpacing(),
       ],
     );
   }
@@ -169,17 +170,18 @@ class CustomWidget {
         DropdownButtonFormField<Item>(
           value: selectedValue,
           onChanged: onChanged,
-          items: items.map<DropdownMenuItem<Item>>((Item item) {
-            return DropdownMenuItem<Item>(
-              value: item,
-              child: Text(
-                item.text?.en ?? '',
-                overflow: TextOverflow.ellipsis,
-                softWrap: false,
-                maxLines: 1,
-              ),
-            );
-          }).toList(),
+          items:
+              items.map<DropdownMenuItem<Item>>((Item item) {
+                return DropdownMenuItem<Item>(
+                  value: item,
+                  child: Text(
+                    item.text?.en ?? '',
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                    maxLines: 1,
+                  ),
+                );
+              }).toList(),
           selectedItemBuilder: (BuildContext context) {
             return items.map<Widget>((Item item) {
               return Text(
@@ -196,7 +198,7 @@ class CustomWidget {
           ),
           isExpanded: true,
         ),
-        verticalSpacing()
+        verticalSpacing(),
       ],
     );
   }
@@ -213,17 +215,18 @@ class CustomWidget {
         DropdownButtonFormField<T>(
           value: selectedValue,
           onChanged: onChanged,
-          items: items.map<DropdownMenuItem<T>>((T value) {
-            return DropdownMenuItem<T>(
-              value: value,
-              child: Text(
-                value.toString(),
-                overflow: TextOverflow.ellipsis,
-                softWrap: false,
-                maxLines: 1,
-              ),
-            );
-          }).toList(),
+          items:
+              items.map<DropdownMenuItem<T>>((T value) {
+                return DropdownMenuItem<T>(
+                  value: value,
+                  child: Text(
+                    value.toString(),
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                    maxLines: 1,
+                  ),
+                );
+              }).toList(),
           selectedItemBuilder: (BuildContext context) {
             return items.map<Widget>((T value) {
               return Text(
@@ -240,104 +243,178 @@ class CustomWidget {
           ),
           isExpanded: true,
         ),
-        verticalSpacing()
+        verticalSpacing(),
       ],
     );
   }
 
-  static Widget elevatedButton(
-      {bool? enabled = true,
-      bool isLoading = false,
-      String? text,
-      Icon? icon,
-      bool? isSmall = false,
-      required void Function() onPressed}) {
+  static Widget elevatedButton({
+    bool? enabled = true,
+    bool isLoading = false,
+    String? text,
+    Icon? icon,
+    bool? isSmall = false,
+    required void Function() onPressed,
+  }) {
     return Column(
       children: [
         ElevatedButton(
           onPressed: enabled! && !isLoading! ? onPressed : null,
           style: ElevatedButton.styleFrom(
             backgroundColor: CustomStyle.primary_color,
-            minimumSize: isSmall == false ? Size(double.infinity, 50) : Size(120, 50),
+            minimumSize:
+                isSmall == false ? Size(double.infinity, 50) : Size(120, 50),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-          child: isLoading
-              ? FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: 16,
-                        width: 16,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
+          child:
+              isLoading
+                  ? FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 16,
+                          width: 16,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        'Please Wait...',
-                        style: CustomStyle.bodyWhiteColor(),
-                      ),
-                    ],
+                        SizedBox(width: 10),
+                        Text(
+                          'Please Wait...',
+                          style: CustomStyle.bodyWhiteColor(),
+                        ),
+                      ],
+                    ),
+                  )
+                  : FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(text ?? "", style: CustomStyle.bodyWhiteColor()),
+                        if (icon != null) ...[
+                          horizontalSpacing(),
+                          Icon(Icons.image_outlined, color: Colors.white),
+                        ],
+                      ],
+                    ),
                   ),
-                )
-              : FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        text ?? "",
-                        style: CustomStyle.bodyWhiteColor(),
-                      ),
-                      if (icon != null) ...[
-                        horizontalSpacing(),
-                        Icon(Icons.image_outlined, color: Colors.white),
-                      ]
-                    ],
-                  ),
-                ),
         ),
-        if (!isSmall!) verticalSpacing()
+        if (!isSmall!) verticalSpacing(),
+      ],
+    );
+  }
+
+  static Widget elevatedButtonOutline({
+    bool? enabled = true,
+    bool isLoading = false,
+    String? text,
+    Icon? icon,
+    bool? isSmall = false,
+    required void Function() onPressed,
+  }) {
+    return Column(
+      children: [
+        ElevatedButton(
+          onPressed: enabled! && !isLoading! ? onPressed : null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white, // Optional: Background color
+            // foregroundColor: Colors.blue,
+            minimumSize:
+                isSmall == false ? Size(double.infinity, 50) : Size(120, 50),
+            side: BorderSide(color: Colors.blue, width: 1), // Outline
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(
+                8,
+              ), // Optional: Rounded corners
+            ),
+          ),
+
+          child:
+              isLoading
+                  ? FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 16,
+                          width: 16,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          'Please Wait...',
+                          style: CustomStyle.bodyWhiteColor(),
+                        ),
+                      ],
+                    ),
+                  )
+                  : FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          text ?? "",
+                          style: TextStyle(color: Color(0xFF2E3192)),
+                        ),
+                        if (icon != null) ...[
+                          horizontalSpacing(),
+                          Icon(Icons.image_outlined, color: Colors.white),
+                        ],
+                      ],
+                    ),
+                  ),
+        ),
+        if (!isSmall!) verticalSpacing(),
       ],
     );
   }
 
   static Widget checkbox(
-      List<Item> selectedDataList, Item data, void Function() onTap) {
+    List<Item> selectedDataList,
+    Item data,
+    void Function() onTap,
+  ) {
     return GestureDetector(
-        onTap: onTap,
-        child: Column(
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Transform.scale(
-                  scale: 1.0,
-                  child: Padding(
-                    padding: EdgeInsets.zero,
-                    child: Checkbox(
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      visualDensity:
-                          VisualDensity(horizontal: -4.0, vertical: -4.0),
-                      value: selectedDataList.contains(data),
-                      onChanged: (bool? value) => onTap,
+      onTap: onTap,
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Transform.scale(
+                scale: 1.0,
+                child: Padding(
+                  padding: EdgeInsets.zero,
+                  child: Checkbox(
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    visualDensity: VisualDensity(
+                      horizontal: -4.0,
+                      vertical: -4.0,
                     ),
+                    value: selectedDataList.contains(data),
+                    onChanged: (bool? value) => onTap,
                   ),
                 ),
-                horizontalSpacing(),
-                Expanded(
-                  child: Text(data.text!.en),
-                ),
-              ],
-            ),
-            verticalSpacing(),
-          ],
-        ));
+              ),
+              horizontalSpacing(),
+              Expanded(child: Text(data.text!.en)),
+            ],
+          ),
+          verticalSpacing(),
+        ],
+      ),
+    );
   }
 
   static SizedBox horizontalSpacing() {
@@ -357,9 +434,7 @@ class CustomWidget {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           content: Text(msg),
           actions: [
             TextButton(
@@ -383,18 +458,17 @@ class CustomWidget {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           backgroundColor: Colors.white,
           content: RichText(
             text: TextSpan(
-              children: msg.map((item) {
-                return TextSpan(
-                  text: item['text'].toString(),
-                  style: item['style'] as TextStyle?,
-                );
-              }).toList(),
+              children:
+                  msg.map((item) {
+                    return TextSpan(
+                      text: item['text'].toString(),
+                      style: item['style'] as TextStyle?,
+                    );
+                  }).toList(),
             ),
           ),
           actions: [
@@ -411,10 +485,11 @@ class CustomWidget {
   }
 
   static Future<void> selectDate(
-      BuildContext context,
-      TextEditingController controller,
-      DateTime maxDate,
-      DateTime minDate) async {
+    BuildContext context,
+    TextEditingController controller,
+    DateTime maxDate,
+    DateTime minDate,
+  ) async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final initial = minDate.isAfter(today) ? minDate : today;
@@ -436,9 +511,7 @@ class CustomWidget {
               onSurface: Colors.black,
             ),
             dialogTheme: DialogTheme(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.zero,
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
             ),
             datePickerTheme: DatePickerThemeData(
               headerBackgroundColor: CustomStyle.primary_color,

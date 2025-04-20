@@ -18,9 +18,12 @@ class AppConfig {
   static String NO_CURRENT_LOAN = "There is no apply loan";
 
   static List<String> PENDING_STATUS = ["pending", "complete-review"];
-  static List<String> PRE_APPROVE_STATUS = ["pre-approved", "agree", "thlo-approved"];
+  static List<String> PRE_APPROVE_STATUS = [
+    "pre-approved",
+    "agree",
+    "thlo-approved",
+    "disburse-approved",
+  ];
   static List<String> APPROVE_STATUS = ["disbursed"];
   static List<String> REJECT_STATUS = ["reject"];
-
 }
-

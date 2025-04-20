@@ -23,8 +23,10 @@ class LoanStatusPage extends StatefulWidget {
 }
 
 class LoanStatusState extends State<LoanStatusPage> {
-  Loan applicationData =
-      Loan.defaultLoan(User.defaultUser(), Admin.defaultAdmin());
+  Loan applicationData = Loan.defaultLoan(
+    User.defaultUser(),
+    Admin.defaultAdmin(),
+  );
   bool isLoading = false;
 
   @override
@@ -44,12 +46,13 @@ class LoanStatusState extends State<LoanStatusPage> {
 
     User loginUser = await getLoginUser();
 
-    ApplicationResponse applicationResponse =
-        await ApplicationRepository().getApplication(loginUser);
+    ApplicationResponse applicationResponse = await ApplicationRepository()
+        .getApplication(loginUser);
 
     if (applicationResponse.response.code != 200) {
       showErrorDialog(
-          applicationResponse.response.message ?? AppConfig.ERR_MESSAGE);
+        applicationResponse.response.message ?? AppConfig.ERR_MESSAGE,
+      );
     } else {
       applicationData = applicationResponse.data;
 
@@ -62,8 +65,10 @@ class LoanStatusState extends State<LoanStatusPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) =>
-              InterviewAppointmentPage(applicationData: applicationData)),
+        builder:
+            (context) =>
+                InterviewAppointmentPage(applicationData: applicationData),
+      ),
     );
   }
 
@@ -102,8 +107,9 @@ class LoanStatusState extends State<LoanStatusPage> {
               else
                 SingleChildScrollView(
                   child: ConstrainedBox(
-                    constraints:
-                        BoxConstraints(minHeight: constraints.maxHeight),
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
                     child: IntrinsicHeight(
                       child: Column(
                         spacing: 0,
@@ -112,8 +118,9 @@ class LoanStatusState extends State<LoanStatusPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                              padding: CustomStyle.pagePadding(),
-                              child: createLoanStatusWidget()),
+                            padding: CustomStyle.pagePadding(),
+                            child: createLoanStatusWidget(),
+                          ),
                         ],
                       ),
                     ),
@@ -159,9 +166,15 @@ class LoanStatusState extends State<LoanStatusPage> {
       return pendingWidget();
     }
 
-    if (AppConfig.PRE_APPROVE_STATUS
-        .contains(applicationData.status)) {
+    if (AppConfig.PRE_APPROVE_STATUS.contains(applicationData.status)) {
       return preApproveWidget();
+    }
+    if (AppConfig.APPROVE_STATUS.contains(applicationData.status)) {
+      return approveWidget();
+    }
+
+    if (AppConfig.REJECT_STATUS.contains(applicationData.status)) {
+      return rejectWidget();
     }
 
     return Container();
@@ -172,10 +185,7 @@ class LoanStatusState extends State<LoanStatusPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          AppConfig.NO_CURRENT_LOAN,
-          style: CustomStyle.titleBold(),
-        ),
+        Text(AppConfig.NO_CURRENT_LOAN, style: CustomStyle.titleBold()),
         CustomWidget.elevatedButton(
           text: 'Apply Loan',
           onPressed: () {
@@ -191,19 +201,22 @@ class LoanStatusState extends State<LoanStatusPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Pending Loan Application',
-          style: CustomStyle.titleBold(),
-        ),
+        Text('Pending Loan Application', style: CustomStyle.titleBold()),
         CustomWidget.verticalSpacing(),
         CustomWidget.verticalSpacing(),
         _buildRow("Contract No", applicationData.contractNo.toString()),
-        _buildRow("Loan Applied Date",
-            formatDate(applicationData.createdAt.toString())),
-        _buildRow("Request Interview Date",
-            formatDate(applicationData.appointmentDate.toString())),
-        _buildRow("Request Interview Time",
-            formatTime(applicationData.appointmentTime.toString())),
+        _buildRow(
+          "Loan Applied Date",
+          formatDate(applicationData.createdAt.toString()),
+        ),
+        _buildRow(
+          "Request Interview Date",
+          formatDate(applicationData.appointmentDate.toString()),
+        ),
+        _buildRow(
+          "Request Interview Time",
+          formatTime(applicationData.appointmentTime.toString()),
+        ),
         _buildRow("Loan Status", applicationData.appointmentStatus.toString()),
         CustomWidget.verticalSpacing(),
         if (applicationData.appointmentResubmit) ...[
@@ -216,7 +229,7 @@ class LoanStatusState extends State<LoanStatusPage> {
             text: 'Resubmit Interview Appointment',
             onPressed: handleReSubmit,
           ),
-        ]
+        ],
       ],
     );
   }
@@ -226,20 +239,122 @@ class LoanStatusState extends State<LoanStatusPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Pre Approved Loan',
-          style: CustomStyle.titleBold(),
-        ),
+        Text('Pre Approved Loan', style: CustomStyle.titleBold()),
         CustomWidget.verticalSpacing(),
         CustomWidget.verticalSpacing(),
         _buildRow("Contract No", applicationData.contractNo.toString()),
         _buildRow(
-            "Loan Size", "${applicationData.approvedAmount.toString()} Baht"),
+          "Loan Size",
+          "${applicationData.approvedAmount.toString()} Baht",
+        ),
         _buildRow("Loan Term", "${applicationData.loanTerm.toString()} Months"),
-        _buildRow("Branch Appointment Date",
-            formatDate(applicationData.appointmentBranchDate.toString())),
-        _buildRow("Branch Appointment Time",
-            applicationData.appointmentBranchTime.toString()),
+        _buildRow(
+          "Branch Appointment Date",
+          formatDate(applicationData.appointmentBranchDate.toString()),
+        ),
+        _buildRow(
+          "Branch Appointment Time",
+          applicationData.appointmentBranchTime.toString(),
+        ),
+      ],
+    );
+  }
+
+  Widget approveWidget() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Approved Loan', style: CustomStyle.titleBold()),
+        CustomWidget.verticalSpacing(),
+        CustomWidget.verticalSpacing(),
+        _buildRow("Contract No", applicationData.contractNo.toString()),
+        _buildRow(
+          "Loan Size",
+          "${applicationData.approvedAmount.toString()} Baht",
+        ),
+        _buildRow("Loan Term", "${applicationData.loanTerm.toString()} Months"),
+        _buildRow(
+          "Branch Appointment Date",
+          formatDate(applicationData.appointmentBranchDate.toString()),
+        ),
+        _buildRow(
+          "Branch Appointment Time",
+          applicationData.appointmentBranchTime.toString(),
+        ),
+        CustomWidget.verticalSpacing(),
+        CustomWidget.elevatedButtonOutline(
+          text: 'Repay at a branch',
+          onPressed: () {},
+        ),
+        CustomWidget.elevatedButtonOutline(
+          text: 'Repayment at ATM',
+          onPressed: () {},
+        ),
+        CustomWidget.elevatedButtonOutline(
+          text: 'Repayment via mobile banking',
+          onPressed: () {},
+        ),
+        CustomWidget.elevatedButton(
+          text: 'View Repayment Schedule',
+          onPressed: () {},
+        ),
+      ],
+    );
+  }
+
+  Widget rejectWidget() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          color: Color(0xFFF0E291),
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 20),
+          child: Column(
+            children: [
+              Text(
+                'We are sorry to say that your loan application is rejected',
+                style: CustomStyle.body(),
+                textAlign: TextAlign.center,
+              ),
+              CustomWidget.verticalSpacing(),
+              Text(
+                'Your Application has expired please login and resubmit again',
+                style: CustomStyle.body(),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+        CustomWidget.verticalSpacing(),
+        Container(
+          color: Colors.transparent,
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text:
+                          'Sorry, you can’t request another loan currently. But don’t worry, you can request again on ',
+
+                      style: CustomStyle.body(),
+                    ),
+                    TextSpan(
+                      text: '20 October 2025',
+
+                      style: CustomStyle.bodyBold(),
+                    ),
+                  ],
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
