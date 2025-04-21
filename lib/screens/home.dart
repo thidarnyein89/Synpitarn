@@ -120,7 +120,12 @@ class HomeState extends State<HomePage> {
       ];
 
       if (AppConfig.PENDING_STATUS.contains(applicationData.status)) {
-        loanSteps[0]['isActive'] = true;
+        if(AppConfig.APPOINTMENT_PENDING_STATUS.contains(applicationData.appointmentStatus)) {
+          loanSteps[0]['isActive'] = true;
+        }
+        if(AppConfig.APPOINTMENT_DONE_STATUS.contains(applicationData.appointmentStatus)) {
+          loanSteps[1]['isActive'] = true;
+        }
       }
 
       if (AppConfig.PRE_APPROVE_STATUS.contains(applicationData.status)) {

@@ -29,4 +29,7 @@ class AppConfig {
   static List<String> APPROVE_STATUS = ["disbursed"];
   static List<String> REJECT_STATUS = ["reject"];
   static List<String> POSTPONE_STATUS = ["postpone"];
+
+  static List<String> APPOINTMENT_PENDING_STATUS = ["pending"];
+  static List<String> APPOINTMENT_DONE_STATUS = ["accept", "done"];
 }
