@@ -55,8 +55,8 @@ class LoanStatusState extends State<LoanStatusPage> {
     isLoading = true;
     setState(() {});
 
-    LoanApplicationResponse applicationResponse =
-        await LoanRepository().getApplication(loginUser);
+    LoanApplicationResponse applicationResponse = await LoanRepository()
+        .getApplication(loginUser);
 
     if (applicationResponse.response.code != 200) {
       showErrorDialog(
@@ -72,8 +72,9 @@ class LoanStatusState extends State<LoanStatusPage> {
 
   Future<void> getTotalLateDay() async {
     if (loginUser.loanApplicationSubmitted) {
-      LoanResponse loanResponse =
-          await LoanRepository().getLoanHistory(loginUser);
+      LoanResponse loanResponse = await LoanRepository().getLoanHistory(
+        loginUser,
+      );
 
       if (loanResponse.response.code != 200) {
         showErrorDialog(loanResponse.response.message);
@@ -96,8 +97,9 @@ class LoanStatusState extends State<LoanStatusPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            InterviewAppointmentPage(applicationData: applicationData),
+        builder:
+            (context) =>
+                InterviewAppointmentPage(applicationData: applicationData),
       ),
     );
   }
@@ -308,35 +310,40 @@ class LoanStatusState extends State<LoanStatusPage> {
         CustomWidget.verticalSpacing(),
         _buildRow("Contract No", applicationData.contractNo.toString()),
         _buildRow(
+          "Repayment date",
+          CommonService.formatDate(
+            applicationData.firstRepaymentDate.toString(),
+          ),
+        ),
+        _buildRow(
+          "Repayment amount",
+          "${applicationData.repaymentAmountPerPeriod.toString()} Baht",
+        ),
+        _buildRow(
           "Loan Size",
           "${applicationData.approvedAmount.toString()} Baht",
         ),
         _buildRow("Loan Term", "${applicationData.loanTerm.toString()} Months"),
-        _buildRow(
-          "Branch Appointment Date",
-          CommonService.formatDate(
-            applicationData.appointmentBranchDate.toString(),
-          ),
-        ),
-        _buildRow(
-          "Branch Appointment Time",
-          applicationData.appointmentBranchTime.toString(),
-        ),
         CustomWidget.verticalSpacing(),
         if (totalLateDay > 0) ...[
           RichText(
-            text: TextSpan(children: [
-              TextSpan(
+            text: TextSpan(
+              children: [
+                TextSpan(
                   text:
                       "Your repayment is now $totalLateDay days late. Please make a payment of $repaymentAmount Baht immediately or click ",
-                  style: CustomStyle.bodyRedColor()),
-              TextSpan(
+                  style: CustomStyle.bodyRedColor(),
+                ),
+                TextSpan(
                   text: "here (messenger link)",
-                  style: CustomStyle.bodyRedColor()),
-              TextSpan(
+                  style: CustomStyle.bodyRedColor(),
+                ),
+                TextSpan(
                   text: " to contact your loan officer",
-                  style: CustomStyle.bodyRedColor())
-            ]),
+                  style: CustomStyle.bodyRedColor(),
+                ),
+              ],
+            ),
           ),
           CustomWidget.verticalSpacing(),
         ],
