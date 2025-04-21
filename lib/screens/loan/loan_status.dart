@@ -15,7 +15,6 @@ import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 class LoanStatusPage extends StatefulWidget {
-
   bool isHome = false;
 
   LoanStatusPage({super.key, required this.isHome});
@@ -79,10 +78,9 @@ class LoanStatusState extends State<LoanStatusPage> {
 
   @override
   Widget build(BuildContext context) {
-    if(widget.isHome) {
+    if (widget.isHome) {
       return createLoanStatusWidget();
-    }
-    else {
+    } else {
       return createLoanStatusPage();
     }
   }
@@ -170,6 +168,10 @@ class LoanStatusState extends State<LoanStatusPage> {
       return rejectWidget();
     }
 
+    if (AppConfig.POSTPONE_STATUS.contains(applicationData.status)) {
+      return postponeWidget();
+    }
+
     return Container();
   }
 
@@ -243,12 +245,26 @@ class LoanStatusState extends State<LoanStatusPage> {
         _buildRow("Loan Term", "${applicationData.loanTerm.toString()} Months"),
         _buildRow(
           "Branch Appointment Date",
-          CommonService.formatDate(applicationData.appointmentBranchDate.toString()),
+          CommonService.formatDate(
+            applicationData.appointmentBranchDate.toString(),
+          ),
         ),
         _buildRow(
           "Branch Appointment Time",
           applicationData.appointmentBranchTime.toString(),
         ),
+        CustomWidget.verticalSpacing(),
+        if (applicationData.status == 'pre-approved') ...[
+          // Text(
+          //   "You need to take interview appointment again",
+          //   style: CustomStyle.bodyRedColor(),
+          // ),
+          CustomWidget.verticalSpacing(),
+          CustomWidget.elevatedButton(
+            text: 'Resubmit Interview Appointment',
+            onPressed: handleReSubmit,
+          ),
+        ],
       ],
     );
   }
@@ -269,7 +285,9 @@ class LoanStatusState extends State<LoanStatusPage> {
         _buildRow("Loan Term", "${applicationData.loanTerm.toString()} Months"),
         _buildRow(
           "Branch Appointment Date",
-          CommonService.formatDate(applicationData.appointmentBranchDate.toString()),
+          CommonService.formatDate(
+            applicationData.appointmentBranchDate.toString(),
+          ),
         ),
         _buildRow(
           "Branch Appointment Time",
@@ -347,6 +365,34 @@ class LoanStatusState extends State<LoanStatusPage> {
               ),
             ],
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget postponeWidget() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(' Your loan has been postponed', style: CustomStyle.titleBold()),
+        CustomWidget.verticalSpacing(),
+        CustomWidget.verticalSpacing(),
+        _buildRow("Contract No", applicationData.contractNo.toString()),
+        _buildRow(
+          "Loan Size",
+          "${applicationData.approvedAmount.toString()} Baht",
+        ),
+        _buildRow("Loan Term", "${applicationData.loanTerm.toString()} Months"),
+        _buildRow(
+          "Branch Appointment Date",
+          CommonService.formatDate(
+            applicationData.appointmentBranchDate.toString(),
+          ),
+        ),
+        _buildRow(
+          "Branch Appointment Time",
+          applicationData.appointmentBranchTime.toString(),
         ),
       ],
     );
