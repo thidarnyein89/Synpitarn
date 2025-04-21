@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
@@ -15,6 +16,7 @@ import 'package:synpitarn/screens/loan/interview_appointment.dart';
 import 'package:synpitarn/screens/profile/profile_home.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoanStatusPage extends StatefulWidget {
   bool isHome = false;
@@ -336,7 +338,14 @@ class LoanStatusState extends State<LoanStatusPage> {
                 ),
                 TextSpan(
                   text: "here (messenger link)",
-                  style: CustomStyle.bodyRedColor(),
+                  style: CustomStyle.bodyBold(),
+                  recognizer: TapGestureRecognizer()..onTap = _openMessenger,
+                  // recognizer:
+                  //     TapGestureRecognizer()
+                  //       ..onTap = () {
+                  //         // Replace this with your actual messenger link
+                  //         print('Messenger link tapped');
+                  //       },
                 ),
                 TextSpan(
                   text: " to contact your loan officer",
@@ -365,6 +374,17 @@ class LoanStatusState extends State<LoanStatusPage> {
         ),
       ],
     );
+  }
+
+  void _openMessenger() async {
+    const messengerUrl = 'https://m.me/sakt'; // Replace with your page username
+    final Uri uri = Uri.parse(messengerUrl);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $messengerUrl';
+    }
   }
 
   Widget rejectWidget() {
