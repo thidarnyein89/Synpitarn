@@ -65,10 +65,9 @@ class HomeState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    slideImage();
     readAboutUsData();
-
     getInitData();
+    slideImage();
   }
 
   @override
@@ -79,13 +78,12 @@ class HomeState extends State<HomePage> {
   }
 
   Future<void> getInitData() async {
-    setState(() {
-      isLoading = true;
-    });
+    isLoading = true;
+    setState(() {});
 
     loginUser = await getLoginUser();
-
     setState(() {});
+
     getApplicationData();
     getLoanHistory();
   }
@@ -113,28 +111,35 @@ class HomeState extends State<HomePage> {
       }
 
       loanSteps = [
-        {'label': 'Apply', 'isActive': false},
+        {'label': 'Apply', 'isActive': true},
         {'label': 'Interview', 'isActive': false},
         {'label': 'Pre-approved', 'isActive': false},
         {'label': 'Disbursed', 'isActive': false},
       ];
 
       if (AppConfig.PENDING_STATUS.contains(applicationData.status)) {
-        if(AppConfig.APPOINTMENT_PENDING_STATUS.contains(applicationData.appointmentStatus)) {
+        if (AppConfig.APPOINTMENT_PENDING_STATUS
+            .contains(applicationData.appointmentStatus)) {
           loanSteps[0]['isActive'] = true;
         }
-        if(AppConfig.APPOINTMENT_DONE_STATUS.contains(applicationData.appointmentStatus)) {
+        if (AppConfig.APPOINTMENT_DONE_STATUS
+            .contains(applicationData.appointmentStatus)) {
+          loanSteps[0]['isActive'] = false;
           loanSteps[1]['isActive'] = true;
         }
       }
 
       if (AppConfig.PRE_APPROVE_STATUS.contains(applicationData.status)) {
+        loanSteps[0]['isActive'] = false;
         loanSteps[2]['isActive'] = true;
       }
 
       if (AppConfig.APPROVE_STATUS.contains(applicationData.status)) {
+        loanSteps[0]['isActive'] = false;
         loanSteps[3]['isActive'] = true;
       }
+
+      setState(() {});
 
       if (loginUser.loanApplicationSubmitted) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -219,19 +224,21 @@ class HomeState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(),
-      body: SingleChildScrollView(
-          child: Column(
-        children: [
-          createSliderSection(),
-          createFeatureSection(),
-          createLoanSection(),
-          createRepaymentSection(),
-          if (!loginUser.loanApplicationSubmitted) ...[
-            GuideHeaderPage(),
-            createAboutUs(),
-          ]
-        ],
-      )),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator(color: CustomStyle.primary_color))
+          : SingleChildScrollView(
+              child: Column(
+              children: [
+                createSliderSection(),
+                createFeatureSection(),
+                createLoanStatusSection(),
+                createLoanSection(),
+                if (!loginUser.loanApplicationSubmitted) ...[
+                  GuideHeaderPage(),
+                  createAboutUs(),
+                ]
+              ],
+            )),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: AppConfig.HOME_INDEX,
         onItemTapped: (index) {
@@ -240,6 +247,39 @@ class HomeState extends State<HomePage> {
           });
         },
       ),
+    );
+  }
+
+  Widget createSliderSection() {
+    return Stack(
+      children: [
+        SizedBox(
+          height: 200,
+          child: PageView.builder(
+            controller: _pageController,
+            itemCount: images.length,
+            onPageChanged: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: CustomStyle.pagePaddingSmall(),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    images[index],
+                    width: double.infinity,
+                    height: 200,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -296,40 +336,7 @@ class HomeState extends State<HomePage> {
     );
   }
 
-  Widget createSliderSection() {
-    return Stack(
-      children: [
-        SizedBox(
-          height: 200,
-          child: PageView.builder(
-            controller: _pageController,
-            itemCount: images.length,
-            onPageChanged: (index) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: CustomStyle.pagePaddingSmall(),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
-                    images[index],
-                    width: double.infinity,
-                    height: 200,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget createLoanSection() {
+  Widget createLoanStatusSection() {
     if (!loginUser.loanApplicationSubmitted) {
       return Container();
     }
@@ -398,11 +405,78 @@ class HomeState extends State<HomePage> {
     );
   }
 
-  Widget createRepaymentSection() {
-    if (repaymentList.isEmpty) {
+  Widget createLoanSection() {
+    if (!loginUser.loanApplicationSubmitted) {
       return Container();
     }
 
+    if (repaymentList.isEmpty) {
+      return createPendingLoanSection();
+    } else {
+      return createRepaymentSection();
+    }
+  }
+
+  Widget createPendingLoanSection() {
+    final int activeIndex = loanSteps.indexWhere((step) => step['isActive']);
+    String loanStatus = 'pending';
+    if (activeIndex != -1) {
+      loanStatus = loanSteps[activeIndex]["label"];
+    }
+
+    return Padding(
+      padding: CustomStyle.pagePaddingSmall(),
+      child: Card(
+          elevation: 1,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+              padding: CustomStyle.pagePaddingSmall(),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildRow(
+                      "Contract No", applicationData.contractNo.toString()),
+                  _buildRow(
+                    "Loan Applied Date",
+                    CommonService.formatDate(
+                        applicationData.createdAt.toString()),
+                  ),
+                  _buildRow(
+                    "Request Interview Date",
+                    CommonService.formatDate(
+                        applicationData.appointmentDate.toString()),
+                  ),
+                  _buildRow(
+                    "Request Interview Time",
+                    CommonService.formatTime(
+                        applicationData.appointmentTime.toString()),
+                  ),
+                  _buildRow("Loan Status", loanStatus),
+                ],
+              ))),
+    );
+  }
+
+  Widget _buildRow(String label, String value) {
+    return Column(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: Text(label, style: CustomStyle.body())),
+            Text(" : "),
+            SizedBox(width: 120, child: Text(value, style: CustomStyle.body())),
+          ],
+        ),
+        CustomWidget.verticalSpacing(),
+      ],
+    );
+  }
+
+  Widget createRepaymentSection() {
     return Padding(
       padding: CustomStyle.pagePaddingSmall(),
       child: Column(
@@ -522,17 +596,22 @@ class HomeState extends State<HomePage> {
     );
   }
 
-  void scrollToActiveStep() {
+  void scrollToActiveStep() async {
     final int activeIndex = loanSteps.indexWhere((step) => step['isActive']);
-    if (activeIndex != -1) {
-      double itemWidth = 100;
-      double scrollOffset = itemWidth * activeIndex;
-      _scrollController.animateTo(
-        scrollOffset,
-        duration: Duration(milliseconds: 1000),
-        curve: Curves.easeInOut,
-      );
+    if (activeIndex == -1) return;
+
+    double itemWidth = 100;
+    double scrollOffset = itemWidth * activeIndex;
+
+    while (!_scrollController.hasClients) {
+      await Future.delayed(Duration(milliseconds: 50));
     }
+
+    _scrollController.animateTo(
+      scrollOffset,
+      duration: Duration(milliseconds: 800),
+      curve: Curves.easeInOut,
+    );
   }
 
   Widget createAboutUs() {
@@ -599,13 +678,13 @@ class HomeState extends State<HomePage> {
           ),
           Expanded(
               child: Text(
-            aboutList[index].titleEN,
-            textAlign: TextAlign.center,
-            style: CustomStyle.body(),
-            softWrap: true,
-            overflow: TextOverflow.visible,
-            maxLines: 5,
-          )),
+                aboutList[index].titleEN,
+                textAlign: TextAlign.center,
+                style: CustomStyle.body(),
+                softWrap: true,
+                overflow: TextOverflow.visible,
+                maxLines: 5,
+              )),
           CustomWidget.verticalSpacing(),
         ],
       ),

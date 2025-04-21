@@ -34,7 +34,10 @@ class GuideHeaderState extends State<GuideHeaderPage> {
 
   Future<void> readGuideData() async {
     guideList = await _commonService.readGuideData();
-    setState(() {});
+
+    if(mounted) {
+      setState(() { });
+    }
   }
 
   @override
@@ -89,9 +92,11 @@ class GuideHeaderState extends State<GuideHeaderPage> {
                   );
                 }).toList(),
             onStepReached: (index) {
-              setState(() {
-                activeStep = index;
-              });
+              activeStep = index;
+
+              if(mounted) {
+                setState(() { });
+              }
 
               Navigator.push(
                 context,
