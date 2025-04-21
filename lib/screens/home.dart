@@ -134,7 +134,7 @@ class HomeState extends State<HomePage> {
         loanSteps[2]['isActive'] = true;
       }
 
-      if (AppConfig.APPROVE_STATUS.contains(applicationData.status)) {
+      if (AppConfig.DISBURSE_STATUS.contains(applicationData.status)) {
         loanSteps[0]['isActive'] = false;
         loanSteps[3]['isActive'] = true;
       }
@@ -150,7 +150,7 @@ class HomeState extends State<HomePage> {
   }
 
   Future<void> getLoanHistory() async {
-    if ((loginUser.loanApplicationSubmitted)) {
+    if (loginUser.loanApplicationSubmitted) {
       LoanResponse loanResponse =
           await LoanRepository().getLoanHistory(loginUser);
 

@@ -66,6 +66,7 @@ class CustomStyle {
     return TextStyle(
       fontSize: body().fontSize,
       color: Colors.red,
+      height: 1.5
     );
   }
 

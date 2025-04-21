@@ -26,7 +26,7 @@ class AppConfig {
     "ready-to-disburse",
     "disburse-approved",
   ];
-  static List<String> APPROVE_STATUS = ["disbursed"];
+  static List<String> DISBURSE_STATUS = ["disbursed"];
   static List<String> REJECT_STATUS = ["reject"];
   static List<String> POSTPONE_STATUS = ["postpone"];
 

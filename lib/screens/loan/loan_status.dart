@@ -3,6 +3,8 @@ import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/loan.dart';
 import 'package:synpitarn/models/loan_application_response.dart';
+import 'package:synpitarn/models/loan_response.dart';
+import 'package:synpitarn/models/loan_schedule.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
@@ -24,13 +26,16 @@ class LoanStatusPage extends StatefulWidget {
 }
 
 class LoanStatusState extends State<LoanStatusPage> {
+  User loginUser = User.defaultUser();
   Loan applicationData = Loan.defaultLoan();
   bool isLoading = false;
+  int totalLateDay = 0;
+  String repaymentAmount = "";
 
   @override
   void initState() {
     super.initState();
-    getApplicationData();
+    getInitData();
   }
 
   @override
@@ -38,14 +43,20 @@ class LoanStatusState extends State<LoanStatusPage> {
     super.dispose();
   }
 
+  Future<void> getInitData() async {
+    loginUser = await getLoginUser();
+    setState(() {});
+
+    getApplicationData();
+    getTotalLateDay();
+  }
+
   Future<void> getApplicationData() async {
     isLoading = true;
     setState(() {});
 
-    User loginUser = await getLoginUser();
-
-    LoanApplicationResponse applicationResponse = await LoanRepository()
-        .getApplication(loginUser);
+    LoanApplicationResponse applicationResponse =
+        await LoanRepository().getApplication(loginUser);
 
     if (applicationResponse.response.code != 200) {
       showErrorDialog(
@@ -59,13 +70,34 @@ class LoanStatusState extends State<LoanStatusPage> {
     }
   }
 
+  Future<void> getTotalLateDay() async {
+    if (loginUser.loanApplicationSubmitted) {
+      LoanResponse loanResponse =
+          await LoanRepository().getLoanHistory(loginUser);
+
+      if (loanResponse.response.code != 200) {
+        showErrorDialog(loanResponse.response.message);
+      } else {
+        if (loanResponse.data.isNotEmpty) {
+          loanResponse.data[0].schedules!.forEach((LoanSchedule loanSchedule) {
+            int dayCount = CommonService.getDayCount(loanSchedule.pmtDate);
+            if (loanSchedule.isPaymentDone == 0 && dayCount > 0) {
+              totalLateDay = dayCount;
+              repaymentAmount = loanSchedule.pmtAmount;
+              setState(() {});
+            }
+          });
+        }
+      }
+    }
+  }
+
   void handleReSubmit() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder:
-            (context) =>
-                InterviewAppointmentPage(applicationData: applicationData),
+        builder: (context) =>
+            InterviewAppointmentPage(applicationData: applicationData),
       ),
     );
   }
@@ -160,8 +192,8 @@ class LoanStatusState extends State<LoanStatusPage> {
       return preApproveWidget();
     }
 
-    if (AppConfig.APPROVE_STATUS.contains(applicationData.status)) {
-      return approveWidget();
+    if (AppConfig.DISBURSE_STATUS.contains(applicationData.status)) {
+      return disburseWidget();
     }
 
     if (AppConfig.REJECT_STATUS.contains(applicationData.status)) {
@@ -266,12 +298,12 @@ class LoanStatusState extends State<LoanStatusPage> {
     );
   }
 
-  Widget approveWidget() {
+  Widget disburseWidget() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Approved Loan', style: CustomStyle.titleBold()),
+        Text('Disbursed Loan', style: CustomStyle.titleBold()),
         CustomWidget.verticalSpacing(),
         CustomWidget.verticalSpacing(),
         _buildRow("Contract No", applicationData.contractNo.toString()),
@@ -291,6 +323,23 @@ class LoanStatusState extends State<LoanStatusPage> {
           applicationData.appointmentBranchTime.toString(),
         ),
         CustomWidget.verticalSpacing(),
+        if (totalLateDay > 0) ...[
+          RichText(
+            text: TextSpan(children: [
+              TextSpan(
+                  text:
+                      "Your repayment is now $totalLateDay days late. Please make a payment of $repaymentAmount Baht immediately or click ",
+                  style: CustomStyle.bodyRedColor()),
+              TextSpan(
+                  text: "here (messenger link)",
+                  style: CustomStyle.bodyRedColor()),
+              TextSpan(
+                  text: " to contact your loan officer",
+                  style: CustomStyle.bodyRedColor())
+            ]),
+          ),
+          CustomWidget.verticalSpacing(),
+        ],
         CustomWidget.elevatedButtonOutline(
           text: 'Repay at a branch',
           onPressed: () {},
@@ -348,12 +397,10 @@ class LoanStatusState extends State<LoanStatusPage> {
                     TextSpan(
                       text:
                           'Sorry, you can’t request another loan currently. But don’t worry, you can request again on ',
-
                       style: CustomStyle.body(),
                     ),
                     TextSpan(
                       text: '20 October 2025',
-
                       style: CustomStyle.bodyBold(),
                     ),
                   ],
