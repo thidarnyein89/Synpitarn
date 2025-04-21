@@ -254,11 +254,8 @@ class LoanStatusState extends State<LoanStatusPage> {
           applicationData.appointmentBranchTime.toString(),
         ),
         CustomWidget.verticalSpacing(),
-        if (applicationData.status == 'pre-approved') ...[
-          // Text(
-          //   "You need to take interview appointment again",
-          //   style: CustomStyle.bodyRedColor(),
-          // ),
+        if (applicationData.status == 'pre-approved' ||
+            applicationData.appointmentResubmit) ...[
           CustomWidget.verticalSpacing(),
           CustomWidget.elevatedButton(
             text: 'Resubmit Interview Appointment',
@@ -384,16 +381,27 @@ class LoanStatusState extends State<LoanStatusPage> {
           "${applicationData.approvedAmount.toString()} Baht",
         ),
         _buildRow("Loan Term", "${applicationData.loanTerm.toString()} Months"),
-        _buildRow(
-          "Branch Appointment Date",
-          CommonService.formatDate(
-            applicationData.appointmentBranchDate.toString(),
+        if (applicationData.appointmentBranchDate != '') ...[
+          _buildRow(
+            "Branch Appointment Date",
+            CommonService.formatDate(
+              applicationData.appointmentBranchDate.toString(),
+            ),
           ),
-        ),
-        _buildRow(
-          "Branch Appointment Time",
-          applicationData.appointmentBranchTime.toString(),
-        ),
+        ],
+        if (applicationData.appointmentBranchTime != '') ...[
+          _buildRow(
+            "Branch Appointment Time",
+            applicationData.appointmentBranchTime.toString(),
+          ),
+        ],
+        CustomWidget.verticalSpacing(),
+        if (applicationData.appointmentResubmit) ...[
+          CustomWidget.elevatedButton(
+            text: 'Resubmit Interview Appointment',
+            onPressed: handleReSubmit,
+          ),
+        ],
       ],
     );
   }
