@@ -87,7 +87,10 @@ class LoanStatusState extends State<LoanStatusPage> {
             if (loanSchedule.isPaymentDone == 0 && dayCount > 0) {
               totalLateDay = dayCount;
               repaymentAmount = loanSchedule.pmtAmount;
-              setState(() {});
+
+              if (mounted) {
+                setState(() {});
+              }
             }
           });
         }

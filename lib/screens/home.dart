@@ -89,13 +89,11 @@ class HomeState extends State<HomePage> {
   }
 
   Future<void> getApplicationData() async {
-    LoanApplicationResponse applicationResponse =
-        await LoanRepository().getApplication(loginUser);
+    LoanApplicationResponse applicationResponse = await LoanRepository()
+        .getApplication(loginUser);
 
     if (applicationResponse.response.code != 200) {
-      showErrorDialog(
-        applicationResponse.response.message ?? AppConfig.ERR_MESSAGE,
-      );
+      showErrorDialog(applicationResponse.response.message);
     } else {
       applicationData = applicationResponse.data;
 
@@ -118,12 +116,14 @@ class HomeState extends State<HomePage> {
       ];
 
       if (AppConfig.PENDING_STATUS.contains(applicationData.status)) {
-        if (AppConfig.APPOINTMENT_PENDING_STATUS
-            .contains(applicationData.appointmentStatus)) {
+        if (AppConfig.APPOINTMENT_PENDING_STATUS.contains(
+          applicationData.appointmentStatus,
+        )) {
           loanSteps[0]['isActive'] = true;
         }
-        if (AppConfig.APPOINTMENT_DONE_STATUS
-            .contains(applicationData.appointmentStatus)) {
+        if (AppConfig.APPOINTMENT_DONE_STATUS.contains(
+          applicationData.appointmentStatus,
+        )) {
           loanSteps[0]['isActive'] = false;
           loanSteps[1]['isActive'] = true;
         }
@@ -139,7 +139,9 @@ class HomeState extends State<HomePage> {
         loanSteps[3]['isActive'] = true;
       }
 
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
 
       if (loginUser.loanApplicationSubmitted) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -151,8 +153,9 @@ class HomeState extends State<HomePage> {
 
   Future<void> getLoanHistory() async {
     if (loginUser.loanApplicationSubmitted) {
-      LoanResponse loanResponse =
-          await LoanRepository().getLoanHistory(loginUser);
+      LoanResponse loanResponse = await LoanRepository().getLoanHistory(
+        loginUser,
+      );
 
       if (loanResponse.response.code != 200) {
         showErrorDialog(loanResponse.response.message);
@@ -162,17 +165,17 @@ class HomeState extends State<HomePage> {
         if (loanResponse.data.isNotEmpty) {
           repaymentList =
               loanResponse.data[0].schedules!.map((LoanSchedule loanSchedule) {
-            int dayCount = CommonService.getDayCount(loanSchedule.pmtDate);
-            bool isLate = loanSchedule.isPaymentDone == 0 && dayCount > 0;
+                int dayCount = CommonService.getDayCount(loanSchedule.pmtDate);
+                bool isLate = loanSchedule.isPaymentDone == 0 && dayCount > 0;
 
-            return {
-              'dueDate': CommonService.formatDate(loanSchedule.pmtDate),
-              'amount': '${loanSchedule.pmtAmount} Baht',
-              'status': loanSchedule.isPaymentDone == 0 ? 'Unpaid' : 'Paid',
-              'dayCount': dayCount,
-              'isLate': isLate,
-            };
-          }).toList();
+                return {
+                  'dueDate': CommonService.formatDate(loanSchedule.pmtDate),
+                  'amount': '${loanSchedule.pmtAmount} Baht',
+                  'status': loanSchedule.isPaymentDone == 0 ? 'Unpaid' : 'Paid',
+                  'dayCount': dayCount,
+                  'isLate': isLate,
+                };
+              }).toList();
 
           var lateRepayment = repaymentList.firstWhere(
             (repayment) => repayment['isLate'] == true,
@@ -224,21 +227,27 @@ class HomeState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator(color: CustomStyle.primary_color))
-          : SingleChildScrollView(
-              child: Column(
-              children: [
-                createSliderSection(),
-                createFeatureSection(),
-                createLoanStatusSection(),
-                createLoanSection(),
-                if (!loginUser.loanApplicationSubmitted) ...[
-                  GuideHeaderPage(),
-                  createAboutUs(),
-                ]
-              ],
-            )),
+      body:
+          isLoading
+              ? Center(
+                child: CircularProgressIndicator(
+                  color: CustomStyle.primary_color,
+                ),
+              )
+              : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    createSliderSection(),
+                    createFeatureSection(),
+                    createLoanStatusSection(),
+                    createLoanSection(),
+                    if (!loginUser.loanApplicationSubmitted) ...[
+                      GuideHeaderPage(),
+                      createAboutUs(),
+                    ],
+                  ],
+                ),
+              ),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: AppConfig.HOME_INDEX,
         onItemTapped: (index) {
@@ -349,14 +358,8 @@ class HomeState extends State<HomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Your Loan Status',
-                style: CustomStyle.subTitleBold(),
-              ),
-              Text(
-                'View All',
-                style: CustomStyle.body(),
-              ),
+              Text('Your Loan Status', style: CustomStyle.subTitleBold()),
+              Text('View All', style: CustomStyle.body()),
             ],
           ),
           CustomWidget.verticalSpacing(),
@@ -391,7 +394,7 @@ class HomeState extends State<HomePage> {
               ),
             ),
           ),
-          CustomWidget.verticalSpacing()
+          CustomWidget.verticalSpacing(),
         ],
       ),
     );
@@ -427,36 +430,36 @@ class HomeState extends State<HomePage> {
     return Padding(
       padding: CustomStyle.pagePaddingSmall(),
       child: Card(
-          elevation: 1,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+        elevation: 1,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: Padding(
+          padding: CustomStyle.pagePaddingSmall(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildRow("Contract No", applicationData.contractNo.toString()),
+              _buildRow(
+                "Loan Applied Date",
+                CommonService.formatDate(applicationData.createdAt.toString()),
+              ),
+              _buildRow(
+                "Request Interview Date",
+                CommonService.formatDate(
+                  applicationData.appointmentDate.toString(),
+                ),
+              ),
+              _buildRow(
+                "Request Interview Time",
+                CommonService.formatTime(
+                  applicationData.appointmentTime.toString(),
+                ),
+              ),
+              _buildRow("Loan Status", loanStatus),
+            ],
           ),
-          child: Padding(
-              padding: CustomStyle.pagePaddingSmall(),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildRow(
-                      "Contract No", applicationData.contractNo.toString()),
-                  _buildRow(
-                    "Loan Applied Date",
-                    CommonService.formatDate(
-                        applicationData.createdAt.toString()),
-                  ),
-                  _buildRow(
-                    "Request Interview Date",
-                    CommonService.formatDate(
-                        applicationData.appointmentDate.toString()),
-                  ),
-                  _buildRow(
-                    "Request Interview Time",
-                    CommonService.formatTime(
-                        applicationData.appointmentTime.toString()),
-                  ),
-                  _buildRow("Loan Status", loanStatus),
-                ],
-              ))),
+        ),
+      ),
     );
   }
 
@@ -485,14 +488,8 @@ class HomeState extends State<HomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Repayment Schedule',
-                style: CustomStyle.subTitleBold(),
-              ),
-              Text(
-                'View All',
-                style: CustomStyle.body(),
-              ),
+              Text('Repayment Schedule', style: CustomStyle.subTitleBold()),
+              Text('View All', style: CustomStyle.body()),
             ],
           ),
           if (totalLateDate > 0) ...[
@@ -540,9 +537,10 @@ class HomeState extends State<HomePage> {
                     const SizedBox(height: 8),
                     Text(
                       item['dueDate'],
-                      style: item['isLate']
-                          ? CustomStyle.bodyRedColor()
-                          : CustomStyle.body(),
+                      style:
+                          item['isLate']
+                              ? CustomStyle.bodyRedColor()
+                              : CustomStyle.body(),
                     ),
                   ],
                 ),
@@ -555,9 +553,10 @@ class HomeState extends State<HomePage> {
                     const SizedBox(height: 8),
                     Text(
                       item['amount'],
-                      style: item['isLate']
-                          ? CustomStyle.bodyRedColor()
-                          : CustomStyle.body(),
+                      style:
+                          item['isLate']
+                              ? CustomStyle.bodyRedColor()
+                              : CustomStyle.body(),
                     ),
                   ],
                 ),
@@ -570,24 +569,26 @@ class HomeState extends State<HomePage> {
                     const SizedBox(height: 8),
                     Text(
                       item['status'],
-                      style: item['isLate']
-                          ? CustomStyle.bodyRedColor()
-                          : CustomStyle.body(),
+                      style:
+                          item['isLate']
+                              ? CustomStyle.bodyRedColor()
+                              : CustomStyle.body(),
                     ),
                   ],
                 ),
                 const SizedBox(width: 20),
                 Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CustomWidget.elevatedButton(
-                        isLoading: false,
-                        text: item['status'] == 0 ? 'Complete' : 'Pay Now',
-                        isSmall: true,
-                        onPressed: handleContinue,
-                      )
-                    ]),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CustomWidget.elevatedButton(
+                      isLoading: false,
+                      text: item['status'] == 0 ? 'Complete' : 'Pay Now',
+                      isSmall: true,
+                      onPressed: handleContinue,
+                    ),
+                  ],
+                ),
               ],
             ),
           );
@@ -640,13 +641,14 @@ class HomeState extends State<HomePage> {
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
                 shrinkWrap: true,
-                children: aboutList
-                    .asMap()
-                    .map((index, aboutData) {
-                      return MapEntry(index, gridItem(index));
-                    })
-                    .values
-                    .toList(),
+                children:
+                    aboutList
+                        .asMap()
+                        .map((index, aboutData) {
+                          return MapEntry(index, gridItem(index));
+                        })
+                        .values
+                        .toList(),
               ),
             ],
           ),
@@ -671,20 +673,18 @@ class HomeState extends State<HomePage> {
           CircleAvatar(
             radius: 24,
             backgroundColor: CustomStyle.secondary_color,
-            child: Icon(
-              aboutList[index].icon,
-              color: CustomStyle.icon_color,
-            ),
+            child: Icon(aboutList[index].icon, color: CustomStyle.icon_color),
           ),
           Expanded(
-              child: Text(
-                aboutList[index].titleEN,
-                textAlign: TextAlign.center,
-                style: CustomStyle.body(),
-                softWrap: true,
-                overflow: TextOverflow.visible,
-                maxLines: 5,
-              )),
+            child: Text(
+              aboutList[index].titleEN,
+              textAlign: TextAlign.center,
+              style: CustomStyle.body(),
+              softWrap: true,
+              overflow: TextOverflow.visible,
+              maxLines: 5,
+            ),
+          ),
           CustomWidget.verticalSpacing(),
         ],
       ),

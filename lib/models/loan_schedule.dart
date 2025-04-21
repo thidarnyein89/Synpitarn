@@ -25,35 +25,36 @@ class LoanSchedule {
   String repaymentTime = "";
   String serviceFee = "";
   String status = "";
-  double totalRepaymentAmount = 0;
+  int totalRepaymentAmount = 0;
 
   LoanSchedule.defaultLoanSchedule();
 
-  LoanSchedule(
-      {required this.clientId,
-      required this.collectionFee,
-      required this.createdAt,
-      required this.currentScheduleNo,
-      required this.interestAmount,
-      required this.isPaymentDone,
-      required this.loanId,
-      required this.loanRepayment,
-      required this.otherFee,
-      required this.outstandingPayment,
-      required this.penaltyFee,
-      required this.period,
-      required this.pmtAmount,
-      required this.pmtDate,
-      required this.pmtRemainAmount,
-      required this.remainBalance,
-      required this.remark,
-      required this.repaymentAmount,
-      required this.repaymentChannel,
-      required this.repaymentDate,
-      required this.repaymentTime,
-      required this.serviceFee,
-      required this.status,
-      required this.totalRepaymentAmount});
+  LoanSchedule({
+    required this.clientId,
+    required this.collectionFee,
+    required this.createdAt,
+    required this.currentScheduleNo,
+    required this.interestAmount,
+    required this.isPaymentDone,
+    required this.loanId,
+    required this.loanRepayment,
+    required this.otherFee,
+    required this.outstandingPayment,
+    required this.penaltyFee,
+    required this.period,
+    required this.pmtAmount,
+    required this.pmtDate,
+    required this.pmtRemainAmount,
+    required this.remainBalance,
+    required this.remark,
+    required this.repaymentAmount,
+    required this.repaymentChannel,
+    required this.repaymentDate,
+    required this.repaymentTime,
+    required this.serviceFee,
+    required this.status,
+    required this.totalRepaymentAmount,
+  });
 
   factory LoanSchedule.fromJson(Map<String, dynamic> json) {
     return LoanSchedule(
