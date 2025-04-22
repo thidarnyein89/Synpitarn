@@ -58,7 +58,7 @@ class LoanRepository {
     return WorkPermitResponse.workPermitResponseFromJson(response.body);
   }
 
-  Future<WorkPermitResponse> checkWorkpermit(int versionId, User loginUser) async {
+  Future<Map<String, dynamic>> checkWorkpermit(int versionId, User loginUser) async {
     String url =
         "${AppConfig.BASE_URL}/${AppConfig.PATH}/e-workpermit-extractor?url=${Uri.encodeComponent(loginUser.workPermitUrl!)}&version_id=$versionId";
 
@@ -71,7 +71,7 @@ class LoanRepository {
       },
     );
 
-    return WorkPermitResponse.workPermitResponseFromJson(response.body);
+    return jsonDecode(response.body);
   }
 
   Future<DataResponse> saveLoanApplicationStep(

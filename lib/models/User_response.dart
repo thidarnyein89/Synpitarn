@@ -3,20 +3,20 @@ import 'package:synpitarn/models/user.dart';
 import 'response.dart';
 import 'meta.dart';
 
-class LoginResponse {
+class UserResponse {
   final Response response;
   final Meta meta;
   final User data;
 
-  LoginResponse({
+  UserResponse({
     required this.response,
     required this.meta,
     required this.data,
   });
 
-  factory LoginResponse.loginResponseFromJson(String str) => LoginResponse.fromJson(json.decode(str));
+  factory UserResponse.userResponseFromJson(String str) => UserResponse.fromJson(json.decode(str));
 
-  factory LoginResponse.fromJson(Map<String, dynamic> json) {
+  factory UserResponse.fromJson(Map<String, dynamic> json) {
     User user = User.defaultUser();
 
     if(json.containsKey("data")) {
@@ -27,7 +27,7 @@ class LoginResponse {
       }
     }
 
-    return LoginResponse(
+    return UserResponse(
       response: Response.fromJson(json["response"]),
       meta: Meta.fromJson(json["meta"]),
       data: user,

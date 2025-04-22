@@ -210,7 +210,9 @@ class ProfileHomeState extends State<ProfileHomePage> with RouteAware {
             ),
             elevation: 4,
             child: InkWell(
-              onTap: () {},
+              onTap: () {
+                RouteService.goToNavigator(context, item.page);
+              },
               borderRadius: BorderRadius.circular(16),
               child: Stack(
                 children: [

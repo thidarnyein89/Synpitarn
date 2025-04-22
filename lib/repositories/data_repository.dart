@@ -62,4 +62,19 @@ class DataRepository {
     return DataResponse.dataResponseFromJson(response.body);
   }
 
+  Future<DataResponse> getIncomeTypes(User loginUser) async {
+    String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/data/income-types");
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer ${loginUser.token}",
+        "x-user-id": loginUser.id.toString(),
+      }
+    );
+
+    return DataResponse.dataResponseFromJson(response.body);
+  }
+
 }

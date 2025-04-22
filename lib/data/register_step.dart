@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:synpitarn/screens/loan/interview_appointment.dart';
-import 'package:synpitarn/screens/profile/loan_type.dart';
+import 'package:synpitarn/screens/profile/profile/basic_information.dart';
+import 'package:synpitarn/screens/profile/register/loan_type.dart';
 import 'package:synpitarn/screens/profile/document_file.dart';
-import 'package:synpitarn/screens/profile/customer_information.dart';
-import 'package:synpitarn/screens/profile/additional_information.dart';
-import 'package:synpitarn/screens/profile/work_permit.dart';
+import 'package:synpitarn/screens/profile/register/customer_information.dart';
+import 'package:synpitarn/screens/profile/register/additional_information.dart';
+import 'package:synpitarn/screens/profile/register/work_permit.dart';
 
 class StepData {
 
@@ -74,9 +75,16 @@ class StepData {
 
     stepList.add(
       StepData(
+          icon: Icons.phone_outlined,
+          text: 'Change Phone Number',
+          page: DocumentFilePage()),
+    );
+
+    stepList.add(
+      StepData(
           icon: Icons.person_2_outlined,
           text: 'Basic Information',
-          page: CustomerInformationPage()),
+          page: BasicInformationPage()),
     );
 
     stepList.add(

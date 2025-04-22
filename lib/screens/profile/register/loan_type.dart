@@ -12,7 +12,7 @@ import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/repositories/data_repository.dart';
 import 'package:synpitarn/repositories/default_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:synpitarn/screens/profile/additional_information.dart';
+import 'package:synpitarn/screens/profile/register/additional_information.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 

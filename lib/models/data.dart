@@ -8,6 +8,7 @@ class Item {
     List<String> parts = text.split("|").map((e) => e.trim()).toList();
     this.text = Data(
       id: 0,
+      key: value,
       mm: parts.length > 0 ? parts[0] : parts[0],
       en: parts.length > 1 ? parts[1] : parts[0],
       th: parts.length > 2 ? parts[2] : parts[0],
@@ -30,6 +31,7 @@ class Item {
 
 class Data {
   int id = 0;
+  String key = "";
   String en = "";
   String mm = "";
   String th = "";
@@ -37,12 +39,13 @@ class Data {
   Data.defaultData();
 
   Data({
-    required this.id, required this.en, required this.mm, required this.th
+    required this.id,  required this.key, required this.en, required this.mm, required this.th
   });
 
   factory Data.fromJson(Map<String, dynamic> json) {
     return Data(
       id: json['id'] ?? 0,
+      key: json.containsKey('key') ? json['key'] : '',
       en: json.containsKey('name') ? json['name'] : json['name_en'] ?? '',
       mm: json.containsKey('name') ? json['name'] : json['name_mm'] ?? '',
       th: json.containsKey('name') ? json['name'] : json['name_th'] ?? '',
@@ -52,6 +55,7 @@ class Data {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'key': key,
       'en': en,
       'mm': mm,
       'th': th,

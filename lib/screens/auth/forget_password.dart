@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/models/login_response.dart';
+import 'package:synpitarn/models/User_response.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/auth/otp.dart';
 import 'package:synpitarn/models/user.dart';
@@ -53,7 +53,7 @@ class ForgetPasswordState extends State<ForgetPasswordPage> {
     user.phoneNumber = phoneController.text;
     user.forgetPassword = true;
 
-    LoginResponse loginResponse = await AuthRepository().getOTP(user);
+    UserResponse loginResponse = await AuthRepository().getOTP(user);
 
     if (loginResponse.response.code != 200) {
       phoneError = loginResponse.response.message;

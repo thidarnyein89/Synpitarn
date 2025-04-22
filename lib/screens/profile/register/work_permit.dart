@@ -21,6 +21,7 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/models/workpermit_response.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/switch_camera_button.dart';
+import 'package:synpitarn/screens/profile/register/customer_information.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 class WorkPermitPage extends StatefulWidget {
@@ -90,6 +91,10 @@ class WorkPermitState extends State<WorkPermitPage> {
   }
 
   void _onDetect(BarcodeCapture barCode) {
+    if(isLoading) {
+      return;
+    }
+
     isLoading = true;
     setState(() {});
 
@@ -247,20 +252,28 @@ class WorkPermitState extends State<WorkPermitPage> {
 
     await LoanRepository().saveWorkpermit(loginUser);
 
-    WorkPermitResponse workpermitResponse = await LoanRepository()
+    Map<String, dynamic> response = await LoanRepository()
         .checkWorkpermit(defaultData.versionId, loginUser);
 
-    if (workpermitResponse.message != "" &&
-        !workpermitResponse.message.contains("successfully")) {
-      showErrorDialog(workpermitResponse.message);
+    if (response['message'] != "" &&
+        !response['message'].contains("successfully")) {
+      showErrorDialog(response['message']);
     } else {
       loginUser.loanFormState = "qr_scan";
       await setLoginUser(loginUser);
 
+      User client = User.defaultUser();
+
+      client.name = response['data']['English name']?.trim() ?? '';
+      client.nameOfEmployment = response['data'][' Name of employer or place ']?.trim() ?? '';
+      client.provinceOfWork = response['data'][' Office location ']?.trim() ?? '';
+
       isLoading = false;
       setState(() {});
 
-      RouteService.profile(context);
+      await controller.stop();
+
+      RouteService.goToReplaceNavigator(context, CustomerInformationPage());
     }
   }
 

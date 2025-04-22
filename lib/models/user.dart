@@ -36,6 +36,7 @@ class User {
   bool forgetPassword = false; //For Determine Forget OR Confirm in OTP Page
   String type = ''; //For PinType
   String authToken = ''; //For Token from SetPassword
+  String nameOfEmployment = ''; //For QR Scan Response Data
 
   User.defaultUser();
 
@@ -87,7 +88,9 @@ class User {
       provinceOfResident: json['province_of_resident'] ?? "",
       districtOfResident: json['district_of_resident'] ?? "",
       incomeType: json['income_type'] ?? "",
-      salary: (json['salary'] ?? 0 as num).toDouble(),
+      salary: (json['salary'] != null && (json['salary'] is num))
+          ? (json['salary'] as num).toDouble()
+          : 0.0,
       email: json['email'] ?? "",
       active: json['active'] ?? "",
       language: json['language'] ?? "",

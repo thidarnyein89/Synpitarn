@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/models/login_response.dart';
+import 'package:synpitarn/models/User_response.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
-import 'package:synpitarn/screens/auth/nrc.dart';
+import 'package:synpitarn/screens/components/nrc.dart';
 import 'package:synpitarn/screens/auth/otp.dart';
 import 'package:synpitarn/screens/auth/term_conditions.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
@@ -149,7 +149,7 @@ class _RegisterPageState extends State<RegisterPage> {
     user.forgetPassword = false;
     user.status = "active";
 
-    LoginResponse registerResponse = await AuthRepository().register(user);
+    UserResponse registerResponse = await AuthRepository().register(user);
 
     if (registerResponse.response.code != 200) {
       String msg = registerResponse.response.message.toLowerCase();
@@ -160,7 +160,7 @@ class _RegisterPageState extends State<RegisterPage> {
         showErrorDialog(msg);
       }
     } else {
-      LoginResponse otpResponse = await AuthRepository().getOTP(user);
+      UserResponse otpResponse = await AuthRepository().getOTP(user);
 
       if (otpResponse.response.code != 200) {
         phoneError = otpResponse.response.message;

@@ -91,6 +91,13 @@ class CustomStyle {
     );
   }
 
+  static TextStyle bodyGreyColor() {
+    return TextStyle(
+      fontSize: body().fontSize,
+      color: Colors.grey[600],
+    );
+  }
+
   static EdgeInsetsGeometry pagePadding() {
     return EdgeInsets.symmetric(horizontal: 20.0, vertical: 20);
   }

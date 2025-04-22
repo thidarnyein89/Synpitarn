@@ -16,7 +16,10 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 class CustomerInformationPage extends StatefulWidget {
-  const CustomerInformationPage({super.key});
+
+  User? client = User.defaultUser();
+
+  CustomerInformationPage({super.key, this.client});
 
   @override
   CustomerInformationState createState() => CustomerInformationState();

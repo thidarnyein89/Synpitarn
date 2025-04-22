@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/models/login_response.dart';
+import 'package:synpitarn/models/User_response.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/screens/auth/set_password.dart';
@@ -88,7 +88,7 @@ class OTPState extends State<OTPPage> {
     user.phoneNumber = widget.loginUser.phoneNumber;
     user.forgetPassword = widget.loginUser.forgetPassword;
 
-    LoginResponse loginResponse = await AuthRepository().getOTP(user);
+    UserResponse loginResponse = await AuthRepository().getOTP(user);
 
     if (loginResponse.response.code != 200) {
       otpError = loginResponse.response.message;
@@ -117,7 +117,7 @@ class OTPState extends State<OTPPage> {
     user.phoneNumber = widget.loginUser.phoneNumber;
     user.forgetPassword = widget.loginUser.forgetPassword;
 
-    LoginResponse loginResponse = await AuthRepository().checkOTP(user);
+    UserResponse loginResponse = await AuthRepository().checkOTP(user);
 
     if (loginResponse.response.code != 200) {
       otpError = loginResponse.response.message;

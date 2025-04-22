@@ -57,8 +57,8 @@ class LoanStatusState extends State<LoanStatusPage> {
     isLoading = true;
     setState(() {});
 
-    LoanApplicationResponse applicationResponse = await LoanRepository()
-        .getApplication(loginUser);
+    LoanApplicationResponse applicationResponse =
+        await LoanRepository().getApplication(loginUser);
 
     if (applicationResponse.response.code != 200) {
       showErrorDialog(
@@ -102,9 +102,8 @@ class LoanStatusState extends State<LoanStatusPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder:
-            (context) =>
-                InterviewAppointmentPage(applicationData: applicationData),
+        builder: (context) =>
+            InterviewAppointmentPage(applicationData: applicationData),
       ),
     );
   }
@@ -170,22 +169,6 @@ class LoanStatusState extends State<LoanStatusPage> {
     );
   }
 
-  Widget _buildRow(String label, String value) {
-    return Column(
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(child: Text(label, style: CustomStyle.body())),
-            Text(" : "),
-            SizedBox(width: 120, child: Text(value, style: CustomStyle.body())),
-          ],
-        ),
-        CustomWidget.verticalSpacing(),
-      ],
-    );
-  }
-
   Widget createLoanStatusWidget() {
     if (applicationData.id <= 0) {
       return noApplyLoanWidget();
@@ -238,20 +221,21 @@ class LoanStatusState extends State<LoanStatusPage> {
         Text('Pending Loan Application', style: CustomStyle.titleBold()),
         CustomWidget.verticalSpacing(),
         CustomWidget.verticalSpacing(),
-        _buildRow("Contract No", applicationData.contractNo.toString()),
-        _buildRow(
+        CustomWidget.buildRow(
+            "Contract No", applicationData.contractNo.toString()),
+        CustomWidget.buildRow(
           "Loan Applied Date",
           CommonService.formatDate(applicationData.createdAt.toString()),
         ),
-        _buildRow(
+        CustomWidget.buildRow(
           "Request Interview Date",
           CommonService.formatDate(applicationData.appointmentDate.toString()),
         ),
-        _buildRow(
+        CustomWidget.buildRow(
           "Request Interview Time",
           CommonService.formatTime(applicationData.appointmentTime.toString()),
         ),
-        _buildRow("Loan Status", 'pending'),
+        CustomWidget.buildRow("Loan Status", 'pending', isLast: true),
         CustomWidget.verticalSpacing(),
         if (applicationData.appointmentResubmit) ...[
           Text(
@@ -276,22 +260,23 @@ class LoanStatusState extends State<LoanStatusPage> {
         Text('Pre Approved Loan', style: CustomStyle.titleBold()),
         CustomWidget.verticalSpacing(),
         CustomWidget.verticalSpacing(),
-        _buildRow("Contract No", applicationData.contractNo.toString()),
-        _buildRow(
+        CustomWidget.buildRow(
+            "Contract No", applicationData.contractNo.toString()),
+        CustomWidget.buildRow(
           "Loan Size",
           "${applicationData.approvedAmount.toString()} Baht",
         ),
-        _buildRow("Loan Term", "${applicationData.loanTerm.toString()} Months"),
-        _buildRow(
+        CustomWidget.buildRow(
+            "Loan Term", "${applicationData.loanTerm.toString()} Months"),
+        CustomWidget.buildRow(
           "Branch Appointment Date",
           CommonService.formatDate(
             applicationData.appointmentBranchDate.toString(),
           ),
         ),
-        _buildRow(
-          "Branch Appointment Time",
-          applicationData.appointmentBranchTime.toString(),
-        ),
+        CustomWidget.buildRow("Branch Appointment Time",
+            applicationData.appointmentBranchTime.toString(),
+            isLast: true),
         CustomWidget.verticalSpacing(),
         if (applicationData.status == 'pre-approved' ||
             applicationData.appointmentResubmit) ...[
@@ -313,22 +298,24 @@ class LoanStatusState extends State<LoanStatusPage> {
         Text('Disbursed Loan', style: CustomStyle.titleBold()),
         CustomWidget.verticalSpacing(),
         CustomWidget.verticalSpacing(),
-        _buildRow("Contract No", applicationData.contractNo.toString()),
-        _buildRow(
+        CustomWidget.buildRow(
+            "Contract No", applicationData.contractNo.toString()),
+        CustomWidget.buildRow(
           "Repayment date",
           CommonService.formatDate(
             applicationData.firstRepaymentDate.toString(),
           ),
         ),
-        _buildRow(
+        CustomWidget.buildRow(
           "Repayment amount",
           "${applicationData.repaymentAmountPerPeriod.toString()} Baht",
         ),
-        _buildRow(
+        CustomWidget.buildRow(
           "Loan Size",
           "${applicationData.approvedAmount.toString()} Baht",
         ),
-        _buildRow("Loan Term", "${applicationData.loanTerm.toString()} Months"),
+        CustomWidget.buildRow(
+            "Loan Term", "${applicationData.loanTerm.toString()} Months"),
         CustomWidget.verticalSpacing(),
         if (totalLateDay > 0) ...[
           RichText(
@@ -452,14 +439,20 @@ class LoanStatusState extends State<LoanStatusPage> {
         Text(' Your loan has been postponed', style: CustomStyle.titleBold()),
         CustomWidget.verticalSpacing(),
         CustomWidget.verticalSpacing(),
-        _buildRow("Contract No", applicationData.contractNo.toString()),
-        _buildRow(
+        CustomWidget.buildRow(
+            "Contract No", applicationData.contractNo.toString()),
+        CustomWidget.buildRow(
           "Loan Size",
           "${applicationData.approvedAmount.toString()} Baht",
         ),
-        _buildRow("Loan Term", "${applicationData.loanTerm.toString()} Months"),
+        CustomWidget.buildRow(
+            "Loan Term", "${applicationData.loanTerm.toString()} Months",
+            isLast: (applicationData.appointmentBranchDate != '' ||
+                    applicationData.appointmentBranchTime != '')
+                ? false
+                : true),
         if (applicationData.appointmentBranchDate != '') ...[
-          _buildRow(
+          CustomWidget.buildRow(
             "Branch Appointment Date",
             CommonService.formatDate(
               applicationData.appointmentBranchDate.toString(),
@@ -467,7 +460,7 @@ class LoanStatusState extends State<LoanStatusPage> {
           ),
         ],
         if (applicationData.appointmentBranchTime != '') ...[
-          _buildRow(
+          CustomWidget.buildRow(
             "Branch Appointment Time",
             applicationData.appointmentBranchTime.toString(),
           ),
