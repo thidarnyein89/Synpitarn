@@ -339,7 +339,9 @@ class DocumentFileState extends State<DocumentFilePage> {
       appBar: AppBar(
         backgroundColor: CustomStyle.primary_color,
         title: Text(
-          'Required Documents',
+          (loginUser.loanApplicationSubmitted)
+              ? 'Documents'
+              : 'Required Documents',
           style: CustomStyle.appTitle(),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -372,27 +374,28 @@ class DocumentFileState extends State<DocumentFilePage> {
                                     buildUploadImageSection(docType))
                                 .toList(),
                             CustomWidget.verticalSpacing(),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomWidget.elevatedButton(
-                                    enabled: true,
-                                    isLoading: false,
-                                    text: 'Previous',
-                                    onPressed: handlePrevious,
+                            if (!loginUser.loanApplicationSubmitted)
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: CustomWidget.elevatedButton(
+                                      enabled: true,
+                                      isLoading: false,
+                                      text: 'Previous',
+                                      onPressed: handlePrevious,
+                                    ),
                                   ),
-                                ),
-                                CustomWidget.horizontalSpacing(),
-                                Expanded(
-                                  child: CustomWidget.elevatedButton(
-                                    enabled: isEnabled,
-                                    isLoading: isLoading,
-                                    text: 'Continue',
-                                    onPressed: handleContinue,
+                                  CustomWidget.horizontalSpacing(),
+                                  Expanded(
+                                    child: CustomWidget.elevatedButton(
+                                      enabled: isEnabled,
+                                      isLoading: isLoading,
+                                      text: 'Continue',
+                                      onPressed: handleContinue,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            )
+                                ],
+                              )
                           ],
                         ),
                       ),

@@ -20,7 +20,9 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 class EditInformationPage extends StatefulWidget {
-  EditInformationPage({super.key});
+  User editUser = User.defaultUser();
+
+  EditInformationPage({super.key, required this.editUser});
 
   @override
   EditInformationState createState() => EditInformationState();
@@ -31,9 +33,6 @@ class EditInformationState extends State<EditInformationPage> {
 
   final Map<String, TextEditingController> textControllers = {
     'name': TextEditingController(),
-    'dob': TextEditingController(),
-    'province_of_work': TextEditingController(),
-    'province_of_resident': TextEditingController(),
     'salary': TextEditingController(),
     'identity_number': TextEditingController(),
     'passport': TextEditingController(),
@@ -43,7 +42,9 @@ class EditInformationState extends State<EditInformationPage> {
     'income_type': null,
   };
 
-  List<Item> incomeTypes = [];
+  Map<String, List<Item>> itemDataList = {
+    "income_type": [Item.defaultItem()],
+  };
 
   final Set<String> inValidFields = {};
 
@@ -69,23 +70,21 @@ class EditInformationState extends State<EditInformationPage> {
     loginUser = await getLoginUser();
 
     await getIncomeTypes();
+    setUserData();
     inValidFieldsAdd();
-    setLoginUserData();
 
     isPageLoading = false;
     setState(() {});
   }
 
   Future<void> getIncomeTypes() async {
-    incomeTypes = [];
-
     DataResponse dataResponse =
         await DataRepository().getIncomeTypes(loginUser);
 
     if (dataResponse.response.code != 200) {
       showInfoDialog(dataResponse.response.message);
     } else {
-      incomeTypes = dataResponse.data.map<Item>((data) {
+      itemDataList['income_type'] = dataResponse.data.map<Item>((data) {
         return Item.named(
           value: data.key.toString(),
           text: data.en,
@@ -96,23 +95,25 @@ class EditInformationState extends State<EditInformationPage> {
     }
   }
 
-  void setLoginUserData() {
+  void setUserData() {
     textControllers.forEach((key, TextEditingController) {
-      if(loginUser.toJson().containsKey(key)) {
-        textControllers[key]!.text = loginUser.toJson()[key].toString();
+      if (widget.editUser.toJson().containsKey(key)) {
+        textControllers[key]!.text = widget.editUser.toJson()[key].toString();
         setState(() {});
       }
     });
 
     dropdownControllers.forEach((key, dynamic) {
-      dropdownControllers[key] =
-          findMatchData(incomeTypes, loginUser.toJson()[key].toString());
+      dropdownControllers[key] = findMatchData(
+          itemDataList[key]!, widget.editUser.toJson()[key].toString());
     });
+
+    setState(() { });
   }
 
   Item? findMatchData(List<Item> itemList, String value) {
     Iterable<Item> matchingItems =
-    itemList.where((item) => item.value == value);
+        itemList.where((item) => item.value == value);
     return matchingItems.isNotEmpty ? matchingItems.first : null;
   }
 
@@ -124,7 +125,10 @@ class EditInformationState extends State<EditInformationPage> {
 
     dropdownControllers.forEach((key, item) {
       inValidFields.remove(key);
-      if (dropdownControllers[key] is Item &&
+      if (dropdownControllers[key] == null) {
+        inValidFields.add(key);
+      }
+      else if (dropdownControllers[key] is Item &&
           dropdownControllers[key].value.isEmpty) {
         inValidFields.add(key);
       } else if (dropdownControllers[key] is List<Item> &&
@@ -165,7 +169,10 @@ class EditInformationState extends State<EditInformationPage> {
 
     final Map<String, dynamic> postBody = {
       ...requestData,
-      'phone_number': loginUser.phoneNumber
+      'phone_number': widget.editUser.phoneNumber,
+      'dob': widget.editUser.dob,
+      'province_of_work': widget.editUser.provinceOfWork,
+      'province_of_resident': widget.editUser.provinceOfResident,
     };
 
     UserResponse response =
@@ -174,11 +181,7 @@ class EditInformationState extends State<EditInformationPage> {
     if (response.response.code != 200) {
       showInfoDialog(response.response.message);
     } else {
-      await setLoginUser(loginUser);
-
-      showInfoDialog("Success Edit Information");
-      isLoading = false;
-      setState(() {});
+      Navigator.pop(context);
     }
   }
 
@@ -274,25 +277,10 @@ class EditInformationState extends State<EditInformationPage> {
                             CustomWidget.textField(
                                 controller: textControllers['passport']!,
                                 label: 'Passport'),
-                            CustomWidget.datePicker(
-                                context: context,
-                                controller: textControllers['dob']!,
-                                label: 'Date of Birth',
-                                readOnly: true,
-                                maxDate: maxDate,
-                                minDate: minDate),
-                            CustomWidget.textField(
-                                controller:
-                                    textControllers['province_of_work']!,
-                                label: 'Province of Work'),
-                            CustomWidget.textField(
-                                controller:
-                                    textControllers['province_of_resident']!,
-                                label: 'Province of Residence'),
                             CustomWidget.dropdownButtonDiffValue(
                               label: 'How often are you paid',
                               selectedValue: dropdownControllers['income_type'],
-                              items: incomeTypes,
+                              items: itemDataList['income_type']!,
                               onChanged: (value) {
                                 setState(() {
                                   inValidFields.remove('income_type');
@@ -308,7 +296,7 @@ class EditInformationState extends State<EditInformationPage> {
                                 enabled: inValidFields.isEmpty,
                                 isLoading: isLoading,
                                 text: 'Continue',
-                                onPressed: handleContinue)
+                                onPressed: handleContinue),
                           ],
                         ),
                       ),

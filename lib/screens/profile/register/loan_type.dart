@@ -27,7 +27,7 @@ class LoanTypeState extends State<LoanTypePage> {
   User loginUser = User.defaultUser();
   DefaultData defaultData = new DefaultData.defaultDefaultData();
 
-  Map<String, dynamic> selectedFormData = {
+  Map<String, dynamic> dropdownControllers = {
     'loan_type_id': null,
     'times_per_month': null,
     'province_work': null,
@@ -60,7 +60,7 @@ class LoanTypeState extends State<LoanTypePage> {
   }
 
   void inValidFieldsAdd() {
-    selectedFormData.forEach((key, item) {
+    dropdownControllers.forEach((key, item) {
       inValidFields.add(key);
     });
     setState(() {});
@@ -136,10 +136,10 @@ class LoanTypeState extends State<LoanTypePage> {
     final Map<String, dynamic> postBody = {
       'version_id': defaultData.versionId,
       'input_data': jsonEncode(defaultData.inputData),
-      'loan_type_id': selectedFormData['loan_type_id']!.value,
-      'times_per_month': selectedFormData['times_per_month']!.value,
-      'province_work': selectedFormData['province_work']!.value,
-      'province_resident': selectedFormData['province_resident']!.value,
+      'loan_type_id': dropdownControllers['loan_type_id']!.value,
+      'times_per_month': dropdownControllers['times_per_month']!.value,
+      'province_work': dropdownControllers['province_work']!.value,
+      'province_resident': dropdownControllers['province_resident']!.value,
     };
 
     DataResponse saveResponse = await LoanRepository()
@@ -206,24 +206,24 @@ class LoanTypeState extends State<LoanTypePage> {
                             children: [
                               CustomWidget.dropdownButtonDiffValue(
                                 label: 'Loan Type',
-                                selectedValue: selectedFormData['loan_type_id'],
+                                selectedValue: dropdownControllers['loan_type_id'],
                                 items: itemDataList['loan_type']!,
                                 onChanged: (value) {
                                   setState(() {
                                     inValidFields.remove('loan_type_id');
-                                    selectedFormData['loan_type_id'] = value!;
+                                    dropdownControllers['loan_type_id'] = value!;
                                   });
                                 },
                               ),
                               CustomWidget.dropdownButtonDiffValue(
                                 label: 'Repayment Term',
                                 selectedValue:
-                                    selectedFormData['times_per_month'],
+                                    dropdownControllers['times_per_month'],
                                 items: itemDataList['times_per_month']!,
                                 onChanged: (value) {
                                   setState(() {
                                     inValidFields.remove('times_per_month');
-                                    selectedFormData['times_per_month'] =
+                                    dropdownControllers['times_per_month'] =
                                         value!;
                                   });
                                 },
@@ -231,24 +231,24 @@ class LoanTypeState extends State<LoanTypePage> {
                               CustomWidget.dropdownButtonDiffValue(
                                 label: 'Province of work',
                                 selectedValue:
-                                    selectedFormData['province_work'],
+                                    dropdownControllers['province_work'],
                                 items: itemDataList['province']!,
                                 onChanged: (value) {
                                   setState(() {
                                     inValidFields.remove('province_work');
-                                    selectedFormData['province_work'] = value!;
+                                    dropdownControllers['province_work'] = value!;
                                   });
                                 },
                               ),
                               CustomWidget.dropdownButtonDiffValue(
                                 label: 'Province of residence',
                                 selectedValue:
-                                    selectedFormData['province_resident'],
+                                    dropdownControllers['province_resident'],
                                 items: itemDataList['province']!,
                                 onChanged: (value) {
                                   setState(() {
                                     inValidFields.remove('province_resident');
-                                    selectedFormData['province_resident'] =
+                                    dropdownControllers['province_resident'] =
                                         value!;
                                   });
                                 },

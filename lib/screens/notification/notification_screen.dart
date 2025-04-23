@@ -18,6 +18,7 @@ class NotificationScreen extends StatefulWidget {
 class _NotificationScreenState extends State<NotificationScreen> {
   List<NotificationModel> notificationLists = [];
   bool isLoading = false;
+
   @override
   void initState() {
     // isLoading = true;
@@ -50,66 +51,65 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(),
-      body:
-          notificationLists.isEmpty
-              ? Center(
-                child: Text(
-                  "No notifications yet",
-                  style: TextStyle(fontSize: 18),
-                ),
-              )
-              : Padding(
-                padding: const EdgeInsets.all(16),
-                child: ListView.builder(
-                  itemCount: notificationLists.length,
-                  itemBuilder: (context, index) {
-                    final item = notificationLists[index];
-                    return Card(
-                      margin: EdgeInsets.only(bottom: 16),
-                      elevation: 1,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    item.data.enTitle,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                  ),
-                                ),
-                                Text(
-                                  DateFormat(
-                                    'dd MMM yyyy',
-                                  ).format(item.createdAt.toLocal()),
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              item.data.enContent,
-                              style: TextStyle(fontSize: 14),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+      body: notificationLists.isEmpty
+          ? Center(
+              child: Text(
+                "No notifications yet",
+                style: TextStyle(fontSize: 18),
               ),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(16),
+              child: ListView.builder(
+                itemCount: notificationLists.length,
+                itemBuilder: (context, index) {
+                  final item = notificationLists[index];
+                  return Card(
+                    margin: EdgeInsets.only(bottom: 16),
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  item.data.enTitle,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                ),
+                              ),
+                              Text(
+                                DateFormat(
+                                  'dd MMM yyyy',
+                                ).format(item.createdAt.toLocal()),
+                                style: TextStyle(fontSize: 14),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            item.data.enContent,
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
     );
   }
 }

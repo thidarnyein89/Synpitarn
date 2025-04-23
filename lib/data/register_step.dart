@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:synpitarn/screens/loan/interview_appointment.dart';
+import 'package:synpitarn/screens/profile/profile/additional_document.dart';
 import 'package:synpitarn/screens/profile/profile/basic_information.dart';
+import 'package:synpitarn/screens/profile/profile/change_phonenumber.dart';
 import 'package:synpitarn/screens/profile/register/loan_type.dart';
 import 'package:synpitarn/screens/profile/document_file.dart';
 import 'package:synpitarn/screens/profile/register/customer_information.dart';
@@ -77,7 +79,7 @@ class StepData {
       StepData(
           icon: Icons.phone_outlined,
           text: 'Change Phone Number',
-          page: DocumentFilePage()),
+          page: ChangePhoneNumberPage()),
     );
 
     stepList.add(
@@ -98,7 +100,7 @@ class StepData {
       StepData(
           icon: Icons.upload_file_outlined,
           text: 'Additional Documents',
-          page: DocumentFilePage()),
+          page: AdditionalDocumentPage()),
     );
 
     return stepList;
