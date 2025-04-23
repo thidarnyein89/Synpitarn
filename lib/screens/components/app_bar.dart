@@ -5,6 +5,7 @@ import 'package:synpitarn/models/notification_response.dart' as model;
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/repositories/notification_repository.dart';
 import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/screens/notification/notification_screen.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -22,7 +23,7 @@ class CustomAppBarState extends State<CustomAppBar> {
   @override
   void initState() {
     super.initState();
-    getNotification();
+    // getNotification();
   }
 
   @override
@@ -36,15 +37,12 @@ class CustomAppBarState extends State<CustomAppBar> {
       User loginUser = await getLoginUser();
 
       model.NotificationResponse notificationResponse =
-          await NotificationRepository().getNotificationCount(loginUser);
+          await NotificationRepository().getNotificationLists(loginUser);
 
       if (notificationResponse.response.code == 200) {
-        _notificationCount = notificationResponse.data;
+        _notificationCount = notificationResponse.data.length;
       }
-
-      if (mounted) {
-        setState(() {});
-      }
+      setState(() {});
     }
   }
 
@@ -67,16 +65,21 @@ class CustomAppBarState extends State<CustomAppBar> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Syn Pitarn', style: CustomStyle.appTitle()),
-            ],
+            children: [Text('Syn Pitarn', style: CustomStyle.appTitle())],
           ),
           Spacer(),
           Stack(
             children: [
               IconButton(
                 icon: Icon(Icons.notifications, color: Colors.white),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NotificationScreen(),
+                    ),
+                  );
+                },
               ),
               if (_notificationCount > 0)
                 Positioned(

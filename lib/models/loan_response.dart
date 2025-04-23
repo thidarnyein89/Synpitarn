@@ -15,7 +15,8 @@ class LoanResponse {
     required this.data,
   });
 
-  factory LoanResponse.loanResponseFromJson(String str) => LoanResponse.fromJson(json.decode(str));
+  factory LoanResponse.loanResponseFromJson(String str) =>
+      LoanResponse.fromJson(json.decode(str));
 
   factory LoanResponse.fromJson(Map<String, dynamic> json) {
     List<Loan> loanList = [];
