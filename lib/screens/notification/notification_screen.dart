@@ -16,11 +16,11 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  List<NotificationModel> repaymentList = [];
+  List<NotificationModel> notificationLists = [];
   bool isLoading = false;
   @override
   void initState() {
-    isLoading = true;
+    // isLoading = true;
     super.initState();
     getNotification();
   }
@@ -34,7 +34,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           await NotificationRepository().getNotificationLists(loginUser);
 
       if (notificationResponse.response.code == 200) {
-        repaymentList = notificationResponse.data;
+        notificationLists = notificationResponse.data;
       }
       isLoading = false;
       setState(() {});
@@ -51,44 +51,59 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return Scaffold(
       appBar: CustomAppBar(),
       body:
-          isLoading
+          notificationLists.isEmpty
               ? Center(
-                child: CircularProgressIndicator(
-                  color: CustomStyle.primary_color,
+                child: Text(
+                  "No notifications yet",
+                  style: TextStyle(fontSize: 18),
                 ),
               )
               : Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 20,
-                ),
+                padding: const EdgeInsets.all(16),
                 child: ListView.builder(
-                  itemCount: repaymentList.length,
+                  itemCount: notificationLists.length,
                   itemBuilder: (context, index) {
-                    final item = repaymentList[index];
+                    final item = notificationLists[index];
                     return Card(
-                      margin: EdgeInsets.only(bottom: 12),
+                      margin: EdgeInsets.only(bottom: 16),
                       elevation: 1,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: ListTile(
-                        title: Text(
-                          item.data.enTitle,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        subtitle: Text(
-                          item.data.enContent,
-                          style: TextStyle(fontSize: 14),
-                        ),
-                        trailing: Text(
-                          DateFormat(
-                            'dd MMM yyyy',
-                          ).format(item.createdAt.toLocal()),
-                          style: TextStyle(fontSize: 14),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    item.data.enTitle,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                  ),
+                                ),
+                                Text(
+                                  DateFormat(
+                                    'dd MMM yyyy',
+                                  ).format(item.createdAt.toLocal()),
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              item.data.enContent,
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          ],
                         ),
                       ),
                     );

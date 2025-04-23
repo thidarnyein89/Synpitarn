@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
@@ -23,7 +25,7 @@ class CustomAppBarState extends State<CustomAppBar> {
   @override
   void initState() {
     super.initState();
-    // getNotification();
+    getNotification();
   }
 
   @override
@@ -41,6 +43,7 @@ class CustomAppBarState extends State<CustomAppBar> {
 
       if (notificationResponse.response.code == 200) {
         _notificationCount = notificationResponse.data.length;
+        print(_notificationCount);
       }
       setState(() {});
     }
@@ -73,6 +76,9 @@ class CustomAppBarState extends State<CustomAppBar> {
               IconButton(
                 icon: Icon(Icons.notifications, color: Colors.white),
                 onPressed: () {
+                  setState(() {
+                    _notificationCount = 0;
+                  });
                   Navigator.push(
                     context,
                     MaterialPageRoute(
