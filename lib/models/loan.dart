@@ -58,6 +58,7 @@ class Loan {
   String? invoiceDocument = "";
   int isFirstToan = 0;
   String lastRepaymentDate = "";
+  String? loanApplicationStatus = "";
   String? loanAgreementDocument = "";
   String? loanCollectionFee = "";
   String? loanFineRate = "";
@@ -144,6 +145,7 @@ class Loan {
       required this.invoiceDocument,
       required this.isFirstToan,
       required this.lastRepaymentDate,
+      required this.loanApplicationStatus,
       required this.loanAgreementDocument,
       required this.loanCollectionFee,
       required this.loanFineRate,
@@ -190,6 +192,16 @@ class Loan {
           scheduleList.add(LoanSchedule.fromJson(scheduleMap));
         }
       }
+    }
+
+    if (json.containsKey('application')) {
+      final applicationJson = json['application'] ?? {};
+      final keyList = applicationJson.keys.toList();
+      keyList.forEach((key) {
+        if (!json.containsKey(key)) {
+          json[key] = applicationJson[key];
+        }
+      });
     }
 
     return Loan(
@@ -247,6 +259,7 @@ class Loan {
         invoiceDocument: json["invoice_document"] ?? "",
         isFirstToan: json["is_first_loan"] ?? 0,
         lastRepaymentDate: json["last_repayment_date"] ?? "",
+        loanApplicationStatus: json['loan_application_status'] ?? "",
         loanAgreementDocument: json["loan_agreement_document"] ?? "",
         loanCollectionFee: json["loan_collection_fee"] ?? "",
         loanFineRate: json["loan_fine_rate"] ?? "",
@@ -258,8 +271,10 @@ class Loan {
         numberCutoff: json["number_cutoff"] ?? 0,
         policyDate: json["policy_date"] ?? "",
         provinceId: json["province_id"] ?? 0,
-        principleAmount: json[''] ?? "principle_amount",
-        qrcode: json['qrcode'] != null ? QrCode.fromJson(json['qrcode']) : QrCode.defaultQrCode(),
+        principleAmount: json['principle_amount'] ?? "",
+        qrcode: json['qrcode'] != null
+            ? QrCode.fromJson(json['qrcode'])
+            : QrCode.defaultQrCode(),
         receiptDocument: json["receipt_document"] ?? "",
         rejectCode: json["reject_code"] ?? "",
         rejectDate: json["reject_date"] ?? "",

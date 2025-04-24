@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/screens/components/app_bar.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/services/route_service.dart';
 
@@ -27,15 +28,7 @@ class SuccessState extends State<SuccessPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: CustomStyle.primary_color,
-          title: Text(
-            'Appointment Success',
-            style: CustomStyle.appTitle(),
-          ),
-          iconTheme: IconThemeData(color: Colors.white),
-          automaticallyImplyLeading: true,
-        ),
+        appBar: CustomAppBar(title: 'Appointment Success', isMainPage: true),
         body: Scaffold(
           backgroundColor: Colors.white,
           body: LayoutBuilder(

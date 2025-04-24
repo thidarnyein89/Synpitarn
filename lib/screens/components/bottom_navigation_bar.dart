@@ -5,6 +5,7 @@ import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/home.dart';
+import 'package:synpitarn/screens/loan/loan_history.dart';
 import 'package:synpitarn/screens/loan/loan_status.dart';
 import 'package:synpitarn/screens/profile/profile_home.dart';
 import 'package:synpitarn/screens/setting/setting.dart';
@@ -54,7 +55,7 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         showErrorDialog(AppConfig.NO_CURRENT_LOAN);
       }
       else {
-        RouteService.goToReplaceNavigator(context, LoanStatusPage(isHome: false));
+        RouteService.goToReplaceNavigator(context, LoanHistoryPage());
       }
     } else if (index == AppConfig.PROFILE_INDEX) {
       RouteService.goToReplaceNavigator(context, ProfileHomePage());

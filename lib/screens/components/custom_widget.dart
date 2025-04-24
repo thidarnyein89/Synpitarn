@@ -562,17 +562,19 @@ class CustomWidget {
     );
   }
 
-  static Widget buildRow(String label, String value, {bool isLast = false}) {
+  static Widget buildRow(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        CustomWidget.verticalSmallSpacing(),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Align(
               alignment: Alignment.centerLeft,
               child: SizedBox(
-                width: 120,
+                width: 140,
                 child: Text(label, style: CustomStyle.body()),
               ),
             ),
@@ -584,12 +586,6 @@ class CustomWidget {
             ),
           ],
         ),
-        CustomWidget.verticalSmallSpacing(),
-        if (!isLast)
-          Divider(
-            color: Colors.grey[200],
-            thickness: 1,
-          ),
         CustomWidget.verticalSmallSpacing(),
       ],
     );

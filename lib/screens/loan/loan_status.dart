@@ -19,9 +19,9 @@ import 'package:synpitarn/services/route_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LoanStatusPage extends StatefulWidget {
-  bool isHome = false;
+  bool isToDisplayPage = true;
 
-  LoanStatusPage({super.key, required this.isHome});
+  LoanStatusPage({super.key, required this.isToDisplayPage});
 
   @override
   LoanStatusState createState() => LoanStatusState();
@@ -74,9 +74,8 @@ class LoanStatusState extends State<LoanStatusPage> {
 
   Future<void> getTotalLateDay() async {
     if (loginUser.loanApplicationSubmitted) {
-      LoanResponse loanResponse = await LoanRepository().getLoanHistory(
-        loginUser,
-      );
+      LoanResponse loanResponse =
+          await LoanRepository().getLoanHistory(loginUser, 1);
 
       if (loanResponse.response.code != 200) {
         showErrorDialog(loanResponse.response.message);
@@ -116,16 +115,19 @@ class LoanStatusState extends State<LoanStatusPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.isHome) {
-      return createLoanStatusWidget();
-    } else {
+    if (widget.isToDisplayPage) {
       return createLoanStatusPage();
+    } else {
+      return createLoanStatusSection();
     }
   }
 
   Widget createLoanStatusPage() {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(
+        title: 'Current Apply Loan',
+        isMainPage: false,
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Stack(
@@ -147,7 +149,7 @@ class LoanStatusState extends State<LoanStatusPage> {
                         children: [
                           Padding(
                             padding: CustomStyle.pagePadding(),
-                            child: createLoanStatusWidget(),
+                            child: createLoanStatusSection(),
                           ),
                         ],
                       ),
@@ -158,46 +160,38 @@ class LoanStatusState extends State<LoanStatusPage> {
           );
         },
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: AppConfig.LOAN_INDEX,
-        onItemTapped: (index) {
-          setState(() {
-            AppConfig.CURRENT_INDEX = index;
-          });
-        },
-      ),
     );
   }
 
-  Widget createLoanStatusWidget() {
+  Widget createLoanStatusSection() {
     if (applicationData.id <= 0) {
-      return noApplyLoanWidget();
+      return noApplyLoanSection();
     }
 
     if (AppConfig.PENDING_STATUS.contains(applicationData.status)) {
-      return pendingWidget();
+      return pendingSection();
     }
 
     if (AppConfig.PRE_APPROVE_STATUS.contains(applicationData.status)) {
-      return preApproveWidget();
+      return preApproveSection();
     }
 
     if (AppConfig.DISBURSE_STATUS.contains(applicationData.status)) {
-      return disburseWidget();
+      return disburseSection();
     }
 
     if (AppConfig.REJECT_STATUS.contains(applicationData.status)) {
-      return rejectWidget();
+      return rejectSection();
     }
 
     if (AppConfig.POSTPONE_STATUS.contains(applicationData.status)) {
-      return postponeWidget();
+      return postponeSection();
     }
 
     return Container();
   }
 
-  Widget noApplyLoanWidget() {
+  Widget noApplyLoanSection() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,13 +207,12 @@ class LoanStatusState extends State<LoanStatusPage> {
     );
   }
 
-  Widget pendingWidget() {
+  Widget pendingSection() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Pending Loan Application', style: CustomStyle.titleBold()),
-        CustomWidget.verticalSpacing(),
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
             "Contract No", applicationData.contractNo.toString()),
@@ -235,7 +228,7 @@ class LoanStatusState extends State<LoanStatusPage> {
           "Request Interview Time",
           CommonService.formatTime(applicationData.appointmentTime.toString()),
         ),
-        CustomWidget.buildRow("Loan Status", 'pending', isLast: true),
+        CustomWidget.buildRow("Loan Status", 'pending'),
         CustomWidget.verticalSpacing(),
         if (applicationData.appointmentResubmit) ...[
           Text(
@@ -252,19 +245,18 @@ class LoanStatusState extends State<LoanStatusPage> {
     );
   }
 
-  Widget preApproveWidget() {
+  Widget preApproveSection() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Pre Approved Loan', style: CustomStyle.titleBold()),
         CustomWidget.verticalSpacing(),
-        CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
             "Contract No", applicationData.contractNo.toString()),
         CustomWidget.buildRow(
           "Loan Size",
-          "${applicationData.approvedAmount.toString()} Baht",
+          "${applicationData.appliedAmount.toString()} Baht",
         ),
         CustomWidget.buildRow(
             "Loan Term", "${applicationData.loanTerm.toString()} Months"),
@@ -275,8 +267,7 @@ class LoanStatusState extends State<LoanStatusPage> {
           ),
         ),
         CustomWidget.buildRow("Branch Appointment Time",
-            applicationData.appointmentBranchTime.toString(),
-            isLast: true),
+            applicationData.appointmentBranchTime.toString()),
         CustomWidget.verticalSpacing(),
         if (applicationData.status == 'pre-approved' ||
             applicationData.appointmentResubmit) ...[
@@ -290,13 +281,12 @@ class LoanStatusState extends State<LoanStatusPage> {
     );
   }
 
-  Widget disburseWidget() {
+  Widget disburseSection() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Disbursed Loan', style: CustomStyle.titleBold()),
-        CustomWidget.verticalSpacing(),
+        Text('Approved Loan', style: CustomStyle.titleBold()),
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
             "Contract No", applicationData.contractNo.toString()),
@@ -377,7 +367,7 @@ class LoanStatusState extends State<LoanStatusPage> {
     }
   }
 
-  Widget rejectWidget() {
+  Widget rejectSection() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -431,13 +421,12 @@ class LoanStatusState extends State<LoanStatusPage> {
     );
   }
 
-  Widget postponeWidget() {
+  Widget postponeSection() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(' Your loan has been postponed', style: CustomStyle.titleBold()),
-        CustomWidget.verticalSpacing(),
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
             "Contract No", applicationData.contractNo.toString()),
@@ -446,11 +435,7 @@ class LoanStatusState extends State<LoanStatusPage> {
           "${applicationData.approvedAmount.toString()} Baht",
         ),
         CustomWidget.buildRow(
-            "Loan Term", "${applicationData.loanTerm.toString()} Months",
-            isLast: (applicationData.appointmentBranchDate != '' ||
-                    applicationData.appointmentBranchTime != '')
-                ? false
-                : true),
+            "Loan Term", "${applicationData.loanTerm.toString()} Months"),
         if (applicationData.appointmentBranchDate != '') ...[
           CustomWidget.buildRow(
             "Branch Appointment Date",

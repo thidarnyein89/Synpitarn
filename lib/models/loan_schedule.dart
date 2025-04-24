@@ -25,7 +25,7 @@ class LoanSchedule {
   String repaymentTime = "";
   String serviceFee = "";
   String status = "";
-  int totalRepaymentAmount = 0;
+  double totalRepaymentAmount = 0.0;
 
   LoanSchedule.defaultLoanSchedule();
 
@@ -81,7 +81,7 @@ class LoanSchedule {
       repaymentTime: json['repayment_time'] ?? "",
       serviceFee: json['service_fee'] ?? "",
       status: json['status'] ?? "",
-      totalRepaymentAmount: json['total_repayment_amount'] ?? 0,
+      totalRepaymentAmount: json['total_repayment_amount'] ?? 0.0,
     );
   }
 }

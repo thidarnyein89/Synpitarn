@@ -7,6 +7,7 @@ import 'package:synpitarn/models/data_response.dart';
 import 'package:synpitarn/models/default/default_data.dart';
 import 'package:synpitarn/models/default/default_response.dart';
 import 'package:synpitarn/repositories/default_repository.dart';
+import 'package:synpitarn/screens/components/app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/data/custom_style.dart';
@@ -61,15 +62,7 @@ class SettingState extends State<SettingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: CustomStyle.primary_color,
-        title: Text(
-          'Setting',
-          style: CustomStyle.appTitle(),
-        ),
-        iconTheme: IconThemeData(color: Colors.white),
-        automaticallyImplyLeading: true,
-      ),
+      appBar: CustomAppBar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Stack(children: [

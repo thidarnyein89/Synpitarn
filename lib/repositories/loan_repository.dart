@@ -24,8 +24,8 @@ class LoanRepository {
     return LoanApplicationResponse.loanApplicationResponseFromJson(response.body);
   }
 
-  Future<LoanResponse> getLoanHistory(User loginUser) async {
-    String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/loan-history?page=1");
+  Future<LoanResponse> getLoanHistory(User loginUser, int page) async {
+    String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/loan-history?page=$page");
 
     final response = await http.get(
       Uri.parse(url),
