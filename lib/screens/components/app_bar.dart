@@ -10,7 +10,10 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/notification/notification_screen.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  const CustomAppBar({super.key});
+  String? title = "";
+  bool? isMainPage = false;
+
+  CustomAppBar({super.key, this.title, this.isMainPage});
 
   @override
   CustomAppBarState createState() => CustomAppBarState();
@@ -49,8 +52,7 @@ class CustomAppBarState extends State<CustomAppBar> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget createMainAppBar() {
     return AppBar(
       backgroundColor: CustomStyle.primary_color,
       automaticallyImplyLeading: false,
@@ -105,5 +107,26 @@ class CustomAppBarState extends State<CustomAppBar> {
         ],
       ),
     );
+  }
+
+  Widget createPageAppBar() {
+    return AppBar(
+      backgroundColor: CustomStyle.primary_color,
+      title: Text(
+        widget.title!,
+        style: CustomStyle.appTitle(),
+      ),
+      iconTheme: IconThemeData(color: Colors.white),
+      automaticallyImplyLeading: true,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.isMainPage == null || widget.isMainPage!) {
+      return createMainAppBar();
+    } else {
+      return createPageAppBar();
+    }
   }
 }

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/models/guide.dart';
 import 'package:synpitarn/models/nrc.dart';
 import 'package:synpitarn/models/aboutUs.dart';
@@ -48,8 +49,29 @@ class CommonService {
   static int getDayCount(String date) {
     DateTime currentDate = DateTime.now();
     DateTime previousDate = DateTime.parse(date);
-  print(currentDate.difference(previousDate).inDays);
     return currentDate.difference(previousDate).inDays;
+  }
+
+  static String getLoanStatus(String status) {
+    String loanStatus = "";
+
+    if (AppConfig.PENDING_STATUS.contains(status)) {
+      loanStatus = 'pending';
+    }
+    if (AppConfig.PRE_APPROVE_STATUS.contains(status)) {
+      loanStatus = 'pre-approved';
+    }
+    if (AppConfig.DISBURSE_STATUS.contains(status)) {
+      loanStatus = 'approved';
+    }
+    if (AppConfig.REJECT_STATUS.contains(status)) {
+      loanStatus = 'reject';
+    }
+    if (AppConfig.POSTPONE_STATUS.contains(status)) {
+      loanStatus = 'postpone';
+    }
+
+    return loanStatus;
   }
 
 }

@@ -89,8 +89,8 @@ class HomeState extends State<HomePage> {
   }
 
   Future<void> getApplicationData() async {
-    LoanApplicationResponse applicationResponse = await LoanRepository()
-        .getApplication(loginUser);
+    LoanApplicationResponse applicationResponse =
+        await LoanRepository().getApplication(loginUser);
 
     if (applicationResponse.response.code != 200) {
       showErrorDialog(applicationResponse.response.message);
@@ -153,9 +153,8 @@ class HomeState extends State<HomePage> {
 
   Future<void> getLoanHistory() async {
     if (loginUser.loanApplicationSubmitted) {
-      LoanResponse loanResponse = await LoanRepository().getLoanHistory(
-        loginUser,
-      );
+      LoanResponse loanResponse =
+          await LoanRepository().getLoanHistory(loginUser, 1);
 
       if (loanResponse.response.code != 200) {
         showErrorDialog(loanResponse.response.message);
@@ -165,17 +164,17 @@ class HomeState extends State<HomePage> {
         if (loanResponse.data.isNotEmpty) {
           repaymentList =
               loanResponse.data[0].schedules!.map((LoanSchedule loanSchedule) {
-                int dayCount = CommonService.getDayCount(loanSchedule.pmtDate);
-                bool isLate = loanSchedule.isPaymentDone == 0 && dayCount > 0;
+            int dayCount = CommonService.getDayCount(loanSchedule.pmtDate);
+            bool isLate = loanSchedule.isPaymentDone == 0 && dayCount > 0;
 
-                return {
-                  'dueDate': CommonService.formatDate(loanSchedule.pmtDate),
-                  'amount': '${loanSchedule.pmtAmount} Baht',
-                  'status': loanSchedule.isPaymentDone == 0 ? 'Unpaid' : 'Paid',
-                  'dayCount': dayCount,
-                  'isLate': isLate,
-                };
-              }).toList();
+            return {
+              'dueDate': CommonService.formatDate(loanSchedule.pmtDate),
+              'amount': '${loanSchedule.pmtAmount} Baht',
+              'status': loanSchedule.isPaymentDone == 0 ? 'Unpaid' : 'Paid',
+              'dayCount': dayCount,
+              'isLate': isLate,
+            };
+          }).toList();
 
           var lateRepayment = repaymentList.firstWhere(
             (repayment) => repayment['isLate'] == true,
@@ -202,7 +201,7 @@ class HomeState extends State<HomePage> {
       } else {
         _currentIndex = 0;
       }
-      if (mounted) {
+      if (mounted && !isLoading) {
         _pageController.animateToPage(
           _currentIndex,
           duration: Duration(milliseconds: 500),
@@ -227,27 +226,26 @@ class HomeState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(),
-      body:
-          isLoading
-              ? Center(
-                child: CircularProgressIndicator(
-                  color: CustomStyle.primary_color,
-                ),
-              )
-              : SingleChildScrollView(
-                child: Column(
-                  children: [
-                    createSliderSection(),
-                    createFeatureSection(),
-                    createLoanStatusSection(),
-                    createLoanSection(),
-                    if (!loginUser.loanApplicationSubmitted) ...[
-                      GuideHeaderPage(),
-                      createAboutUs(),
-                    ],
-                  ],
-                ),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                color: CustomStyle.primary_color,
               ),
+            )
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  createSliderSection(),
+                  createFeatureSection(),
+                  createLoanStatusSection(),
+                  createLoanSection(),
+                  if (!loginUser.loanApplicationSubmitted) ...[
+                    GuideHeaderPage(),
+                    createAboutUs(),
+                  ],
+                ],
+              ),
+            ),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: AppConfig.HOME_INDEX,
         onItemTapped: (index) {
@@ -438,44 +436,50 @@ class HomeState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildRow("Contract No", applicationData.contractNo.toString()),
-              _buildRow(
-                "Loan Applied Date",
-                CommonService.formatDate(applicationData.createdAt.toString()),
-              ),
-              _buildRow(
-                "Request Interview Date",
-                CommonService.formatDate(
-                  applicationData.appointmentDate.toString(),
+              CustomWidget.buildRow(
+                  "Contract No", applicationData.contractNo.toString()),
+              if (AppConfig.PRE_APPROVE_STATUS
+                  .contains(applicationData.status)) ...[
+                CustomWidget.buildRow(
+                  "Loan Size",
+                  "${applicationData.appliedAmount.toString()} Baht",
                 ),
-              ),
-              _buildRow(
-                "Request Interview Time",
-                CommonService.formatTime(
-                  applicationData.appointmentTime.toString(),
+                CustomWidget.buildRow("Loan Term",
+                    "${applicationData.loanTerm.toString()} Months"),
+                CustomWidget.buildRow(
+                  "Branch Appointment Date",
+                  CommonService.formatDate(
+                    applicationData.appointmentBranchDate.toString(),
+                  ),
                 ),
-              ),
-              _buildRow("Loan Status", loanStatus),
+                CustomWidget.buildRow("Branch Appointment Time",
+                    applicationData.appointmentBranchTime.toString()),
+              ],
+              if (!AppConfig.PRE_APPROVE_STATUS
+                  .contains(applicationData.status)) ...[
+                CustomWidget.buildRow(
+                  "Loan Applied Date",
+                  CommonService.formatDate(
+                      applicationData.createdAt.toString()),
+                ),
+                CustomWidget.buildRow(
+                  "Request Interview Date",
+                  CommonService.formatDate(
+                    applicationData.appointmentDate.toString(),
+                  ),
+                ),
+                CustomWidget.buildRow(
+                  "Request Interview Time",
+                  CommonService.formatTime(
+                    applicationData.appointmentTime.toString(),
+                  ),
+                ),
+              ],
+              CustomWidget.buildRow("Loan Status", loanStatus),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildRow(String label, String value) {
-    return Column(
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(child: Text(label, style: CustomStyle.body())),
-            Text(" : "),
-            SizedBox(width: 120, child: Text(value, style: CustomStyle.body())),
-          ],
-        ),
-        CustomWidget.verticalSpacing(),
-      ],
     );
   }
 
@@ -537,10 +541,9 @@ class HomeState extends State<HomePage> {
                     const SizedBox(height: 8),
                     Text(
                       item['dueDate'],
-                      style:
-                          item['isLate']
-                              ? CustomStyle.bodyRedColor()
-                              : CustomStyle.body(),
+                      style: item['isLate']
+                          ? CustomStyle.bodyRedColor()
+                          : CustomStyle.body(),
                     ),
                   ],
                 ),
@@ -553,10 +556,9 @@ class HomeState extends State<HomePage> {
                     const SizedBox(height: 8),
                     Text(
                       item['amount'],
-                      style:
-                          item['isLate']
-                              ? CustomStyle.bodyRedColor()
-                              : CustomStyle.body(),
+                      style: item['isLate']
+                          ? CustomStyle.bodyRedColor()
+                          : CustomStyle.body(),
                     ),
                   ],
                 ),
@@ -569,10 +571,9 @@ class HomeState extends State<HomePage> {
                     const SizedBox(height: 8),
                     Text(
                       item['status'],
-                      style:
-                          item['isLate']
-                              ? CustomStyle.bodyRedColor()
-                              : CustomStyle.body(),
+                      style: item['isLate']
+                          ? CustomStyle.bodyRedColor()
+                          : CustomStyle.body(),
                     ),
                   ],
                 ),
@@ -641,14 +642,13 @@ class HomeState extends State<HomePage> {
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
                 shrinkWrap: true,
-                children:
-                    aboutList
-                        .asMap()
-                        .map((index, aboutData) {
-                          return MapEntry(index, gridItem(index));
-                        })
-                        .values
-                        .toList(),
+                children: aboutList
+                    .asMap()
+                    .map((index, aboutData) {
+                      return MapEntry(index, gridItem(index));
+                    })
+                    .values
+                    .toList(),
               ),
             ],
           ),
