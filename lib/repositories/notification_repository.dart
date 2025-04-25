@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:synpitarn/models/notification_response.dart';
 import 'package:synpitarn/models/user.dart';
@@ -19,9 +21,13 @@ class NotificationRepository {
     return NotificationResponse.notificationResponseFromJson(response.body);
   }
 
-  Future<NotificationResponse> getNotificationLists(User loginRequest) async {
+  Future<NotificationResponse> getNotificationLists({
+    required User loginRequest,
+    required int page,
+    int perPage = 10,
+  }) async {
     String url =
-        ("${AppConfig.BASE_URL}/${AppConfig.PATH}/notification?page=1");
+        ("${AppConfig.BASE_URL}/${AppConfig.PATH}/notification?page=$page");
 
     final response = await http.get(
       Uri.parse(url),
@@ -30,6 +36,25 @@ class NotificationRepository {
         "Authorization": "Bearer ${loginRequest.token}",
         "x-user-id": loginRequest.id.toString(),
       },
+    );
+
+    return NotificationResponse.notificationResponseFromJson(response.body);
+  }
+
+  Future<NotificationResponse> readNotification(
+    Map<String, dynamic> postBody,
+    User loginUser,
+  ) async {
+    String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/notification/read");
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer ${loginUser.token}",
+        "x-user-id": loginUser.id.toString(),
+      },
+      body: jsonEncode(postBody),
     );
 
     return NotificationResponse.notificationResponseFromJson(response.body);

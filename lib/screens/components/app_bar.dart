@@ -10,10 +10,7 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/notification/notification_screen.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  String? title = "";
-  bool? isMainPage = false;
-
-  CustomAppBar({super.key, this.title, this.isMainPage});
+  const CustomAppBar({super.key});
 
   @override
   CustomAppBarState createState() => CustomAppBarState();
@@ -42,7 +39,7 @@ class CustomAppBarState extends State<CustomAppBar> {
       User loginUser = await getLoginUser();
 
       model.NotificationResponse notificationResponse =
-          await NotificationRepository().getNotificationLists(loginUser);
+          await NotificationRepository().getNotificationCount(loginUser);
 
       if (notificationResponse.response.code == 200) {
         _notificationCount = notificationResponse.data.length;
@@ -52,7 +49,8 @@ class CustomAppBarState extends State<CustomAppBar> {
     }
   }
 
-  Widget createMainAppBar() {
+  @override
+  Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: CustomStyle.primary_color,
       automaticallyImplyLeading: false,
@@ -107,26 +105,5 @@ class CustomAppBarState extends State<CustomAppBar> {
         ],
       ),
     );
-  }
-
-  Widget createPageAppBar() {
-    return AppBar(
-      backgroundColor: CustomStyle.primary_color,
-      title: Text(
-        widget.title!,
-        style: CustomStyle.appTitle(),
-      ),
-      iconTheme: IconThemeData(color: Colors.white),
-      automaticallyImplyLeading: true,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.isMainPage == null || widget.isMainPage!) {
-      return createMainAppBar();
-    } else {
-      return createPageAppBar();
-    }
   }
 }
