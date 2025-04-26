@@ -7,7 +7,7 @@ import 'meta.dart';
 class NotificationResponse {
   final Response response;
   final Meta meta;
-  final List<NotificationModel> data;
+  final dynamic data;
 
   NotificationResponse({
     required this.response,
@@ -29,13 +29,14 @@ class NotificationResponse {
         }
       }
     }
+
     return NotificationResponse(
-      response: Response.fromJson(json["response"]),
-      meta: Meta.fromJson(json["meta"]),
-      data:
-          (json['data'] as List)
-              .map((e) => NotificationModel.fromJson(e))
-              .toList(),
-    );
+        response: Response.fromJson(json["response"]),
+        meta: Meta.fromJson(json["meta"]),
+        data: (loanJson is List)
+            ? (json['data'] as List)
+                .map((e) => NotificationModel.fromJson(e))
+                .toList()
+            : json['data']);
   }
 }

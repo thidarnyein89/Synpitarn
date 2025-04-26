@@ -9,10 +9,10 @@ import 'package:synpitarn/models/loan_application_response.dart';
 import 'package:synpitarn/models/loan_response.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
-import 'package:synpitarn/screens/components/app_bar.dart';
+import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:synpitarn/screens/loan/loan_status.dart';
+import 'package:synpitarn/screens/loan/current_loan.dart';
 import 'package:synpitarn/screens/loan/previous_loan.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
@@ -118,7 +118,7 @@ class LoanHistoryState extends State<LoanHistoryPage> {
                       CommonService.getLoanStatus(
                           applicationData.status.toString())),
                   CustomWidget.buildRow(
-                      "Loan Size", "${applicationData.appliedAmount} Baht"),
+                      "Loan Size", CommonService.getLoanSize(applicationData)),
                   CustomWidget.buildRow(
                       "Loan Term", "${applicationData.loanTerm} Months"),
                 ],
@@ -164,7 +164,7 @@ class LoanHistoryState extends State<LoanHistoryPage> {
                       CommonService.getLoanStatus(
                           loanData.loanApplicationStatus.toString())),
                   CustomWidget.buildRow(
-                      "Loan Size", "${loanData.principleAmount} Baht"),
+                      "Loan Size", CommonService.getLoanSize(loanData)),
                   CustomWidget.buildRow(
                       "Loan Term", "${loanData.termPeriod} Months"),
                   CustomWidget.buildRow(
@@ -185,16 +185,16 @@ class LoanHistoryState extends State<LoanHistoryPage> {
   }
 
   String getLoopText(int n) {
-    if (n == 1) return '1st loop';
-    if (n == 2) return '2nd loop';
-    if (n == 3) return '3rd loop';
-    return '${n}th loop';
+    if (n == 1) return '1st Loan';
+    if (n == 2) return '2nd Loan';
+    if (n == 3) return '3rd Loan';
+    return '${n}th Loan';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: MainAppBar(),
       body: LayoutBuilder(builder: (context, constraints) {
         return Stack(
           children: [
@@ -216,7 +216,7 @@ class LoanHistoryState extends State<LoanHistoryPage> {
                         GestureDetector(
                           onTap: () {
                             RouteService.goToNavigator(
-                                context, LoanStatusPage(isToDisplayPage: true));
+                                context, CurrentLoanPage(isToDisplayPage: true));
                           },
                           child: createCurrentApplyLoanCard(),
                         ),

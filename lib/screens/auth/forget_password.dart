@@ -6,7 +6,7 @@ import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/auth/otp.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
-import 'package:synpitarn/screens/components/app_bar.dart';
+import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 

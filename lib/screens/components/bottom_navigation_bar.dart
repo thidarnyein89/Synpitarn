@@ -6,7 +6,7 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/home.dart';
 import 'package:synpitarn/screens/loan/loan_history.dart';
-import 'package:synpitarn/screens/loan/loan_status.dart';
+import 'package:synpitarn/screens/loan/current_loan.dart';
 import 'package:synpitarn/screens/profile/profile_home.dart';
 import 'package:synpitarn/screens/setting/setting.dart';
 import 'package:synpitarn/services/route_service.dart';

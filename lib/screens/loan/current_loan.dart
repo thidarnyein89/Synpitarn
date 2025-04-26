@@ -9,25 +9,24 @@ import 'package:synpitarn/models/loan_schedule.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:synpitarn/screens/components/app_bar.dart';
-import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/data/app_config.dart';
+import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/loan/interview_appointment.dart';
 import 'package:synpitarn/screens/profile/profile_home.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class LoanStatusPage extends StatefulWidget {
+class CurrentLoanPage extends StatefulWidget {
   bool isToDisplayPage = true;
 
-  LoanStatusPage({super.key, required this.isToDisplayPage});
+  CurrentLoanPage({super.key, required this.isToDisplayPage});
 
   @override
-  LoanStatusState createState() => LoanStatusState();
+  CurrentLoanState createState() => CurrentLoanState();
 }
 
-class LoanStatusState extends State<LoanStatusPage> {
+class CurrentLoanState extends State<CurrentLoanPage> {
   User loginUser = User.defaultUser();
   Loan applicationData = Loan.defaultLoan();
   bool isLoading = false;
@@ -124,9 +123,8 @@ class LoanStatusState extends State<LoanStatusPage> {
 
   Widget createLoanStatusPage() {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: PageAppBar(
         title: 'Current Apply Loan',
-        isMainPage: false,
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -255,8 +253,7 @@ class LoanStatusState extends State<LoanStatusPage> {
         CustomWidget.buildRow(
             "Contract No", applicationData.contractNo.toString()),
         CustomWidget.buildRow(
-          "Loan Size",
-          "${applicationData.appliedAmount.toString()} Baht",
+          "Loan Size", CommonService.getLoanSize(applicationData),
         ),
         CustomWidget.buildRow(
             "Loan Term", "${applicationData.loanTerm.toString()} Months"),
@@ -301,8 +298,7 @@ class LoanStatusState extends State<LoanStatusPage> {
           "${applicationData.repaymentAmountPerPeriod.toString()} Baht",
         ),
         CustomWidget.buildRow(
-          "Loan Size",
-          "${applicationData.approvedAmount.toString()} Baht",
+          "Loan Size", CommonService.getLoanSize(applicationData),
         ),
         CustomWidget.buildRow(
             "Loan Term", "${applicationData.loanTerm.toString()} Months"),
@@ -431,8 +427,7 @@ class LoanStatusState extends State<LoanStatusPage> {
         CustomWidget.buildRow(
             "Contract No", applicationData.contractNo.toString()),
         CustomWidget.buildRow(
-          "Loan Size",
-          "${applicationData.approvedAmount.toString()} Baht",
+          "Loan Size", CommonService.getLoanSize(applicationData),
         ),
         CustomWidget.buildRow(
             "Loan Term", "${applicationData.loanTerm.toString()} Months"),

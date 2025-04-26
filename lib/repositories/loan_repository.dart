@@ -131,4 +131,19 @@ class LoanRepository {
 
     return DataResponse.dataResponseFromJson(response.body);
   }
+
+  Future<LoanApplicationResponse> getLoanById(int loanId, User loginUser) async {
+    String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/loan-history/$loanId/schedule");
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer ${loginUser.token}",
+        "x-user-id": loginUser.id.toString(),
+      },
+    );
+
+    return LoanApplicationResponse.loanApplicationResponseFromJson(response.body);
+  }
 }

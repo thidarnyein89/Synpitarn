@@ -14,6 +14,7 @@ import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/repositories/default_repository.dart';
 import 'package:synpitarn/repositories/document_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
+import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/profile/register/customer_information.dart';
@@ -336,17 +337,9 @@ class DocumentFileState extends State<DocumentFilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: CustomStyle.primary_color,
-        title: Text(
-          (loginUser.loanApplicationSubmitted)
+      appBar: PageAppBar(title: (loginUser.loanApplicationSubmitted)
               ? 'Documents'
-              : 'Required Documents',
-          style: CustomStyle.appTitle(),
-        ),
-        iconTheme: IconThemeData(color: Colors.white),
-        automaticallyImplyLeading: true,
-      ),
+              : 'Required Documents'),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Stack(children: [

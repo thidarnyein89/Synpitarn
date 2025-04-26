@@ -14,7 +14,7 @@ import 'package:synpitarn/screens/setting/guide_header.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/models/aboutUs.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/screens/components/app_bar.dart';
+import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/data/app_config.dart';
 import 'package:remixicon/remixicon.dart';
@@ -225,7 +225,7 @@ class HomeState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: MainAppBar(),
       body: isLoading
           ? Center(
               child: CircularProgressIndicator(
@@ -441,9 +441,7 @@ class HomeState extends State<HomePage> {
               if (AppConfig.PRE_APPROVE_STATUS
                   .contains(applicationData.status)) ...[
                 CustomWidget.buildRow(
-                  "Loan Size",
-                  "${applicationData.appliedAmount.toString()} Baht",
-                ),
+                    "Loan Size", CommonService.getLoanSize(applicationData)),
                 CustomWidget.buildRow("Loan Term",
                     "${applicationData.loanTerm.toString()} Months"),
                 CustomWidget.buildRow(

@@ -2,8 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/screens/components/app_bar.dart';
+import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
+import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 class SuccessPage extends StatefulWidget {
@@ -28,7 +29,7 @@ class SuccessState extends State<SuccessPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: CustomAppBar(title: 'Appointment Success', isMainPage: true),
+        appBar: PageAppBar(title: 'Appointment Success'),
         body: Scaffold(
           backgroundColor: Colors.white,
           body: LayoutBuilder(

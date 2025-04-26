@@ -7,6 +7,7 @@ import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/profile/profile/edit_information.dart';
 import 'package:synpitarn/services/route_service.dart';
 
@@ -77,15 +78,7 @@ class BasicInformationState extends State<BasicInformationPage> with RouteAware 
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: CustomStyle.primary_color,
-        title: Text(
-          'Basic Information',
-          style: CustomStyle.appTitle(),
-        ),
-        iconTheme: IconThemeData(color: Colors.white),
-        automaticallyImplyLeading: true,
-      ),
+      appBar: PageAppBar(title: 'Basic Information'),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Stack(

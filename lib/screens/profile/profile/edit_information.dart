@@ -15,6 +15,7 @@ import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/nrc.dart';
+import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/services/route_service.dart';
@@ -227,15 +228,7 @@ class EditInformationState extends State<EditInformationPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: CustomStyle.primary_color,
-        title: Text(
-          'Edit Information',
-          style: CustomStyle.appTitle(),
-        ),
-        iconTheme: IconThemeData(color: Colors.white),
-        automaticallyImplyLeading: true,
-      ),
+      appBar: PageAppBar(title: 'Edit Information'),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Stack(children: [

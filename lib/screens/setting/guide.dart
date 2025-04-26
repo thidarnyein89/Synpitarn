@@ -7,8 +7,9 @@ import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/models/guide.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:synpitarn/screens/components/dashed_circle_painter.dart';
+import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/services/common_service.dart';
-import 'package:synpitarn/screens/components/app_bar.dart';
+import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/data/app_config.dart';
 
@@ -65,7 +66,7 @@ class GuideState extends State<GuidePage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(),
+      appBar: PageAppBar(title: 'User Guide'),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return ConstrainedBox(

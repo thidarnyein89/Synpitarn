@@ -9,6 +9,7 @@ import 'package:synpitarn/models/User_response.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/profile_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
+import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/profile/profile_home.dart';
 import 'package:synpitarn/services/route_service.dart';
 
@@ -146,15 +147,7 @@ class ChangePhoneOTPState extends State<ChangePhoneOTPPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: CustomStyle.primary_color,
-        title: Text(
-          'Verify OTP Code',
-          style: CustomStyle.appTitle(),
-        ),
-        iconTheme: IconThemeData(color: Colors.white),
-        automaticallyImplyLeading: true,
-      ),
+      appBar: PageAppBar(title: 'Verify OTP Code'),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(

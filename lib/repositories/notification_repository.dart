@@ -21,7 +21,7 @@ class NotificationRepository {
     return NotificationResponse.notificationResponseFromJson(response.body);
   }
 
-  Future<NotificationResponse> getNotificationLists({
+  Future<NotificationResponse> getNotificationList({
     required User loginRequest,
     required int page,
     int perPage = 10,

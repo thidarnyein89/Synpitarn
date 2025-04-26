@@ -3,8 +3,9 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/models/aboutUs.dart';
+import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/services/common_service.dart';
-import 'package:synpitarn/screens/components/app_bar.dart';
+import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/data/app_config.dart';
 
@@ -55,7 +56,7 @@ class AboutUsState extends State<AboutUsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(),
+      appBar: PageAppBar(title: 'About  Us'),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(

@@ -9,6 +9,7 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/repositories/data_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
+import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/loan/success.dart';
 
 class InterviewAppointmentPage extends StatefulWidget {
@@ -96,7 +97,7 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
   }
 
   void getDefaultTimeList() {
-    if(textControllers['date']!.text == "") {
+    if (textControllers['date']!.text == "") {
       return;
     }
 
@@ -171,8 +172,8 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
 
     DataResponse response;
     if (widget.applicationData == null) {
-      response = await LoanRepository()
-          .saveInterviewAppointment(postBody, loginUser);
+      response =
+          await LoanRepository().saveInterviewAppointment(postBody, loginUser);
     } else {
       response = await LoanRepository().updateInterviewAppointment(
           widget.applicationData!.id, postBody, loginUser);
@@ -213,15 +214,7 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: CustomStyle.primary_color,
-        title: Text(
-          'Interview Appointment',
-          style: CustomStyle.appTitle(),
-        ),
-        iconTheme: IconThemeData(color: Colors.white),
-        automaticallyImplyLeading: true,
-      ),
+      appBar: PageAppBar(title: 'Interview Appointment'),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(

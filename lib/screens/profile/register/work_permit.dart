@@ -9,7 +9,8 @@ import 'package:synpitarn/models/default/default_data.dart';
 import 'package:synpitarn/models/default/default_response.dart';
 import 'package:synpitarn/repositories/default_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:synpitarn/screens/components/app_bar.dart';
+import 'package:synpitarn/screens/components/main_app_bar.dart';
+import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/components/scanner_error_widget.dart';
 import 'package:synpitarn/screens/components/toggle_flashlight_button.dart';
 import 'package:synpitarn/screens/components/scan_window_overlay.dart';
@@ -115,7 +116,7 @@ class WorkPermitState extends State<WorkPermitPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(),
+      appBar: PageAppBar(title: 'Work Permit'),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,

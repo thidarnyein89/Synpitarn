@@ -7,7 +7,8 @@ import 'package:synpitarn/models/notification.dart';
 import 'package:synpitarn/models/notification_response.dart' as model;
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/notification_repository.dart';
-import 'package:synpitarn/screens/components/app_bar.dart';
+import 'package:synpitarn/screens/components/main_app_bar.dart';
+import 'package:synpitarn/screens/components/page_app_bar.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -18,7 +19,7 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreenState extends State<NotificationScreen> {
   final ScrollController _scrollController = ScrollController();
-  List<NotificationModel> notificationLists = [];
+  List<NotificationModel> notificationList = [];
   final NotificationRepository _repository = NotificationRepository();
   bool _isLoading = false;
   int _currentPage = 1;
@@ -49,12 +50,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
       User loginUser = await getLoginUser();
 
       try {
-        final result = await _repository.getNotificationLists(
+        final result = await _repository.getNotificationList(
           loginRequest: loginUser,
           page: _currentPage,
         );
         setState(() {
-          notificationLists.addAll(result.data);
+          notificationList.addAll(result.data);
           _hasNextPage = result.meta.hasNextPage;
           _currentPage++;
         });
@@ -70,7 +71,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     bool isLoggedIn = await getLoginStatus();
     if (isLoggedIn) {
       User loginUser = await getLoginUser();
-      final notifyIds = notificationLists.map((item) => item.id).toList();
+      final notifyIds = notificationList.map((item) => item.id).toList();
       var postBody = {"ids": notifyIds};
       model.NotificationResponse notificationResponse =
           await NotificationRepository().readNotification(postBody, loginUser);
@@ -91,15 +92,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: PageAppBar(title: "Notification"),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: ListView.builder(
           controller: _scrollController,
-          itemCount: notificationLists.length + (_isLoading ? 1 : 0),
+          itemCount: notificationList.length + (_isLoading ? 1 : 0),
           itemBuilder: (context, index) {
-            if (index < notificationLists.length) {
-              return _buildNotificationTile(notificationLists[index]);
+            if (index < notificationList.length) {
+              return _buildNotificationTile(notificationList[index]);
             } else {
               return Center(child: CircularProgressIndicator());
             }

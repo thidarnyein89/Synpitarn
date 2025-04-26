@@ -1,18 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/loan.dart';
-import 'package:synpitarn/models/loan_application_response.dart';
-import 'package:synpitarn/models/loan_response.dart';
 import 'package:synpitarn/models/user.dart';
-import 'package:synpitarn/repositories/loan_repository.dart';
-import 'package:synpitarn/screens/components/app_bar.dart';
-import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
+import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:synpitarn/screens/loan/loan_status.dart';
+import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/loan/repayment_list.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
@@ -51,7 +46,11 @@ class PreviousLoanState extends State<PreviousLoanPage> {
   }
 
   handleViewRepayment() {
-    RouteService.goToNavigator(context, RepaymentListPage());
+    RouteService.goToNavigator(
+        context,
+        RepaymentListPage(
+          loan: widget.loan!,
+        ));
   }
 
   void showErrorDialog(String errorMessage) {
@@ -63,7 +62,7 @@ class PreviousLoanState extends State<PreviousLoanPage> {
   Widget createLoanCard() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CustomWidget.buildRow(
             "Contract No", widget.loan!.contractNoRef.toString()),
@@ -72,7 +71,7 @@ class PreviousLoanState extends State<PreviousLoanPage> {
             CommonService.getLoanStatus(
                 widget.loan!.loanApplicationStatus.toString())),
         CustomWidget.buildRow(
-            "Loan Size", "${widget.loan!.principleAmount} Baht"),
+            "Loan Size", CommonService.getLoanSize(widget.loan!)),
         CustomWidget.buildRow("Loan Term", "${widget.loan!.termPeriod} Months"),
         CustomWidget.buildRow(
             "First Payment Date",
@@ -83,10 +82,27 @@ class PreviousLoanState extends State<PreviousLoanPage> {
             CommonService.formatDate(
                 widget.loan!.lastRepaymentDate.toString())),
         CustomWidget.verticalSpacing(),
-        CustomWidget.elevatedButton(
-          text: 'View Repayment Schedule',
-          onPressed: handleViewRepayment,
-        ),
+        if (widget.loan!.qrcode.photo != "")
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.network(
+                widget.loan!.qrcode.photo,
+                width: 200,
+                height: 200,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) =>
+                    Icon(Icons.broken_image),
+              ),
+              Text(widget.loan!.qrcode.string),
+              CustomWidget.verticalSpacing(),
+            ],
+          ),
+        if ((widget.loan?.schedules ?? []).isNotEmpty)
+          CustomWidget.elevatedButton(
+            text: 'View Repayment Schedule',
+            onPressed: handleViewRepayment,
+          ),
       ],
     );
   }
@@ -94,8 +110,7 @@ class PreviousLoanState extends State<PreviousLoanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          CustomAppBar(title: widget.loan?.contractNoRef, isMainPage: false),
+      appBar: PageAppBar(title: widget.loan!.contractNoRef),
       body: LayoutBuilder(builder: (context, constraints) {
         return Stack(
           children: [

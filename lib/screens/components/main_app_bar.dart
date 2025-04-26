@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
@@ -9,17 +7,17 @@ import 'package:synpitarn/repositories/notification_repository.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/notification/notification_screen.dart';
 
-class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  const CustomAppBar({super.key});
+class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
+  MainAppBar({super.key});
 
   @override
-  CustomAppBarState createState() => CustomAppBarState();
+  MainAppBarState createState() => MainAppBarState();
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }
 
-class CustomAppBarState extends State<CustomAppBar> {
+class MainAppBarState extends State<MainAppBar> {
   int _notificationCount = 0;
 
   @override
@@ -42,8 +40,7 @@ class CustomAppBarState extends State<CustomAppBar> {
           await NotificationRepository().getNotificationCount(loginUser);
 
       if (notificationResponse.response.code == 200) {
-        _notificationCount = notificationResponse.data.length;
-        print(_notificationCount);
+        _notificationCount = notificationResponse.data;
       }
       setState(() {});
     }

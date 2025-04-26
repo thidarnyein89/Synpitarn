@@ -5,7 +5,7 @@ import 'package:synpitarn/data/register_step.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/screens/components/app_bar.dart';
+import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/services/route_service.dart';
@@ -92,7 +92,7 @@ class ProfileHomeState extends State<ProfileHomePage> with RouteAware {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: MainAppBar(),
       body: SingleChildScrollView(
         child: Column(
           children: [

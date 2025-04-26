@@ -7,6 +7,7 @@ import 'package:synpitarn/models/admin.dart';
 
 class Loan {
   int id = 0;
+  String? applicationStatus = "";
   String? appointmentBranchDate = "";
   String? appointmentBranchTime = "";
   String? appointmentChannel = "";
@@ -93,6 +94,7 @@ class Loan {
 
   Loan(
       {required this.id,
+      required this.applicationStatus,
       required this.appointmentBranchDate,
       required this.appointmentBranchTime,
       required this.appointmentChannel,
@@ -201,11 +203,15 @@ class Loan {
         if (!json.containsKey(key)) {
           json[key] = applicationJson[key];
         }
+        if(key == 'status') {
+          json['application_status'] = applicationJson['status'];
+        }
       });
     }
 
     return Loan(
         id: json["id"] ?? 0,
+        applicationStatus: json['application_status'] ?? "",
         appointmentBranchDate: json["appointment_branch_date"] ?? "",
         appointmentBranchTime: json["appointment_branch_time"] ?? "",
         appointmentChannel: json["appointment_channel"] ?? "",

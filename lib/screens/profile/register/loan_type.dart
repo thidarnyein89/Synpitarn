@@ -12,6 +12,7 @@ import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/repositories/data_repository.dart';
 import 'package:synpitarn/repositories/default_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
+import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/profile/register/additional_information.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
@@ -173,15 +174,7 @@ class LoanTypeState extends State<LoanTypePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: CustomStyle.primary_color,
-        title: Text(
-          'Loan Application',
-          style: CustomStyle.appTitle(),
-        ),
-        iconTheme: IconThemeData(color: Colors.white),
-        automaticallyImplyLeading: true,
-      ),
+      appBar: PageAppBar(title: 'Loan Application'),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Stack(children: [

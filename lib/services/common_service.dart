@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/models/guide.dart';
+import 'package:synpitarn/models/loan.dart';
 import 'package:synpitarn/models/nrc.dart';
 import 'package:synpitarn/models/aboutUs.dart';
 
@@ -72,6 +73,22 @@ class CommonService {
     }
 
     return loanStatus;
+  }
+
+  static String getLoanSize(Loan loanData) {
+    print("Application Status ${loanData.applicationStatus} Loan Status ${loanData.status}");
+    String loanSize = "";
+    if (AppConfig.PRE_APPROVE_STATUS.contains(loanData.status)) {
+      loanSize = loanData.approvedAmount ?? "0";
+    }
+    else if (AppConfig.DISBURSE_STATUS.contains(loanData.status)) {
+      loanSize = loanData.disbursedAmount ?? "0";
+    }
+    else {
+      loanSize = loanData.appliedAmount ?? "0";
+    }
+
+    return "$loanSize  Baht";
   }
 
 }

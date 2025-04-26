@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:synpitarn/screens/components/page_app_bar.dart';
 
 class TermAndConditionsPage extends StatelessWidget {
 
@@ -9,11 +10,7 @@ class TermAndConditionsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: Text("Term and Conditions"),
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.white,
-        ),
+        appBar: PageAppBar(title: "Term and Conditions"),
         body: SingleChildScrollView(
             child: SizedBox(
                 child: Center(
