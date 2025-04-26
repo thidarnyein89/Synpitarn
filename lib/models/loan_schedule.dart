@@ -25,7 +25,7 @@ class LoanSchedule {
   String repaymentTime = "";
   String serviceFee = "";
   String status = "";
-  double totalRepaymentAmount = 0.0;
+  int totalRepaymentAmount = 0;
 
   LoanSchedule.defaultLoanSchedule();
 
@@ -57,6 +57,17 @@ class LoanSchedule {
   });
 
   factory LoanSchedule.fromJson(Map<String, dynamic> json) {
+    final totalRepaymentAmountJson = json['total_repayment_amount'];
+    int totalRepaymentAmountParsed = 0;
+
+    if (totalRepaymentAmountJson is int) {
+      totalRepaymentAmountParsed = totalRepaymentAmountJson;
+    } else if (totalRepaymentAmountJson is double) {
+      totalRepaymentAmountParsed = totalRepaymentAmountJson.round();
+    } else if (totalRepaymentAmountJson != null) {
+      totalRepaymentAmountParsed = int.tryParse(totalRepaymentAmountJson.toString()) ?? 0;
+    }
+
     return LoanSchedule(
       clientId: json['client_id'] ?? 0,
       collectionFee: json['collection_fee'] ?? "",
@@ -81,7 +92,7 @@ class LoanSchedule {
       repaymentTime: json['repayment_time'] ?? "",
       serviceFee: json['service_fee'] ?? "",
       status: json['status'] ?? "",
-      totalRepaymentAmount: json['total_repayment_amount'] ?? 0.0,
+      totalRepaymentAmount: totalRepaymentAmountParsed,
     );
   }
 }

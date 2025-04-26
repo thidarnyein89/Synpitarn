@@ -1,5 +1,6 @@
 import 'dart:async';
-
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/loan.dart';
@@ -18,6 +19,7 @@ import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/data/app_config.dart';
 import 'package:remixicon/remixicon.dart';
+import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -173,6 +175,9 @@ class HomeState extends State<HomePage> {
               'status': loanSchedule.isPaymentDone == 0 ? 'Unpaid' : 'Paid',
               'dayCount': dayCount,
               'isLate': isLate,
+              "qrCodePhotoName": "QR_${loanResponse.data[0].contractNo}",
+              'qrCodePhoto': loanResponse.data[0].qrcode.photo,
+              'qrCodeString': loanResponse.data[0].qrcode.string,
             };
           }).toList();
 
@@ -310,7 +315,9 @@ class HomeState extends State<HomePage> {
               child: InkWell(
                 borderRadius: BorderRadius.circular(16),
                 onTap: () {
-                  // Handle tap here
+                  if (index == 0) {
+                    showQRDialog(context);
+                  }
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12),
@@ -690,4 +697,133 @@ class HomeState extends State<HomePage> {
   }
 
   void handleContinue() {}
+
+  Future<void> showQRDialog(BuildContext context) async {
+    bool isDownloading = false;
+    bool isFinish = false;
+    String downloadMessage = "";
+
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            Future<void> handleDownload() async {
+              final imageUrl = repaymentList[0]['qrCodePhoto'];
+              final fileName = repaymentList[0]['qrCodePhotoName'];
+
+              setState(() {
+                isDownloading = true;
+                isFinish = false;
+                downloadMessage = "Downloading...";
+              });
+
+              try {
+                FileDownloader.downloadFile(
+                  url: imageUrl,
+                  name: fileName,
+                  onProgress: (fileName, progress) {
+                    setState(() {
+                      isDownloading = true;
+                    });
+                  },
+                  onDownloadCompleted: (path) {
+                    setState(() {
+                      downloadMessage = "Download completed!";
+                      isDownloading = false;
+                      isFinish = true;
+                    });
+                  },
+                  onDownloadError: (errorMessage) {
+                    setState(() {
+                      downloadMessage = "Error downloading: $errorMessage";
+                      isDownloading = false;
+                      isFinish = false;
+                    });
+                  },
+                );
+              } catch (e) {
+                setState(() {
+                  downloadMessage = "Error downloading";
+                  isDownloading = false;
+                  isFinish = false;
+                });
+              }
+            }
+
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5)),
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.network(
+                    repaymentList[0]['qrCodePhoto'],
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.contain,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) {
+                        return child;
+                      }
+                      return SizedBox(
+                        width: 200,
+                        height: 200,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) =>
+                        Icon(Icons.broken_image),
+                  ),
+                  CustomWidget.verticalSpacing(),
+                  Text(repaymentList[0]['qrCodeString']),
+                  CustomWidget.verticalSpacing(),
+                  if (downloadMessage != "")
+                    Row(
+                      spacing: 5,
+                      children: [
+                        Icon(isFinish
+                            ? Icons.done_outlined
+                            : Icons.download_outlined),
+                        Text(downloadMessage),
+                      ],
+                    )
+                ],
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: CustomWidget.elevatedButton(
+                        enabled: !isDownloading,
+                        text: 'Download',
+                        onPressed: handleDownload,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: CustomWidget.elevatedButton(
+                        text: 'Ok',
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 }
