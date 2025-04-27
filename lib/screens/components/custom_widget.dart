@@ -29,6 +29,9 @@ class CustomWidget {
         TextField(
           readOnly: readOnly,
           controller: controller,
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp(r'[ -~]')),
+          ],
           decoration: InputDecoration(
             labelText: label,
             border: OutlineInputBorder(),
@@ -582,7 +585,11 @@ class CustomWidget {
             Expanded(
               child: Align(
                 alignment: Alignment.centerRight,
-                child: Text(value, style: CustomStyle.bodyGreyColor(), textAlign: TextAlign.right,),
+                child: Text(
+                  value,
+                  style: CustomStyle.bodyGreyColor(),
+                  textAlign: TextAlign.right,
+                ),
               ),
             ),
           ],

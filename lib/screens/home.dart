@@ -11,6 +11,7 @@ import 'package:synpitarn/models/loan_schedule.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
+import 'package:synpitarn/screens/profile/register/required_document.dart';
 import 'package:synpitarn/screens/setting/about_us.dart';
 import 'package:synpitarn/screens/setting/guide_header.dart';
 import 'package:synpitarn/services/common_service.dart';
@@ -20,6 +21,7 @@ import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:remixicon/remixicon.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
+import 'package:synpitarn/services/route_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -317,6 +319,9 @@ class HomeState extends State<HomePage> {
                 onTap: () {
                   if (index == 0) {
                     showQRDialog(context);
+                  }
+                  if (index == 2) {
+                    goToDocumentPage(context);
                   }
                 },
                 child: Padding(
@@ -830,5 +835,13 @@ class HomeState extends State<HomePage> {
         );
       },
     );
+  }
+
+  void goToDocumentPage(BuildContext context) {
+    if (!loginUser.loanApplicationSubmitted) {
+      showErrorDialog(Message.NO_CURRENT_LOAN);
+    } else {
+      RouteService.goToNavigator(context, RequiredDocumentPage());
+    }
   }
 }

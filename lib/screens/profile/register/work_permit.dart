@@ -261,14 +261,13 @@ class WorkPermitState extends State<WorkPermitPage> {
         !response['message'].contains("successfully")) {
       showErrorDialog(response['message']);
     } else {
+      loginUser.name = response['data']['English name']?.trim() ?? '';
+      loginUser.passport = response['data'][' Passport number ']?.trim() ?? '';
+      loginUser.nameOfEmployment = response['data'][' Name of employer or place ']?.trim() ?? '';
+      loginUser.provinceOfWorkText = response['data'][' Office location ']?.trim() ?? '';
+
       loginUser.loanFormState = "qr_scan";
       await setLoginUser(loginUser);
-
-      User client = User.defaultUser();
-
-      client.name = response['data']['English name']?.trim() ?? '';
-      client.nameOfEmployment = response['data'][' Name of employer or place ']?.trim() ?? '';
-      client.provinceOfWork = response['data'][' Office location ']?.trim() ?? '';
 
       isLoading = false;
       setState(() {});

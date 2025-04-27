@@ -1,25 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 
 class TermAndConditionsPage extends StatelessWidget {
-
   const TermAndConditionsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: PageAppBar(title: "Term and Conditions"),
+        appBar: AppBar(
+          backgroundColor: CustomStyle.primary_color,
+          title: Text(
+            "Term and Conditions",
+            style: CustomStyle.appTitle(),
+          ),
+          iconTheme: IconThemeData(color: Colors.white),
+          automaticallyImplyLeading: false,
+        ),
         body: SingleChildScrollView(
             child: SizedBox(
                 child: Center(
                     child: Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Column(
-                        children: [
-                          Html(
-                            data: """
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          children: [
+                            Html(
+                              data: """
                               <style>
                                 table {
                                   width: 100%;
@@ -251,30 +259,28 @@ class TermAndConditionsPage extends StatelessWidget {
                                 </div>
                             </div>
                             """,
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(true);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.indigo,
-                              minimumSize: Size(double.infinity, 50),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(true);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.indigo,
+                                minimumSize: Size(double.infinity, 50),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                ' Agree Term & Condition ',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 16),
                               ),
                             ),
-                            child: Text(
-                              ' Agree Term & Condition ',
-                              style: TextStyle(color: Colors.white, fontSize: 16),
-                            ),
-                          ),
-                          SizedBox(height: 10,)
-                        ],
-                      )
-                    )
-                )
-            )
-        )
-    );
+                            SizedBox(
+                              height: 10,
+                            )
+                          ],
+                        ))))));
   }
 }

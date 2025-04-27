@@ -8,6 +8,7 @@ import 'package:synpitarn/screens/profile/register/loan_type.dart';
 import 'package:synpitarn/screens/profile/document_file.dart';
 import 'package:synpitarn/screens/profile/register/customer_information.dart';
 import 'package:synpitarn/screens/profile/register/additional_information.dart';
+import 'package:synpitarn/screens/profile/register/required_document.dart';
 import 'package:synpitarn/screens/profile/register/work_permit.dart';
 
 class StepData {
@@ -49,7 +50,7 @@ class StepData {
         loanFormState: 'customer_information',
         icon: Icons.upload_file_outlined,
         text: 'Required Documents',
-        page: DocumentFilePage()));
+        page: RequiredDocumentPage()));
 
     stepList.add(StepData(
         loanFormState: 'required_documents',

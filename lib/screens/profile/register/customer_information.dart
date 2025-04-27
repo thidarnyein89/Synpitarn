@@ -17,7 +17,6 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 class CustomerInformationPage extends StatefulWidget {
-
   User? client = User.defaultUser();
 
   CustomerInformationPage({super.key, this.client});
@@ -148,13 +147,19 @@ class CustomerInformationState extends State<CustomerInformationPage> {
 
   void setSavedData(Map<String, dynamic> inputData) {
     textControllers.forEach((key, TextEditingController) {
-      if(inputData.containsKey(key)) {
+      if (inputData.containsKey(key)) {
         textControllers[key]!.text = inputData[key];
+      } else if (loginUser.toJson().containsKey(key)) {
+        textControllers[key]!.text = loginUser.toJson()[key];
       }
     });
 
+    print("====");
+    print(loginUser.toJson()['dob']);
+    print(loginUser.toJson()['phone_number']);
+
     dropdownControllers.forEach((key, dynamic) {
-      if(inputData.containsKey(key)) {
+      if (inputData.containsKey(key)) {
         dropdownControllers[key] =
             findMatchData(itemDataList[key]!, inputData[key]);
       }
@@ -264,12 +269,14 @@ class CustomerInformationState extends State<CustomerInformationPage> {
                             ),
                             CustomWidget.dropdownButtonDiffValue(
                               label: 'Marital Status',
-                              selectedValue: dropdownControllers['martial_status'],
+                              selectedValue:
+                                  dropdownControllers['martial_status'],
                               items: itemDataList['martial_status']!,
                               onChanged: (value) {
                                 setState(() {
                                   inValidFields.remove('martial_status');
-                                  dropdownControllers['martial_status'] = value!;
+                                  dropdownControllers['martial_status'] =
+                                      value!;
                                 });
                               },
                             ),
@@ -299,7 +306,8 @@ class CustomerInformationState extends State<CustomerInformationPage> {
                                 controller: textControllers['residence']!,
                                 label: 'Residence'),
                             CustomWidget.textField(
-                                controller: textControllers['name_of_employment']!,
+                                controller:
+                                    textControllers['name_of_employment']!,
                                 label: 'Name of Employment'),
                             CustomWidget.textField(
                                 controller: textControllers['office_location']!,
