@@ -149,7 +149,7 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
     DataResponse dataResponse =
         await DataRepository().getAvailableTime(postBody, loginUser);
     if (dataResponse.response.code != 200) {
-      showErrorDialog(dataResponse.response.message ?? AppConfig.ERR_MESSAGE);
+      showErrorDialog(dataResponse.response.message);
     } else {
       itemDataList["time"] =
           dataResponse.data.map((d) => d.toString()).toList();
@@ -180,7 +180,7 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
     }
 
     if (response.response.code != 200) {
-      showErrorDialog(response.response.message ?? AppConfig.ERR_MESSAGE);
+      showErrorDialog(response.response.message);
     } else {
       loginUser.loanApplicationSubmitted = true;
       setLoginUser(loginUser);

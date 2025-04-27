@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/data/register_step.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/user.dart';
@@ -103,10 +104,10 @@ class ProfileHomeState extends State<ProfileHomePage> with RouteAware {
         ),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: AppConfig.PROFILE_INDEX,
+        selectedIndex: ConstantData.PROFILE_INDEX,
         onItemTapped: (index) {
           setState(() {
-            AppConfig.CURRENT_INDEX = index;
+            ConstantData.CURRENT_INDEX = index;
           });
         },
       ),

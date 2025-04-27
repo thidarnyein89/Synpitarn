@@ -130,7 +130,7 @@ class DocumentFileState extends State<DocumentFilePage> {
           await DocumentRepository().uploadDocument(postBody, loginUser);
       if (documentResponse.response.code != 200) {
         showErrorDialog(
-            documentResponse.response.message ?? AppConfig.ERR_MESSAGE);
+            documentResponse.response.message);
 
         setState(() {
           imageFile.isLoading = false;
@@ -207,7 +207,7 @@ class DocumentFileState extends State<DocumentFilePage> {
             await DocumentRepository().deleteDocument(postBody, loginUser);
         if (documentResponse.response.code != 200) {
           showErrorDialog(
-              documentResponse.response.message ?? AppConfig.ERR_MESSAGE);
+              documentResponse.response.message);
 
           setState(() {
             imageFile.isDeleteLoading = false;
@@ -238,7 +238,7 @@ class DocumentFileState extends State<DocumentFilePage> {
     DataResponse saveResponse = await LoanRepository()
         .saveLoanApplicationStep(postBody, loginUser, stepName);
     if (saveResponse.response.code != 200) {
-      showErrorDialog(saveResponse.response.message ?? AppConfig.ERR_MESSAGE);
+      showErrorDialog(saveResponse.response.message);
     } else {
       loginUser.loanFormState = "required_documents";
       await setLoginUser(loginUser);

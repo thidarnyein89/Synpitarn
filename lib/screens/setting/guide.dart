@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/models/guide.dart';
@@ -142,10 +143,10 @@ class GuideState extends State<GuidePage> {
         },
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: AppConfig.SETTING_INDEX,
+        selectedIndex: ConstantData.SETTING_INDEX,
         onItemTapped: (index) {
           setState(() {
-            AppConfig.CURRENT_INDEX = index;
+            ConstantData.CURRENT_INDEX = index;
           });
         },
       ),

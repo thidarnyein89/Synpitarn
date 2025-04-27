@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/models/data_response.dart';
 import 'package:synpitarn/models/default/default_data.dart';
@@ -123,10 +124,10 @@ class WorkPermitState extends State<WorkPermitPage> {
         children: [Expanded(child: qrScannerWidget())],
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: AppConfig.PROFILE_INDEX,
+        selectedIndex: ConstantData.PROFILE_INDEX,
         onItemTapped: (index) {
           setState(() {
-            AppConfig.CURRENT_INDEX = index;
+            ConstantData.CURRENT_INDEX = index;
           });
         },
       ),

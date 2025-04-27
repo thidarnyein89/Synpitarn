@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/models/aboutUs.dart';
@@ -84,10 +85,10 @@ class AboutUsState extends State<AboutUsPage> {
         },
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: AppConfig.CURRENT_INDEX,
+        selectedIndex: ConstantData.CURRENT_INDEX,
         onItemTapped: (index) {
           setState(() {
-            AppConfig.CURRENT_INDEX = index;
+            ConstantData.CURRENT_INDEX = index;
           });
         },
       ),

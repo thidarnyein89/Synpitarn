@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/app_config.dart';
+import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/models/data.dart';
 import 'package:synpitarn/models/data_response.dart';
 import 'package:synpitarn/models/default/default_data.dart';
@@ -99,10 +100,10 @@ class SettingState extends State<SettingPage> {
         },
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: AppConfig.SETTING_INDEX,
+        selectedIndex: ConstantData.SETTING_INDEX,
         onItemTapped: (index) {
           setState(() {
-            AppConfig.CURRENT_INDEX = index;
+            ConstantData.CURRENT_INDEX = index;
           });
         },
       ),

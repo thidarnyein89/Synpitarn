@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:synpitarn/data/constant.dart';
+import 'package:synpitarn/data/loan_status.dart';
+import 'package:synpitarn/data/message.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/loan.dart';
 import 'package:synpitarn/models/loan_application_response.dart';
@@ -17,7 +18,6 @@ import 'package:synpitarn/models/aboutUs.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
-import 'package:synpitarn/data/app_config.dart';
 import 'package:remixicon/remixicon.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 
@@ -99,7 +99,7 @@ class HomeState extends State<HomePage> {
     } else {
       applicationData = applicationResponse.data;
 
-      if (AppConfig.PENDING_STATUS.contains(applicationData.status)) {
+      if (LoanStatus.PENDING_STATUS.contains(applicationData.status)) {
         var lateRepayment = loanSteps.firstWhere(
           (step) => step['isLate'] == true,
           orElse: () => <String, Object>{},
@@ -117,13 +117,13 @@ class HomeState extends State<HomePage> {
         {'label': 'Disbursed', 'isActive': false},
       ];
 
-      if (AppConfig.PENDING_STATUS.contains(applicationData.status)) {
-        if (AppConfig.APPOINTMENT_PENDING_STATUS.contains(
+      if (LoanStatus.PENDING_STATUS.contains(applicationData.status)) {
+        if (LoanStatus.APPOINTMENT_PENDING_STATUS.contains(
           applicationData.appointmentStatus,
         )) {
           loanSteps[0]['isActive'] = true;
         }
-        if (AppConfig.APPOINTMENT_DONE_STATUS.contains(
+        if (LoanStatus.APPOINTMENT_DONE_STATUS.contains(
           applicationData.appointmentStatus,
         )) {
           loanSteps[0]['isActive'] = false;
@@ -131,12 +131,12 @@ class HomeState extends State<HomePage> {
         }
       }
 
-      if (AppConfig.PRE_APPROVE_STATUS.contains(applicationData.status)) {
+      if (LoanStatus.PRE_APPROVE_STATUS.contains(applicationData.status)) {
         loanSteps[0]['isActive'] = false;
         loanSteps[2]['isActive'] = true;
       }
 
-      if (AppConfig.DISBURSE_STATUS.contains(applicationData.status)) {
+      if (LoanStatus.DISBURSE_STATUS.contains(applicationData.status)) {
         loanSteps[0]['isActive'] = false;
         loanSteps[3]['isActive'] = true;
       }
@@ -252,10 +252,10 @@ class HomeState extends State<HomePage> {
               ),
             ),
       bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: AppConfig.HOME_INDEX,
+        selectedIndex: ConstantData.HOME_INDEX,
         onItemTapped: (index) {
           setState(() {
-            AppConfig.CURRENT_INDEX = index;
+            ConstantData.CURRENT_INDEX = index;
           });
         },
       ),
@@ -445,7 +445,7 @@ class HomeState extends State<HomePage> {
             children: [
               CustomWidget.buildRow(
                   "Contract No", applicationData.contractNo.toString()),
-              if (AppConfig.PRE_APPROVE_STATUS
+              if (LoanStatus.PRE_APPROVE_STATUS
                   .contains(applicationData.status)) ...[
                 CustomWidget.buildRow(
                     "Loan Size", CommonService.getLoanSize(applicationData)),
@@ -460,7 +460,7 @@ class HomeState extends State<HomePage> {
                 CustomWidget.buildRow("Branch Appointment Time",
                     applicationData.appointmentBranchTime.toString()),
               ],
-              if (!AppConfig.PRE_APPROVE_STATUS
+              if (!LoanStatus.PRE_APPROVE_STATUS
                   .contains(applicationData.status)) ...[
                 CustomWidget.buildRow(
                   "Loan Applied Date",
@@ -699,6 +699,11 @@ class HomeState extends State<HomePage> {
   void handleContinue() {}
 
   Future<void> showQRDialog(BuildContext context) async {
+    if (repaymentList.isEmpty) {
+      showErrorDialog(Message.NO_CURRENT_REPAYMENT);
+      return;
+    }
+
     bool isDownloading = false;
     bool isFinish = false;
     String downloadMessage = "";

@@ -192,7 +192,7 @@ class CustomerInformationState extends State<CustomerInformationPage> {
     DataResponse saveResponse = await LoanRepository()
         .saveLoanApplicationStep(postBody, loginUser, stepName);
     if (saveResponse.response.code != 200) {
-      showErrorDialog(saveResponse.response.message ?? AppConfig.ERR_MESSAGE);
+      showErrorDialog(saveResponse.response.message);
     } else {
       loginUser.loanFormState = stepName;
       await setLoginUser(loginUser);

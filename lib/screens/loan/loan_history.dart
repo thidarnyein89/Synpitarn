@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/app_config.dart';
+import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/loan.dart';
@@ -249,10 +250,10 @@ class LoanHistoryState extends State<LoanHistoryPage> {
         );
       }),
       bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: AppConfig.LOAN_INDEX,
+        selectedIndex: ConstantData.LOAN_INDEX,
         onItemTapped: (index) {
           setState(() {
-            AppConfig.CURRENT_INDEX = index;
+            ConstantData.CURRENT_INDEX = index;
           });
         },
       ),

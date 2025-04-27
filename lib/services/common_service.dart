@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:synpitarn/data/app_config.dart';
+import 'package:synpitarn/data/loan_status.dart';
 import 'package:synpitarn/models/guide.dart';
 import 'package:synpitarn/models/loan.dart';
 import 'package:synpitarn/models/nrc.dart';
@@ -56,19 +56,19 @@ class CommonService {
   static String getLoanStatus(String status) {
     String loanStatus = "";
 
-    if (AppConfig.PENDING_STATUS.contains(status)) {
+    if (LoanStatus.PENDING_STATUS.contains(status)) {
       loanStatus = 'pending';
     }
-    if (AppConfig.PRE_APPROVE_STATUS.contains(status)) {
+    if (LoanStatus.PRE_APPROVE_STATUS.contains(status)) {
       loanStatus = 'pre-approved';
     }
-    if (AppConfig.DISBURSE_STATUS.contains(status)) {
+    if (LoanStatus.DISBURSE_STATUS.contains(status)) {
       loanStatus = 'approved';
     }
-    if (AppConfig.REJECT_STATUS.contains(status)) {
+    if (LoanStatus.REJECT_STATUS.contains(status)) {
       loanStatus = 'reject';
     }
-    if (AppConfig.POSTPONE_STATUS.contains(status)) {
+    if (LoanStatus.POSTPONE_STATUS.contains(status)) {
       loanStatus = 'postpone';
     }
 
@@ -78,10 +78,10 @@ class CommonService {
   static String getLoanSize(Loan loanData) {
     print("Application Status ${loanData.applicationStatus} Loan Status ${loanData.status}");
     String loanSize = "";
-    if (AppConfig.PRE_APPROVE_STATUS.contains(loanData.status)) {
+    if (LoanStatus.PRE_APPROVE_STATUS.contains(loanData.status)) {
       loanSize = loanData.approvedAmount ?? "0";
     }
-    else if (AppConfig.DISBURSE_STATUS.contains(loanData.status)) {
+    else if (LoanStatus.DISBURSE_STATUS.contains(loanData.status)) {
       loanSize = loanData.disbursedAmount ?? "0";
     }
     else {

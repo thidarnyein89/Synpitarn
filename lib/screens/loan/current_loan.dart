@@ -1,6 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/data/loan_status.dart';
+import 'package:synpitarn/data/message.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/loan.dart';
 import 'package:synpitarn/models/loan_application_response.dart';
@@ -61,7 +63,7 @@ class CurrentLoanState extends State<CurrentLoanPage> {
 
     if (applicationResponse.response.code != 200) {
       showErrorDialog(
-        applicationResponse.response.message ?? AppConfig.ERR_MESSAGE,
+        applicationResponse.response.message,
       );
     } else {
       applicationData = applicationResponse.data;
@@ -166,23 +168,23 @@ class CurrentLoanState extends State<CurrentLoanPage> {
       return noApplyLoanSection();
     }
 
-    if (AppConfig.PENDING_STATUS.contains(applicationData.status)) {
+    if (LoanStatus.PENDING_STATUS.contains(applicationData.status)) {
       return pendingSection();
     }
 
-    if (AppConfig.PRE_APPROVE_STATUS.contains(applicationData.status)) {
+    if (LoanStatus.PRE_APPROVE_STATUS.contains(applicationData.status)) {
       return preApproveSection();
     }
 
-    if (AppConfig.DISBURSE_STATUS.contains(applicationData.status)) {
+    if (LoanStatus.DISBURSE_STATUS.contains(applicationData.status)) {
       return disburseSection();
     }
 
-    if (AppConfig.REJECT_STATUS.contains(applicationData.status)) {
+    if (LoanStatus.REJECT_STATUS.contains(applicationData.status)) {
       return rejectSection();
     }
 
-    if (AppConfig.POSTPONE_STATUS.contains(applicationData.status)) {
+    if (LoanStatus.POSTPONE_STATUS.contains(applicationData.status)) {
       return postponeSection();
     }
 
@@ -194,7 +196,7 @@ class CurrentLoanState extends State<CurrentLoanPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(AppConfig.NO_CURRENT_LOAN, style: CustomStyle.titleBold()),
+        Text(Message.NO_CURRENT_LOAN, style: CustomStyle.titleBold()),
         CustomWidget.elevatedButton(
           text: 'Apply Loan',
           onPressed: () {

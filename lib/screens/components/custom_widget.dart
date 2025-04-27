@@ -570,9 +570,10 @@ class CustomWidget {
         CustomWidget.verticalSmallSpacing(),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: Alignment.centerRight,
               child: SizedBox(
                 width: 140,
                 child: Text(label, style: CustomStyle.body()),
@@ -581,7 +582,7 @@ class CustomWidget {
             Expanded(
               child: Align(
                 alignment: Alignment.centerRight,
-                child: Text(value, style: CustomStyle.bodyGreyColor()),
+                child: Text(value, style: CustomStyle.bodyGreyColor(), textAlign: TextAlign.right,),
               ),
             ),
           ],
