@@ -11,13 +11,15 @@ import 'package:synpitarn/models/loan_schedule.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
+import 'package:synpitarn/screens/loan/branch_appointment.dart';
 import 'package:synpitarn/screens/loan/interview_appointment.dart';
 import 'package:synpitarn/screens/profile/profile_home.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 class CurrentLoanPage extends StatefulWidget {
   bool isToDisplayPage = true;
@@ -28,7 +30,7 @@ class CurrentLoanPage extends StatefulWidget {
   CurrentLoanState createState() => CurrentLoanState();
 }
 
-class CurrentLoanState extends State<CurrentLoanPage> {
+class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
   User loginUser = User.defaultUser();
   Loan applicationData = Loan.defaultLoan();
   bool isLoading = false;
@@ -43,7 +45,18 @@ class CurrentLoanState extends State<CurrentLoanPage> {
 
   @override
   void dispose() {
+    routeObserver.unsubscribe(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      routeObserver.subscribe(this, route);
+      getInitData();
+    }
   }
 
   Future<void> getInitData() async {
@@ -99,13 +112,11 @@ class CurrentLoanState extends State<CurrentLoanPage> {
   }
 
   void handleReSubmit() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            InterviewAppointmentPage(applicationData: applicationData),
-      ),
-    );
+    RouteService.goToNavigator(context, InterviewAppointmentPage(applicationData: applicationData));
+  }
+
+  void handleBranchAppointment() {
+    RouteService.goToNavigator(context, BranchAppointmentPage(applicationData: applicationData));
   }
 
   void showErrorDialog(String errorMessage) {
@@ -273,7 +284,7 @@ class CurrentLoanState extends State<CurrentLoanPage> {
           CustomWidget.verticalSpacing(),
           CustomWidget.elevatedButton(
             text: 'Resubmit Interview Appointment',
-            onPressed: handleReSubmit,
+            onPressed: handleBranchAppointment,
           ),
         ],
       ],
