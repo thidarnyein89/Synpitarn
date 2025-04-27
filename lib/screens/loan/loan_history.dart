@@ -56,8 +56,8 @@ class LoanHistoryState extends State<LoanHistoryPage> {
   }
 
   Future<void> getApplicationData() async {
-    LoanApplicationResponse applicationResponse =
-        await LoanRepository().getApplication(loginUser);
+    LoanApplicationResponse applicationResponse = await LoanRepository()
+        .getApplication(loginUser);
 
     if (applicationResponse.response.code != 200) {
       showErrorDialog(applicationResponse.response.message);
@@ -68,8 +68,10 @@ class LoanHistoryState extends State<LoanHistoryPage> {
   }
 
   Future<void> getLoanHistory() async {
-    LoanResponse loanResponse =
-        await LoanRepository().getLoanHistory(loginUser, 1);
+    LoanResponse loanResponse = await LoanRepository().getLoanHistory(
+      loginUser,
+      1,
+    );
 
     if (loanResponse.response.code != 200) {
       showErrorDialog(loanResponse.response.message);
@@ -100,8 +102,9 @@ class LoanHistoryState extends State<LoanHistoryPage> {
               width: double.infinity,
               decoration: BoxDecoration(
                 color: CustomStyle.primary_color,
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(10)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(10),
+                ),
               ),
               child: Text(
                 "Current Apply Loan",
@@ -113,18 +116,26 @@ class LoanHistoryState extends State<LoanHistoryPage> {
               child: Column(
                 children: [
                   CustomWidget.buildRow(
-                      "Contract No", applicationData.contractNo.toString()),
+                    "Contract No",
+                    applicationData.contractNo.toString(),
+                  ),
                   CustomWidget.buildRow(
-                      "Loan Status",
-                      CommonService.getLoanStatus(
-                          applicationData.status.toString())),
+                    "Loan Status",
+                    CommonService.getLoanStatus(
+                      applicationData.status.toString(),
+                    ),
+                  ),
                   CustomWidget.buildRow(
-                      "Loan Size", CommonService.getLoanSize(applicationData)),
+                    "Loan Size",
+                    CommonService.getLoanSize(applicationData),
+                  ),
                   CustomWidget.buildRow(
-                      "Loan Term", "${applicationData.loanTerm} Months"),
+                    "Loan Term",
+                    "${applicationData.loanTerm} Months",
+                  ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -146,39 +157,49 @@ class LoanHistoryState extends State<LoanHistoryPage> {
               width: double.infinity,
               decoration: BoxDecoration(
                 color: CustomStyle.primary_color,
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(10)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(10),
+                ),
               ),
-              child: Text(
-                loanPlace,
-                style: CustomStyle.bodyWhiteColor(),
-              ),
+              child: Text(loanPlace, style: CustomStyle.bodyWhiteColor()),
             ),
             Container(
               padding: CustomStyle.pagePaddingSmall(),
               child: Column(
                 children: [
                   CustomWidget.buildRow(
-                      "Contract No", loanData.contractNoRef.toString()),
+                    "Contract No",
+                    loanData.contractNoRef.toString(),
+                  ),
                   CustomWidget.buildRow(
-                      "Loan Status",
-                      CommonService.getLoanStatus(
-                          loanData.loanApplicationStatus.toString())),
+                    "Loan Status",
+                    CommonService.getLoanStatus(
+                      loanData.loanApplicationStatus.toString(),
+                    ),
+                  ),
                   CustomWidget.buildRow(
-                      "Loan Size", CommonService.getLoanSize(loanData)),
+                    "Loan Size",
+                    CommonService.getLoanSize(loanData),
+                  ),
                   CustomWidget.buildRow(
-                      "Loan Term", "${loanData.termPeriod} Months"),
+                    "Loan Term",
+                    "${loanData.termPeriod} Months",
+                  ),
                   CustomWidget.buildRow(
-                      "First Payment Date",
-                      CommonService.formatDate(
-                          loanData.firstRepaymentDate.toString())),
+                    "First Payment Date",
+                    CommonService.formatDate(
+                      loanData.firstRepaymentDate.toString(),
+                    ),
+                  ),
                   CustomWidget.buildRow(
-                      "Last Payment Date",
-                      CommonService.formatDate(
-                          loanData.lastRepaymentDate.toString())),
+                    "Last Payment Date",
+                    CommonService.formatDate(
+                      loanData.lastRepaymentDate.toString(),
+                    ),
+                  ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -196,59 +217,66 @@ class LoanHistoryState extends State<LoanHistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MainAppBar(),
-      body: LayoutBuilder(builder: (context, constraints) {
-        return Stack(
-          children: [
-            if (isLoading)
-              CustomWidget.loading()
-            else
-              SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight,
-                  ),
-                  child: IntrinsicHeight(
-                    child: Column(
-                      spacing: 0,
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            RouteService.goToNavigator(
-                                context, CurrentLoanPage(isToDisplayPage: true));
-                          },
-                          child: createCurrentApplyLoanCard(),
-                        ),
-                        ...loanList.asMap().entries.map<Widget>((entry) {
-                          final index = entry.key;
-                          final loan = entry.value;
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return Stack(
+            children: [
+              if (isLoading)
+                CustomWidget.loading()
+              else
+                SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        spacing: 0,
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              RouteService.goToNavigator(
+                                context,
+                                CurrentLoanPage(isToDisplayPage: true),
+                              );
+                            },
+                            child: createCurrentApplyLoanCard(),
+                          ),
+                          ...loanList.asMap().entries.map<Widget>((entry) {
+                            final index = entry.key;
+                            final loan = entry.value;
 
-                          final loanPlace =
-                              getLoopText(loanList.length - index);
+                            final loanPlace = getLoopText(
+                              loanList.length - index,
+                            );
 
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  RouteService.goToNavigator(
-                                      context, PreviousLoanPage(loan: loan));
-                                },
-                                child: createLoanCard(loan, loanPlace),
-                              )
-                            ],
-                          );
-                        }),
-                      ],
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    RouteService.goToNavigator(
+                                      context,
+                                      PreviousLoanPage(loan: loan),
+                                    );
+                                  },
+                                  child: createLoanCard(loan, loanPlace),
+                                ),
+                              ],
+                            );
+                          }),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-          ],
-        );
-      }),
+            ],
+          );
+        },
+      ),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: ConstantData.LOAN_INDEX,
         onItemTapped: (index) {

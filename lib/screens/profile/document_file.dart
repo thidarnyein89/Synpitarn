@@ -31,17 +31,22 @@ class DocumentFilePage extends StatefulWidget {
 
 class DocumentFileState extends State<DocumentFilePage> {
   final Map<String, ImageFile?> imageList = {
-    'Bank Book':
-        ImageFile(uniqueId: "control-281301e7-fdd5-4a66-be40-1b2debcf9697"),
-    'Pay Slip / Bank Transaction':
-        ImageFile(uniqueId: "control-0d77d53e-7951-4bab-92d5-3cc5e5900f1e"),
+    'Bank Book': ImageFile(
+      uniqueId: "control-281301e7-fdd5-4a66-be40-1b2debcf9697",
+    ),
+    'Pay Slip / Bank Transaction': ImageFile(
+      uniqueId: "control-0d77d53e-7951-4bab-92d5-3cc5e5900f1e",
+    ),
     'Visa': ImageFile(uniqueId: "control-44072091-4923-4eb8-ac1d-7f2be8e4155c"),
-    'Passport First Page':
-        ImageFile(uniqueId: "control-d3522d45-9d03-4ef8-9b88-44781291c7df"),
-    'Work Permit (Front)':
-        ImageFile(uniqueId: "control-74593ce7-2c66-48aa-bd48-764c4bb3c165"),
-    'Work Permit (Back)':
-        ImageFile(uniqueId: "control-fe42f126-d6f3-4970-a907-1aba299c6ba3"),
+    'Passport First Page': ImageFile(
+      uniqueId: "control-d3522d45-9d03-4ef8-9b88-44781291c7df",
+    ),
+    'Work Permit (Front)': ImageFile(
+      uniqueId: "control-74593ce7-2c66-48aa-bd48-764c4bb3c165",
+    ),
+    'Work Permit (Back)': ImageFile(
+      uniqueId: "control-fe42f126-d6f3-4970-a907-1aba299c6ba3",
+    ),
   };
 
   final ImagePicker _picker = ImagePicker();
@@ -71,8 +76,9 @@ class DocumentFileState extends State<DocumentFilePage> {
     loginUser = await getLoginUser();
     setState(() {});
 
-    DefaultResponse defaultResponse =
-        await DefaultRepository().getDefaultData(loginUser);
+    DefaultResponse defaultResponse = await DefaultRepository().getDefaultData(
+      loginUser,
+    );
 
     if (defaultResponse.response.code == 200) {
       defaultData = defaultResponse.data;
@@ -90,9 +96,10 @@ class DocumentFileState extends State<DocumentFilePage> {
       documentList = documentResponse.data;
 
       imageList.forEach((key, imageFile) async {
-        Document? document = documentList
-            .where((document) => document.uniqueId == imageFile?.uniqueId)
-            .firstOrNull;
+        Document? document =
+            documentList
+                .where((document) => document.uniqueId == imageFile?.uniqueId)
+                .firstOrNull;
         if (document != null) {
           imageFile?.isDeleteLoading = true;
           setState(() {});
@@ -123,14 +130,13 @@ class DocumentFileState extends State<DocumentFilePage> {
       final Map<String, dynamic> postBody = {
         'version_id': defaultData.versionId,
         'unique_id': imageFile.uniqueId,
-        'file_path': file.path
+        'file_path': file.path,
       };
 
-      DocumentResponse documentResponse =
-          await DocumentRepository().uploadDocument(postBody, loginUser);
+      DocumentResponse documentResponse = await DocumentRepository()
+          .uploadDocument(postBody, loginUser);
       if (documentResponse.response.code != 200) {
-        showErrorDialog(
-            documentResponse.response.message);
+        showErrorDialog(documentResponse.response.message);
 
         setState(() {
           imageFile.isLoading = false;
@@ -203,11 +209,10 @@ class DocumentFileState extends State<DocumentFilePage> {
           'version_id': defaultData.versionId,
         };
 
-        DocumentResponse documentResponse =
-            await DocumentRepository().deleteDocument(postBody, loginUser);
+        DocumentResponse documentResponse = await DocumentRepository()
+            .deleteDocument(postBody, loginUser);
         if (documentResponse.response.code != 200) {
-          showErrorDialog(
-              documentResponse.response.message);
+          showErrorDialog(documentResponse.response.message);
 
           setState(() {
             imageFile.isDeleteLoading = false;
@@ -235,8 +240,11 @@ class DocumentFileState extends State<DocumentFilePage> {
       'input_data': jsonEncode(defaultData.inputData),
     };
 
-    DataResponse saveResponse = await LoanRepository()
-        .saveLoanApplicationStep(postBody, loginUser, stepName);
+    DataResponse saveResponse = await LoanRepository().saveLoanApplicationStep(
+      postBody,
+      loginUser,
+      stepName,
+    );
     if (saveResponse.response.code != 200) {
       showErrorDialog(saveResponse.response.message);
     } else {
@@ -263,62 +271,68 @@ class DocumentFileState extends State<DocumentFilePage> {
           height: 120,
           width: double.infinity,
           color: Colors.grey[300],
-          child: (imageFile?.filePath != null)
-              ? Stack(
-                  children: [
-                    Positioned.fill(
-                      child: (imageFile?.file != null)
-                          ? Image.file(imageFile!.file!, fit: BoxFit.cover)
-                          : Image.network(
-                              imageFile!.filePath!,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Icon(Icons.broken_image),
-                            ),
-                    ),
-                    if (imageFile.isDeleteLoading ?? false)
+          child:
+              (imageFile?.filePath != null)
+                  ? Stack(
+                    children: [
                       Positioned.fill(
-                        child: Container(
-                          color: Color.fromRGBO(0, 0, 0, 0.5),
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
+                        child:
+                            (imageFile?.file != null)
+                                ? Image.file(
+                                  imageFile!.file!,
+                                  fit: BoxFit.cover,
+                                )
+                                : Image.network(
+                                  imageFile!.filePath!,
+                                  fit: BoxFit.cover,
+                                  errorBuilder:
+                                      (context, error, stackTrace) =>
+                                          Icon(Icons.broken_image),
+                                ),
                       ),
-                    if (!(imageFile?.isDeleteLoading ?? false))
-                      Positioned(
-                        top: 4,
-                        right: 4,
-                        child: GestureDetector(
-                          onTap: () {
-                            deleteImage(imageFile!);
-                          },
+                      if (imageFile.isDeleteLoading ?? false)
+                        Positioned.fill(
                           child: Container(
-                            decoration: BoxDecoration(
-                              color: Color.fromRGBO(0, 0, 0, 0.5),
-                              shape: BoxShape.circle,
+                            color: Color.fromRGBO(0, 0, 0, 0.5),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
                             ),
-                            padding: EdgeInsets.all(4),
-                            child:
-                                Icon(Icons.close, color: Colors.red, size: 20),
                           ),
                         ),
-                      ),
-                  ],
-                )
-              : Center(child: Text('No file selected')),
+                      if (!(imageFile?.isDeleteLoading ?? false))
+                        Positioned(
+                          top: 4,
+                          right: 4,
+                          child: GestureDetector(
+                            onTap: () {
+                              deleteImage(imageFile!);
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Color.fromRGBO(0, 0, 0, 0.5),
+                                shape: BoxShape.circle,
+                              ),
+                              padding: EdgeInsets.all(4),
+                              child: Icon(
+                                Icons.close,
+                                color: Colors.red,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  )
+                  : Center(child: Text('No file selected')),
         ),
         CustomWidget.verticalSpacing(),
         CustomWidget.elevatedButton(
           enabled: imageFile?.file == null,
           isLoading: imageFile!.isLoading ?? false,
           text: 'Upload',
-          icon: Icon(
-            Icons.image_outlined,
-            color: Colors.white,
-          ),
+          icon: Icon(Icons.image_outlined, color: Colors.white),
           onPressed: () => pickImage(imageFile),
         ),
         CustomWidget.verticalSpacing(),
@@ -337,66 +351,76 @@ class DocumentFileState extends State<DocumentFilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: (loginUser.loanApplicationSubmitted)
-              ? 'Documents'
-              : 'Required Documents'),
+      appBar: PageAppBar(
+        title:
+            (loginUser.loanApplicationSubmitted)
+                ? 'Documents'
+                : 'Required Documents',
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          return Stack(children: [
-            if (isPageLoading)
-              CustomWidget.loading()
-            else
-              SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: IntrinsicHeight(
+          return Stack(
+            children: [
+              if (isPageLoading)
+                CustomWidget.loading()
+              else
+                SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: IntrinsicHeight(
                       child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RegisterTabBar(activeStep: 1),
-                      Padding(
-                        padding: CustomStyle.pageWithoutTopPadding(),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ...imageList.keys
-                                .map((docType) =>
-                                    buildUploadImageSection(docType))
-                                .toList(),
-                            CustomWidget.verticalSpacing(),
-                            if (!loginUser.loanApplicationSubmitted)
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: CustomWidget.elevatedButton(
-                                      enabled: true,
-                                      isLoading: false,
-                                      text: 'Previous',
-                                      onPressed: handlePrevious,
-                                    ),
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RegisterTabBar(activeStep: 1),
+                          Padding(
+                            padding: CustomStyle.pageWithoutTopPadding(),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ...imageList.keys
+                                    .map(
+                                      (docType) =>
+                                          buildUploadImageSection(docType),
+                                    )
+                                    .toList(),
+                                CustomWidget.verticalSpacing(),
+                                if (!loginUser.loanApplicationSubmitted)
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomWidget.elevatedButton(
+                                          enabled: true,
+                                          isLoading: false,
+                                          text: 'Previous',
+                                          onPressed: handlePrevious,
+                                        ),
+                                      ),
+                                      CustomWidget.horizontalSpacing(),
+                                      Expanded(
+                                        child: CustomWidget.elevatedButton(
+                                          enabled: isEnabled,
+                                          isLoading: isLoading,
+                                          text: 'Continue',
+                                          onPressed: handleContinue,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  CustomWidget.horizontalSpacing(),
-                                  Expanded(
-                                    child: CustomWidget.elevatedButton(
-                                      enabled: isEnabled,
-                                      isLoading: isLoading,
-                                      text: 'Continue',
-                                      onPressed: handleContinue,
-                                    ),
-                                  ),
-                                ],
-                              )
-                          ],
-                        ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  )),
+                    ),
+                  ),
                 ),
-              )
-          ]);
+            ],
+          );
         },
       ),
     );

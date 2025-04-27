@@ -17,20 +17,21 @@ class Document {
 
   Document.defaultDocument();
 
-  Document(
-      {required this.id,
-      required this.clientId,
-      required this.versionId,
-      required this.oldVersionId,
-      required this.uniqueId,
-      required this.oldUniqueId,
-      required this.docType,
-      required this.docName,
-      required this.docUrl,
-      required this.status,
-      required this.type,
-      required this.createdAt,
-      required this.updatedAt});
+  Document({
+    required this.id,
+    required this.clientId,
+    required this.versionId,
+    required this.oldVersionId,
+    required this.uniqueId,
+    required this.oldUniqueId,
+    required this.docType,
+    required this.docName,
+    required this.docUrl,
+    required this.status,
+    required this.type,
+    required this.createdAt,
+    required this.updatedAt,
+  });
 
   factory Document.fromJson(Map<String, dynamic> json) {
     return Document(
@@ -64,7 +65,7 @@ class Document {
       'status': status,
       'type': type,
       'created_at': createdAt,
-      'updated_at': updatedAt
+      'updated_at': updatedAt,
     };
   }
 

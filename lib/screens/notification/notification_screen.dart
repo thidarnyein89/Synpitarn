@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
-import 'package:synpitarn/models/meta.dart';
 import 'package:synpitarn/models/notification.dart';
 import 'package:synpitarn/models/notification_response.dart' as model;
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/notification_repository.dart';
-import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -23,7 +20,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
   final NotificationRepository _repository = NotificationRepository();
   bool _isLoading = false;
   int _currentPage = 1;
-  final int _perPage = 10;
   bool _hasNextPage = true;
 
   @override
