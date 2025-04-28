@@ -154,10 +154,6 @@ class CustomerInformationState extends State<CustomerInformationPage> {
       }
     });
 
-    print("====");
-    print(loginUser.toJson()['dob']);
-    print(loginUser.toJson()['phone_number']);
-
     dropdownControllers.forEach((key, dynamic) {
       if (inputData.containsKey(key)) {
         dropdownControllers[key] =

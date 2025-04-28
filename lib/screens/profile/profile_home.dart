@@ -6,6 +6,7 @@ import 'package:synpitarn/data/register_step.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/data/app_config.dart';
@@ -157,14 +158,11 @@ class ProfileHomeState extends State<ProfileHomePage> with RouteAware {
                               size: 40,
                               color: CustomStyle.primary_color,
                             ),
-                            const SizedBox(height: 12),
+                            CustomWidget.verticalSpacing(),
                             Text(
                               item.text,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
+                              style: CustomStyle.body(),
                             )
                           ],
                         ),
@@ -227,14 +225,11 @@ class ProfileHomeState extends State<ProfileHomePage> with RouteAware {
                           size: 40,
                           color: CustomStyle.primary_color,
                         ),
-                        const SizedBox(height: 12),
+                        CustomWidget.verticalSpacing(),
                         Text(
                           item.text,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: CustomStyle.body(),
                         )
                       ],
                     ),

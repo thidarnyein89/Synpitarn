@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/data_response.dart';
 import 'package:synpitarn/models/default/default_data.dart';
@@ -129,8 +128,7 @@ class DocumentFileState extends State<DocumentFilePage> {
       DocumentResponse documentResponse =
           await DocumentRepository().uploadDocument(postBody, loginUser);
       if (documentResponse.response.code != 200) {
-        showErrorDialog(
-            documentResponse.response.message);
+        showErrorDialog(documentResponse.response.message);
 
         setState(() {
           imageFile.isLoading = false;
@@ -206,8 +204,7 @@ class DocumentFileState extends State<DocumentFilePage> {
         DocumentResponse documentResponse =
             await DocumentRepository().deleteDocument(postBody, loginUser);
         if (documentResponse.response.code != 200) {
-          showErrorDialog(
-              documentResponse.response.message);
+          showErrorDialog(documentResponse.response.message);
 
           setState(() {
             imageFile.isDeleteLoading = false;
@@ -272,6 +269,22 @@ class DocumentFileState extends State<DocumentFilePage> {
                           : Image.network(
                               imageFile!.filePath!,
                               fit: BoxFit.cover,
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            (loadingProgress
+                                                    .expectedTotalBytes ??
+                                                1)
+                                        : null,
+                                  ),
+                                );
+                              },
                               errorBuilder: (context, error, stackTrace) =>
                                   Icon(Icons.broken_image),
                             ),
@@ -337,7 +350,8 @@ class DocumentFileState extends State<DocumentFilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: (loginUser.loanApplicationSubmitted)
+      appBar: PageAppBar(
+          title: (loginUser.loanApplicationSubmitted)
               ? 'Documents'
               : 'Required Documents'),
       body: LayoutBuilder(

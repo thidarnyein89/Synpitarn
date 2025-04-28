@@ -17,6 +17,7 @@ import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 class SettingPage extends StatefulWidget {
@@ -53,11 +54,7 @@ class SettingState extends State<SettingPage> {
   }
 
   Future<void> handleLogout() async {
-    setLoginUser(User.defaultUser());
-    setLoginStatus(false);
-    setState(() {});
-
-    RouteService.goToMain(context);
+    AuthService().logout(context);
   }
 
   @override

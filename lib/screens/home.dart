@@ -11,7 +11,7 @@ import 'package:synpitarn/models/loan_schedule.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:synpitarn/screens/profile/register/required_document.dart';
+import 'package:synpitarn/screens/profile/profile_home.dart';
 import 'package:synpitarn/screens/setting/about_us.dart';
 import 'package:synpitarn/screens/setting/guide_header.dart';
 import 'package:synpitarn/services/common_service.dart';
@@ -841,7 +841,7 @@ class HomeState extends State<HomePage> {
     if (!loginUser.loanApplicationSubmitted) {
       showErrorDialog(Message.NO_CURRENT_LOAN);
     } else {
-      RouteService.goToNavigator(context, RequiredDocumentPage());
+      RouteService.goToNavigator(context, ProfileHomePage());
     }
   }
 }

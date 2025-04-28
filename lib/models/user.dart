@@ -37,6 +37,7 @@ class User {
   String type = ''; //For PinType
   String authToken = ''; //For Token from SetPassword
   String nameOfEmployment = ''; //For QR Scan Response Data
+  String officeLocation = ''; //For QR Scan Response Data
 
   User.defaultUser();
 
@@ -76,6 +77,8 @@ class User {
     required this.forgetPassword,
     required this.type,
     required this.authToken,
+    required this.nameOfEmployment,
+    required this.officeLocation,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -83,7 +86,7 @@ class User {
       id: json['id'] ?? 0,
       name: json['name'] ?? "",
       phoneNumber: json['phone_number'] ?? "",
-      dob: json['dob'] ?? "",
+      dob: (json['dob'] == null || json['dob'] == '0000-00-00') ? "" : json['dob'],
       provinceOfWork: json['province_of_work'] ?? "",
       provinceOfResident: json['province_of_resident'] ?? "",
       districtOfResident: json['district_of_resident'] ?? "",
@@ -117,6 +120,8 @@ class User {
       forgetPassword: json.containsKey("forget_password") ? json["forget_password"] is bool ? json["forget_password"] : false : false,
       type: json.containsKey("type") ? json["type"] ?? json["type"] : "",
       authToken: json.containsKey("auth_token") ? json["auth_token"] ?? json["auth_token"] : "",
+      nameOfEmployment: json['name_of_employment'] ?? "",
+      officeLocation: json['office_location'] ?? "",
     );
   }
 
@@ -157,6 +162,8 @@ class User {
       'forget_password': forgetPassword,
       'type': type,
       'auth_token': authToken,
+      'name_of_employment': nameOfEmployment,
+      'office_location': officeLocation
     };
   }
 
