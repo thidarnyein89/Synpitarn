@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:synpitarn/models/document.dart';
 import 'package:synpitarn/models/document_response.dart';
 import 'package:synpitarn/models/loan.dart';
@@ -60,11 +61,50 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
 
     if (documentResponse.response.code == 200) {
       documentList = documentResponse.data;
-      print(documentList.map((data) => data.docName));
     }
 
     isLoading = false;
     setState(() {});
+  }
+
+  Map<String, List<Document>> groupImagesByDate(List<Document> images) {
+    Map<String, List<Document>> groupedImages = {};
+
+    for (var item in images) {
+      String formattedDate = getFormattedDate(item.createdAt);
+
+      if (groupedImages.containsKey(formattedDate)) {
+        groupedImages[formattedDate]!.add(item);
+      } else {
+        groupedImages[formattedDate] = [item];
+      }
+    }
+
+    return groupedImages;
+  }
+
+  String getFormattedDate(String createdAt) {
+    // Parse the created_at date string
+    DateTime createdDate = DateTime.parse(createdAt);
+    DateTime now = DateTime.now();
+    DateTime yesterday = now.subtract(Duration(days: 1));
+
+    // Compare with Today, Yesterday, or specific date
+    if (isSameDay(createdDate, now)) {
+      return 'Today';
+    } else if (isSameDay(createdDate, yesterday)) {
+      return 'Yesterday';
+    } else {
+      return DateFormat(
+        'd MMM yyyy',
+      ).format(createdDate); // Example: 23 Apr 2025
+    }
+  }
+
+  bool isSameDay(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
   }
 
   @override
@@ -80,46 +120,98 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
 
   @override
   Widget build(BuildContext context) {
+    Map<String, List<Document>> groupedImages = groupImagesByDate(documentList);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PageAppBar(title: 'Additional Document'),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return Stack(
-            children: [
-              if (isLoading)
-                CustomWidget.loading()
-              else
-                SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: IntrinsicHeight(
-                      child: Column(
-                        spacing: 0,
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: CustomStyle.pagePadding(),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Image.network(documentList.data)
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+      body: Stack(
+        children: [
+          if (isLoading)
+            CustomWidget.loading()
+          else
+            groupedImages.isEmpty
+                ? Center(
+                  child: Text(
+                    'No Data Available',
+                    style: TextStyle(fontSize: 20, color: Colors.grey),
                   ),
+                )
+                : ListView(
+                  children:
+                      groupedImages.entries.map((entry) {
+                        String date = entry.key;
+                        List<Document> imageItems = entry.value;
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  date,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            ...imageItems.map((item) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: 16),
+                                  child: Image.network(
+                                    'item.file',
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (
+                                      BuildContext context,
+                                      Widget child,
+                                      ImageChunkEvent? loadingProgress,
+                                    ) {
+                                      if (loadingProgress == null) {
+                                        return child;
+                                      } else {
+                                        return Center(
+                                          child: CircularProgressIndicator(
+                                            value:
+                                                loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                                .expectedTotalBytes !=
+                                                            null
+                                                        ? loadingProgress
+                                                                .cumulativeBytesLoaded /
+                                                            (loadingProgress
+                                                                    .expectedTotalBytes ??
+                                                                1)
+                                                        : null
+                                                    : null,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    errorBuilder:
+                                        (context, error, stackTrace) => Center(
+                                          child: Icon(Icons.broken_image),
+                                        ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ],
+                        );
+                      }).toList(),
                 ),
-            ],
-          );
-        },
+        ],
       ),
     );
   }
