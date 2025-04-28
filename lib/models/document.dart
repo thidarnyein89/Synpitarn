@@ -22,25 +22,26 @@ class Document {
 
   Document.defaultDocument();
 
-  Document(
-      {required this.id,
-      required this.userId,
-      required this.clientId,
-      required this.versionId,
-      required this.oldVersionId,
-      required this.loanApplicationId,
-      required this.uniqueId,
-      required this.oldUniqueId,
-      required this.docType,
-      required this.docName,
-      required this.docUrl,
-      required this.status,
-      required this.type,
-      required this.file,
-      required this.fileName,
-      required this.filePath,
-      required this.createdAt,
-      required this.updatedAt});
+  Document({
+    required this.id,
+    required this.userId,
+    required this.clientId,
+    required this.versionId,
+    required this.oldVersionId,
+    required this.loanApplicationId,
+    required this.uniqueId,
+    required this.oldUniqueId,
+    required this.docType,
+    required this.docName,
+    required this.docUrl,
+    required this.status,
+    required this.type,
+    required this.file,
+    required this.fileName,
+    required this.filePath,
+    required this.createdAt,
+    required this.updatedAt,
+  });
 
   factory Document.fromJson(Map<String, dynamic> json) {
     return Document(
