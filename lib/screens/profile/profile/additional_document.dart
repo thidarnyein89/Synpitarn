@@ -24,11 +24,14 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
   User loginUser = User.defaultUser();
   List<Document> documentList = [];
   bool isLoading = false;
+  late PageController _pageController;
+  int selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
     getInitData();
+    _pageController = PageController();
   }
 
   Future<void> getInitData() async {
@@ -109,6 +112,7 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
 
   @override
   void dispose() {
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -118,100 +122,98 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
     setState(() {});
   }
 
+  void onThumbnailTap(int index) {
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    Map<String, List<Document>> groupedImages = groupImagesByDate(documentList);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PageAppBar(title: 'Additional Document'),
-      body: Stack(
-        children: [
-          if (isLoading)
-            CustomWidget.loading()
-          else
-            groupedImages.isEmpty
-                ? Center(
-                  child: Text(
-                    'No Data Available',
-                    style: TextStyle(fontSize: 20, color: Colors.grey),
-                  ),
-                )
-                : ListView(
-                  children:
-                      groupedImages.entries.map((entry) {
-                        String date = entry.key;
-                        List<Document> imageItems = entry.value;
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                              ),
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                  date,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            ...imageItems.map((item) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
-                                child: Container(
-                                  margin: EdgeInsets.only(bottom: 16),
-                                  child: Image.network(
-                                    'item.file',
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder: (
-                                      BuildContext context,
-                                      Widget child,
-                                      ImageChunkEvent? loadingProgress,
-                                    ) {
-                                      if (loadingProgress == null) {
-                                        return child;
-                                      } else {
-                                        return Center(
-                                          child: CircularProgressIndicator(
-                                            value:
-                                                loadingProgress
-                                                            .expectedTotalBytes !=
-                                                        null
-                                                    ? loadingProgress
-                                                                .expectedTotalBytes !=
-                                                            null
-                                                        ? loadingProgress
-                                                                .cumulativeBytesLoaded /
-                                                            (loadingProgress
-                                                                    .expectedTotalBytes ??
-                                                                1)
-                                                        : null
-                                                    : null,
-                                          ),
-                                        );
-                                      }
-                                    },
-                                    errorBuilder:
-                                        (context, error, stackTrace) => Center(
-                                          child: Icon(Icons.broken_image),
-                                        ),
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          ],
-                        );
-                      }).toList(),
-                ),
-        ],
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 400,
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: documentList.length,
+                onPageChanged: (index) {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
+                itemBuilder: (context, index) {
+                  return Image.network(
+                    documentList[index].file,
+                    fit: BoxFit.contain,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const Center(child: CircularProgressIndicator());
+                    },
+                    errorBuilder:
+                        (context, error, stackTrace) =>
+                            Icon(Icons.broken_image),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              height: 80,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: documentList.length,
+                itemBuilder: (context, index) {
+                  final doc = documentList[index];
+                  return GestureDetector(
+                    onTap: () => onThumbnailTap(index),
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      padding:
+                          selectedIndex == index
+                              ? const EdgeInsets.all(2)
+                              : EdgeInsets.zero,
+                      decoration: BoxDecoration(
+                        border:
+                            selectedIndex == index
+                                ? Border.all(color: Colors.blue, width: 2)
+                                : null,
+                      ),
+                      child: Image.network(
+                        doc.file,
+                        width: 70,
+                        height: 70,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Center(child: Icon(Icons.broken_image));
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 10),
+            // Text('23 Apr 2025'),
+          ],
+        ),
       ),
     );
   }
