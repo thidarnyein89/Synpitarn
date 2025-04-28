@@ -86,7 +86,7 @@ class Document {
       'file_name': fileName,
       'file_path': filePath,
       'created_at': createdAt,
-      'updated_at': updatedAt
+      'updated_at': updatedAt,
     };
   }
 
