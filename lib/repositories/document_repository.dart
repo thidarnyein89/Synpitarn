@@ -7,7 +7,8 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/data/app_config.dart';
 
 class DocumentRepository {
-  Future<DocumentResponse> uploadDocument(Map<String, dynamic> postBody, User loginUser) async {
+  Future<DocumentResponse> uploadDocument(
+      Map<String, dynamic> postBody, User loginUser) async {
     String url =
         ("${AppConfig.BASE_URL}/${AppConfig.PATH}/form/type/default/upload-file");
 
@@ -29,8 +30,8 @@ class DocumentRepository {
     return DocumentResponse.documentResponseFromJson(response.body);
   }
 
-  Future<DocumentResponse> deleteDocument(Map<String, dynamic> postBody, User loginUser) async {
-
+  Future<DocumentResponse> deleteDocument(
+      Map<String, dynamic> postBody, User loginUser) async {
     String url =
         ("${AppConfig.BASE_URL}/${AppConfig.PATH}/form/type/default/delete");
 
@@ -47,8 +48,29 @@ class DocumentRepository {
     return DocumentResponse.documentResponseFromJson(response.body);
   }
 
-  Future<DocumentResponse> getUploadDocumentData(User loginRequest, int versionId) async {
-    String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/form/type/default/upload-file?version_id=$versionId");
+  Future<DocumentResponse> getUploadDocumentData(
+      User loginRequest, int versionId) async {
+    String url =
+        ("${AppConfig.BASE_URL}/${AppConfig.PATH}/form/type/default/upload-file?version_id=$versionId");
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer ${loginRequest.token}",
+        "x-user-id": loginRequest.id.toString(),
+      },
+    );
+
+    return DocumentResponse.documentResponseFromJson(response.body);
+  }
+
+  Future<DocumentResponse> getAdditionalDocumentData(
+    User loginRequest,
+    int userId,
+  ) async {
+    String url =
+        ("${AppConfig.BASE_URL}/${AppConfig.PATH}/loan/application/documents/$userId");
 
     final response = await http.get(
       Uri.parse(url),

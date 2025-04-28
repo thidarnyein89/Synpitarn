@@ -37,13 +37,17 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
   Future<void> getInitData() async {
     isLoading = true;
     loginUser = await getLoginUser();
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
 
     await getApplicationData();
     await getAdditionalDocumentData();
 
     isLoading = false;
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> getApplicationData() async {
@@ -54,7 +58,9 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
       showErrorDialog(applicationResponse.response.message);
     } else {
       applicationData = applicationResponse.data;
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
@@ -67,7 +73,9 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
     }
 
     isLoading = false;
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Map<String, List<Document>> groupImagesByDate(List<Document> images) {
@@ -119,7 +127,9 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
   void showErrorDialog(String errorMessage) {
     CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void onThumbnailTap(int index) {

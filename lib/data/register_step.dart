@@ -105,4 +105,24 @@ class StepData {
 
     return stepList;
   }
+
+  static List<StepData> getDocumentSteps() {
+    List<StepData> stepList = [];
+
+    stepList.add(
+      StepData(
+          icon: Icons.upload_file_outlined,
+          text: 'Documents',
+          page: DocumentFilePage()),
+    );
+
+    stepList.add(
+      StepData(
+          icon: Icons.upload_file_outlined,
+          text: 'Additional Documents',
+          page: AdditionalDocumentPage()),
+    );
+
+    return stepList;
+  }
 }

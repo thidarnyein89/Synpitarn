@@ -8,6 +8,7 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
+import 'package:synpitarn/screens/components/qr_dialog.dart';
 import 'package:synpitarn/screens/loan/repayment_list.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
@@ -86,13 +87,20 @@ class PreviousLoanState extends State<PreviousLoanPage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.network(
-                widget.loan!.qrcode.photo,
-                width: 200,
-                height: 200,
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) =>
-                    Icon(Icons.broken_image),
+              GestureDetector(
+                onTap: () {
+                  QRDialog.showQRDialog(context, widget.loan!.qrcode.photo,
+                      widget.loan!.qrcode.string);
+                },
+                child: FadeInImage(
+                  placeholder: AssetImage('assets/images/spinner.gif'),
+                  image: NetworkImage(widget.loan!.qrcode.photo),
+                  fit: BoxFit.contain,
+                  width: 200,
+                  height: 200,
+                  imageErrorBuilder: (context, error, stackTrace) =>
+                      Icon(Icons.broken_image),
+                ),
               ),
               Text(widget.loan!.qrcode.string),
               CustomWidget.verticalSpacing(),

@@ -11,6 +11,8 @@ import 'package:synpitarn/models/loan_schedule.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
+import 'package:synpitarn/screens/components/qr_dialog.dart';
+import 'package:synpitarn/screens/profile/document_home.dart';
 import 'package:synpitarn/screens/profile/profile_home.dart';
 import 'package:synpitarn/screens/setting/about_us.dart';
 import 'package:synpitarn/screens/setting/guide_header.dart';
@@ -318,9 +320,15 @@ class HomeState extends State<HomePage> {
                 borderRadius: BorderRadius.circular(16),
                 onTap: () {
                   if (index == 0) {
-                    showQRDialog(context);
+                    QRDialog.showQRDialog(
+                        context,
+                        repaymentList[0]['qrCodePhoto'],
+                        repaymentList[0]['qrCodePhotoName']);
                   }
                   if (index == 2) {
+                    goToDocumentPage(context);
+                  }
+                  if (index == 3) {
                     goToDocumentPage(context);
                   }
                 },
@@ -703,145 +711,11 @@ class HomeState extends State<HomePage> {
 
   void handleContinue() {}
 
-  Future<void> showQRDialog(BuildContext context) async {
-    if (repaymentList.isEmpty) {
-      showErrorDialog(Message.NO_CURRENT_REPAYMENT);
-      return;
-    }
-
-    bool isDownloading = false;
-    bool isFinish = false;
-    String downloadMessage = "";
-
-    return showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            Future<void> handleDownload() async {
-              final imageUrl = repaymentList[0]['qrCodePhoto'];
-              final fileName = repaymentList[0]['qrCodePhotoName'];
-
-              setState(() {
-                isDownloading = true;
-                isFinish = false;
-                downloadMessage = "Downloading...";
-              });
-
-              try {
-                FileDownloader.downloadFile(
-                  url: imageUrl,
-                  name: fileName,
-                  onProgress: (fileName, progress) {
-                    setState(() {
-                      isDownloading = true;
-                    });
-                  },
-                  onDownloadCompleted: (path) {
-                    setState(() {
-                      downloadMessage = "Download completed!";
-                      isDownloading = false;
-                      isFinish = true;
-                    });
-                  },
-                  onDownloadError: (errorMessage) {
-                    setState(() {
-                      downloadMessage = "Error downloading: $errorMessage";
-                      isDownloading = false;
-                      isFinish = false;
-                    });
-                  },
-                );
-              } catch (e) {
-                setState(() {
-                  downloadMessage = "Error downloading";
-                  isDownloading = false;
-                  isFinish = false;
-                });
-              }
-            }
-
-            return AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5)),
-              content: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.network(
-                    repaymentList[0]['qrCodePhoto'],
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.contain,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) {
-                        return child;
-                      }
-                      return SizedBox(
-                        width: 200,
-                        height: 200,
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                : null,
-                          ),
-                        ),
-                      );
-                    },
-                    errorBuilder: (context, error, stackTrace) =>
-                        Icon(Icons.broken_image),
-                  ),
-                  CustomWidget.verticalSpacing(),
-                  Text(repaymentList[0]['qrCodeString']),
-                  CustomWidget.verticalSpacing(),
-                  if (downloadMessage != "")
-                    Row(
-                      spacing: 5,
-                      children: [
-                        Icon(isFinish
-                            ? Icons.done_outlined
-                            : Icons.download_outlined),
-                        Text(downloadMessage),
-                      ],
-                    )
-                ],
-              ),
-              actions: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: CustomWidget.elevatedButton(
-                        enabled: !isDownloading,
-                        text: 'Download',
-                        onPressed: handleDownload,
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: CustomWidget.elevatedButton(
-                        text: 'Ok',
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
   void goToDocumentPage(BuildContext context) {
     if (!loginUser.loanApplicationSubmitted) {
       showErrorDialog(Message.NO_CURRENT_LOAN);
     } else {
-      RouteService.goToNavigator(context, ProfileHomePage());
+      RouteService.goToNavigator(context, DocumentHomePage());
     }
   }
 }

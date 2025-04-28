@@ -578,7 +578,7 @@ class CustomWidget {
             Align(
               alignment: Alignment.centerRight,
               child: SizedBox(
-                width: 140,
+                width: 150,
                 child: Text(label, style: CustomStyle.body()),
               ),
             ),

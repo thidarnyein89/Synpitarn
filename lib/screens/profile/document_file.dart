@@ -96,10 +96,9 @@ class DocumentFileState extends State<DocumentFilePage> {
       documentList = documentResponse.data;
 
       imageList.forEach((key, imageFile) async {
-        Document? document =
-            documentList
-                .where((document) => document.uniqueId == imageFile?.uniqueId)
-                .firstOrNull;
+        Document? document = documentList
+            .where((document) => document.uniqueId == imageFile?.uniqueId)
+            .firstOrNull;
         if (document != null) {
           imageFile?.isDeleteLoading = true;
           setState(() {});
@@ -133,8 +132,8 @@ class DocumentFileState extends State<DocumentFilePage> {
         'file_path': file.path,
       };
 
-      DocumentResponse documentResponse = await DocumentRepository()
-          .uploadDocument(postBody, loginUser);
+      DocumentResponse documentResponse =
+          await DocumentRepository().uploadDocument(postBody, loginUser);
       if (documentResponse.response.code != 200) {
         showErrorDialog(documentResponse.response.message);
 
@@ -209,8 +208,8 @@ class DocumentFileState extends State<DocumentFilePage> {
           'version_id': defaultData.versionId,
         };
 
-        DocumentResponse documentResponse = await DocumentRepository()
-            .deleteDocument(postBody, loginUser);
+        DocumentResponse documentResponse =
+            await DocumentRepository().deleteDocument(postBody, loginUser);
         if (documentResponse.response.code != 200) {
           showErrorDialog(documentResponse.response.message);
 
@@ -271,65 +270,63 @@ class DocumentFileState extends State<DocumentFilePage> {
           height: 120,
           width: double.infinity,
           color: Colors.grey[300],
-          child:
-              (imageFile?.filePath != null)
-                  ? Stack(
-                    children: [
+          child: (imageFile?.filePath != null)
+              ? Stack(
+                  children: [
+                    Positioned.fill(
+                      child: (imageFile?.file != null)
+                          ? Image.file(
+                              imageFile!.file!,
+                            )
+                          : FadeInImage(
+                              placeholder:
+                                  AssetImage('assets/images/spinner.gif'),
+                              image: NetworkImage(imageFile!.filePath!),
+                              fit: BoxFit.contain,
+                              imageErrorBuilder: (context, error, stackTrace) =>
+                                  Icon(Icons.broken_image),
+                            ),
+                    ),
+                    if (imageFile.isDeleteLoading ?? false)
                       Positioned.fill(
-                        child:
-                            (imageFile?.file != null)
-                                ? Image.file(
-                                  imageFile!.file!,
-                                  fit: BoxFit.cover,
-                                )
-                                : Image.network(
-                                  imageFile!.filePath!,
-                                  fit: BoxFit.cover,
-                                  errorBuilder:
-                                      (context, error, stackTrace) =>
-                                          Icon(Icons.broken_image),
-                                ),
+                        child: Container(
+                          color: Color.fromRGBO(0, 0, 0, 0.5),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ),
-                      if (imageFile.isDeleteLoading ?? false)
-                        Positioned.fill(
+                    if (!(imageFile?.isDeleteLoading ?? false))
+                      Positioned(
+                        top: 4,
+                        right: 4,
+                        child: GestureDetector(
+                          onTap: () {
+                            deleteImage(imageFile!);
+                          },
                           child: Container(
-                            color: Color.fromRGBO(0, 0, 0, 0.5),
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
+                            decoration: BoxDecoration(
+                              color: Color.fromRGBO(0, 0, 0, 0.5),
+                              shape: BoxShape.circle,
+                            ),
+                            padding: EdgeInsets.all(4),
+                            child: Icon(
+                              Icons.close,
+                              color: Colors.red,
+                              size: 20,
                             ),
                           ),
                         ),
-                      if (!(imageFile?.isDeleteLoading ?? false))
-                        Positioned(
-                          top: 4,
-                          right: 4,
-                          child: GestureDetector(
-                            onTap: () {
-                              deleteImage(imageFile!);
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Color.fromRGBO(0, 0, 0, 0.5),
-                                shape: BoxShape.circle,
-                              ),
-                              padding: EdgeInsets.all(4),
-                              child: Icon(
-                                Icons.close,
-                                color: Colors.red,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  )
-                  : Center(child: Text('No file selected')),
+                      ),
+                  ],
+                )
+              : Center(child: Text('No file selected')),
         ),
         CustomWidget.verticalSpacing(),
         CustomWidget.elevatedButton(
-          enabled: imageFile?.file == null,
+          enabled: imageFile?.filePath == null,
           isLoading: imageFile!.isLoading ?? false,
           text: 'Upload',
           icon: Icon(Icons.image_outlined, color: Colors.white),
@@ -352,10 +349,9 @@ class DocumentFileState extends State<DocumentFilePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PageAppBar(
-        title:
-            (loginUser.loanApplicationSubmitted)
-                ? 'Documents'
-                : 'Required Documents',
+        title: (loginUser.loanApplicationSubmitted)
+            ? 'Documents'
+            : 'Required Documents',
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
