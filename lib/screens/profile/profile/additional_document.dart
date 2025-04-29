@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/models/document.dart';
 import 'package:synpitarn/models/document_response.dart';
 import 'package:synpitarn/models/loan.dart';
@@ -7,13 +7,12 @@ import 'package:synpitarn/models/loan_application_response.dart';
 import 'package:synpitarn/repositories/document_repository.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 
 class AdditionalDocumentPage extends StatefulWidget {
-  AdditionalDocumentPage({super.key});
+  const AdditionalDocumentPage({super.key});
 
   @override
   AdditionalDocumentState createState() => AdditionalDocumentState();
@@ -78,46 +77,6 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
     }
   }
 
-  Map<String, List<Document>> groupImagesByDate(List<Document> images) {
-    Map<String, List<Document>> groupedImages = {};
-
-    for (var item in images) {
-      String formattedDate = getFormattedDate(item.createdAt);
-
-      if (groupedImages.containsKey(formattedDate)) {
-        groupedImages[formattedDate]!.add(item);
-      } else {
-        groupedImages[formattedDate] = [item];
-      }
-    }
-
-    return groupedImages;
-  }
-
-  String getFormattedDate(String createdAt) {
-    // Parse the created_at date string
-    DateTime createdDate = DateTime.parse(createdAt);
-    DateTime now = DateTime.now();
-    DateTime yesterday = now.subtract(Duration(days: 1));
-
-    // Compare with Today, Yesterday, or specific date
-    if (isSameDay(createdDate, now)) {
-      return 'Today';
-    } else if (isSameDay(createdDate, yesterday)) {
-      return 'Yesterday';
-    } else {
-      return DateFormat(
-        'd MMM yyyy',
-      ).format(createdDate); // Example: 23 Apr 2025
-    }
-  }
-
-  bool isSameDay(DateTime date1, DateTime date2) {
-    return date1.year == date2.year &&
-        date1.month == date2.month &&
-        date1.day == date2.day;
-  }
-
   @override
   void dispose() {
     _pageController.dispose();
@@ -149,81 +108,109 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
       backgroundColor: Colors.white,
       appBar: PageAppBar(title: 'Additional Document'),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 400,
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: documentList.length,
-                onPageChanged: (index) {
-                  setState(() {
-                    selectedIndex = index;
-                  });
-                },
-                itemBuilder: (context, index) {
-                  return Image.network(
-                    documentList[index].file,
-                    fit: BoxFit.contain,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return const Center(child: CircularProgressIndicator());
-                    },
-                    errorBuilder:
-                        (context, error, stackTrace) =>
-                            Icon(Icons.broken_image),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              height: 80,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: documentList.length,
-                itemBuilder: (context, index) {
-                  final doc = documentList[index];
-                  return GestureDetector(
-                    onTap: () => onThumbnailTap(index),
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      padding:
-                          selectedIndex == index
-                              ? const EdgeInsets.all(2)
-                              : EdgeInsets.zero,
-                      decoration: BoxDecoration(
-                        border:
-                            selectedIndex == index
-                                ? Border.all(color: Colors.blue, width: 2)
-                                : null,
+        child:
+            isLoading
+                ? CustomWidget.loading()
+                : documentList.isEmpty
+                ? Center(
+                  child: Text(
+                    'There is no additional documents.',
+                    style: CustomStyle.bodyGreyColor(),
+                  ),
+                )
+                : Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      const Spacer(),
+                      SizedBox(
+                        height: 300,
+                        child: PageView.builder(
+                          controller: _pageController,
+                          itemCount: documentList.length,
+                          onPageChanged: (index) {
+                            setState(() {
+                              selectedIndex = index;
+                            });
+                          },
+                          itemBuilder: (context, index) {
+                            return Image.network(
+                              documentList[index].file,
+                              fit: BoxFit.contain,
+                              loadingBuilder: (
+                                context,
+                                child,
+                                loadingProgress,
+                              ) {
+                                if (loadingProgress == null) return child;
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              },
+                              errorBuilder:
+                                  (context, error, stackTrace) =>
+                                      Icon(Icons.broken_image),
+                            );
+                          },
+                        ),
                       ),
-                      child: Image.network(
-                        doc.file,
-                        width: 70,
-                        height: 70,
-                        fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Center(child: Icon(Icons.broken_image));
-                        },
+                      const Spacer(),
+                      SizedBox(
+                        height: 80,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: documentList.length,
+                          itemBuilder: (context, index) {
+                            final doc = documentList[index];
+                            return GestureDetector(
+                              onTap: () => onThumbnailTap(index),
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                ),
+                                padding:
+                                    selectedIndex == index
+                                        ? const EdgeInsets.all(2)
+                                        : EdgeInsets.zero,
+                                decoration: BoxDecoration(
+                                  border:
+                                      selectedIndex == index
+                                          ? Border.all(
+                                            color: Colors.blue,
+                                            width: 2,
+                                          )
+                                          : null,
+                                ),
+                                child: Image.network(
+                                  doc.file,
+                                  width: 70,
+                                  height: 70,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder: (
+                                    context,
+                                    child,
+                                    loadingProgress,
+                                  ) {
+                                    if (loadingProgress == null) return child;
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  },
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Center(
+                                      child: Icon(Icons.broken_image),
+                                    );
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 10),
-            // Text('23 Apr 2025'),
-          ],
-        ),
+                      const SizedBox(height: 10),
+                    ],
+                  ),
+                ),
       ),
     );
   }

@@ -23,7 +23,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
   final NotificationRepository _repository = NotificationRepository();
   bool _isLoading = false;
   int _currentPage = 1;
-  final int _perPage = 10;
   bool _hasNextPage = true;
 
   @override

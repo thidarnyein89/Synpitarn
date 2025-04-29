@@ -48,6 +48,8 @@ class MainAppBarState extends State<MainAppBar> {
 
   @override
   Widget build(BuildContext context) {
+    String displayCount =
+        _notificationCount > 99 ? '99+' : _notificationCount.toString();
     return AppBar(
       backgroundColor: CustomStyle.primary_color,
       automaticallyImplyLeading: false,
@@ -86,14 +88,14 @@ class MainAppBarState extends State<MainAppBar> {
               ),
               if (_notificationCount > 0)
                 Positioned(
-                  right: 6,
-                  top: 6,
+                  right: 5,
+                  top: 5,
                   child: CircleAvatar(
                     radius: 10,
                     backgroundColor: Colors.red,
                     child: Text(
-                      '$_notificationCount',
-                      style: TextStyle(fontSize: 12, color: Colors.white),
+                      '$displayCount',
+                      style: TextStyle(fontSize: 11, color: Colors.white),
                     ),
                   ),
                 ),
