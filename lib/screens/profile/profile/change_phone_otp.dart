@@ -11,6 +11,7 @@ import 'package:synpitarn/repositories/profile_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/profile/profile_home.dart';
+import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 class ChangePhoneOTPPage extends StatefulWidget {
@@ -104,14 +105,16 @@ class ChangePhoneOTPState extends State<ChangePhoneOTPPage> {
     UserResponse userResponse =
         await ProfileRepository().getOTP(postBody, loginUser);
 
-    if (userResponse.response.code != 200) {
-      otpError = userResponse.response.message;
-    } else {
+    if (userResponse.response.code == 200) {
       code = userResponse.data.code;
-
       _minuteRemaining = 3;
       _secondsRemaining = 0;
       _canResendOtp = false;
+    } else if (userResponse.response.code == 403) {
+      await showErrorDialog(userResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      otpError = userResponse.response.message;
     }
 
     setState(() {});
@@ -132,13 +135,22 @@ class ChangePhoneOTPState extends State<ChangePhoneOTPPage> {
     UserResponse profileResponse =
         await ProfileRepository().changePhoneNumber(postBody, loginUser);
 
-    if (profileResponse.response.code != 200) {
-      otpError = profileResponse.response.message;
-    } else {
+    if (profileResponse.response.code == 200) {
       _timer.cancel();
       RouteService.goToReplaceNavigator(context, ProfileHomePage());
+    } else if (profileResponse.response.code == 403) {
+      await showErrorDialog(profileResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      otpError = profileResponse.response.message;
     }
 
+    isLoading = false;
+    setState(() {});
+  }
+
+  Future<void> showErrorDialog(String errorMessage) async {
+    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }

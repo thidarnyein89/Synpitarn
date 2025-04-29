@@ -20,6 +20,7 @@ import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/profile/profile/change_phone_otp.dart';
+import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 class ChangePhoneNumberPage extends StatefulWidget {
@@ -75,24 +76,28 @@ class ChangePhoneNumberState extends State<ChangePhoneNumberPage> {
     };
 
     UserResponse userResponse =
-    await ProfileRepository().getOTP(postBody, loginUser);
+        await ProfileRepository().getOTP(postBody, loginUser);
 
-    if (userResponse.response.code != 200) {
-      showErrorDialog(userResponse.response.message);
-    } else {
+    if (userResponse.response.code == 200) {
       loginUser.code = userResponse.data.code;
       loginUser.phoneNumber = phoneController.text;
       loginUser.forgetPassword = false;
 
-      RouteService.goToReplaceNavigator(context, ChangePhoneOTPPage(loginUser: loginUser));
+      RouteService.goToReplaceNavigator(
+          context, ChangePhoneOTPPage(loginUser: loginUser));
+    } else if (userResponse.response.code == 403) {
+      await showErrorDialog(userResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(userResponse.response.message);
     }
 
     isLoading = false;
     setState(() {});
   }
 
-  void showErrorDialog(String errorMessage) {
-    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+  Future<void> showErrorDialog(String errorMessage) async {
+    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }
@@ -110,32 +115,32 @@ class ChangePhoneNumberState extends State<ChangePhoneNumberPage> {
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: IntrinsicHeight(
                     child: Column(
-                      spacing: 0,
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RegisterTabBar(activeStep: 0),
-                        Padding(
-                          padding: CustomStyle.pageWithoutTopPadding(),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomWidget.phoneTextField(
-                                  controller: phoneController,
-                                  label: 'Phone number',
-                                  errorText: phoneError),
-                              CustomWidget.elevatedButton(
-                                  enabled: isPhoneValidate,
-                                  isLoading: isLoading,
-                                  text: 'Change Phone Number',
-                                  onPressed: handleContinue),
-                            ],
-                          ),
-                        ),
-                      ],
-                    )),
+                  spacing: 0,
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RegisterTabBar(activeStep: 0),
+                    Padding(
+                      padding: CustomStyle.pageWithoutTopPadding(),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomWidget.phoneTextField(
+                              controller: phoneController,
+                              label: 'Phone number',
+                              errorText: phoneError),
+                          CustomWidget.elevatedButton(
+                              enabled: isPhoneValidate,
+                              isLoading: isLoading,
+                              text: 'Change Phone Number',
+                              onPressed: handleContinue),
+                        ],
+                      ),
+                    ),
+                  ],
+                )),
               ),
             )
           ]);

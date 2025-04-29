@@ -9,7 +9,7 @@ import 'package:synpitarn/models/loan_application_response.dart';
 import 'package:synpitarn/models/workpermit_response.dart';
 
 class LoanRepository {
-  Future<LoanApplicationResponse> getApplication(User loginUser) async {
+  Future<LoanApplicationResponse> getLoanApplication(User loginUser) async {
     String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/loan/application");
 
     final response = await http.get(
@@ -132,8 +132,23 @@ class LoanRepository {
     return DataResponse.dataResponseFromJson(response.body);
   }
 
-  Future<LoanApplicationResponse> getLoanById(int loanId, User loginUser) async {
+  Future<LoanApplicationResponse> getLoanSchedule(int loanId, User loginUser) async {
     String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/loan-history/$loanId/schedule");
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer ${loginUser.token}",
+        "x-user-id": loginUser.id.toString(),
+      },
+    );
+
+    return LoanApplicationResponse.loanApplicationResponseFromJson(response.body);
+  }
+
+  Future<LoanApplicationResponse> getLoanInformation(User loginUser) async {
+    String url = ("${AppConfig.BASE_URL}/${AppConfig.PATH}/loan/information");
 
     final response = await http.get(
       Uri.parse(url),

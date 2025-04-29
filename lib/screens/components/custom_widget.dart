@@ -431,7 +431,7 @@ class CustomWidget {
     required BuildContext context,
     required String msg,
   }) async {
-    return showDialog(
+    await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
@@ -455,7 +455,7 @@ class CustomWidget {
     required BuildContext context,
     required List<Map<String, dynamic>> msg,
   }) async {
-    return showDialog(
+    await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
@@ -565,7 +565,7 @@ class CustomWidget {
     );
   }
 
-  static Widget buildRow(String label, String value) {
+  static Widget buildRow(String label, String value, {TextStyle? otherStyle}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -579,7 +579,7 @@ class CustomWidget {
               alignment: Alignment.centerRight,
               child: SizedBox(
                 width: 150,
-                child: Text(label, style: CustomStyle.body()),
+                child: Text(label, style: CustomStyle.body().merge(otherStyle)),
               ),
             ),
             Expanded(
@@ -587,7 +587,7 @@ class CustomWidget {
                 alignment: Alignment.centerRight,
                 child: Text(
                   value,
-                  style: CustomStyle.bodyGreyColor(),
+                  style: CustomStyle.bodyGreyColor().merge(otherStyle),
                   textAlign: TextAlign.right,
                 ),
               ),

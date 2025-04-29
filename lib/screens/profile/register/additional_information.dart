@@ -13,6 +13,7 @@ import 'package:synpitarn/repositories/default_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/profile/document_file.dart';
+import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 
@@ -94,6 +95,11 @@ class Information2State extends State<Information2Page> {
 
       setItemDataList(controls);
       setSavedData(inputData!);
+    } else if (defaultResponse.response.code == 403) {
+      await showErrorDialog(defaultResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(defaultResponse.response.message);
     }
 
     inValidFieldsAdd();
@@ -118,13 +124,13 @@ class Information2State extends State<Information2Page> {
 
   void setSavedData(Map<String, dynamic> inputData) {
     textControllers.forEach((key, TextEditingController) {
-      if(inputData.containsKey(key)) {
+      if (inputData.containsKey(key)) {
         textControllers[key]!.text = inputData[key];
       }
     });
 
     dropdownControllers.forEach((key, dynamic) {
-      if(inputData.containsKey(key)) {
+      if (inputData.containsKey(key)) {
         if (key == 'main_purpose_of_loan') {
           List<String> values = (inputData[key] as List).cast<String>();
           dropdownControllers[key] =
@@ -209,15 +215,18 @@ class Information2State extends State<Information2Page> {
 
     DataResponse saveResponse = await LoanRepository()
         .saveLoanApplicationStep(postBody, loginUser, stepName);
-    if (saveResponse.response.code != 200) {
-      showErrorDialog(saveResponse.response.message);
-    } else {
+    if (saveResponse.response.code == 200) {
       loginUser.loanFormState = stepName;
       await setLoginUser(loginUser);
       isLoading = false;
       setState(() {});
 
       RouteService.profile(context);
+    } else if (saveResponse.response.code == 403) {
+      await showErrorDialog(saveResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(saveResponse.response.message);
     }
   }
 
@@ -228,8 +237,8 @@ class Information2State extends State<Information2Page> {
     );
   }
 
-  void showErrorDialog(String errorMessage) {
-    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+  Future<void> showErrorDialog(String errorMessage) async {
+    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }
@@ -298,12 +307,14 @@ class Information2State extends State<Information2Page> {
                               ),
                               CustomWidget.dropdownButtonDiffValue(
                                 label: 'Type of Work',
-                                selectedValue: dropdownControllers['type_of_work'],
+                                selectedValue:
+                                    dropdownControllers['type_of_work'],
                                 items: itemDataList['type_of_work']!,
                                 onChanged: (Item? value) {
                                   setState(() {
                                     inValidFields.remove('type_of_work');
-                                    dropdownControllers['type_of_work'] = value!;
+                                    dropdownControllers['type_of_work'] =
+                                        value!;
                                   });
                                 },
                               ),
@@ -345,7 +356,8 @@ class Information2State extends State<Information2Page> {
                                 onChanged: (value) {
                                   setState(() {
                                     inValidFields.remove('loan_term_year');
-                                    dropdownControllers['loan_term_year'] = value!;
+                                    dropdownControllers['loan_term_year'] =
+                                        value!;
                                   });
                                 },
                               ),

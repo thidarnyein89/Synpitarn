@@ -9,6 +9,7 @@ import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/profile/profile/edit_information.dart';
+import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 class BasicInformationPage extends StatefulWidget {
@@ -18,7 +19,8 @@ class BasicInformationPage extends StatefulWidget {
   BasicInformationState createState() => BasicInformationState();
 }
 
-class BasicInformationState extends State<BasicInformationPage> with RouteAware {
+class BasicInformationState extends State<BasicInformationPage>
+    with RouteAware {
   User loginUser = User.defaultUser();
   DefaultData defaultData = new DefaultData.defaultDefaultData();
 
@@ -52,26 +54,33 @@ class BasicInformationState extends State<BasicInformationPage> with RouteAware 
 
     loginUser = await getLoginUser();
 
-    UserResponse profileResponse = await ProfileRepository().getProfile(loginUser);
-    if(profileResponse.response.code != 200) {
-      showErrorDialog(profileResponse.response.message);
-    }
-    else {
+    UserResponse profileResponse =
+        await ProfileRepository().getProfile(loginUser);
+    if (profileResponse.response.code == 200) {
       loginUser = profileResponse.data;
+    } else if (profileResponse.response.code == 403) {
+      await showErrorDialog(profileResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(profileResponse.response.message);
     }
 
     isLoading = false;
     setState(() {});
   }
 
-  void showErrorDialog(String errorMessage) {
-    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+  Future<void> showErrorDialog(String errorMessage) async {
+    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }
 
   void handleEdit() {
-    RouteService.goToNavigator(context, EditInformationPage(editUser: loginUser,));
+    RouteService.goToNavigator(
+        context,
+        EditInformationPage(
+          editUser: loginUser,
+        ));
   }
 
   @override

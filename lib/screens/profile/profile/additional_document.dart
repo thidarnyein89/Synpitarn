@@ -10,6 +10,7 @@ import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
+import 'package:synpitarn/services/auth_service.dart';
 
 class AdditionalDocumentPage extends StatefulWidget {
   const AdditionalDocumentPage({super.key});
@@ -50,16 +51,19 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
   }
 
   Future<void> getApplicationData() async {
-    LoanApplicationResponse applicationResponse = await LoanRepository()
-        .getApplication(loginUser);
+    LoanApplicationResponse applicationResponse =
+        await LoanRepository().getLoanApplication(loginUser);
 
-    if (applicationResponse.response.code != 200) {
-      showErrorDialog(applicationResponse.response.message);
-    } else {
+    if (applicationResponse.response.code == 200) {
       applicationData = applicationResponse.data;
       if (mounted) {
         setState(() {});
       }
+    } else if (applicationResponse.response.code == 403) {
+      await showErrorDialog(applicationResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(applicationResponse.response.message);
     }
   }
 
@@ -69,6 +73,11 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
 
     if (documentResponse.response.code == 200) {
       documentList = documentResponse.data;
+    } else if (documentResponse.response.code == 403) {
+      await showErrorDialog(documentResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(documentResponse.response.message);
     }
 
     isLoading = false;
@@ -83,8 +92,8 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
     super.dispose();
   }
 
-  void showErrorDialog(String errorMessage) {
-    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+  Future<void> showErrorDialog(String errorMessage) async {
+    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
     if (mounted) {
       setState(() {});
@@ -108,109 +117,105 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
       backgroundColor: Colors.white,
       appBar: PageAppBar(title: 'Additional Document'),
       body: SafeArea(
-        child:
-            isLoading
-                ? CustomWidget.loading()
-                : documentList.isEmpty
+        child: isLoading
+            ? CustomWidget.loading()
+            : documentList.isEmpty
                 ? Center(
-                  child: Text(
-                    'There is no additional documents.',
-                    style: CustomStyle.bodyGreyColor(),
-                  ),
-                )
+                    child: Text(
+                      'There is no additional documents.',
+                      style: CustomStyle.bodyGreyColor(),
+                    ),
+                  )
                 : Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      const Spacer(),
-                      SizedBox(
-                        height: 300,
-                        child: PageView.builder(
-                          controller: _pageController,
-                          itemCount: documentList.length,
-                          onPageChanged: (index) {
-                            setState(() {
-                              selectedIndex = index;
-                            });
-                          },
-                          itemBuilder: (context, index) {
-                            return Image.network(
-                              documentList[index].file,
-                              fit: BoxFit.contain,
-                              loadingBuilder: (
-                                context,
-                                child,
-                                loadingProgress,
-                              ) {
-                                if (loadingProgress == null) return child;
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              },
-                              errorBuilder:
-                                  (context, error, stackTrace) =>
-                                      Icon(Icons.broken_image),
-                            );
-                          },
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        const Spacer(),
+                        SizedBox(
+                          height: 300,
+                          child: PageView.builder(
+                            controller: _pageController,
+                            itemCount: documentList.length,
+                            onPageChanged: (index) {
+                              setState(() {
+                                selectedIndex = index;
+                              });
+                            },
+                            itemBuilder: (context, index) {
+                              return Image.network(
+                                documentList[index].file,
+                                fit: BoxFit.contain,
+                                loadingBuilder: (
+                                  context,
+                                  child,
+                                  loadingProgress,
+                                ) {
+                                  if (loadingProgress == null) return child;
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Icon(Icons.broken_image),
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                      const Spacer(),
-                      SizedBox(
-                        height: 80,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: documentList.length,
-                          itemBuilder: (context, index) {
-                            final doc = documentList[index];
-                            return GestureDetector(
-                              onTap: () => onThumbnailTap(index),
-                              child: Container(
-                                margin: const EdgeInsets.symmetric(
-                                  horizontal: 4,
-                                ),
-                                padding:
-                                    selectedIndex == index
-                                        ? const EdgeInsets.all(2)
-                                        : EdgeInsets.zero,
-                                decoration: BoxDecoration(
-                                  border:
-                                      selectedIndex == index
-                                          ? Border.all(
+                        const Spacer(),
+                        SizedBox(
+                          height: 80,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: documentList.length,
+                            itemBuilder: (context, index) {
+                              final doc = documentList[index];
+                              return GestureDetector(
+                                onTap: () => onThumbnailTap(index),
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                  ),
+                                  padding: selectedIndex == index
+                                      ? const EdgeInsets.all(2)
+                                      : EdgeInsets.zero,
+                                  decoration: BoxDecoration(
+                                    border: selectedIndex == index
+                                        ? Border.all(
                                             color: Colors.blue,
                                             width: 2,
                                           )
-                                          : null,
+                                        : null,
+                                  ),
+                                  child: Image.network(
+                                    doc.file,
+                                    width: 70,
+                                    height: 70,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (
+                                      context,
+                                      child,
+                                      loadingProgress,
+                                    ) {
+                                      if (loadingProgress == null) return child;
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Center(
+                                        child: Icon(Icons.broken_image),
+                                      );
+                                    },
+                                  ),
                                 ),
-                                child: Image.network(
-                                  doc.file,
-                                  width: 70,
-                                  height: 70,
-                                  fit: BoxFit.cover,
-                                  loadingBuilder: (
-                                    context,
-                                    child,
-                                    loadingProgress,
-                                  ) {
-                                    if (loadingProgress == null) return child;
-                                    return const Center(
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  },
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return const Center(
-                                      child: Icon(Icons.broken_image),
-                                    );
-                                  },
-                                ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                    ],
+                        const SizedBox(height: 10),
+                      ],
+                    ),
                   ),
-                ),
       ),
     );
   }

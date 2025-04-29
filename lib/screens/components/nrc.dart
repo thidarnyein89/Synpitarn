@@ -1,10 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/models/nrc.dart';
 

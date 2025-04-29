@@ -14,7 +14,9 @@ import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/loan/branch_appointment.dart';
 import 'package:synpitarn/screens/loan/interview_appointment.dart';
+import 'package:synpitarn/screens/loan/repayment_list.dart';
 import 'package:synpitarn/screens/profile/profile_home.dart';
+import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -72,17 +74,17 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
     setState(() {});
 
     LoanApplicationResponse applicationResponse =
-        await LoanRepository().getApplication(loginUser);
+        await LoanRepository().getLoanApplication(loginUser);
 
-    if (applicationResponse.response.code != 200) {
-      showErrorDialog(
-        applicationResponse.response.message,
-      );
-    } else {
+    if (applicationResponse.response.code == 200) {
       applicationData = applicationResponse.data;
-
       isLoading = false;
       setState(() {});
+    } else if (applicationResponse.response.code == 403) {
+      await showErrorDialog(applicationResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(applicationResponse.response.message);
     }
   }
 
@@ -91,9 +93,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
       LoanResponse loanResponse =
           await LoanRepository().getLoanHistory(loginUser, 1);
 
-      if (loanResponse.response.code != 200) {
-        showErrorDialog(loanResponse.response.message);
-      } else {
+      if (loanResponse.response.code == 200) {
         if (loanResponse.data.isNotEmpty) {
           loanResponse.data[0].schedules!.forEach((LoanSchedule loanSchedule) {
             int dayCount = CommonService.getDayCount(loanSchedule.pmtDate);
@@ -107,20 +107,27 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
             }
           });
         }
+      } else if (loanResponse.response.code == 403) {
+        await showErrorDialog(loanResponse.response.message);
+        AuthService().logout(context);
+      } else {
+        showErrorDialog(loanResponse.response.message);
       }
     }
   }
 
   void handleReSubmit() {
-    RouteService.goToNavigator(context, InterviewAppointmentPage(applicationData: applicationData));
+    RouteService.goToNavigator(
+        context, InterviewAppointmentPage(applicationData: applicationData));
   }
 
   void handleBranchAppointment() {
-    RouteService.goToNavigator(context, BranchAppointmentPage(applicationData: applicationData));
+    RouteService.goToNavigator(
+        context, BranchAppointmentPage(applicationData: applicationData));
   }
 
-  void showErrorDialog(String errorMessage) {
-    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+  Future<void> showErrorDialog(String errorMessage) async {
+    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }
@@ -266,7 +273,8 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         CustomWidget.buildRow(
             "Contract No", applicationData.contractNo.toString()),
         CustomWidget.buildRow(
-          "Loan Size", CommonService.getLoanSize(applicationData),
+          "Loan Size",
+          CommonService.getLoanSize(applicationData),
         ),
         CustomWidget.buildRow(
             "Loan Term", "${applicationData.loanTerm.toString()} Months"),
@@ -311,7 +319,8 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
           "${applicationData.repaymentAmountPerPeriod.toString()} Baht",
         ),
         CustomWidget.buildRow(
-          "Loan Size", CommonService.getLoanSize(applicationData),
+          "Loan Size",
+          CommonService.getLoanSize(applicationData),
         ),
         CustomWidget.buildRow(
             "Loan Term", "${applicationData.loanTerm.toString()} Months"),
@@ -359,7 +368,9 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         ),
         CustomWidget.elevatedButton(
           text: 'View Repayment Schedule',
-          onPressed: () {},
+          onPressed: () {
+            goToRepaymentList();
+          },
         ),
       ],
     );
@@ -440,7 +451,8 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         CustomWidget.buildRow(
             "Contract No", applicationData.contractNo.toString()),
         CustomWidget.buildRow(
-          "Loan Size", CommonService.getLoanSize(applicationData),
+          "Loan Size",
+          CommonService.getLoanSize(applicationData),
         ),
         CustomWidget.buildRow(
             "Loan Term", "${applicationData.loanTerm.toString()} Months"),
@@ -467,5 +479,23 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         ],
       ],
     );
+  }
+
+  Future<void> goToRepaymentList() async {
+    LoanApplicationResponse response =
+        await LoanRepository().getLoanInformation(loginUser);
+    if (response.response.code == 200) {
+      Loan currentLoan = response.data;
+      RouteService.goToNavigator(
+          context,
+          RepaymentListPage(
+            loan: currentLoan,
+          ));
+    } else if (response.response.code == 403) {
+      await showErrorDialog(response.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(response.response.message);
+    }
   }
 }

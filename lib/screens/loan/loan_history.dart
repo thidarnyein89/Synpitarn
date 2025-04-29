@@ -15,6 +15,7 @@ import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/loan/current_loan.dart';
 import 'package:synpitarn/screens/loan/previous_loan.dart';
+import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 
@@ -26,20 +27,34 @@ class LoanHistoryPage extends StatefulWidget {
 }
 
 class LoanHistoryState extends State<LoanHistoryPage> {
+  final ScrollController scrollController = ScrollController();
   User loginUser = User.defaultUser();
   Loan applicationData = Loan.defaultLoan();
   List<Loan> loanList = [];
 
   bool isLoading = false;
+  int currentPage = 1;
+  bool hasNextPage = true;
 
   @override
   void initState() {
     super.initState();
+
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+              scrollController.position.maxScrollExtent - 100 &&
+          !isLoading &&
+          hasNextPage) {
+        getLoanHistory();
+      }
+    });
+
     getInitData();
   }
 
   @override
   void dispose() {
+    scrollController.dispose();
     super.dispose();
   }
 
@@ -57,30 +72,43 @@ class LoanHistoryState extends State<LoanHistoryPage> {
 
   Future<void> getApplicationData() async {
     LoanApplicationResponse applicationResponse =
-        await LoanRepository().getApplication(loginUser);
+        await LoanRepository().getLoanApplication(loginUser);
 
-    if (applicationResponse.response.code != 200) {
-      showErrorDialog(applicationResponse.response.message);
-    } else {
+    if (applicationResponse.response.code == 200) {
       applicationData = applicationResponse.data;
       setState(() {});
+    } else if (applicationResponse.response.code == 403) {
+      await showErrorDialog(applicationResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(applicationResponse.response.message);
     }
   }
 
   Future<void> getLoanHistory() async {
-    LoanResponse loanResponse =
-        await LoanRepository().getLoanHistory(loginUser, 1);
+    isLoading = true;
+    setState(() {});
 
-    if (loanResponse.response.code != 200) {
-      showErrorDialog(loanResponse.response.message);
-    } else {
-      loanList = loanResponse.data;
+    LoanResponse loanResponse =
+        await LoanRepository().getLoanHistory(loginUser, currentPage);
+
+    if (loanResponse.response.code == 200) {
+      loanList.addAll(loanResponse.data);
+      hasNextPage = loanResponse.meta.hasNextPage;
+      currentPage++;
+
       setState(() {});
+    } else if (loanResponse.response.code == 403) {
+      await showErrorDialog(loanResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(loanResponse.response.message);
     }
   }
 
-  void showErrorDialog(String errorMessage) {
-    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+  Future<void> showErrorDialog(String errorMessage) async {
+    await CustomWidget.showDialogWithoutStyle(
+        context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }
@@ -216,8 +244,8 @@ class LoanHistoryState extends State<LoanHistoryPage> {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            RouteService.goToNavigator(
-                                context, CurrentLoanPage(isToDisplayPage: true));
+                            RouteService.goToNavigator(context,
+                                CurrentLoanPage(isToDisplayPage: true));
                           },
                           child: createCurrentApplyLoanCard(),
                         ),
@@ -241,6 +269,11 @@ class LoanHistoryState extends State<LoanHistoryPage> {
                             ],
                           );
                         }),
+                        if (isLoading && hasNextPage)
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Center(child: CircularProgressIndicator()),
+                          ),
                       ],
                     ),
                   ),

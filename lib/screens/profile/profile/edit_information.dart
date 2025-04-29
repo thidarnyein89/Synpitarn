@@ -18,6 +18,7 @@ import 'package:synpitarn/screens/components/nrc.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 class EditInformationPage extends StatefulWidget {
@@ -82,9 +83,7 @@ class EditInformationState extends State<EditInformationPage> {
     DataResponse dataResponse =
         await DataRepository().getIncomeTypes(loginUser);
 
-    if (dataResponse.response.code != 200) {
-      showInfoDialog(dataResponse.response.message);
-    } else {
+    if (dataResponse.response.code == 200) {
       itemDataList['income_type'] = dataResponse.data.map<Item>((data) {
         return Item.named(
           value: data.key.toString(),
@@ -93,6 +92,11 @@ class EditInformationState extends State<EditInformationPage> {
       }).toList();
 
       setState(() {});
+    } else if (dataResponse.response.code == 403) {
+      await showInfoDialog(dataResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showInfoDialog(dataResponse.response.message);
     }
   }
 
@@ -109,7 +113,7 @@ class EditInformationState extends State<EditInformationPage> {
           itemDataList[key]!, widget.editUser.toJson()[key].toString());
     });
 
-    setState(() { });
+    setState(() {});
   }
 
   Item? findMatchData(List<Item> itemList, String value) {
@@ -128,8 +132,7 @@ class EditInformationState extends State<EditInformationPage> {
       inValidFields.remove(key);
       if (dropdownControllers[key] == null) {
         inValidFields.add(key);
-      }
-      else if (dropdownControllers[key] is Item &&
+      } else if (dropdownControllers[key] is Item &&
           dropdownControllers[key].value.isEmpty) {
         inValidFields.add(key);
       } else if (dropdownControllers[key] is List<Item> &&
@@ -179,15 +182,18 @@ class EditInformationState extends State<EditInformationPage> {
     UserResponse response =
         await ProfileRepository().editProfile(postBody, loginUser);
 
-    if (response.response.code != 200) {
-      showInfoDialog(response.response.message);
-    } else {
+    if (response.response.code == 200) {
       Navigator.pop(context);
+    } else if (response.response.code == 403) {
+      await showInfoDialog(response.response.message);
+      AuthService().logout(context);
+    } else {
+      showInfoDialog(response.response.message);
     }
   }
 
-  void showInfoDialog(String errorMessage) {
-    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+  Future<void> showInfoDialog(String message) async {
+    await CustomWidget.showDialogWithoutStyle(context: context, msg: message);
     isLoading = false;
     setState(() {});
   }

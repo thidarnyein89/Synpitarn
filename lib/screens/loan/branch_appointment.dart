@@ -10,6 +10,7 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/branch_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
+import 'package:synpitarn/services/auth_service.dart';
 
 class BranchAppointmentPage extends StatefulWidget {
   Loan? applicationData;
@@ -84,11 +85,14 @@ class BranchAppointmentState extends State<BranchAppointmentPage> {
   Future<void> getBranches() async {
     BranchResponse branchResponse = await BranchRepository().getBranches();
 
-    if (branchResponse.response.code != 200) {
-      showErrorDialog(branchResponse.response.message);
-    } else {
+    if (branchResponse.response.code == 200) {
       branchList = branchResponse.data;
       setState(() {});
+    } else if (branchResponse.response.code == 403) {
+      await showErrorDialog(branchResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(branchResponse.response.message);
     }
   }
 
@@ -133,20 +137,24 @@ class BranchAppointmentState extends State<BranchAppointmentPage> {
       'time': dropdownControllers['time'],
     };
 
-    BranchResponse response = await BranchRepository().saveAppointment(postBody, loginUser);
+    BranchResponse response =
+        await BranchRepository().saveAppointment(postBody, loginUser);
 
-    if (response.response.code != 200) {
-      showErrorDialog(response.response.message);
-    } else {
+    if (response.response.code == 200) {
       isLoading = false;
       setState(() {});
 
       Navigator.pop(context);
+    } else if (response.response.code == 403) {
+      await showErrorDialog(response.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(response.response.message);
     }
   }
 
-  void showErrorDialog(String errorMessage) {
-    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+  Future<void> showErrorDialog(String errorMessage) async {
+    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }

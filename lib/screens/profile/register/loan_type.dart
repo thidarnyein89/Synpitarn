@@ -14,6 +14,7 @@ import 'package:synpitarn/repositories/default_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/profile/register/additional_information.dart';
+import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 
@@ -77,6 +78,11 @@ class LoanTypeState extends State<LoanTypePage> {
 
     if (defaultResponse.response.code == 200) {
       defaultData = defaultResponse.data;
+    } else if (defaultResponse.response.code == 403) {
+      await showErrorDialog(defaultResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(defaultResponse.response.message);
     }
 
     isPageLoading = false;
@@ -99,6 +105,11 @@ class LoanTypeState extends State<LoanTypePage> {
       }).toList();
 
       itemDataList["loan_type"] = loanTypeItems;
+    } else if (dataResponse.response.code == 403) {
+      await showErrorDialog(dataResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(dataResponse.response.message);
     }
 
     dataResponse = await DataRepository().getTimesPerMonth();
@@ -111,6 +122,11 @@ class LoanTypeState extends State<LoanTypePage> {
       }).toList();
 
       itemDataList["times_per_month"] = timesPerMonth;
+    } else if (dataResponse.response.code == 403) {
+      await showErrorDialog(dataResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(dataResponse.response.message);
     }
 
     dataResponse = await DataRepository().getProvinces();
@@ -123,6 +139,11 @@ class LoanTypeState extends State<LoanTypePage> {
       }).toList();
 
       itemDataList["province"] = province;
+    } else if (dataResponse.response.code == 403) {
+      await showErrorDialog(dataResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(dataResponse.response.message);
     }
 
     isPageLoading = false;
@@ -145,15 +166,18 @@ class LoanTypeState extends State<LoanTypePage> {
 
     DataResponse saveResponse = await LoanRepository()
         .saveLoanApplicationStep(postBody, loginUser, stepName);
-    if (saveResponse.response.code != 200) {
-      showErrorDialog(saveResponse.response.message ?? 'Error is occur, please contact admin');
-    } else {
+    if (saveResponse.response.code == 200) {
       loginUser.loanFormState = "choose_loan_type";
       await setLoginUser(loginUser);
       isLoading = false;
       setState(() {});
 
       RouteService.profile(context);
+    } else if (saveResponse.response.code == 403) {
+      await showErrorDialog(saveResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(saveResponse.response.message);
     }
   }
 
@@ -164,8 +188,8 @@ class LoanTypeState extends State<LoanTypePage> {
     );
   }
 
-  void showErrorDialog(String errorMessage) {
-    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+  Future<void> showErrorDialog(String errorMessage) async{
+    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }
@@ -199,12 +223,14 @@ class LoanTypeState extends State<LoanTypePage> {
                             children: [
                               CustomWidget.dropdownButtonDiffValue(
                                 label: 'Loan Type',
-                                selectedValue: dropdownControllers['loan_type_id'],
+                                selectedValue:
+                                    dropdownControllers['loan_type_id'],
                                 items: itemDataList['loan_type']!,
                                 onChanged: (value) {
                                   setState(() {
                                     inValidFields.remove('loan_type_id');
-                                    dropdownControllers['loan_type_id'] = value!;
+                                    dropdownControllers['loan_type_id'] =
+                                        value!;
                                   });
                                 },
                               ),
@@ -229,7 +255,8 @@ class LoanTypeState extends State<LoanTypePage> {
                                 onChanged: (value) {
                                   setState(() {
                                     inValidFields.remove('province_work');
-                                    dropdownControllers['province_work'] = value!;
+                                    dropdownControllers['province_work'] =
+                                        value!;
                                   });
                                 },
                               ),

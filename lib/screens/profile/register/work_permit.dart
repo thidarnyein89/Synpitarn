@@ -24,6 +24,7 @@ import 'package:synpitarn/models/workpermit_response.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/switch_camera_button.dart';
 import 'package:synpitarn/screens/profile/register/customer_information.dart';
+import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 class WorkPermitPage extends StatefulWidget {
@@ -87,13 +88,18 @@ class WorkPermitState extends State<WorkPermitPage> {
 
     if (defaultResponse.response.code == 200) {
       defaultData = defaultResponse.data;
+    } else if (defaultResponse.response.code == 403) {
+      await showErrorDialog(defaultResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(defaultResponse.response.message);
     }
 
     setState(() {});
   }
 
   void _onDetect(BarcodeCapture barCode) {
-    if(isLoading) {
+    if (isLoading) {
       return;
     }
 
@@ -266,8 +272,10 @@ class WorkPermitState extends State<WorkPermitPage> {
       loginUser.name = name.substring(name.indexOf(' ') + 1);
 
       loginUser.passport = response['data'][' Passport number ']?.trim() ?? '';
-      loginUser.nameOfEmployment = response['data'][' Name of employer or place ']?.trim() ?? '';
-      loginUser.officeLocation = response['data'][' Office location ']?.trim() ?? '';
+      loginUser.nameOfEmployment =
+          response['data'][' Name of employer or place ']?.trim() ?? '';
+      loginUser.officeLocation =
+          response['data'][' Office location ']?.trim() ?? '';
 
       loginUser.loanFormState = "qr_scan";
       await setLoginUser(loginUser);
@@ -292,21 +300,23 @@ class WorkPermitState extends State<WorkPermitPage> {
 
     DataResponse saveResponse = await LoanRepository()
         .saveLoanApplicationStep(postBody, loginUser, stepName);
-    if (saveResponse.response.code != 200) {
-      showErrorDialog(saveResponse.response.message ??
-          'Error is occur, please contact admin');
-    } else {
+    if (saveResponse.response.code == 200) {
       loginUser.loanFormState = stepName;
       await setLoginUser(loginUser);
       isLoading = false;
       setState(() {});
 
       RouteService.profile(context);
+    } else if (saveResponse.response.code == 403) {
+      await showErrorDialog(saveResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(saveResponse.response.message);
     }
   }
 
-  void showErrorDialog(String errorMessage) {
-    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+  Future<void> showErrorDialog(String errorMessage) async {
+    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }

@@ -6,6 +6,7 @@ import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/repositories/notification_repository.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/notification/notification_screen.dart';
+import 'package:synpitarn/services/auth_service.dart';
 
 class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
   MainAppBar({super.key});
@@ -42,8 +43,19 @@ class MainAppBarState extends State<MainAppBar> {
       if (notificationResponse.response.code == 200) {
         _notificationCount = notificationResponse.data;
       }
+      else if(notificationResponse.response.code == 403) {
+        await showErrorDialog(notificationResponse.response.message);
+        AuthService().logout(context);
+      }
+      else {
+        showErrorDialog(notificationResponse.response.message);
+      }
       setState(() {});
     }
+  }
+
+  Future<void> showErrorDialog(String errorMessage) async {
+    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
   }
 
   @override

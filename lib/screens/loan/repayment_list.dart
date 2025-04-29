@@ -61,6 +61,21 @@ class RepaymentListState extends State<RepaymentListPage> {
   }
 
   Widget repaymentStep(LoanSchedule schedule, {bool isLast = false}) {
+    String scheduleStatus = schedule.status.toLowerCase();
+    int dayCount = CommonService.getDayCount(schedule.pmtDate);
+    bool isPaid = scheduleStatus == 'paid';
+
+    TextStyle lineThroughStyle = const TextStyle();
+    TextStyle overdueStyle = const TextStyle();
+
+    if (isPaid) {
+      lineThroughStyle = const TextStyle(decoration: TextDecoration.lineThrough);
+    } else if (dayCount > 0) {
+      scheduleStatus = "Overdue $dayCount Days";
+      overdueStyle = const TextStyle(color: Colors.red);
+    }
+    setState(() {});
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -70,12 +85,13 @@ class RepaymentListState extends State<RepaymentListPage> {
           style: CustomStyle.subTitleBold(),
         ),
         CustomWidget.verticalSmallSpacing(),
+        CustomWidget.buildRow("Repayment amount", schedule.pmtAmount,
+            otherStyle: lineThroughStyle),
         CustomWidget.buildRow(
-            "Repayment amount", schedule.pmtAmount),
-        CustomWidget.buildRow(
-            "Repayment date", CommonService.formatDate(schedule.pmtDate)),
-        CustomWidget.buildRow(
-            "Repayment status", schedule.status),
+            "Repayment date", CommonService.formatDate(schedule.pmtDate),
+            otherStyle: lineThroughStyle),
+        CustomWidget.buildRow("Repayment status", scheduleStatus,
+            otherStyle: lineThroughStyle.merge(overdueStyle)),
         CustomWidget.verticalSmallSpacing(),
         if (!isLast) Divider(thickness: 1, color: Colors.grey),
         CustomWidget.verticalSmallSpacing(),
@@ -104,5 +120,4 @@ class RepaymentListState extends State<RepaymentListPage> {
       ),
     );
   }
-
 }

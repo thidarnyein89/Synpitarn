@@ -14,6 +14,7 @@ import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 class CustomerInformationPage extends StatefulWidget {
@@ -91,6 +92,11 @@ class CustomerInformationState extends State<CustomerInformationPage> {
 
       setItemDataList(controls);
       setSavedData(inputData!);
+    } else if (defaultResponse.response.code == 403) {
+      await showErrorDialog(defaultResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(defaultResponse.response.message);
     }
 
     inValidFieldsAdd();
@@ -192,20 +198,23 @@ class CustomerInformationState extends State<CustomerInformationPage> {
 
     DataResponse saveResponse = await LoanRepository()
         .saveLoanApplicationStep(postBody, loginUser, stepName);
-    if (saveResponse.response.code != 200) {
-      showErrorDialog(saveResponse.response.message);
-    } else {
+    if (saveResponse.response.code == 200) {
       loginUser.loanFormState = stepName;
       await setLoginUser(loginUser);
       isLoading = false;
       setState(() {});
 
       RouteService.profile(context);
+    } else if (saveResponse.response.code == 403) {
+      await showErrorDialog(saveResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(saveResponse.response.message);
     }
   }
 
-  void showErrorDialog(String errorMessage) {
-    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+  Future<void> showErrorDialog(String errorMessage) async {
+    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }

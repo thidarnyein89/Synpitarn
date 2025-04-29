@@ -11,6 +11,7 @@ import 'package:synpitarn/repositories/data_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/loan/success.dart';
+import 'package:synpitarn/services/auth_service.dart';
 
 class InterviewAppointmentPage extends StatefulWidget {
   Loan? applicationData;
@@ -148,11 +149,14 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
 
     DataResponse dataResponse =
         await DataRepository().getAvailableTime(postBody, loginUser);
-    if (dataResponse.response.code != 200) {
-      showErrorDialog(dataResponse.response.message);
-    } else {
+    if (dataResponse.response.code == 200) {
       itemDataList["time"] =
           dataResponse.data.map((d) => d.toString()).toList();
+    } else if (dataResponse.response.code == 403) {
+      await showErrorDialog(dataResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(dataResponse.response.message);
     }
 
     setState(() {});
@@ -179,9 +183,7 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
           widget.applicationData!.id, postBody, loginUser);
     }
 
-    if (response.response.code != 200) {
-      showErrorDialog(response.response.message);
-    } else {
+    if (response.response.code == 200) {
       loginUser.loanApplicationSubmitted = true;
       setLoginUser(loginUser);
 
@@ -192,11 +194,16 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
         context,
         MaterialPageRoute(builder: (context) => SuccessPage()),
       );
+    } else if (response.response.code == 403) {
+      await showErrorDialog(response.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(response.response.message);
     }
   }
 
-  void showErrorDialog(String errorMessage) {
-    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+  Future<void> showErrorDialog(String errorMessage) async {
+    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }

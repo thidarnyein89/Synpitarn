@@ -13,16 +13,15 @@ import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/qr_dialog.dart';
 import 'package:synpitarn/screens/profile/document_home.dart';
-import 'package:synpitarn/screens/profile/profile_home.dart';
 import 'package:synpitarn/screens/setting/about_us.dart';
 import 'package:synpitarn/screens/setting/guide_header.dart';
+import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/models/aboutUs.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:remixicon/remixicon.dart';
-import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 class HomePage extends StatefulWidget {
@@ -96,11 +95,9 @@ class HomeState extends State<HomePage> {
 
   Future<void> getApplicationData() async {
     LoanApplicationResponse applicationResponse =
-        await LoanRepository().getApplication(loginUser);
+        await LoanRepository().getLoanApplication(loginUser);
 
-    if (applicationResponse.response.code != 200) {
-      showErrorDialog(applicationResponse.response.message);
-    } else {
+    if (applicationResponse.response.code == 200) {
       applicationData = applicationResponse.data;
 
       if (LoanStatus.PENDING_STATUS.contains(applicationData.status)) {
@@ -154,6 +151,11 @@ class HomeState extends State<HomePage> {
           scrollToActiveStep();
         });
       }
+    } else if (applicationResponse.response.code == 403) {
+      await showErrorDialog(applicationResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(applicationResponse.response.message);
     }
   }
 
@@ -162,9 +164,7 @@ class HomeState extends State<HomePage> {
       LoanResponse loanResponse =
           await LoanRepository().getLoanHistory(loginUser, 1);
 
-      if (loanResponse.response.code != 200) {
-        showErrorDialog(loanResponse.response.message);
-      } else {
+      if (loanResponse.response.code == 200) {
         repaymentList = [];
 
         if (loanResponse.data.isNotEmpty) {
@@ -194,6 +194,11 @@ class HomeState extends State<HomePage> {
             totalLateDate = lateRepayment['dayCount'];
           }
         }
+      } else if (loanResponse.response.code == 403) {
+        await showErrorDialog(loanResponse.response.message);
+        AuthService().logout(context);
+      } else {
+        showErrorDialog(loanResponse.response.message);
       }
       isLoading = false;
       setState(() {});
@@ -210,7 +215,7 @@ class HomeState extends State<HomePage> {
       } else {
         _currentIndex = 0;
       }
-      if (mounted && !isLoading) {
+      if (mounted && !isLoading && _pageController.hasClients) {
         _pageController.animateToPage(
           _currentIndex,
           duration: Duration(milliseconds: 500),
@@ -225,8 +230,8 @@ class HomeState extends State<HomePage> {
     setState(() {});
   }
 
-  void showErrorDialog(String errorMessage) {
-    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+  Future<void> showErrorDialog(String errorMessage) async {
+    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }
@@ -320,10 +325,14 @@ class HomeState extends State<HomePage> {
                 borderRadius: BorderRadius.circular(16),
                 onTap: () {
                   if (index == 0) {
-                    QRDialog.showQRDialog(
-                        context,
-                        repaymentList[0]['qrCodePhoto'],
-                        repaymentList[0]['qrCodePhotoName']);
+                    if (repaymentList.isEmpty) {
+                      showErrorDialog(Message.NO_CURRENT_REPAYMENT);
+                    } else {
+                      QRDialog.showQRDialog(
+                          context,
+                          repaymentList[0]['qrCodePhoto'],
+                          repaymentList[0]['qrCodePhotoName']);
+                    }
                   }
                   if (index == 2) {
                     goToDocumentPage(context);

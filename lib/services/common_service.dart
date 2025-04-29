@@ -77,10 +77,20 @@ class CommonService {
 
   static String getLoanSize(Loan loanData) {
     String loanSize = "";
-    if (LoanStatus.PRE_APPROVE_STATUS.contains(loanData.status)) {
+    String? loanStatus = "";
+
+    //For can be work both application data and loan data
+    if(loanData.loanApplicationStatus != "") {
+      loanStatus = loanData.loanApplicationStatus;
+    }
+    else {
+      loanStatus = loanData.status;
+    }
+
+    if (LoanStatus.PRE_APPROVE_STATUS.contains(loanStatus)) {
       loanSize = loanData.approvedAmount ?? "0";
     }
-    else if (LoanStatus.DISBURSE_STATUS.contains(loanData.status)) {
+    else if (LoanStatus.DISBURSE_STATUS.contains(loanStatus)) {
       loanSize = loanData.disbursedAmount ?? "0";
     }
     else {

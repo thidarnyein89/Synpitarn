@@ -7,8 +7,10 @@ import 'package:synpitarn/models/notification.dart';
 import 'package:synpitarn/models/notification_response.dart' as model;
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/notification_repository.dart';
+import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
+import 'package:synpitarn/services/auth_service.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -76,10 +78,20 @@ class _NotificationScreenState extends State<NotificationScreen> {
           await NotificationRepository().readNotification(postBody, loginUser);
 
       if (notificationResponse.response.code == 200) {
-        print(notificationResponse);
+        print(notificationResponse.response.message);
+      } else if (notificationResponse.response.code == 403) {
+        await showErrorDialog(notificationResponse.response.message);
+        AuthService().logout(context);
+      } else {
+        showErrorDialog(notificationResponse.response.message);
       }
       setState(() {});
     }
+  }
+
+  Future<void> showErrorDialog(String errorMessage) async {
+    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+    setState(() {});
   }
 
   @override

@@ -18,6 +18,7 @@ import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/profile/register/customer_information.dart';
+import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:synpitarn/models/image_file.dart';
@@ -83,6 +84,11 @@ class DocumentFileState extends State<DocumentFilePage> {
     if (defaultResponse.response.code == 200) {
       defaultData = defaultResponse.data;
       setState(() {});
+    } else if (defaultResponse.response.code == 403) {
+      await showErrorDialog(defaultResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(defaultResponse.response.message);
     }
 
     getUploadDocumentData();
@@ -109,6 +115,11 @@ class DocumentFileState extends State<DocumentFilePage> {
           setState(() {});
         }
       });
+    } else if (documentResponse.response.code == 403) {
+      await showErrorDialog(documentResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(documentResponse.response.message);
     }
 
     isPageLoading = false;
@@ -134,20 +145,23 @@ class DocumentFileState extends State<DocumentFilePage> {
 
       DocumentResponse documentResponse =
           await DocumentRepository().uploadDocument(postBody, loginUser);
-      if (documentResponse.response.code != 200) {
-        showErrorDialog(documentResponse.response.message);
-
-        setState(() {
-          imageFile.isLoading = false;
-          isEnabled = true;
-        });
-      } else {
+      if (documentResponse.response.code == 200) {
         setState(() {
           imageFile.isLoading = false;
           isEnabled = true;
           imageFile.id = documentResponse.data.firstOrNull!.id;
           imageFile.file = file;
           imageFile.filePath = file.path;
+        });
+      } else if (documentResponse.response.code == 403) {
+        await showErrorDialog(documentResponse.response.message);
+        AuthService().logout(context);
+      } else {
+        showErrorDialog(documentResponse.response.message);
+
+        setState(() {
+          imageFile.isLoading = false;
+          isEnabled = true;
         });
       }
     } else {
@@ -210,17 +224,20 @@ class DocumentFileState extends State<DocumentFilePage> {
 
         DocumentResponse documentResponse =
             await DocumentRepository().deleteDocument(postBody, loginUser);
-        if (documentResponse.response.code != 200) {
-          showErrorDialog(documentResponse.response.message);
-
-          setState(() {
-            imageFile.isDeleteLoading = false;
-            isEnabled = true;
-          });
-        } else {
+        if (documentResponse.response.code == 200) {
           setState(() {
             imageFile.file = null;
             imageFile.filePath = null;
+            imageFile.isDeleteLoading = false;
+            isEnabled = true;
+          });
+        } else if (documentResponse.response.code == 403) {
+          await showErrorDialog(documentResponse.response.message);
+          AuthService().logout(context);
+        } else {
+          showErrorDialog(documentResponse.response.message);
+
+          setState(() {
             imageFile.isDeleteLoading = false;
             isEnabled = true;
           });
@@ -244,9 +261,7 @@ class DocumentFileState extends State<DocumentFilePage> {
       loginUser,
       stepName,
     );
-    if (saveResponse.response.code != 200) {
-      showErrorDialog(saveResponse.response.message);
-    } else {
+    if (saveResponse.response.code == 200) {
       loginUser.loanFormState = "required_documents";
       await setLoginUser(loginUser);
       isLoading = false;
@@ -254,6 +269,11 @@ class DocumentFileState extends State<DocumentFilePage> {
       setState(() {});
 
       RouteService.profile(context);
+    } else if (saveResponse.response.code == 403) {
+      await showErrorDialog(saveResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(saveResponse.response.message);
     }
   }
 
@@ -422,7 +442,7 @@ class DocumentFileState extends State<DocumentFilePage> {
     );
   }
 
-  void showErrorDialog(String errorMessage) {
-    CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+  Future<void> showErrorDialog(String errorMessage) async {
+    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
   }
 }
