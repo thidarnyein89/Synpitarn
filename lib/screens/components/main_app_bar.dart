@@ -88,14 +88,16 @@ class MainAppBarState extends State<MainAppBar> {
               ),
               if (_notificationCount > 0)
                 Positioned(
-                  right: 5,
-                  top: 5,
+                  right: 6,
+                  top: 6,
                   child: CircleAvatar(
                     radius: 10,
                     backgroundColor: Colors.red,
-                    child: Text(
-                      '$displayCount',
-                      style: TextStyle(fontSize: 11, color: Colors.white),
+                    child: Center(
+                      child: Text(
+                        '$displayCount',
+                        style: TextStyle(fontSize: 10, color: Colors.white),
+                      ),
                     ),
                   ),
                 ),
