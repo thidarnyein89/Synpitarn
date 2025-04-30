@@ -14,6 +14,7 @@ import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/qr_dialog.dart';
 import 'package:synpitarn/screens/profile/document_home.dart';
 import 'package:synpitarn/screens/setting/about_us.dart';
+import 'package:synpitarn/screens/setting/call_center.dart';
 import 'package:synpitarn/screens/setting/guide_header.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/common_service.dart';
@@ -94,8 +95,8 @@ class HomeState extends State<HomePage> {
   }
 
   Future<void> getApplicationData() async {
-    LoanApplicationResponse applicationResponse =
-        await LoanRepository().getLoanApplication(loginUser);
+    LoanApplicationResponse applicationResponse = await LoanRepository()
+        .getLoanApplication(loginUser);
 
     if (applicationResponse.response.code == 200) {
       applicationData = applicationResponse.data;
@@ -161,8 +162,10 @@ class HomeState extends State<HomePage> {
 
   Future<void> getLoanHistory() async {
     if (loginUser.loanApplicationSubmitted) {
-      LoanResponse loanResponse =
-          await LoanRepository().getLoanHistory(loginUser, 1);
+      LoanResponse loanResponse = await LoanRepository().getLoanHistory(
+        loginUser,
+        1,
+      );
 
       if (loanResponse.response.code == 200) {
         repaymentList = [];
@@ -170,20 +173,20 @@ class HomeState extends State<HomePage> {
         if (loanResponse.data.isNotEmpty) {
           repaymentList =
               loanResponse.data[0].schedules!.map((LoanSchedule loanSchedule) {
-            int dayCount = CommonService.getDayCount(loanSchedule.pmtDate);
-            bool isLate = loanSchedule.isPaymentDone == 0 && dayCount > 0;
+                int dayCount = CommonService.getDayCount(loanSchedule.pmtDate);
+                bool isLate = loanSchedule.isPaymentDone == 0 && dayCount > 0;
 
-            return {
-              'dueDate': CommonService.formatDate(loanSchedule.pmtDate),
-              'amount': '${loanSchedule.pmtAmount} Baht',
-              'status': loanSchedule.isPaymentDone == 0 ? 'Unpaid' : 'Paid',
-              'dayCount': dayCount,
-              'isLate': isLate,
-              "qrCodePhotoName": "QR_${loanResponse.data[0].contractNo}",
-              'qrCodePhoto': loanResponse.data[0].qrcode.photo,
-              'qrCodeString': loanResponse.data[0].qrcode.string,
-            };
-          }).toList();
+                return {
+                  'dueDate': CommonService.formatDate(loanSchedule.pmtDate),
+                  'amount': '${loanSchedule.pmtAmount} Baht',
+                  'status': loanSchedule.isPaymentDone == 0 ? 'Unpaid' : 'Paid',
+                  'dayCount': dayCount,
+                  'isLate': isLate,
+                  "qrCodePhotoName": "QR_${loanResponse.data[0].contractNo}",
+                  'qrCodePhoto': loanResponse.data[0].qrcode.photo,
+                  'qrCodeString': loanResponse.data[0].qrcode.string,
+                };
+              }).toList();
 
           var lateRepayment = repaymentList.firstWhere(
             (repayment) => repayment['isLate'] == true,
@@ -231,7 +234,10 @@ class HomeState extends State<HomePage> {
   }
 
   Future<void> showErrorDialog(String errorMessage) async {
-    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+    await CustomWidget.showDialogWithoutStyle(
+      context: context,
+      msg: errorMessage,
+    );
     isLoading = false;
     setState(() {});
   }
@@ -240,26 +246,27 @@ class HomeState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MainAppBar(),
-      body: isLoading
-          ? Center(
-              child: CircularProgressIndicator(
-                color: CustomStyle.primary_color,
-              ),
-            )
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  createSliderSection(),
-                  createFeatureSection(),
-                  createLoanStatusSection(),
-                  createLoanSection(),
-                  if (!loginUser.loanApplicationSubmitted) ...[
-                    GuideHeaderPage(),
-                    createAboutUs(),
+      body:
+          isLoading
+              ? Center(
+                child: CircularProgressIndicator(
+                  color: CustomStyle.primary_color,
+                ),
+              )
+              : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    createSliderSection(),
+                    createFeatureSection(),
+                    createLoanStatusSection(),
+                    createLoanSection(),
+                    if (!loginUser.loanApplicationSubmitted) ...[
+                      GuideHeaderPage(),
+                      createAboutUs(),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: ConstantData.HOME_INDEX,
         onItemTapped: (index) {
@@ -329,9 +336,10 @@ class HomeState extends State<HomePage> {
                       showErrorDialog(Message.NO_CURRENT_REPAYMENT);
                     } else {
                       QRDialog.showQRDialog(
-                          context,
-                          repaymentList[0]['qrCodePhoto'],
-                          repaymentList[0]['qrCodePhotoName']);
+                        context,
+                        repaymentList[0]['qrCodePhoto'],
+                        repaymentList[0]['qrCodePhotoName'],
+                      );
                     }
                   }
                   if (index == 2) {
@@ -466,28 +474,39 @@ class HomeState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomWidget.buildRow(
-                  "Contract No", applicationData.contractNo.toString()),
-              if (LoanStatus.PRE_APPROVE_STATUS
-                  .contains(applicationData.status)) ...[
+                "Contract No",
+                applicationData.contractNo.toString(),
+              ),
+              if (LoanStatus.PRE_APPROVE_STATUS.contains(
+                applicationData.status,
+              )) ...[
                 CustomWidget.buildRow(
-                    "Loan Size", CommonService.getLoanSize(applicationData)),
-                CustomWidget.buildRow("Loan Term",
-                    "${applicationData.loanTerm.toString()} Months"),
+                  "Loan Size",
+                  CommonService.getLoanSize(applicationData),
+                ),
+                CustomWidget.buildRow(
+                  "Loan Term",
+                  "${applicationData.loanTerm.toString()} Months",
+                ),
                 CustomWidget.buildRow(
                   "Branch Appointment Date",
                   CommonService.formatDate(
                     applicationData.appointmentBranchDate.toString(),
                   ),
                 ),
-                CustomWidget.buildRow("Branch Appointment Time",
-                    applicationData.appointmentBranchTime.toString()),
+                CustomWidget.buildRow(
+                  "Branch Appointment Time",
+                  applicationData.appointmentBranchTime.toString(),
+                ),
               ],
-              if (!LoanStatus.PRE_APPROVE_STATUS
-                  .contains(applicationData.status)) ...[
+              if (!LoanStatus.PRE_APPROVE_STATUS.contains(
+                applicationData.status,
+              )) ...[
                 CustomWidget.buildRow(
                   "Loan Applied Date",
                   CommonService.formatDate(
-                      applicationData.createdAt.toString()),
+                    applicationData.createdAt.toString(),
+                  ),
                 ),
                 CustomWidget.buildRow(
                   "Request Interview Date",
@@ -568,9 +587,10 @@ class HomeState extends State<HomePage> {
                     const SizedBox(height: 8),
                     Text(
                       item['dueDate'],
-                      style: item['isLate']
-                          ? CustomStyle.bodyRedColor()
-                          : CustomStyle.body(),
+                      style:
+                          item['isLate']
+                              ? CustomStyle.bodyRedColor()
+                              : CustomStyle.body(),
                     ),
                   ],
                 ),
@@ -583,9 +603,10 @@ class HomeState extends State<HomePage> {
                     const SizedBox(height: 8),
                     Text(
                       item['amount'],
-                      style: item['isLate']
-                          ? CustomStyle.bodyRedColor()
-                          : CustomStyle.body(),
+                      style:
+                          item['isLate']
+                              ? CustomStyle.bodyRedColor()
+                              : CustomStyle.body(),
                     ),
                   ],
                 ),
@@ -598,9 +619,10 @@ class HomeState extends State<HomePage> {
                     const SizedBox(height: 8),
                     Text(
                       item['status'],
-                      style: item['isLate']
-                          ? CustomStyle.bodyRedColor()
-                          : CustomStyle.body(),
+                      style:
+                          item['isLate']
+                              ? CustomStyle.bodyRedColor()
+                              : CustomStyle.body(),
                     ),
                   ],
                 ),
@@ -669,13 +691,14 @@ class HomeState extends State<HomePage> {
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
                 shrinkWrap: true,
-                children: aboutList
-                    .asMap()
-                    .map((index, aboutData) {
-                      return MapEntry(index, gridItem(index));
-                    })
-                    .values
-                    .toList(),
+                children:
+                    aboutList
+                        .asMap()
+                        .map((index, aboutData) {
+                          return MapEntry(index, gridItem(index));
+                        })
+                        .values
+                        .toList(),
               ),
             ],
           ),
@@ -724,7 +747,7 @@ class HomeState extends State<HomePage> {
     if (!loginUser.loanApplicationSubmitted) {
       showErrorDialog(Message.NO_CURRENT_LOAN);
     } else {
-      RouteService.goToNavigator(context, DocumentHomePage());
+      RouteService.goToNavigator(context, CallCenter());
     }
   }
 }

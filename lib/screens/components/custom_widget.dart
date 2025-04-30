@@ -173,17 +173,18 @@ class CustomWidget {
         DropdownButtonFormField<Item>(
           value: selectedValue,
           onChanged: onChanged,
-          items: items.map<DropdownMenuItem<Item>>((Item item) {
-            return DropdownMenuItem<Item>(
-              value: item,
-              child: Text(
-                item.text?.en ?? '',
-                overflow: TextOverflow.ellipsis,
-                softWrap: false,
-                maxLines: 1,
-              ),
-            );
-          }).toList(),
+          items:
+              items.map<DropdownMenuItem<Item>>((Item item) {
+                return DropdownMenuItem<Item>(
+                  value: item,
+                  child: Text(
+                    item.text?.en ?? '',
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                    maxLines: 1,
+                  ),
+                );
+              }).toList(),
           selectedItemBuilder: (BuildContext context) {
             return items.map<Widget>((Item item) {
               return Text(
@@ -217,17 +218,18 @@ class CustomWidget {
         DropdownButtonFormField<T>(
           value: selectedValue,
           onChanged: onChanged,
-          items: items.map<DropdownMenuItem<T>>((T value) {
-            return DropdownMenuItem<T>(
-              value: value,
-              child: Text(
-                value.toString(),
-                overflow: TextOverflow.ellipsis,
-                softWrap: false,
-                maxLines: 1,
-              ),
-            );
-          }).toList(),
+          items:
+              items.map<DropdownMenuItem<T>>((T value) {
+                return DropdownMenuItem<T>(
+                  value: value,
+                  child: Text(
+                    value.toString(),
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                    maxLines: 1,
+                  ),
+                );
+              }).toList(),
           selectedItemBuilder: (BuildContext context) {
             return items.map<Widget>((T value) {
               return Text(
@@ -253,7 +255,7 @@ class CustomWidget {
     bool? enabled = true,
     bool isLoading = false,
     String? text,
-    Icon? icon,
+    IconData? icon,
     bool? isSmall = false,
     required void Function() onPressed,
   }) {
@@ -269,41 +271,44 @@ class CustomWidget {
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-          child: isLoading
-              ? FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: 16,
-                        width: 16,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
+          child:
+              isLoading
+                  ? FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 16,
+                          width: 16,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        'Please Wait...',
-                        style: CustomStyle.bodyWhiteColor(),
-                      ),
-                    ],
-                  ),
-                )
-              : FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(text ?? "", style: CustomStyle.bodyWhiteColor()),
-                      if (icon != null) ...[
-                        horizontalSpacing(),
-                        Icon(Icons.image_outlined, color: Colors.white),
+                        SizedBox(width: 10),
+                        Text(
+                          'Please Wait...',
+                          style: CustomStyle.bodyWhiteColor(),
+                        ),
                       ],
-                    ],
+                    ),
+                  )
+                  : FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (icon != null) ...[
+                          horizontalSpacing(),
+                          Icon(icon, color: Colors.white),
+                        ],
+                        SizedBox(width: 8),
+
+                        Text(text ?? "", style: CustomStyle.bodyWhiteColor()),
+                      ],
+                    ),
                   ),
-                ),
         ),
         if (!isSmall!) verticalSpacing(),
       ],
@@ -314,7 +319,7 @@ class CustomWidget {
     bool? enabled = true,
     bool isLoading = false,
     String? text,
-    Icon? icon,
+    IconData? icon,
     bool? isSmall = false,
     required void Function() onPressed,
   }) {
@@ -334,44 +339,50 @@ class CustomWidget {
               ), // Optional: Rounded corners
             ),
           ),
-          child: isLoading
-              ? FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: 16,
-                        width: 16,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
+          child:
+              isLoading
+                  ? FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 16,
+                          width: 16,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        'Please Wait...',
-                        style: CustomStyle.bodyWhiteColor(),
-                      ),
-                    ],
-                  ),
-                )
-              : FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        text ?? "",
-                        style: TextStyle(color: Color(0xFF2E3192)),
-                      ),
-                      if (icon != null) ...[
-                        horizontalSpacing(),
-                        Icon(Icons.image_outlined, color: Colors.white),
+                        SizedBox(width: 10),
+                        Text(
+                          'Please Wait...',
+                          style: CustomStyle.bodyWhiteColor(),
+                        ),
                       ],
-                    ],
+                    ),
+                  )
+                  : FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (icon != null) ...[
+                          horizontalSpacing(),
+                          Icon(icon, color: Color(0xFF2E3192)),
+                        ],
+                        SizedBox(width: 8),
+                        Text(
+                          text ?? "",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF2E3192),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
         ),
         if (!isSmall!) verticalSpacing(),
       ],
@@ -464,12 +475,13 @@ class CustomWidget {
           backgroundColor: Colors.white,
           content: RichText(
             text: TextSpan(
-              children: msg.map((item) {
-                return TextSpan(
-                  text: item['text'].toString(),
-                  style: item['style'] as TextStyle?,
-                );
-              }).toList(),
+              children:
+                  msg.map((item) {
+                    return TextSpan(
+                      text: item['text'].toString(),
+                      style: item['style'] as TextStyle?,
+                    );
+                  }).toList(),
             ),
           ),
           actions: [

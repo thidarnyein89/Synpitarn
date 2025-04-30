@@ -73,8 +73,8 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
     isLoading = true;
     setState(() {});
 
-    LoanApplicationResponse applicationResponse =
-        await LoanRepository().getLoanApplication(loginUser);
+    LoanApplicationResponse applicationResponse = await LoanRepository()
+        .getLoanApplication(loginUser);
 
     if (applicationResponse.response.code == 200) {
       applicationData = applicationResponse.data;
@@ -90,8 +90,10 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
 
   Future<void> getTotalLateDay() async {
     if (loginUser.loanApplicationSubmitted) {
-      LoanResponse loanResponse =
-          await LoanRepository().getLoanHistory(loginUser, 1);
+      LoanResponse loanResponse = await LoanRepository().getLoanHistory(
+        loginUser,
+        1,
+      );
 
       if (loanResponse.response.code == 200) {
         if (loanResponse.data.isNotEmpty) {
@@ -118,16 +120,23 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
 
   void handleReSubmit() {
     RouteService.goToNavigator(
-        context, InterviewAppointmentPage(applicationData: applicationData));
+      context,
+      InterviewAppointmentPage(applicationData: applicationData),
+    );
   }
 
   void handleBranchAppointment() {
     RouteService.goToNavigator(
-        context, BranchAppointmentPage(applicationData: applicationData));
+      context,
+      BranchAppointmentPage(applicationData: applicationData),
+    );
   }
 
   Future<void> showErrorDialog(String errorMessage) async {
-    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+    await CustomWidget.showDialogWithoutStyle(
+      context: context,
+      msg: errorMessage,
+    );
     isLoading = false;
     setState(() {});
   }
@@ -143,9 +152,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
 
   Widget createLoanStatusPage() {
     return Scaffold(
-      appBar: PageAppBar(
-        title: 'Current Apply Loan',
-      ),
+      appBar: PageAppBar(title: 'Current Apply Loan'),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Stack(
@@ -233,7 +240,9 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         Text('Pending Loan Application', style: CustomStyle.titleBold()),
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
-            "Contract No", applicationData.contractNo.toString()),
+          "Contract No",
+          applicationData.contractNo.toString(),
+        ),
         CustomWidget.buildRow(
           "Loan Applied Date",
           CommonService.formatDate(applicationData.createdAt.toString()),
@@ -271,21 +280,27 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         Text('Pre Approved Loan', style: CustomStyle.titleBold()),
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
-            "Contract No", applicationData.contractNo.toString()),
+          "Contract No",
+          applicationData.contractNo.toString(),
+        ),
         CustomWidget.buildRow(
           "Loan Size",
           CommonService.getLoanSize(applicationData),
         ),
         CustomWidget.buildRow(
-            "Loan Term", "${applicationData.loanTerm.toString()} Months"),
+          "Loan Term",
+          "${applicationData.loanTerm.toString()} Months",
+        ),
         CustomWidget.buildRow(
           "Branch Appointment Date",
           CommonService.formatDate(
             applicationData.appointmentBranchDate.toString(),
           ),
         ),
-        CustomWidget.buildRow("Branch Appointment Time",
-            applicationData.appointmentBranchTime.toString()),
+        CustomWidget.buildRow(
+          "Branch Appointment Time",
+          applicationData.appointmentBranchTime.toString(),
+        ),
         CustomWidget.verticalSpacing(),
         if (applicationData.status == 'pre-approved' ||
             applicationData.appointmentResubmit) ...[
@@ -307,7 +322,9 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         Text('Approved Loan', style: CustomStyle.titleBold()),
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
-            "Contract No", applicationData.contractNo.toString()),
+          "Contract No",
+          applicationData.contractNo.toString(),
+        ),
         CustomWidget.buildRow(
           "Repayment date",
           CommonService.formatDate(
@@ -323,7 +340,9 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
           CommonService.getLoanSize(applicationData),
         ),
         CustomWidget.buildRow(
-            "Loan Term", "${applicationData.loanTerm.toString()} Months"),
+          "Loan Term",
+          "${applicationData.loanTerm.toString()} Months",
+        ),
         CustomWidget.verticalSpacing(),
         if (totalLateDay > 0) ...[
           RichText(
@@ -377,7 +396,8 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
   }
 
   void _openMessenger() async {
-    const messengerUrl = 'https://m.me/sakt'; // Replace with your page username
+    const messengerUrl =
+        'https://www.facebook.com/synpitarn/'; // Replace with your page username
     final Uri uri = Uri.parse(messengerUrl);
 
     if (await canLaunchUrl(uri)) {
@@ -449,13 +469,17 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         Text(' Your loan has been postponed', style: CustomStyle.titleBold()),
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
-            "Contract No", applicationData.contractNo.toString()),
+          "Contract No",
+          applicationData.contractNo.toString(),
+        ),
         CustomWidget.buildRow(
           "Loan Size",
           CommonService.getLoanSize(applicationData),
         ),
         CustomWidget.buildRow(
-            "Loan Term", "${applicationData.loanTerm.toString()} Months"),
+          "Loan Term",
+          "${applicationData.loanTerm.toString()} Months",
+        ),
         if (applicationData.appointmentBranchDate != '') ...[
           CustomWidget.buildRow(
             "Branch Appointment Date",
@@ -482,15 +506,11 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
   }
 
   Future<void> goToRepaymentList() async {
-    LoanApplicationResponse response =
-        await LoanRepository().getLoanInformation(loginUser);
+    LoanApplicationResponse response = await LoanRepository()
+        .getLoanInformation(loginUser);
     if (response.response.code == 200) {
       Loan currentLoan = response.data;
-      RouteService.goToNavigator(
-          context,
-          RepaymentListPage(
-            loan: currentLoan,
-          ));
+      RouteService.goToNavigator(context, RepaymentListPage(loan: currentLoan));
     } else if (response.response.code == 403) {
       await showErrorDialog(response.response.message);
       AuthService().logout(context);
