@@ -108,10 +108,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return Scaffold(
       appBar: PageAppBar(title: "Notification"),
       body:
-          _isLoading
-              ? CustomWidget.loading()
-              : notificationList.isEmpty
-              ? Center(child: Text('There is no notification.'))
+          notificationList.isEmpty
+              ? Center(
+                child: Text(
+                  'There is no notification.',
+                  style: CustomStyle.bodyGreyColor(),
+                ),
+              )
               : Padding(
                 padding: const EdgeInsets.all(16),
                 child: ListView.builder(
