@@ -491,7 +491,7 @@ class DocumentFileState extends State<DocumentFilePage> {
       );
     }
 
-    if ((widget.documentList ?? []).isEmpty) {
+    if ((widget.documentList ?? []).isNotEmpty) {
       final bool allFilesHavePath = imageList.values
           .whereType<ImageFile>()
           .every((file) => file.filePath != null);
