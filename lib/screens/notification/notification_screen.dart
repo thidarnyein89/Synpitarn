@@ -90,7 +90,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   Future<void> showErrorDialog(String errorMessage) async {
-    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+    await CustomWidget.showDialogWithoutStyle(
+      context: context,
+      msg: errorMessage,
+    );
     setState(() {});
   }
 
@@ -104,20 +107,28 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PageAppBar(title: "Notification"),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView.builder(
-          controller: _scrollController,
-          itemCount: notificationList.length + (_isLoading ? 1 : 0),
-          itemBuilder: (context, index) {
-            if (index < notificationList.length) {
-              return _buildNotificationTile(notificationList[index]);
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
-      ),
+      body:
+          notificationList.isEmpty
+              ? Center(
+                child: Text(
+                  'There is no notification.',
+                  style: CustomStyle.bodyGreyColor(),
+                ),
+              )
+              : Padding(
+                padding: const EdgeInsets.all(16),
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount: notificationList.length + (_isLoading ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index < notificationList.length) {
+                      return _buildNotificationTile(notificationList[index]);
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
+              ),
     );
   }
 
