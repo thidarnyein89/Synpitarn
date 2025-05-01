@@ -141,7 +141,7 @@ class LoanHistoryState extends State<LoanHistoryPage> {
               child: Column(
                 children: [
                   CustomWidget.buildRow(
-                      "Contract No", applicationData.contractNo.toString()),
+                      "Contract No", applicationData.contractNoRef ?? applicationData.contractNo.toString()),
                   CustomWidget.buildRow(
                       "Loan Status",
                       CommonService.getLoanStatus(

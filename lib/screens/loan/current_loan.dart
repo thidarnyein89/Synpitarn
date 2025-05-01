@@ -63,7 +63,9 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
 
   Future<void> getInitData() async {
     loginUser = await getLoginUser();
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
 
     getApplicationData();
     getTotalLateDay();
@@ -71,15 +73,19 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
 
   Future<void> getApplicationData() async {
     isLoading = true;
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
 
-    LoanApplicationResponse applicationResponse = await LoanRepository()
-        .getLoanApplication(loginUser);
+    LoanApplicationResponse applicationResponse =
+        await LoanRepository().getLoanApplication(loginUser);
 
     if (applicationResponse.response.code == 200) {
       applicationData = applicationResponse.data;
       isLoading = false;
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     } else if (applicationResponse.response.code == 403) {
       await showErrorDialog(applicationResponse.response.message);
       AuthService().logout(context);
@@ -97,17 +103,22 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
 
       if (loanResponse.response.code == 200) {
         if (loanResponse.data.isNotEmpty) {
-          loanResponse.data[0].schedules!.forEach((LoanSchedule loanSchedule) {
-            int dayCount = CommonService.getDayCount(loanSchedule.pmtDate);
-            if (loanSchedule.isPaymentDone == 0 && dayCount > 0) {
-              totalLateDay = dayCount;
-              repaymentAmount = loanSchedule.pmtAmount;
+          LoanSchedule? lateSchedule =
+              loanResponse.data[0].schedules!.cast<LoanSchedule>().firstWhere(
+                    (loanSchedule) =>
+                        loanSchedule.isPaymentDone == 0 &&
+                        CommonService.getDayCount(loanSchedule.pmtDate) > 0,
+                    orElse: () => LoanSchedule.defaultLoanSchedule(),
+                  );
 
-              if (mounted) {
-                setState(() {});
-              }
+          if (lateSchedule.loanId != 0) {
+            totalLateDay = CommonService.getDayCount(lateSchedule.pmtDate);
+            repaymentAmount = lateSchedule.pmtAmount;
+
+            if (mounted) {
+              setState(() {});
             }
-          });
+          }
         }
       } else if (loanResponse.response.code == 403) {
         await showErrorDialog(loanResponse.response.message);
@@ -138,7 +149,9 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
       msg: errorMessage,
     );
     isLoading = false;
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -241,7 +254,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
           "Contract No",
-          applicationData.contractNo.toString(),
+          applicationData.contractNoRef ?? applicationData.contractNo.toString(),
         ),
         CustomWidget.buildRow(
           "Loan Applied Date",
@@ -281,7 +294,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
           "Contract No",
-          applicationData.contractNo.toString(),
+          applicationData.contractNoRef ?? applicationData.contractNo.toString(),
         ),
         CustomWidget.buildRow(
           "Loan Size",
@@ -323,7 +336,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
           "Contract No",
-          applicationData.contractNo.toString(),
+          applicationData.contractNoRef ?? applicationData.contractNo.toString(),
         ),
         CustomWidget.buildRow(
           "Repayment date",
@@ -470,7 +483,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
           "Contract No",
-          applicationData.contractNo.toString(),
+          applicationData.contractNoRef ?? applicationData.contractNo.toString(),
         ),
         CustomWidget.buildRow(
           "Loan Size",
@@ -506,8 +519,8 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
   }
 
   Future<void> goToRepaymentList() async {
-    LoanApplicationResponse response = await LoanRepository()
-        .getLoanInformation(loginUser);
+    LoanApplicationResponse response =
+        await LoanRepository().getLoanInformation(loginUser);
     if (response.response.code == 200) {
       Loan currentLoan = response.data;
       RouteService.goToNavigator(context, RepaymentListPage(loan: currentLoan));

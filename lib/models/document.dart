@@ -9,8 +9,13 @@ class Document {
   int loanApplicationId = 0;
   String uniqueId = "";
   String oldUniqueId = "";
+  String controlId = "";
   String docType = "";
   String docName = "";
+  String name = "";
+  String nameEN = "";
+  String nameMM = "";
+  String nameTH = "";
   String docUrl = "";
   String status = "";
   String type = "";
@@ -31,8 +36,13 @@ class Document {
     required this.loanApplicationId,
     required this.uniqueId,
     required this.oldUniqueId,
+    required this.controlId,
     required this.docType,
     required this.docName,
+    required this.name,
+    required this.nameEN,
+    required this.nameMM,
+    required this.nameTH,
     required this.docUrl,
     required this.status,
     required this.type,
@@ -54,10 +64,15 @@ class Document {
           int.tryParse(json['loan_application_id'].toString()) ?? 0,
       uniqueId: json['unique_id'] ?? "",
       oldUniqueId: json['old_unique_id'] ?? "",
+      controlId: json['control_id'] ?? "",
       docType: json['doc_type'] ?? "",
       docName: json['doc_name'] ?? "",
+      name: json['name'] ?? "",
+      nameEN: json['name_en'] ?? "",
+      nameMM: json['name_mm'] ?? "",
+      nameTH: json['name_th'] ?? "",
       docUrl: json['doc_url'] ?? "",
-      status: json['status'] ?? "",
+      status: json['status'].toString(),
       type: json['type'] ?? "",
       file: json['file'] ?? "",
       fileName: json['file_name'] ?? "",
@@ -77,8 +92,13 @@ class Document {
       'loan_application_id': loanApplicationId,
       'unique_id': uniqueId,
       'old_unique_id': oldUniqueId,
+      'control_id': controlId,
       'doc_type': docType,
       'doc_name': docName,
+      'name': name,
+      'name_en': nameEN,
+      'name_mm': nameMM,
+      'name_th': nameTH,
       'doc_url': docUrl,
       'status': status,
       'type': type,
