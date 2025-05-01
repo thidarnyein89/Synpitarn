@@ -61,7 +61,7 @@ class HomeState extends State<HomePage> {
   ];
 
   List<Map<String, dynamic>> repaymentList = [];
-  int totalLateDate = 0;
+  int totalLateDay = 0;
 
   int _currentIndex = 0;
   bool isLoading = false;
@@ -108,7 +108,7 @@ class HomeState extends State<HomePage> {
         );
 
         if (lateRepayment.isNotEmpty) {
-          totalLateDate = lateRepayment['dayCount'];
+          totalLateDay = lateRepayment['dayCount'];
         }
       }
 
@@ -194,7 +194,7 @@ class HomeState extends State<HomePage> {
           );
 
           if (lateRepayment.isNotEmpty) {
-            totalLateDate = lateRepayment['dayCount'];
+            totalLateDay = lateRepayment['dayCount'];
           }
         }
       } else if (loanResponse.response.code == 403) {
@@ -346,7 +346,7 @@ class HomeState extends State<HomePage> {
                     goToDocumentPage(context);
                   }
                   if (index == 3) {
-                    goToDocumentPage(context);
+                    RouteService.goToNavigator(context, CallCenter());
                   }
                 },
                 child: Padding(
@@ -542,10 +542,10 @@ class HomeState extends State<HomePage> {
               Text('View All', style: CustomStyle.body()),
             ],
           ),
-          if (totalLateDate > 0) ...[
+          if (totalLateDay > 0) ...[
             CustomWidget.verticalSpacing(),
             Text(
-              'Your repayment is $totalLateDate days late.',
+              'Your repayment is $totalLateDay days late.',
               style: CustomStyle.bodyRedColor(),
             ),
             Text(
@@ -747,7 +747,7 @@ class HomeState extends State<HomePage> {
     if (!loginUser.loanApplicationSubmitted) {
       showErrorDialog(Message.NO_CURRENT_LOAN);
     } else {
-      RouteService.goToNavigator(context, CallCenter());
+      RouteService.goToNavigator(context, DocumentHomePage());
     }
   }
 }

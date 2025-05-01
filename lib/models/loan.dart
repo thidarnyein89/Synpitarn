@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:synpitarn/models/document.dart';
 import 'package:synpitarn/models/loan_schedule.dart';
 import 'package:synpitarn/models/qrcode.dart';
 import 'package:synpitarn/models/user.dart';
@@ -87,7 +88,7 @@ class Loan {
   bool toAppointmentBranch = false;
   String? updatedAt = "";
   int userId = 0;
-  String? documentsRequest = "";
+  List<Document>? documentsRequest;
   User? client;
   Admin? user;
   List<LoanSchedule>? schedules;
@@ -196,6 +197,17 @@ class Loan {
       }
     }
 
+    List<Document> documentList = [];
+
+    final documentJson = json['documents_request'] ?? [];
+    if (documentJson is List) {
+      for (final documentMap in documentJson) {
+        if (documentMap is Map<String, dynamic>) {
+          documentList.add(Document.fromJson(documentMap));
+        }
+      }
+    }
+
     if (json.containsKey('application')) {
       final applicationJson = json['application'] ?? {};
       final keyList = applicationJson.keys.toList();
@@ -253,7 +265,7 @@ class Loan {
         disbursedAmount: json["disbursed_amount"] ?? "",
         disbursementDate: json["disbursement_date"] ?? "",
         disbursementDocument: json["disbursement_document"] ?? "",
-        documentsRequest: json["documents_request"] ?? "",
+        documentsRequest: documentList,
         dueOn1: json["due_on_1"] ?? 0,
         dueOn2: json["due_on_2"] ?? 0,
         ect2Rate: json["ect2_rate"] ?? 0,
