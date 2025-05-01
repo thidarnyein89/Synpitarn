@@ -5,10 +5,25 @@ import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CallCenter extends StatelessWidget {
-  const CallCenter({super.key});
+class CallCenterPage extends StatefulWidget {
+  const CallCenterPage({super.key});
 
-  final String phone = '09987654321';
+  @override
+  CallCenterState createState() => CallCenterState();
+}
+
+class CallCenterState extends State<CallCenterPage> {
+  final String phone = '+6620242424';
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   Future<void> _callNow() async {
     final Uri uri = Uri.parse('tel:$phone');
@@ -23,22 +38,15 @@ class CallCenter extends StatelessWidget {
     }
   }
 
-  Future<void> _openFacebookPage() async {
-    final Uri fbAppUri = Uri.parse(
-      'fb://facewebmodal/f?href=https://www.facebook.com/synpitarn/',
-    ); // Change to your page
-
+  Future<void> _openMessengerChat() async {
     try {
-      final launched = await launchUrl(
-        fbAppUri,
-        mode: LaunchMode.externalApplication,
-      );
+      final messengerUri =
+          Uri.parse("fb-messenger://user-thread/105351764988706");
 
-      if (!launched) {
-        debugPrint('Launch failed');
-      }
+      await launchUrl(messengerUri, mode: LaunchMode.platformDefault);
     } catch (e) {
-      debugPrint('Error launching: $e');
+      await CustomWidget.showDialogWithoutStyle(
+          context: context, msg: "Could not launch Messenger");
     }
   }
 
@@ -79,7 +87,7 @@ class CallCenter extends StatelessWidget {
               ),
               SizedBox(height: 8),
               CustomWidget.elevatedButtonOutline(
-                onPressed: _openFacebookPage,
+                onPressed: _openMessengerChat,
                 icon: Iconsax.message_text,
                 text: 'Messenger',
               ),

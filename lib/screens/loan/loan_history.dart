@@ -93,7 +93,9 @@ class LoanHistoryState extends State<LoanHistoryPage> {
         await LoanRepository().getLoanHistory(loginUser, currentPage);
 
     if (loanResponse.response.code == 200) {
-      loanList.addAll(loanResponse.data);
+      loanList.addAll(loanResponse.data
+          .where((data) => data.id != applicationData.loanId)
+          .toList());
       hasNextPage = loanResponse.meta.hasNextPage;
       currentPage++;
 
@@ -141,7 +143,10 @@ class LoanHistoryState extends State<LoanHistoryPage> {
               child: Column(
                 children: [
                   CustomWidget.buildRow(
-                      "Contract No", applicationData.contractNoRef != "" ? applicationData.contractNoRef.toString() : applicationData.contractNo.toString()),
+                      "Contract No",
+                      applicationData.contractNoRef != ""
+                          ? applicationData.contractNoRef.toString()
+                          : applicationData.contractNo.toString()),
                   CustomWidget.buildRow(
                       "Loan Status",
                       CommonService.getLoanStatus(

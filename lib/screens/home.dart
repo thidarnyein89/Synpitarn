@@ -12,6 +12,7 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/qr_dialog.dart';
+import 'package:synpitarn/screens/loan/repayment_list.dart';
 import 'package:synpitarn/screens/profile/document_home.dart';
 import 'package:synpitarn/screens/setting/about_us.dart';
 import 'package:synpitarn/screens/setting/call_center.dart';
@@ -48,7 +49,7 @@ class HomeState extends State<HomePage> {
 
   final List<Map<String, dynamic>> features = const [
     {"icon": RemixIcons.hand_coin_line, "label": "Repayment"},
-    {"icon": Icons.edit_note, "label": "Loan Apply"},
+    {"icon": Icons.edit_note, "label": "Loan Schedule"},
     {"icon": Icons.description, "label": "Documents"},
     {"icon": Icons.support_agent, "label": "Call Center"},
   ];
@@ -60,6 +61,7 @@ class HomeState extends State<HomePage> {
     {'label': 'Disbursed', 'isActive': false},
   ];
 
+  List<Loan> loanList = [];
   List<Map<String, dynamic>> repaymentList = [];
   int totalLateDay = 0;
 
@@ -169,6 +171,7 @@ class HomeState extends State<HomePage> {
 
       if (loanResponse.response.code == 200) {
         repaymentList = [];
+        loanList = loanResponse.data;
 
         if (loanResponse.data.isNotEmpty) {
           repaymentList =
@@ -320,9 +323,8 @@ class HomeState extends State<HomePage> {
         padding: CustomStyle.pagePaddingSmall(),
         itemBuilder: (context, index) {
           final item = features[index];
-          return Container(
-            width: 100,
-            margin: const EdgeInsets.only(right: 12),
+          return SizedBox(
+            width: 110,
             child: Card(
               elevation: 1,
               shape: RoundedRectangleBorder(
@@ -342,11 +344,14 @@ class HomeState extends State<HomePage> {
                       );
                     }
                   }
+                  if(index == 1) {
+                    goToLoanSchedulePage(context);
+                  }
                   if (index == 2) {
                     goToDocumentPage(context);
                   }
                   if (index == 3) {
-                    RouteService.goToNavigator(context, CallCenter());
+                    RouteService.goToNavigator(context, CallCenterPage());
                   }
                 },
                 child: Padding(
@@ -364,7 +369,7 @@ class HomeState extends State<HomePage> {
                         item['label'],
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                          fontSize: 13,
+                          fontSize: 12,
                           fontWeight: FontWeight.w500,
                           color: Colors.black87,
                         ),
@@ -748,6 +753,14 @@ class HomeState extends State<HomePage> {
       showErrorDialog(Message.NO_CURRENT_LOAN);
     } else {
       RouteService.goToNavigator(context, DocumentHomePage());
+    }
+  }
+
+  void goToLoanSchedulePage(BuildContext context) {
+    if (repaymentList.isEmpty) {
+      showErrorDialog(Message.NO_CURRENT_REPAYMENT);
+    } else {
+      RouteService.goToNavigator(context, RepaymentListPage(loan: loanList.first));
     }
   }
 }
