@@ -15,6 +15,7 @@ import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/loan/branch_appointment.dart';
 import 'package:synpitarn/screens/loan/interview_appointment.dart';
 import 'package:synpitarn/screens/loan/repayment_list.dart';
+import 'package:synpitarn/screens/profile/document_file.dart';
 import 'package:synpitarn/screens/profile/profile_home.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/common_service.dart';
@@ -136,6 +137,17 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
     );
   }
 
+  void handleReUpload() {
+    RouteService.goToNavigator(
+      context,
+      DocumentFilePage(
+          applicationData: applicationData,
+          documentList: applicationData.documentsRequest
+              ?.where((doc) => doc.status == "true")
+              .toList()),
+    );
+  }
+
   void handleBranchAppointment() {
     RouteService.goToNavigator(
       context,
@@ -254,7 +266,9 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
           "Contract No",
-          applicationData.contractNoRef ?? applicationData.contractNo.toString(),
+          applicationData.contractNoRef != ""
+              ? applicationData.contractNoRef.toString()
+              : applicationData.contractNo.toString(),
         ),
         CustomWidget.buildRow(
           "Loan Applied Date",
@@ -281,6 +295,17 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
             onPressed: handleReSubmit,
           ),
         ],
+        if (applicationData.documentsRequest!.isNotEmpty) ...[
+          Text(
+            "We are sorry to inform you that your loan information need updated information.Please Update your information.",
+            style: CustomStyle.bodyRedColor(),
+          ),
+          CustomWidget.verticalSpacing(),
+          CustomWidget.elevatedButton(
+            text: 'Reupload Request',
+            onPressed: handleReUpload,
+          ),
+        ],
       ],
     );
   }
@@ -294,7 +319,8 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
           "Contract No",
-          applicationData.contractNoRef ?? applicationData.contractNo.toString(),
+          applicationData.contractNoRef ??
+              applicationData.contractNo.toString(),
         ),
         CustomWidget.buildRow(
           "Loan Size",
@@ -336,7 +362,8 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
           "Contract No",
-          applicationData.contractNoRef ?? applicationData.contractNo.toString(),
+          applicationData.contractNoRef ??
+              applicationData.contractNo.toString(),
         ),
         CustomWidget.buildRow(
           "Repayment date",
@@ -483,7 +510,8 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
           "Contract No",
-          applicationData.contractNoRef ?? applicationData.contractNo.toString(),
+          applicationData.contractNoRef ??
+              applicationData.contractNo.toString(),
         ),
         CustomWidget.buildRow(
           "Loan Size",

@@ -33,6 +33,7 @@ class ChangePhoneNumberPage extends StatefulWidget {
 class ChangePhoneNumberState extends State<ChangePhoneNumberPage> {
   User loginUser = User.defaultUser();
 
+  final TextEditingController currentPhoneController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
 
   String? phoneError;
@@ -54,6 +55,7 @@ class ChangePhoneNumberState extends State<ChangePhoneNumberPage> {
 
   Future<void> getInitData() async {
     loginUser = await getLoginUser();
+    currentPhoneController.text = loginUser.phoneNumber;
     setState(() {});
   }
 
@@ -127,6 +129,10 @@ class ChangePhoneNumberState extends State<ChangePhoneNumberPage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          CustomWidget.phoneTextField(
+                              controller: currentPhoneController,
+                              label: 'Current Phone number',
+                              readOnly: true),
                           CustomWidget.phoneTextField(
                               controller: phoneController,
                               label: 'Phone number',

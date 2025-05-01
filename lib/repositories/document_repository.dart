@@ -83,4 +83,24 @@ class DocumentRepository {
 
     return DocumentResponse.documentResponseFromJson(response.body);
   }
+
+  Future<DocumentResponse> saveReUploadDocumentFinish(
+    Map<String, dynamic> postBody,
+    User loginRequest,
+  ) async {
+    String url =
+        ("${AppConfig.BASE_URL}/${AppConfig.PATH}/form/finish/documentupload");
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer ${loginRequest.token}",
+        "x-user-id": loginRequest.id.toString(),
+      },
+      body: jsonEncode(postBody),
+    );
+
+    return DocumentResponse.documentResponseFromJson(response.body);
+  }
 }

@@ -8,6 +8,7 @@ import 'package:synpitarn/models/default/default_data.dart';
 import 'package:synpitarn/models/default/default_response.dart';
 import 'package:synpitarn/models/document.dart';
 import 'package:synpitarn/models/document_response.dart';
+import 'package:synpitarn/models/loan.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/repositories/default_repository.dart';
@@ -23,7 +24,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:synpitarn/models/image_file.dart';
 
 class DocumentFilePage extends StatefulWidget {
-  const DocumentFilePage({super.key});
+  Loan? applicationData = Loan.defaultLoan();
+  List<Document>? documentList = [];
+
+  DocumentFilePage({super.key, this.applicationData, this.documentList});
 
   @override
   DocumentFileState createState() => DocumentFileState();
@@ -90,7 +94,29 @@ class DocumentFileState extends State<DocumentFilePage> {
       showErrorDialog(defaultResponse.response.message);
     }
 
-    getUploadDocumentData();
+    if ((widget.documentList ?? []).isEmpty) {
+      getUploadDocumentData();
+    } else {
+      final Set<String> documentIds =
+          widget.documentList!.map((doc) => doc.controlId).toSet();
+
+      final List<String> keysToRemove = [];
+
+      imageList.forEach((key, imageFile) {
+        if (imageFile != null && documentIds.contains(imageFile.uniqueId)) {
+          imageFile.isRequest = true;
+        } else {
+          keysToRemove.add(key);
+        }
+      });
+
+      for (String key in keysToRemove) {
+        imageList.remove(key);
+      }
+
+      isPageLoading = false;
+      setState(() {});
+    }
   }
 
   Future<void> getUploadDocumentData() async {
@@ -101,10 +127,9 @@ class DocumentFileState extends State<DocumentFilePage> {
       documentList = documentResponse.data;
 
       imageList.forEach((key, imageFile) async {
-        Document? document =
-            documentList
-                .where((document) => document.uniqueId == imageFile?.uniqueId)
-                .firstOrNull;
+        Document? document = documentList
+            .where((document) => document.uniqueId == imageFile?.uniqueId)
+            .firstOrNull;
         if (document != null) {
           imageFile?.isDeleteLoading = true;
           setState(() {});
@@ -143,8 +168,8 @@ class DocumentFileState extends State<DocumentFilePage> {
         'file_path': file.path,
       };
 
-      DocumentResponse documentResponse = await DocumentRepository()
-          .uploadDocument(postBody, loginUser);
+      DocumentResponse documentResponse =
+          await DocumentRepository().uploadDocument(postBody, loginUser);
       if (documentResponse.response.code == 200) {
         setState(() {
           imageFile.isLoading = false;
@@ -222,8 +247,8 @@ class DocumentFileState extends State<DocumentFilePage> {
           'version_id': defaultData.versionId,
         };
 
-        DocumentResponse documentResponse = await DocumentRepository()
-            .deleteDocument(postBody, loginUser);
+        DocumentResponse documentResponse =
+            await DocumentRepository().deleteDocument(postBody, loginUser);
         if (documentResponse.response.code == 200) {
           setState(() {
             imageFile.file = null;
@@ -277,6 +302,27 @@ class DocumentFileState extends State<DocumentFilePage> {
     }
   }
 
+  Future<void> handleReUpload() async {
+    isLoading = true;
+    isEnabled = false;
+    setState(() {});
+
+    final Map<String, dynamic> postBody = {
+      'loan_application_id': widget.applicationData?.id
+    };
+
+    DocumentResponse saveResponse = await DocumentRepository()
+        .saveReUploadDocumentFinish(postBody, loginUser);
+    if (saveResponse.response.code == 200) {
+      Navigator.of(context).pop(true);
+    } else if (saveResponse.response.code == 403) {
+      await showErrorDialog(saveResponse.response.message);
+      AuthService().logout(context);
+    } else {
+      showErrorDialog(saveResponse.response.message);
+    }
+  }
+
   Widget buildUploadImageSection(String docType) {
     ImageFile? imageFile = imageList[docType];
 
@@ -290,61 +336,58 @@ class DocumentFileState extends State<DocumentFilePage> {
           height: 120,
           width: double.infinity,
           color: Colors.grey[300],
-          child:
-              (imageFile?.filePath != null)
-                  ? Stack(
-                    children: [
+          child: (imageFile?.filePath != null)
+              ? Stack(
+                  children: [
+                    Positioned.fill(
+                      child: (imageFile?.file != null)
+                          ? Image.file(imageFile!.file!)
+                          : FadeInImage(
+                              placeholder: AssetImage(
+                                'assets/images/spinner.gif',
+                              ),
+                              image: NetworkImage(imageFile!.filePath!),
+                              fit: BoxFit.contain,
+                              imageErrorBuilder: (context, error, stackTrace) =>
+                                  Icon(Icons.broken_image),
+                            ),
+                    ),
+                    if (imageFile.isDeleteLoading ?? false)
                       Positioned.fill(
-                        child:
-                            (imageFile?.file != null)
-                                ? Image.file(imageFile!.file!)
-                                : FadeInImage(
-                                  placeholder: AssetImage(
-                                    'assets/images/spinner.gif',
-                                  ),
-                                  image: NetworkImage(imageFile!.filePath!),
-                                  fit: BoxFit.contain,
-                                  imageErrorBuilder:
-                                      (context, error, stackTrace) =>
-                                          Icon(Icons.broken_image),
-                                ),
+                        child: Container(
+                          color: Color.fromRGBO(0, 0, 0, 0.5),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ),
-                      if (imageFile.isDeleteLoading ?? false)
-                        Positioned.fill(
+                    if (!(imageFile?.isDeleteLoading ?? false))
+                      Positioned(
+                        top: 4,
+                        right: 4,
+                        child: GestureDetector(
+                          onTap: () {
+                            deleteImage(imageFile!);
+                          },
                           child: Container(
-                            color: Color.fromRGBO(0, 0, 0, 0.5),
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
+                            decoration: BoxDecoration(
+                              color: Color.fromRGBO(0, 0, 0, 0.5),
+                              shape: BoxShape.circle,
+                            ),
+                            padding: EdgeInsets.all(4),
+                            child: Icon(
+                              Icons.close,
+                              color: Colors.red,
+                              size: 20,
                             ),
                           ),
                         ),
-                      if (!(imageFile?.isDeleteLoading ?? false))
-                        Positioned(
-                          top: 4,
-                          right: 4,
-                          child: GestureDetector(
-                            onTap: () {
-                              deleteImage(imageFile!);
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Color.fromRGBO(0, 0, 0, 0.5),
-                                shape: BoxShape.circle,
-                              ),
-                              padding: EdgeInsets.all(4),
-                              child: Icon(
-                                Icons.close,
-                                color: Colors.red,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  )
-                  : Center(child: Text('No file selected')),
+                      ),
+                  ],
+                )
+              : Center(child: Text('No file selected')),
         ),
         CustomWidget.verticalSpacing(),
         CustomWidget.elevatedButton(
@@ -371,10 +414,9 @@ class DocumentFileState extends State<DocumentFilePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PageAppBar(
-        title:
-            (loginUser.loanApplicationSubmitted)
-                ? 'Documents'
-                : 'Required Documents',
+        title: (loginUser.loanApplicationSubmitted)
+            ? 'Documents'
+            : 'Required Documents',
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -408,28 +450,7 @@ class DocumentFileState extends State<DocumentFilePage> {
                                     )
                                     .toList(),
                                 CustomWidget.verticalSpacing(),
-                                if (!loginUser.loanApplicationSubmitted)
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: CustomWidget.elevatedButton(
-                                          enabled: true,
-                                          isLoading: false,
-                                          text: 'Previous',
-                                          onPressed: handlePrevious,
-                                        ),
-                                      ),
-                                      CustomWidget.horizontalSpacing(),
-                                      Expanded(
-                                        child: CustomWidget.elevatedButton(
-                                          enabled: isEnabled,
-                                          isLoading: isLoading,
-                                          text: 'Continue',
-                                          onPressed: handleContinue,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                createButtonSection(),
                               ],
                             ),
                           ),
@@ -443,6 +464,47 @@ class DocumentFileState extends State<DocumentFilePage> {
         },
       ),
     );
+  }
+
+  Widget createButtonSection() {
+    if (!loginUser.loanApplicationSubmitted && (widget.documentList ?? []).isEmpty) {
+      return Row(
+        children: [
+          Expanded(
+            child: CustomWidget.elevatedButton(
+              enabled: true,
+              isLoading: false,
+              text: 'Previous',
+              onPressed: handlePrevious,
+            ),
+          ),
+          CustomWidget.horizontalSpacing(),
+          Expanded(
+            child: CustomWidget.elevatedButton(
+              enabled: isEnabled,
+              isLoading: isLoading,
+              text: 'Continue',
+              onPressed: handleContinue,
+            ),
+          ),
+        ],
+      );
+    }
+
+    if ((widget.documentList ?? []).isEmpty) {
+      final bool allFilesHavePath = imageList.values
+          .whereType<ImageFile>()
+          .every((file) => file.filePath != null);
+
+      return CustomWidget.elevatedButton(
+        enabled: allFilesHavePath,
+        isLoading: isLoading,
+        text: 'Reupload Request',
+        onPressed: handleReUpload,
+      );
+    }
+
+    return Container();
   }
 
   Future<void> showErrorDialog(String errorMessage) async {

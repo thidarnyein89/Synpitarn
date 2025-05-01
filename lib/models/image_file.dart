@@ -5,8 +5,9 @@ class ImageFile {
   File? file;
   String? filePath = "";
   String uniqueId;
+  bool? isRequest = false;
   bool? isLoading = false;
   bool? isDeleteLoading = false;
 
-  ImageFile({this.id, this.file, this.filePath, required this.uniqueId, this.isLoading, this.isDeleteLoading});
+  ImageFile({this.id, this.file, this.filePath, required this.uniqueId, this.isRequest, this.isLoading, this.isDeleteLoading});
 }
