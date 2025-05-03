@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/loan_status.dart';
 import 'package:synpitarn/data/message.dart';
@@ -241,6 +242,28 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
     return Container();
   }
 
+  Widget documentRequestSection() {
+    if (applicationData.documentsRequest?.isNotEmpty != true) {
+      return const SizedBox();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "We are sorry to inform you that your loan information needs updated information. Please update your information.",
+          style: CustomStyle.bodyRedColor(),
+        ),
+        CustomWidget.verticalSpacing(),
+        CustomWidget.elevatedButton(
+          text: 'Reupload Request',
+          onPressed: handleReUpload,
+        ),
+      ],
+    );
+  }
+
+
   Widget noApplyLoanSection() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -295,17 +318,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
             onPressed: handleReSubmit,
           ),
         ],
-        if (applicationData.documentsRequest!.isNotEmpty) ...[
-          Text(
-            "We are sorry to inform you that your loan information need updated information.Please Update your information.",
-            style: CustomStyle.bodyRedColor(),
-          ),
-          CustomWidget.verticalSpacing(),
-          CustomWidget.elevatedButton(
-            text: 'Reupload Request',
-            onPressed: handleReUpload,
-          ),
-        ],
+        documentRequestSection()
       ],
     );
   }
@@ -349,6 +362,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
             onPressed: handleBranchAppointment,
           ),
         ],
+        documentRequestSection()
       ],
     );
   }
@@ -373,7 +387,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         ),
         CustomWidget.buildRow(
           "Repayment amount",
-          "${applicationData.repaymentAmountPerPeriod.toString()} Baht",
+          CommonService.formatWithThousandSeparator(applicationData.repaymentAmountPerPeriod),
         ),
         CustomWidget.buildRow(
           "Loan Size",
@@ -390,7 +404,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
               children: [
                 TextSpan(
                   text:
-                      "Your repayment is now $totalLateDay days late. Please make a payment of $repaymentAmount Baht immediately or click ",
+                      "Your repayment is now $totalLateDay days late. Please make a payment of ${CommonService.formatWithThousandSeparator(repaymentAmount)} immediately or click ",
                   style: CustomStyle.bodyRedColor(),
                 ),
                 TextSpan(
@@ -435,15 +449,15 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
     );
   }
 
-  void _openMessenger() async {
-    const messengerUrl =
-        'https://www.facebook.com/synpitarn/'; // Replace with your page username
-    final Uri uri = Uri.parse(messengerUrl);
+  Future<void> _openMessenger() async {
+    try {
+      final messengerUri =
+      Uri.parse("fb-messenger://user-thread/${ConstantData.MESSENGER_ID}");
 
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      throw 'Could not launch $messengerUrl';
+      await launchUrl(messengerUri, mode: LaunchMode.platformDefault);
+    } catch (e) {
+      await CustomWidget.showDialogWithoutStyle(
+          context: context, msg: "Could not launch Messenger");
     }
   }
 

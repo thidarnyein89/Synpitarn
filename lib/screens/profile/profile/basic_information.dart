@@ -10,6 +10,7 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/profile/profile/edit_information.dart';
 import 'package:synpitarn/services/auth_service.dart';
+import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 class BasicInformationPage extends StatefulWidget {
@@ -146,7 +147,7 @@ class BasicInformationState extends State<BasicInformationPage>
                                 ),
                                 CustomWidget.buildRow(
                                   "Total income (Salary + Overtime + Other Income) (Baht)",
-                                  "${loginUser.salary} Baht",
+                                  CommonService.formatWithThousandSeparator(loginUser.salary),
                                 ),
                                 CustomWidget.elevatedButton(
                                   text: 'Edit Information',

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -41,7 +42,7 @@ class CallCenterState extends State<CallCenterPage> {
   Future<void> _openMessengerChat() async {
     try {
       final messengerUri =
-          Uri.parse("fb-messenger://user-thread/105351764988706");
+          Uri.parse("fb-messenger://user-thread/${ConstantData.MESSENGER_ID}");
 
       await launchUrl(messengerUri, mode: LaunchMode.platformDefault);
     } catch (e) {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/models/guide.dart';
@@ -10,9 +9,6 @@ import 'package:dotted_line/dotted_line.dart';
 import 'package:synpitarn/screens/components/dashed_circle_painter.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/services/common_service.dart';
-import 'package:synpitarn/screens/components/main_app_bar.dart';
-import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
-import 'package:synpitarn/data/app_config.dart';
 
 class GuidePage extends StatefulWidget {
   int activeStep;
@@ -51,6 +47,11 @@ class GuideState extends State<GuidePage> {
     activeStep = widget.activeStep;
 
     setState(() {});
+
+    // Wait until layout is built, then scroll
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToStep(widget.activeStep);
+    });
   }
 
   @override
@@ -142,14 +143,6 @@ class GuideState extends State<GuidePage> {
           );
         },
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: ConstantData.SETTING_INDEX,
-        onItemTapped: (index) {
-          setState(() {
-            ConstantData.CURRENT_INDEX = index;
-          });
-        },
-      ),
     );
   }
 
@@ -170,7 +163,7 @@ class GuideState extends State<GuidePage> {
         }
       }
 
-      if (widget.activeStep == activeStep) {
+      if (widget.activeStep > 0 && widget.activeStep == activeStep) {
         _scrollToStep(widget.activeStep);
       }
     });

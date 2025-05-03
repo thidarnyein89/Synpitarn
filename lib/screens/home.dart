@@ -97,8 +97,8 @@ class HomeState extends State<HomePage> {
   }
 
   Future<void> getApplicationData() async {
-    LoanApplicationResponse applicationResponse = await LoanRepository()
-        .getLoanApplication(loginUser);
+    LoanApplicationResponse applicationResponse =
+        await LoanRepository().getLoanApplication(loginUser);
 
     if (applicationResponse.response.code == 200) {
       applicationData = applicationResponse.data;
@@ -176,20 +176,20 @@ class HomeState extends State<HomePage> {
         if (loanResponse.data.isNotEmpty) {
           repaymentList =
               loanResponse.data[0].schedules!.map((LoanSchedule loanSchedule) {
-                int dayCount = CommonService.getDayCount(loanSchedule.pmtDate);
-                bool isLate = loanSchedule.isPaymentDone == 0 && dayCount > 0;
+            int dayCount = CommonService.getDayCount(loanSchedule.pmtDate);
+            bool isLate = loanSchedule.isPaymentDone == 0 && dayCount > 0;
 
-                return {
-                  'dueDate': CommonService.formatDate(loanSchedule.pmtDate),
-                  'amount': '${loanSchedule.pmtAmount} Baht',
-                  'status': loanSchedule.isPaymentDone == 0 ? 'Unpaid' : 'Paid',
-                  'dayCount': dayCount,
-                  'isLate': isLate,
-                  "qrCodePhotoName": "QR_${loanResponse.data[0].contractNo}",
-                  'qrCodePhoto': loanResponse.data[0].qrcode.photo,
-                  'qrCodeString': loanResponse.data[0].qrcode.string,
-                };
-              }).toList();
+            return {
+              'dueDate': CommonService.formatDate(loanSchedule.pmtDate),
+              'amount': CommonService.formatWithThousandSeparator(loanSchedule.pmtAmount),
+              'status': loanSchedule.isPaymentDone == 0 ? 'Unpaid' : 'Paid',
+              'dayCount': dayCount,
+              'isLate': isLate,
+              "qrCodePhotoName": "QR_${loanResponse.data[0].contractNo}",
+              'qrCodePhoto': loanResponse.data[0].qrcode.photo,
+              'qrCodeString': loanResponse.data[0].qrcode.string,
+            };
+          }).toList();
 
           var lateRepayment = repaymentList.firstWhere(
             (repayment) => repayment['isLate'] == true,
@@ -249,27 +249,26 @@ class HomeState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MainAppBar(),
-      body:
-          isLoading
-              ? Center(
-                child: CircularProgressIndicator(
-                  color: CustomStyle.primary_color,
-                ),
-              )
-              : SingleChildScrollView(
-                child: Column(
-                  children: [
-                    createSliderSection(),
-                    createFeatureSection(),
-                    createLoanStatusSection(),
-                    createLoanSection(),
-                    if (!loginUser.loanApplicationSubmitted) ...[
-                      GuideHeaderPage(),
-                      createAboutUs(),
-                    ],
-                  ],
-                ),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                color: CustomStyle.primary_color,
               ),
+            )
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  createSliderSection(),
+                  createFeatureSection(),
+                  createLoanStatusSection(),
+                  createLoanSection(),
+                  if (!loginUser.loanApplicationSubmitted) ...[
+                    GuideHeaderPage(),
+                    createAboutUs(),
+                  ],
+                ],
+              ),
+            ),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: ConstantData.HOME_INDEX,
         onItemTapped: (index) {
@@ -344,7 +343,7 @@ class HomeState extends State<HomePage> {
                       );
                     }
                   }
-                  if(index == 1) {
+                  if (index == 1) {
                     goToLoanSchedulePage(context);
                   }
                   if (index == 2) {
@@ -434,7 +433,6 @@ class HomeState extends State<HomePage> {
               ),
             ),
           ),
-          CustomWidget.verticalSpacing(),
         ],
       ),
     );
@@ -455,6 +453,9 @@ class HomeState extends State<HomePage> {
 
     if (repaymentList.isEmpty) {
       return createPendingLoanSection();
+    } else if (repaymentList.isEmpty ||
+        LoanStatus.REJECT_STATUS.contains(applicationData.status)) {
+      return createRejectLoanSection();
     } else {
       return createRepaymentSection();
     }
@@ -462,8 +463,9 @@ class HomeState extends State<HomePage> {
 
   Widget createPendingLoanSection() {
     final int activeIndex = loanSteps.indexWhere((step) => step['isActive']);
-    String loanStatus = 'pending';
-    if (activeIndex != -1) {
+    String loanStatus = CommonService.getLoanStatus(
+        applicationData.status.toString());
+    if (activeIndex == 1) {
       loanStatus = loanSteps[activeIndex]["label"];
     }
 
@@ -534,6 +536,38 @@ class HomeState extends State<HomePage> {
     );
   }
 
+  Widget createRejectLoanSection() {
+    return Padding(
+      padding: CustomStyle.pagePaddingSmall(),
+      child: Card(
+        elevation: 1,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: Padding(
+          padding: CustomStyle.pagePaddingSmall(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomWidget.buildRow(
+                  "Contract No",
+                  applicationData.contractNoRef != ""
+                      ? applicationData.contractNoRef.toString()
+                      : applicationData.contractNo.toString()),
+              CustomWidget.buildRow(
+                  "Loan Status",
+                  CommonService.getLoanStatus(
+                      applicationData.status.toString())),
+              CustomWidget.buildRow(
+                  "Loan Size", CommonService.getLoanSize(applicationData)),
+              CustomWidget.buildRow(
+                  "Loan Term", "${applicationData.loanTerm} Months"),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget createRepaymentSection() {
     return Padding(
       padding: CustomStyle.pagePaddingSmall(),
@@ -592,10 +626,9 @@ class HomeState extends State<HomePage> {
                     const SizedBox(height: 8),
                     Text(
                       item['dueDate'],
-                      style:
-                          item['isLate']
-                              ? CustomStyle.bodyRedColor()
-                              : CustomStyle.body(),
+                      style: item['isLate']
+                          ? CustomStyle.bodyRedColor()
+                          : CustomStyle.body(),
                     ),
                   ],
                 ),
@@ -608,10 +641,9 @@ class HomeState extends State<HomePage> {
                     const SizedBox(height: 8),
                     Text(
                       item['amount'],
-                      style:
-                          item['isLate']
-                              ? CustomStyle.bodyRedColor()
-                              : CustomStyle.body(),
+                      style: item['isLate']
+                          ? CustomStyle.bodyRedColor()
+                          : CustomStyle.body(),
                     ),
                   ],
                 ),
@@ -624,10 +656,9 @@ class HomeState extends State<HomePage> {
                     const SizedBox(height: 8),
                     Text(
                       item['status'],
-                      style:
-                          item['isLate']
-                              ? CustomStyle.bodyRedColor()
-                              : CustomStyle.body(),
+                      style: item['isLate']
+                          ? CustomStyle.bodyRedColor()
+                          : CustomStyle.body(),
                     ),
                   ],
                 ),
@@ -696,14 +727,13 @@ class HomeState extends State<HomePage> {
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
                 shrinkWrap: true,
-                children:
-                    aboutList
-                        .asMap()
-                        .map((index, aboutData) {
-                          return MapEntry(index, gridItem(index));
-                        })
-                        .values
-                        .toList(),
+                children: aboutList
+                    .asMap()
+                    .map((index, aboutData) {
+                      return MapEntry(index, gridItem(index));
+                    })
+                    .values
+                    .toList(),
               ),
             ],
           ),
@@ -760,7 +790,8 @@ class HomeState extends State<HomePage> {
     if (repaymentList.isEmpty) {
       showErrorDialog(Message.NO_CURRENT_REPAYMENT);
     } else {
-      RouteService.goToNavigator(context, RepaymentListPage(loan: loanList.first));
+      RouteService.goToNavigator(
+          context, RepaymentListPage(loan: loanList.first));
     }
   }
 }

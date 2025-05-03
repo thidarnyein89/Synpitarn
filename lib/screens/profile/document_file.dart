@@ -97,6 +97,8 @@ class DocumentFileState extends State<DocumentFilePage> {
     if ((widget.documentList ?? []).isEmpty) {
       getUploadDocumentData();
     } else {
+      showReUploadDocumentFileName();
+
       final Set<String> documentIds =
           widget.documentList!.map((doc) => doc.controlId).toSet();
 
@@ -117,6 +119,40 @@ class DocumentFileState extends State<DocumentFilePage> {
       isPageLoading = false;
       setState(() {});
     }
+  }
+
+  void showReUploadDocumentFileName() {
+    List<Map<String, dynamic>> msg = [];
+
+    msg.add({
+      "text": "We found out that your ",
+      "style": TextStyle(color: Colors.black)
+    });
+
+    final docNames = widget.documentList?.map((doc) => doc.name).toList() ?? [];
+    for (int i = 0; i < docNames.length; i++) {
+      msg.add({
+        "text": docNames[i],
+        "style": TextStyle(color: Colors.black, fontWeight: FontWeight.bold)
+      });
+
+      if (i != docNames.length - 1) {
+        msg.add({
+          "text": ", ",
+          "style": TextStyle(color: Colors.black)
+        });
+      }
+    }
+
+    msg.add({
+      "text": " is blurred and we would like you to upload that document again for your loan application.",
+      "style": TextStyle(color: Colors.black)
+    });
+
+    CustomWidget.showDialogWithStyle(
+      context: context,
+      msg: msg,
+    );
   }
 
   Future<void> getUploadDocumentData() async {

@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/models/aboutUs.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/services/common_service.dart';
-import 'package:synpitarn/screens/components/main_app_bar.dart';
-import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
-import 'package:synpitarn/data/app_config.dart';
 
 class AboutUsPage extends StatefulWidget {
   int activeIndex;
@@ -82,14 +78,6 @@ class AboutUsState extends State<AboutUsPage> {
               ),
             ),
           );
-        },
-      ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: ConstantData.CURRENT_INDEX,
-        onItemTapped: (index) {
-          setState(() {
-            ConstantData.CURRENT_INDEX = index;
-          });
         },
       ),
     );

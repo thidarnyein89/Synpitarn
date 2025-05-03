@@ -157,38 +157,69 @@ class EditInformationState extends State<EditInformationPage> {
   }
 
   Future<void> handleContinue() async {
-    setState(() {
-      isLoading = true;
-    });
+    if (await checkMissingFields() == false) {
+      setState(() {
+        isLoading = true;
+      });
 
-    Map<String, dynamic> requestData = {};
+      Map<String, dynamic> requestData = {};
 
-    textControllers.forEach((key, controller) {
-      requestData[key] = controller.text;
-    });
+      textControllers.forEach((key, controller) {
+        requestData[key] = controller.text;
+      });
 
-    dropdownControllers.forEach((key, controller) {
-      requestData[key] = controller.value;
-    });
+      dropdownControllers.forEach((key, controller) {
+        requestData[key] = controller.value;
+      });
 
-    final Map<String, dynamic> postBody = {
-      ...requestData,
-      'phone_number': widget.editUser.phoneNumber,
-      'dob': widget.editUser.dob,
-      'province_of_work': widget.editUser.provinceOfWork,
-      'province_of_resident': widget.editUser.provinceOfResident,
-    };
+      final Map<String, dynamic> postBody = {
+        ...requestData,
+        'phone_number': widget.editUser.phoneNumber,
+        'dob': widget.editUser.dob,
+        'province_of_work': widget.editUser.provinceOfWork,
+        'province_of_resident': widget.editUser.provinceOfResident,
+      };
 
-    UserResponse response =
-        await ProfileRepository().editProfile(postBody, loginUser);
+      UserResponse response =
+          await ProfileRepository().editProfile(postBody, loginUser);
 
-    if (response.response.code == 200) {
-      Navigator.pop(context);
-    } else if (response.response.code == 403) {
-      await showInfoDialog(response.response.message);
-      AuthService().logout(context);
+      if (response.response.code == 200) {
+        Navigator.pop(context);
+      } else if (response.response.code == 403) {
+        await showInfoDialog(response.response.message);
+        AuthService().logout(context);
+      } else {
+        showInfoDialog(response.response.message);
+      }
+    }
+  }
+
+  Future<bool> checkMissingFields() async {
+    List<String> missingFields = [];
+
+    if (widget.editUser.phoneNumber == null ||
+        widget.editUser.phoneNumber!.trim().isEmpty) {
+      missingFields.add("Phone Number");
+    }
+    if (widget.editUser.dob == null || widget.editUser.dob!.trim().isEmpty) {
+      missingFields.add("DOB");
+    }
+    if (widget.editUser.provinceOfWork == null ||
+        widget.editUser.provinceOfWork!.trim().isEmpty) {
+      missingFields.add("Province of Work");
+    }
+    if (widget.editUser.provinceOfResident == null ||
+        widget.editUser.provinceOfResident!.trim().isEmpty) {
+      missingFields.add("Province of Resident");
+    }
+
+    if (missingFields.isNotEmpty) {
+      String message =
+          "Invalid Input Data (${missingFields.join(', ')}). Please contact admin.";
+      await showInfoDialog(message);
+      return true;
     } else {
-      showInfoDialog(response.response.message);
+      return false;
     }
   }
 

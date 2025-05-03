@@ -1,4 +1,6 @@
 class ConstantData {
+  static String MESSENGER_ID = "105351764988706";
+
   // For Bottom Navigation Bar Index
   static int HOME_INDEX = 0;
   static int LOAN_INDEX = 1;

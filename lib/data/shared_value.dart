@@ -38,3 +38,15 @@ Future<User> getLoginUser() async {
     return User.defaultUser();
   }
 }
+
+Future<void> setLanguage(String language) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('language', language);
+}
+
+Future<String> getLanguage() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('language') ?? "en";
+}
+
+

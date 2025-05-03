@@ -97,7 +97,21 @@ class CommonService {
       loanSize = loanData.appliedAmount ?? "0";
     }
 
-    return "$loanSize  Baht";
+    return formatWithThousandSeparator(loanSize);
+  }
+
+  static String formatWithThousandSeparator(dynamic value) {
+    if (value == null || value.toString().trim().isEmpty) {
+      return '0';
+    }
+
+    try {
+      final num parsedValue = value is num ? value : num.parse(value.toString());
+      final formatter = NumberFormat("#,##0.00", "en_US");
+      return "${formatter.format(parsedValue)} Baht";
+    } catch (e) {
+      return '0 Baht';
+    }
   }
 
 }
