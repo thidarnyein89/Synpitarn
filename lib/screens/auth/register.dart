@@ -260,6 +260,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       CustomWidget.verticalSpacing(),
                       CustomWidget.elevatedButton(
+                          context: context,
                           enabled: isPhoneValidate &&
                               isPassportValidate &&
                               isNRCValidate &&

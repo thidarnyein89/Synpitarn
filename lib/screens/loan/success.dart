@@ -60,6 +60,7 @@ class SuccessState extends State<SuccessPage> {
                           ),
                           CustomWidget.verticalSpacing(),
                           CustomWidget.elevatedButton(
+                              context: context,
                               enabled: true,
                               isLoading: false,
                               text: 'Go To Home Page',

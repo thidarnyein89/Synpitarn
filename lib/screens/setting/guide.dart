@@ -68,7 +68,7 @@ class GuideState extends State<GuidePage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: 'User Guide'),
+      appBar: PageAppBar(title: 'How To Apply For A Loan'),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return ConstrainedBox(
@@ -79,7 +79,7 @@ class GuideState extends State<GuidePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Step-by-Step Guide", style: CustomStyle.titleBold()),
+                    Text("How To Apply For A Loan", style: CustomStyle.titleBold()),
                     EasyStepper(
                       activeStep: activeStep,
                       maxReachedStep: 3,

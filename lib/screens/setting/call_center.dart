@@ -72,6 +72,7 @@ class CallCenterState extends State<CallCenterPage> {
               ),
               SizedBox(height: 8),
               CustomWidget.elevatedButton(
+                context: context,
                 onPressed: _callNow,
                 icon: CupertinoIcons.phone,
                 text: 'Call Centre',
@@ -88,6 +89,7 @@ class CallCenterState extends State<CallCenterPage> {
               ),
               SizedBox(height: 8),
               CustomWidget.elevatedButtonOutline(
+                context: context,
                 onPressed: _openMessengerChat,
                 icon: Iconsax.message_text,
                 text: 'Messenger',

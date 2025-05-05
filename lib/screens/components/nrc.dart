@@ -143,6 +143,7 @@ class NRCState extends State<NRCPage> {
                 focusNode: _nrcFocusNode,
               ),
               CustomWidget.elevatedButton(
+                  context: context,
                   enabled: selectedState != null &&
                       selectedTownship != null &&
                       selectedCitizen != null &&

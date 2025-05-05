@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/constant.dart';
+import 'package:synpitarn/data/language.dart';
+import 'package:synpitarn/main.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/data/custom_style.dart';
@@ -11,6 +13,7 @@ import 'package:synpitarn/screens/setting/call_center.dart';
 import 'package:synpitarn/screens/setting/guide.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -60,7 +63,6 @@ class SettingState extends State<SettingPage> {
         ),
         CustomWidget.horizontalSpacing(),
         Expanded(
-          // constrain the column
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -91,9 +93,9 @@ class SettingState extends State<SettingPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomWidget.verticalSpacing(),
-        Text("Setting", style: CustomStyle.subTitleBold()),
+        Text(AppLocalizations.of(context)!.setting, style: CustomStyle.subTitleBold()),
         CustomWidget.verticalSmallSpacing(),
-        buildSettingTile(Icons.language, "Change Language", () => {}),
+        buildSettingTile(Icons.language, AppLocalizations.of(context)!.changeLanguage, showLanguageDialog),
       ],
     );
   }
@@ -103,10 +105,10 @@ class SettingState extends State<SettingPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomWidget.verticalSpacing(),
-        Text("Location", style: CustomStyle.subTitleBold()),
+        Text(AppLocalizations.of(context)!.location, style: CustomStyle.subTitleBold()),
         CustomWidget.verticalSmallSpacing(),
-        buildSettingTile(Icons.apartment, "Nearest Branch", () => {}),
-        buildSettingTile(Icons.money, "Nearest ATM", () => {}),
+        buildSettingTile(Icons.apartment, AppLocalizations.of(context)!.nearestBranch, () => {}),
+        buildSettingTile(Icons.money, AppLocalizations.of(context)!.nearestATM, () => {}),
       ],
     );
   }
@@ -116,11 +118,13 @@ class SettingState extends State<SettingPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomWidget.verticalSpacing(),
-        Text("Help & Support", style: CustomStyle.subTitleBold()),
+        Text(AppLocalizations.of(context)!.helpAndSupport, style: CustomStyle.subTitleBold()),
         CustomWidget.verticalSmallSpacing(),
-        buildSettingTile(Icons.help_outline, "Guide", goToGuidePage),
-        buildSettingTile(Icons.info_outline, "About Us", goToAboutUsPage),
-        buildSettingTile(Icons.support_agent, "Call Center", goToCallCenterPage),
+        buildSettingTile(Icons.help_outline,
+            AppLocalizations.of(context)!.howToApplyLoan, goToGuidePage),
+        buildSettingTile(Icons.info_outline, AppLocalizations.of(context)!.getToKnowUs, goToAboutUsPage),
+        buildSettingTile(
+            Icons.support_agent, AppLocalizations.of(context)!.callCenter, goToCallCenterPage),
       ],
     );
   }
@@ -152,11 +156,58 @@ class SettingState extends State<SettingPage> {
     );
   }
 
+  Future<void> showLanguageDialog() async {
+    final currentLocale = Localizations.localeOf(context);
+
+    var result = await showModalBottomSheet<Language>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(5),
+          topRight: Radius.circular(5),
+        ),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: LanguageData.languages.length,
+            itemBuilder: (context, index) {
+              final lang = LanguageData.languages[index];
+              return ListTile(
+                leading: ClipOval(
+                  child: Image.asset(
+                    lang.image,
+                    width: 24,
+                    height: 24,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                title: Text(lang.label),
+                trailing: lang.locale == currentLocale
+                    ? const Icon(Icons.check, color: CustomStyle.primary_color)
+                    : null,
+                onTap: () {
+                  MyApp.setLocale(context, lang.locale);
+                  Navigator.pop(context, lang);
+                },
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: 'Setting'),
+      appBar: PageAppBar(title: AppLocalizations.of(context)!.setting),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Stack(children: [
@@ -185,7 +236,8 @@ class SettingState extends State<SettingPage> {
                             createHelpSection(),
                             CustomWidget.verticalSpacing(),
                             CustomWidget.elevatedButton(
-                                text: 'Logout', onPressed: handleLogout),
+                                context: context,
+                                text: AppLocalizations.of(context)!.logout, onPressed: handleLogout),
                             CustomWidget.verticalSpacing(),
                             Center(
                               child: Text("v ${packageInfo.version}"),

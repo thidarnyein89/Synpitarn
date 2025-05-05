@@ -228,6 +228,7 @@ class OTPState extends State<OTPPage> {
                         ),
                       SizedBox(height: 20),
                       CustomWidget.elevatedButton(
+                          context: context,
                           enabled: isOTPValidate,
                           isLoading: isLoading,
                           text: 'Verify OTP Code',

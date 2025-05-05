@@ -256,6 +256,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         ),
         CustomWidget.verticalSpacing(),
         CustomWidget.elevatedButton(
+          context: context,
           text: 'Reupload Request',
           onPressed: handleReUpload,
         ),
@@ -271,6 +272,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
       children: [
         Text(Message.NO_CURRENT_LOAN, style: CustomStyle.titleBold()),
         CustomWidget.elevatedButton(
+          context: context,
           text: 'Apply Loan',
           onPressed: () {
             RouteService.goToNavigator(context, ProfileHomePage());
@@ -314,6 +316,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
           ),
           CustomWidget.verticalSpacing(),
           CustomWidget.elevatedButton(
+            context: context,
             text: 'Resubmit Interview Appointment',
             onPressed: handleReSubmit,
           ),
@@ -358,6 +361,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
             applicationData.appointmentResubmit) ...[
           CustomWidget.verticalSpacing(),
           CustomWidget.elevatedButton(
+            context: context,
             text: 'Resubmit Interview Appointment',
             onPressed: handleBranchAppointment,
           ),
@@ -428,18 +432,22 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
           CustomWidget.verticalSpacing(),
         ],
         CustomWidget.elevatedButtonOutline(
+          context: context,
           text: 'Repay at a branch',
           onPressed: () {},
         ),
         CustomWidget.elevatedButtonOutline(
+          context: context,
           text: 'Repayment at ATM',
           onPressed: () {},
         ),
         CustomWidget.elevatedButtonOutline(
+          context: context,
           text: 'Repayment via mobile banking',
           onPressed: () {},
         ),
         CustomWidget.elevatedButton(
+          context: context,
           text: 'View Repayment Schedule',
           onPressed: () {
             goToRepaymentList();
@@ -552,6 +560,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         CustomWidget.verticalSpacing(),
         if (applicationData.appointmentResubmit) ...[
           CustomWidget.elevatedButton(
+            context: context,
             text: 'Resubmit Interview Appointment',
             onPressed: handleReSubmit,
           ),

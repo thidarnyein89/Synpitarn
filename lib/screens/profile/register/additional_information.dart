@@ -457,6 +457,7 @@ class Information2State extends State<Information2Page> {
                                 children: [
                                   Expanded(
                                     child: CustomWidget.elevatedButton(
+                                      context: context,
                                       enabled: true,
                                       isLoading: false,
                                       text: 'Previous',
@@ -466,6 +467,7 @@ class Information2State extends State<Information2Page> {
                                   CustomWidget.horizontalSpacing(),
                                   Expanded(
                                     child: CustomWidget.elevatedButton(
+                                      context: context,
                                       enabled: inValidFields.isEmpty,
                                       isLoading: isLoading,
                                       text: 'Continue',

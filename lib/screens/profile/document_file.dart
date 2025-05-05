@@ -427,6 +427,7 @@ class DocumentFileState extends State<DocumentFilePage> {
         ),
         CustomWidget.verticalSpacing(),
         CustomWidget.elevatedButton(
+          context: context,
           enabled: imageFile?.filePath == null,
           isLoading: imageFile!.isLoading ?? false,
           text: 'Upload',
@@ -508,6 +509,7 @@ class DocumentFileState extends State<DocumentFilePage> {
         children: [
           Expanded(
             child: CustomWidget.elevatedButton(
+              context: context,
               enabled: true,
               isLoading: false,
               text: 'Previous',
@@ -517,6 +519,7 @@ class DocumentFileState extends State<DocumentFilePage> {
           CustomWidget.horizontalSpacing(),
           Expanded(
             child: CustomWidget.elevatedButton(
+              context: context,
               enabled: isEnabled,
               isLoading: isLoading,
               text: 'Continue',
@@ -533,6 +536,7 @@ class DocumentFileState extends State<DocumentFilePage> {
           .every((file) => file.filePath != null);
 
       return CustomWidget.elevatedButton(
+        context: context,
         enabled: allFilesHavePath,
         isLoading: isLoading,
         text: 'Reupload Request',

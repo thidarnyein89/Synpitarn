@@ -323,6 +323,7 @@ class EditInformationState extends State<EditInformationPage> {
                                 label:
                                     'Total income (Salary + Overtime + Other Income) (Baht) (Baht)'),
                             CustomWidget.elevatedButton(
+                                context: context,
                                 enabled: inValidFields.isEmpty,
                                 isLoading: isLoading,
                                 text: 'Continue',

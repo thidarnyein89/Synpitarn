@@ -9,7 +9,7 @@ import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
-import 'package:synpitarn/data/app_config.dart';
+import 'package:synpitarn/services/language_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -160,7 +160,7 @@ class ProfileHomeState extends State<ProfileHomePage> with RouteAware {
                             ),
                             CustomWidget.verticalSpacing(),
                             Text(
-                              item.text,
+                              LanguageService.translateKey(context, item.text),
                               textAlign: TextAlign.center,
                               style: CustomStyle.body(),
                             )
@@ -227,7 +227,7 @@ class ProfileHomeState extends State<ProfileHomePage> with RouteAware {
                         ),
                         CustomWidget.verticalSpacing(),
                         Text(
-                          item.text,
+                          LanguageService.translateKey(context, item.text),
                           textAlign: TextAlign.center,
                           style: CustomStyle.body(),
                         )

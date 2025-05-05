@@ -229,6 +229,7 @@ class BranchAppointmentState extends State<BranchAppointmentPage> {
                                 },
                               ),
                               CustomWidget.elevatedButton(
+                                context: context,
                                 enabled: inValidFields.isEmpty,
                                 isLoading: isLoading,
                                 text: 'Make Appointment',

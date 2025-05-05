@@ -24,6 +24,7 @@ import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:remixicon/remixicon.dart';
+import 'package:synpitarn/services/language_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 class HomePage extends StatefulWidget {
@@ -48,17 +49,17 @@ class HomeState extends State<HomePage> {
   ];
 
   final List<Map<String, dynamic>> features = const [
-    {"icon": RemixIcons.hand_coin_line, "label": "Repayment"},
-    {"icon": Icons.edit_note, "label": "Loan Schedule"},
-    {"icon": Icons.description, "label": "Documents"},
-    {"icon": Icons.support_agent, "label": "Call Center"},
+    {"icon": RemixIcons.hand_coin_line, "label": "repayment"},
+    {"icon": Icons.edit_note, "label": "loanSchedule"},
+    {"icon": Icons.description, "label": "documents"},
+    {"icon": Icons.support_agent, "label": "callCenter"},
   ];
 
   List<Map<String, dynamic>> loanSteps = [
-    {'label': 'Apply', 'isActive': true},
-    {'label': 'Interview', 'isActive': false},
-    {'label': 'Pre-approved', 'isActive': false},
-    {'label': 'Disbursed', 'isActive': false},
+    {'label': 'apply', 'isActive': true},
+    {'label': 'interview', 'isActive': false},
+    {'label': 'preApproved', 'isActive': false},
+    {'label': 'disbursed', 'isActive': false},
   ];
 
   List<Loan> loanList = [];
@@ -115,10 +116,10 @@ class HomeState extends State<HomePage> {
       }
 
       loanSteps = [
-        {'label': 'Apply', 'isActive': true},
-        {'label': 'Interview', 'isActive': false},
-        {'label': 'Pre-approved', 'isActive': false},
-        {'label': 'Disbursed', 'isActive': false},
+        {'label': 'apply', 'isActive': true},
+        {'label': 'interview', 'isActive': false},
+        {'label': 'preApproved', 'isActive': false},
+        {'label': 'disbursed', 'isActive': false},
       ];
 
       if (LoanStatus.PENDING_STATUS.contains(applicationData.status)) {
@@ -365,7 +366,8 @@ class HomeState extends State<HomePage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        item['label'],
+                        LanguageService.translateKey(context, item['label']),
+                        overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 12,
@@ -425,7 +427,7 @@ class HomeState extends State<HomePage> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: createLoanStep(
-                      label: step['label'],
+                      label: LanguageService.translateKey(context, step['label']),
                       isActive: step['isActive'],
                     ),
                   );
@@ -466,7 +468,7 @@ class HomeState extends State<HomePage> {
     String loanStatus = CommonService.getLoanStatus(
         applicationData.status.toString());
     if (activeIndex == 1) {
-      loanStatus = loanSteps[activeIndex]["label"];
+      loanStatus = LanguageService.translateKey(context, loanSteps[activeIndex]["label"]);
     }
 
     return Padding(
@@ -668,6 +670,7 @@ class HomeState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CustomWidget.elevatedButton(
+                      context: context,
                       isLoading: false,
                       text: item['status'] == 0 ? 'Complete' : 'Pay Now',
                       isSmall: true,

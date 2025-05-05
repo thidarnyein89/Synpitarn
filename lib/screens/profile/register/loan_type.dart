@@ -277,6 +277,7 @@ class LoanTypeState extends State<LoanTypePage> {
                                 children: [
                                   Expanded(
                                     child: CustomWidget.elevatedButton(
+                                      context: context,
                                       enabled: true,
                                       isLoading: false,
                                       text: 'Previous',
@@ -286,6 +287,7 @@ class LoanTypeState extends State<LoanTypePage> {
                                   CustomWidget.horizontalSpacing(),
                                   Expanded(
                                     child: CustomWidget.elevatedButton(
+                                      context: context,
                                       enabled: inValidFields.isEmpty,
                                       isLoading: isLoading,
                                       text: 'Apply Loan',

@@ -184,6 +184,7 @@ class WorkPermitState extends State<WorkPermitPage> {
                 Padding(
                   padding: CustomStyle.pagePadding(),
                   child: CustomWidget.elevatedButton(
+                    context: context,
                     enabled: !isLoading,
                     isLoading: false,
                     text: 'Manual Fill',

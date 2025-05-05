@@ -134,8 +134,8 @@ class ChangePhoneOTPState extends State<ChangePhoneOTPPage> {
 
     UserResponse profileResponse =
         await ProfileRepository().changePhoneNumber(postBody, loginUser);
-
     if (profileResponse.response.code == 200) {
+      await setLoginUser(widget.loginUser);
       _timer.cancel();
       RouteService.goToReplaceNavigator(context, ProfileHomePage());
     } else if (profileResponse.response.code == 403) {
@@ -239,6 +239,7 @@ class ChangePhoneOTPState extends State<ChangePhoneOTPPage> {
                         ),
                       SizedBox(height: 20),
                       CustomWidget.elevatedButton(
+                          context: context,
                           enabled: isOTPValidate,
                           isLoading: isLoading,
                           text: 'Verify OTP Code',

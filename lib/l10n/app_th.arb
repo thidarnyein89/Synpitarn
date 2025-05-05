@@ -1,6 +1,83 @@
 {
+  "@mainPage": {
+    "description": "This values for main page"
+  },
   "welcomeMessage": "ยินดีต้อนรับสู่ สินพิธาน",
   "openAccount": "สมัครขอสินเชื่อ สมัครสินเชื่อด้วยบัญชีที่เปิดอยู่",
   "login": "เข้าสู่ระบบ",
-  "or": "หรือ"
+  "or": "หรือ",
+
+  "@loginPage": {
+    "description": "This values for login page"
+  },
+  "phoneNumber": "เบอร์โทรศัพท์",
+  "pin": "รหัสผ่าน",
+  "forgotPinCode": "ลืมรหัสผ่าน",
+  "continueText": "ถัดไป",
+  "doNotHaveAnAccount": "ยังไม่มีบัญชีใช่ไหม? ",
+  "clickHere": "คลิกที่นี่เพื่อสมัครสมาชิก",
+
+  "@homePage": {
+    "description": "This values for home page"
+  },
+  "repayment": "การชำระคืน",
+  "loanSchedule": "ตารางเวลาการให้กู้ยืม",
+  "callCenter": "คอลเซ็นเตอร์",
+
+  "apply": "สมัครและยื่นขอสินเชื่อ",
+  "interview": "การสัมภาษณ์",
+  "preApproved": "การอนุมัติเบื้องต้น",
+  "disbursed": "การเบิกจ่ายเงินกู้",
+
+  "@settingPage": {
+    "description": "This values for Setting page"
+  },
+  "changeLanguage": "เปลี่ยนภาษา",
+  "location": "พื้นที่ให้บริการ",
+  "nearestBranch": "สาขาใกล้ฉัน",
+  "nearestATM": "เอทีเอ็มใกล้ฉัน",
+  "helpAndSupport": "แผนที่",
+  "howToApplyLoan": "ขั้นตอนการขอเงินกู้",
+  "getToKnowUs": "รู้จักสินพิธาน",
+  "logout": "ออกจากระบบ",
+
+  "@bottomNavigation": {
+    "description": "This values for bottom Navigation"
+  },
+  "home": "หน้าแรก",
+  "loan": "เงินกู้",
+  "profile": "โปรไฟล์",
+
+  "@registerStep": {
+    "description": "This values for Register Step"
+  },
+  "workPermit": "ใบอนุญาตทำงาน",
+  "customerInformation": "ข้อมูลโปรไฟล์",
+  "requiredDocuments": "เอกสารที่จำเป็น",
+  "additionalInformation": "ข้อมูลเพิ่มเติม",
+  "loanType": "ประเภทเงินกู้",
+  "interviewAppointment": "การนัดสัมภาษณ์",
+  "changePhoneNumber": "เปลี่ยนหมายเลขโทรศัพท์",
+  "basicInformation": "ข้อมูลพื้นฐาน",
+  "additionalDocuments": "เอกสารเพิ่มเติม",
+
+  "@changePhoneNumberPage": {
+    "description": "This values for Change Phone Number page"
+  },
+  "currentPhoneNumber": "หมายเลขโทรศัพท์ปัจจุบัน",
+
+  "@common": {
+    "description": "This values for Button"
+  },
+  "pleaseWait": "กรุณารอสักครู่...",
+
+  "@common": {
+    "description": "This values for Setting, BottomNavigation"
+  },
+  "setting": "การตั้งค่า",
+
+  "@common": {
+    "description": "This values for homePage, registerStep"
+  },
+  "documents": "เอกสาร"
 }

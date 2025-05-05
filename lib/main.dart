@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/data/language.dart';
 import 'package:synpitarn/screens/auth/login.dart';
 import 'package:synpitarn/screens/auth/register.dart';
 import 'package:synpitarn/screens/components/language_dropdown.dart';
@@ -15,8 +16,14 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
+
   @override
   _MyAppState createState() => _MyAppState();
+
+  static void setLocale(BuildContext context, Locale newLocale) {
+    final state = context.findAncestorStateOfType<_MyAppState>();
+    state?.changeLanguage(newLocale);
+  }
 }
 
 class _MyAppState extends State<MyApp> {
@@ -36,7 +43,7 @@ class _MyAppState extends State<MyApp> {
     String language = await getLanguage();
     currentLocale = Locale(language);
 
-    setState(() { });
+    setState(() {});
   }
 
   void changeLanguage(Locale newLocale) {
@@ -56,11 +63,8 @@ class _MyAppState extends State<MyApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('en'),
-        Locale('my'),
-        Locale('th'),
-      ],
+      supportedLocales:
+          LanguageData.languages.map((lang) => lang.locale).toList(),
       locale: currentLocale,
       navigatorObservers: [routeObserver],
       debugShowCheckedModeBanner: false,
@@ -88,7 +92,6 @@ class _MyAppState extends State<MyApp> {
 }
 
 class MainPage extends StatefulWidget {
-
   Function(Locale)? onLanguageChanged;
 
   MainPage({this.onLanguageChanged});
@@ -98,7 +101,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-
   Locale? currentLocale;
 
   @override
@@ -111,7 +113,7 @@ class _MainPageState extends State<MainPage> {
     String language = await getLanguage();
     currentLocale = Locale(language);
 
-    setState(() { });
+    setState(() {});
   }
 
   @override
@@ -138,15 +140,18 @@ class _MainPageState extends State<MainPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Image.asset('assets/images/synpitarn.jpg', height: 180),
                     SizedBox(height: 20),
                     Text(
                       AppLocalizations.of(context)!.welcomeMessage,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: CustomStyle.primary_color),
+                          color: CustomStyle.primary_color,
+                      ),
                     ),
                     SizedBox(height: 100),
                     ElevatedButton(
@@ -166,6 +171,7 @@ class _MainPageState extends State<MainPage> {
                         ),
                       ),
                       child: Text(
+                        textAlign: TextAlign.center,
                         AppLocalizations.of(context)!.openAccount,
                         style: TextStyle(color: Colors.white),
                       ),
@@ -189,6 +195,7 @@ class _MainPageState extends State<MainPage> {
                         ),
                       ),
                       child: Text(
+                        textAlign: TextAlign.center,
                         AppLocalizations.of(context)!.login,
                         style: TextStyle(color: Colors.white),
                       ),

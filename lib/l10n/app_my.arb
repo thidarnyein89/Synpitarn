@@ -1,6 +1,87 @@
 {
+   "@mainPage": {
+     "description": "This values for main page"
+   },
   "welcomeMessage": "Syn Pitarn (ဆင်ပိတန်) မှ ကြိုဆိုပါသည်",
   "openAccount": "အကောင့်ဖွင့်၍ ချေးငွေလျှောက်ရန်",
   "login": "သင့်အကောင့်ထဲဝင်ရန်",
-  "or": "သို့မဟုတ်"
+  "or": "သို့မဟုတ်",
+
+  "@loginPage": {
+    "description": "This values for login page"
+  },
+  "pin": "လျို့ဝှက် PIN နံပါတ်",
+  "forgotPinCode": "စကားဝှက်မေ့နေပါသလား",
+  "continueText": "ဆက်လက်၍",
+  "doNotHaveAnAccount": "အကောင့်မရှိသေးဘူးလား? ",
+  "clickHere": "စာရင်းသွင်းပါ",
+
+  "@homePage": {
+    "description": "This values for home page"
+  },
+  "repayment": "ငွေပြန်လည်ပေးချေမှု",
+  "loanSchedule": "ချေးငွေလုပ်ငန်းစဥ်အချိန်ဇယား",
+  "callCenter": "ဝန်ဆောင်မှုဌာန",
+
+  "apply": "အကောင့်ဖွင့်၍ ချေးငွေလျှောက်ခြင်း",
+  "interview": "အင်တာဗျူးဖြေဆိုခြင်း",
+  "preApproved": "ချေးငွေကြိုတင်အတည်ပြုခြင်း",
+  "disbursed": "ချေးငွေထုတ်ချေးခြင်း",
+
+  "@settingPage": {
+    "description": "This values for Setting page"
+  },
+  "changeLanguage": "ဘာသာစကားပြောင်းရန်",
+  "location": "တည်နေရာ",
+  "nearestBranch": "အနီးဆုံးရုံးခွဲ",
+  "nearestATM": "အနီးဆုံး ATM",
+  "helpAndSupport": "App လမ်းညွှန်",
+  "howToApplyLoan": "ချေးငွေလျှောက်ထားခြင်းအဆင့်များ",
+  "getToKnowUs": "ကျွန်ုပ်တို့အကြောင်းသိရှိရန်",
+  "logout": "အကောင့်မှထွက်ရန်",
+
+  "@bottomNavigation": {
+    "description": "This values for bottom Navigation"
+  },
+  "home": "မူလစာမျက်နှာ",
+  "loan": "ချေးငွေ",
+  "profile": "ကိုယ်ရေးအကျဉ်း",
+
+  "@registerStep": {
+    "description": "This values for Register Step"
+  },
+  "workPermit": "အလုပ်ပါမစ်",
+  "customerInformation": "ကိုယ်ရေးအချက်အလက်",
+  "requiredDocuments": "လိုအပ်သောစာရွက်စာတမ်းများ",
+  "additionalInformation": "ထပ်ဆောင်းအချက်အလက်",
+  "loanType": "ချေးငွေအမျိုးအစား",
+  "interviewAppointment": "အင်တာဗျူးရက်ချိန်း",
+  "changePhoneNumber": "ဖုန်းနံပါတ်ပြင်ရန်",
+  "basicInformation": "အခြေခံအချက်အလက်",
+  "additionalDocuments": "ထပ်ဆောင်းစာရွက်စာတမ်းများ",
+
+  "@changePhoneNumberPage": {
+    "description": "This values for Change Phone Number page"
+  },
+  "currentPhoneNumber": "လက်ရှိ ဖုန်းနံပါတ်",
+
+  "@common": {
+    "description": "This values for Button"
+  },
+  "pleaseWait": "ကျေးဇူးပြု၍ ခဏစောင့်ပါ...",
+
+  "@common": {
+    "description": "This values for Setting, BottomNavigation"
+  },
+  "setting": "ဆက်တင်",
+
+  "@common": {
+    "description": "This values for homePage, registerStep"
+  },
+  "documents": "စာရွက်စာတမ်းများ",
+
+  "@common": {
+    "description": "This values for loginPage, changePhoneNumberPage"
+  },
+  "phoneNumber": "ဖုန်းနံပါတ်"
 }

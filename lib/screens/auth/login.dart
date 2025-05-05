@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/models/default/default_response.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/models/User_response.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
-import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/screens/auth/register.dart';
 import 'package:synpitarn/screens/auth/forget_password.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -117,18 +115,19 @@ class LoginState extends State<LoginPage> {
                         height: 180,
                       ),
                       Text(
-                        'Welcome to Synpitarn',
+                        textAlign: TextAlign.center,
+                        AppLocalizations.of(context)!.welcomeMessage,
                         style: CustomStyle.titleBold(),
                       ),
                       CustomWidget.verticalSpacing(),
                       CustomWidget.verticalSpacing(),
                       CustomWidget.phoneTextField(
                           controller: phoneController,
-                          label: 'Phone number',
+                          label: AppLocalizations.of(context)!.phoneNumber,
                           errorText: phoneError),
                       CustomWidget.pinTextField(
                           controller: pinController,
-                          label: 'PIN',
+                          label: AppLocalizations.of(context)!.pin,
                           isObscured: _isObscured,
                           errorText: pinError,
                           onPressed: () {
@@ -148,16 +147,17 @@ class LoginState extends State<LoginPage> {
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: Text(
-                            "Forgot PIN code",
+                            AppLocalizations.of(context)!.forgotPinCode,
                             style: CustomStyle.body(),
                           ),
                         ),
                       ),
                       CustomWidget.verticalSpacing(),
                       CustomWidget.elevatedButton(
+                          context: context,
                           enabled: isPhoneValidate && isPinValidate,
                           isLoading: isLoading,
-                          text: 'Continue',
+                          text: AppLocalizations.of(context)!.continueText,
                           onPressed: handleLogin),
                       GestureDetector(
                         onTap: () {
@@ -170,11 +170,11 @@ class LoginState extends State<LoginPage> {
                         },
                         child: RichText(
                           text: TextSpan(
-                            text: "Don't have an account, ",
+                            text: AppLocalizations.of(context)!.doNotHaveAnAccount,
                             style: CustomStyle.body(),
                             children: [
                               TextSpan(
-                                text: "click here",
+                                text: AppLocalizations.of(context)!.clickHere,
                                 style: CustomStyle.bodyUnderline(),
                               ),
                             ],

@@ -1,6 +1,83 @@
 {
+  "@mainPage": {
+    "description": "This values for main page"
+  },
   "welcomeMessage": "Welcome to SynPitarn",
   "openAccount": "Apply Loan with open account",
   "login": "Existing User?",
-  "or": "OR"
+  "or": "OR",
+
+  "@loginPage": {
+    "description": "This values for login page"
+  },
+  "phoneNumber": "Phone number",
+  "pin": "PIN",
+  "forgotPinCode": "Forgot PIN code",
+  "continueText": "Continue",
+  "doNotHaveAnAccount": "Don't have an account, ",
+  "clickHere": "click here",
+
+  "@homePage": {
+    "description": "This values for home page"
+  },
+  "repayment": "Repayment",
+  "loanSchedule": "Loan Schedule",
+  "callCenter": "Call Center",
+
+  "apply": "Apply",
+  "interview": "Interview",
+  "preApproved": "Pre-approved",
+  "disbursed": "Disbursed",
+
+  "@settingPage": {
+    "description": "This values for Setting page"
+  },
+  "changeLanguage": "Change Language",
+  "location": "Location",
+  "nearestBranch": "Nearest Branch",
+  "nearestATM": "Nearest ATM",
+  "helpAndSupport": "Help & Support",
+  "howToApplyLoan": "How To Apply For A Loan",
+  "getToKnowUs": "Get to know us",
+  "logout": "Logout",
+
+  "@bottomNavigation": {
+    "description": "This values for bottom Navigation"
+  },
+  "home": "Home",
+  "loan": "Loan",
+  "profile": "Profile",
+
+  "@registerStep": {
+    "description": "This values for Register Step"
+  },
+  "workPermit": "Work Permit",
+  "customerInformation": "Customer Information",
+  "requiredDocuments": "Required Documents",
+  "additionalInformation": "Additional Information",
+  "loanType": "Loan Type",
+  "interviewAppointment": "Interview Appointment",
+  "changePhoneNumber": "Change Phone Number",
+  "basicInformation": "Basic Information",
+  "additionalDocuments": "Additional Documents",
+
+  "@changePhoneNumberPage": {
+    "description": "This values for Change Phone Number page"
+  },
+  "currentPhoneNumber": "Current Phone Number",
+
+  "@common": {
+    "description": "This values for Button"
+  },
+  "pleaseWait": "Please Wait...",
+
+  "@common": {
+    "description": "This values for Setting, BottomNavigation"
+  },
+  "setting": "Setting",
+
+  "@common": {
+    "description": "This values for homePage, registerStep"
+  },
+  "documents": "Documents"
 }

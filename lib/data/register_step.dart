@@ -35,38 +35,38 @@ class StepData {
     stepList.add(
       StepData(
           icon: Icons.qr_code_scanner_outlined,
-          text: 'Work Permit',
+          text: 'workPermit',
           page: WorkPermitPage()),
     );
 
     stepList.add(StepData(
         loanFormState: 'qr_scan',
         icon: Icons.person_2_outlined,
-        text: 'Customer Information',
+        text: 'customerInformation',
         page: CustomerInformationPage()));
 
     stepList.add(StepData(
         loanFormState: 'customer_information',
         icon: Icons.upload_file_outlined,
-        text: 'Required Documents',
+        text: 'requiredDocuments',
         page: DocumentFilePage()));
 
     stepList.add(StepData(
         loanFormState: 'required_documents',
         icon: Icons.assignment_outlined,
-        text: 'Additional Information',
+        text: 'additionalInformation',
         page: Information2Page()));
 
     stepList.add(StepData(
         loanFormState: 'additional_information',
         icon: Icons.category_outlined,
-        text: 'Loan Type',
+        text: 'loanType',
         page: LoanTypePage()));
 
     stepList.add(StepData(
         loanFormState: 'choose_loan_type',
         icon: Icons.calendar_month_outlined,
-        text: 'Interview Appointment',
+        text: 'interviewAppointment',
         page: InterviewAppointmentPage(applicationData: null)));
 
     return stepList;
@@ -78,28 +78,28 @@ class StepData {
     stepList.add(
       StepData(
           icon: Icons.phone_outlined,
-          text: 'Change Phone Number',
+          text: 'changePhoneNumber',
           page: ChangePhoneNumberPage()),
     );
 
     stepList.add(
       StepData(
           icon: Icons.person_2_outlined,
-          text: 'Basic Information',
+          text: 'basicInformation',
           page: BasicInformationPage()),
     );
 
     stepList.add(
       StepData(
           icon: Icons.upload_file_outlined,
-          text: 'Documents',
+          text: 'documents',
           page: DocumentFilePage()),
     );
 
     stepList.add(
       StepData(
           icon: Icons.upload_file_outlined,
-          text: 'Additional Documents',
+          text: 'additionalDocuments',
           page: AdditionalDocumentPage()),
     );
 
@@ -112,14 +112,14 @@ class StepData {
     stepList.add(
       StepData(
           icon: Icons.upload_file_outlined,
-          text: 'Documents',
+          text: 'documents',
           page: DocumentFilePage()),
     );
 
     stepList.add(
       StepData(
           icon: Icons.upload_file_outlined,
-          text: 'Additional Documents',
+          text: 'additionalDocuments',
           page: AdditionalDocumentPage()),
     );
 

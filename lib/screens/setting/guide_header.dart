@@ -57,7 +57,7 @@ class GuideHeaderState extends State<GuideHeaderPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Step-by-Step Guide", style: CustomStyle.titleBold()),
+          Text("How To Apply For A Loan", style: CustomStyle.titleBold()),
           EasyStepper(
             activeStep: activeStep,
             maxReachedStep: 3,

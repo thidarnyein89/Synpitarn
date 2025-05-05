@@ -332,6 +332,7 @@ class CustomerInformationState extends State<CustomerInformationPage> {
                                 controller: textControllers['testing']!,
                                 label: 'Testing'),
                             CustomWidget.elevatedButton(
+                                context: context,
                                 enabled: inValidFields.isEmpty,
                                 isLoading: isLoading,
                                 text: 'Continue',

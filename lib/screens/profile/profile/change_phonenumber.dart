@@ -1,27 +1,18 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/models/User_response.dart';
-import 'package:synpitarn/models/data.dart';
-import 'package:synpitarn/models/data_response.dart';
-import 'package:synpitarn/models/default/default_data.dart';
-import 'package:synpitarn/models/default/default_response.dart';
-import 'package:synpitarn/repositories/data_repository.dart';
-import 'package:synpitarn/repositories/default_repository.dart';
 import 'package:synpitarn/repositories/profile_repository.dart';
-import 'package:synpitarn/screens/auth/otp.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
-import 'package:synpitarn/repositories/loan_repository.dart';
-import 'package:synpitarn/screens/components/nrc.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/profile/profile/change_phone_otp.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/route_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChangePhoneNumberPage extends StatefulWidget {
   const ChangePhoneNumberPage({super.key});
@@ -99,7 +90,8 @@ class ChangePhoneNumberState extends State<ChangePhoneNumberPage> {
   }
 
   Future<void> showErrorDialog(String errorMessage) async {
-    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+    await CustomWidget.showDialogWithoutStyle(
+        context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }
@@ -108,7 +100,8 @@ class ChangePhoneNumberState extends State<ChangePhoneNumberPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: 'Change Phone Number'),
+      appBar:
+          PageAppBar(title: AppLocalizations.of(context)!.changePhoneNumber),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Stack(children: [
@@ -131,16 +124,19 @@ class ChangePhoneNumberState extends State<ChangePhoneNumberPage> {
                         children: [
                           CustomWidget.phoneTextField(
                               controller: currentPhoneController,
-                              label: 'Current Phone number',
+                              label: AppLocalizations.of(context)!
+                                  .currentPhoneNumber,
                               readOnly: true),
                           CustomWidget.phoneTextField(
                               controller: phoneController,
-                              label: 'Phone number',
+                              label: AppLocalizations.of(context)!.phoneNumber,
                               errorText: phoneError),
                           CustomWidget.elevatedButton(
+                              context: context,
                               enabled: isPhoneValidate,
                               isLoading: isLoading,
-                              text: 'Change Phone Number',
+                              text: AppLocalizations.of(context)!
+                                  .changePhoneNumber,
                               onPressed: handleContinue),
                         ],
                       ),

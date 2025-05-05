@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/models/data.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CustomWidget {
   static Widget loading() {
@@ -252,6 +253,7 @@ class CustomWidget {
   }
 
   static Widget elevatedButton({
+    required BuildContext context,
     bool? enabled = true,
     bool isLoading = false,
     String? text,
@@ -288,7 +290,7 @@ class CustomWidget {
                         ),
                         SizedBox(width: 10),
                         Text(
-                          'Please Wait...',
+                          AppLocalizations.of(context)!.pleaseWait,
                           style: CustomStyle.bodyWhiteColor(),
                         ),
                       ],
@@ -316,6 +318,7 @@ class CustomWidget {
   }
 
   static Widget elevatedButtonOutline({
+    required BuildContext context,
     bool? enabled = true,
     bool isLoading = false,
     String? text,
@@ -326,9 +329,9 @@ class CustomWidget {
     return Column(
       children: [
         ElevatedButton(
-          onPressed: enabled! && !isLoading! ? onPressed : null,
+          onPressed: enabled! && !isLoading ? onPressed : null,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white, // Optional: Background color
+            backgroundColor: Colors.white,
             // foregroundColor: Colors.blue,
             minimumSize:
                 isSmall == false ? Size(double.infinity, 50) : Size(120, 50),
@@ -356,7 +359,7 @@ class CustomWidget {
                         ),
                         SizedBox(width: 10),
                         Text(
-                          'Please Wait...',
+                          AppLocalizations.of(context)!.pleaseWait,
                           style: CustomStyle.bodyWhiteColor(),
                         ),
                       ],

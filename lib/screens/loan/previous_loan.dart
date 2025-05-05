@@ -105,6 +105,7 @@ class PreviousLoanState extends State<PreviousLoanPage> {
           ),
         if ((widget.loan?.schedules ?? []).isNotEmpty)
           CustomWidget.elevatedButton(
+            context: context,
             text: 'View Repayment Schedule',
             onPressed: handleViewRepayment,
           ),

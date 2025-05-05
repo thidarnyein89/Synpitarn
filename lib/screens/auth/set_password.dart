@@ -173,6 +173,7 @@ class SetPasswordState extends State<SetPasswordPage> {
                             });
                           }),
                       CustomWidget.elevatedButton(
+                          context: context,
                           enabled: isPin1Validate && isPin2Validate,
                           isLoading: isLoading,
                           text: 'Set New Password',

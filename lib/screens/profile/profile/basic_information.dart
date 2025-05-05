@@ -150,6 +150,7 @@ class BasicInformationState extends State<BasicInformationPage>
                                   CommonService.formatWithThousandSeparator(loginUser.salary),
                                 ),
                                 CustomWidget.elevatedButton(
+                                  context: context,
                                   text: 'Edit Information',
                                   onPressed: handleEdit,
                                 ),

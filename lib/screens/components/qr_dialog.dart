@@ -93,6 +93,7 @@ class QRDialog {
                   children: [
                     Expanded(
                       child: CustomWidget.elevatedButton(
+                        context: context,
                         enabled: !isDownloading,
                         text: 'Download',
                         onPressed: handleDownload,
@@ -101,6 +102,7 @@ class QRDialog {
                     SizedBox(width: 10),
                     Expanded(
                       child: CustomWidget.elevatedButton(
+                        context: context,
                         text: 'Ok',
                         onPressed: () => Navigator.of(context).pop(),
                       ),
