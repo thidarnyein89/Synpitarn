@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class QRDialog {
   static void showQRDialog(
@@ -20,7 +21,7 @@ class QRDialog {
               setState(() {
                 isDownloading = true;
                 isFinish = false;
-                downloadMessage = "Downloading...";
+                downloadMessage = AppLocalizations.of(context)!.downloading;
               });
 
               try {
@@ -34,7 +35,7 @@ class QRDialog {
                   },
                   onDownloadCompleted: (path) {
                     setState(() {
-                      downloadMessage = "Download completed!";
+                      downloadMessage = AppLocalizations.of(context)!.downloadComplete;
                       isDownloading = false;
                       isFinish = true;
                     });
@@ -95,7 +96,7 @@ class QRDialog {
                       child: CustomWidget.elevatedButton(
                         context: context,
                         enabled: !isDownloading,
-                        text: 'Download',
+                        text: AppLocalizations.of(context)!.download,
                         onPressed: handleDownload,
                       ),
                     ),
@@ -103,7 +104,7 @@ class QRDialog {
                     Expanded(
                       child: CustomWidget.elevatedButton(
                         context: context,
-                        text: 'Ok',
+                        text: AppLocalizations.of(context)!.ok,
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                     ),

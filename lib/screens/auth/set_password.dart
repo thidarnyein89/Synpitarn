@@ -6,6 +6,7 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SetPasswordPage extends StatefulWidget {
   User loginUser;
@@ -86,7 +87,7 @@ class SetPasswordState extends State<SetPasswordPage> {
         List<Map<String, dynamic>> msg = [];
 
         msg.add({
-          "text": "Please remember your phone number which is your username ",
+          "text": AppLocalizations.of(context)!.rememberPhonePincode1,
           "style": TextStyle(color: Colors.black)
         });
         msg.add({
@@ -94,7 +95,7 @@ class SetPasswordState extends State<SetPasswordPage> {
           "style": TextStyle(color: Colors.black, fontWeight: FontWeight.bold)
         });
         msg.add({
-          "text": " and your PIN code ",
+          "text": AppLocalizations.of(context)!.rememberPhonePincode2,
           "style": TextStyle(color: Colors.black)
         });
         msg.add({
@@ -102,7 +103,7 @@ class SetPasswordState extends State<SetPasswordPage> {
           "style": TextStyle(color: Colors.black, fontWeight: FontWeight.bold)
         });
         msg.add({
-          "text": " to login to your account at any time.",
+          "text": AppLocalizations.of(context)!.rememberPhonePincode3,
           "style": TextStyle(color: Colors.black)
         });
 
@@ -140,7 +141,7 @@ class SetPasswordState extends State<SetPasswordPage> {
                         height: 180,
                       ),
                       Text(
-                        'Set Your Pin Code',
+                        AppLocalizations.of(context)!.setPincode,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -150,11 +151,11 @@ class SetPasswordState extends State<SetPasswordPage> {
                       CustomWidget.verticalSpacing(),
                       CustomWidget.phoneTextField(
                           controller: phoneController,
-                          label: 'Phone number',
+                          label: AppLocalizations.of(context)!.phoneNumber,
                           readOnly: true),
                       CustomWidget.pinTextField(
                           controller: pin1Controller,
-                          label: 'PIN',
+                          label: AppLocalizations.of(context)!.pin,
                           errorText: pin1Error,
                           isObscured: _isObscured1,
                           onPressed: () {
@@ -164,7 +165,7 @@ class SetPasswordState extends State<SetPasswordPage> {
                           }),
                       CustomWidget.pinTextField(
                           controller: pin2Controller,
-                          label: 'Confirm PIN',
+                          label: AppLocalizations.of(context)!.confirmPin,
                           errorText: pin2Error,
                           isObscured: _isObscured2,
                           onPressed: () {
@@ -176,7 +177,7 @@ class SetPasswordState extends State<SetPasswordPage> {
                           context: context,
                           enabled: isPin1Validate && isPin2Validate,
                           isLoading: isLoading,
-                          text: 'Set New Password',
+                          text: AppLocalizations.of(context)!.setNewPassword,
                           onPressed: handleSetPassowrd),
                     ],
                   ),

@@ -26,6 +26,7 @@ import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:remixicon/remixicon.dart';
 import 'package:synpitarn/services/language_service.dart';
 import 'package:synpitarn/services/route_service.dart';
+import 'package:synpitarn/models/qrcode.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -41,6 +42,7 @@ class HomeState extends State<HomePage> {
 
   User loginUser = User.defaultUser();
   Loan applicationData = Loan.defaultLoan();
+  QrCode qrcode = QrCode.defaultQrCode();
 
   final List<String> images = [
     'assets/images/slider1.jpeg',
@@ -185,12 +187,14 @@ class HomeState extends State<HomePage> {
               'amount': CommonService.formatWithThousandSeparator(loanSchedule.pmtAmount),
               'status': loanSchedule.isPaymentDone == 0 ? 'Unpaid' : 'Paid',
               'dayCount': dayCount,
-              'isLate': isLate,
-              "qrCodePhotoName": "QR_${loanResponse.data[0].contractNo}",
-              'qrCodePhoto': loanResponse.data[0].qrcode.photo,
-              'qrCodeString': loanResponse.data[0].qrcode.string,
+              'isLate': isLate
             };
           }).toList();
+
+          if(loanResponse.data[0].qrcode != null) {
+            qrcode.photo = loanResponse.data[0].qrcode.photo;
+            qrcode.string = loanResponse.data[0].qrcode.string;
+          }
 
           var lateRepayment = repaymentList.firstWhere(
             (repayment) => repayment['isLate'] == true,
@@ -334,13 +338,13 @@ class HomeState extends State<HomePage> {
                 borderRadius: BorderRadius.circular(16),
                 onTap: () {
                   if (index == 0) {
-                    if (repaymentList.isEmpty) {
-                      showErrorDialog(Message.NO_CURRENT_REPAYMENT);
+                    if (qrcode.photo == "") {
+                      showErrorDialog(Message.NO_CURRENT_LOAN);
                     } else {
                       QRDialog.showQRDialog(
                         context,
-                        repaymentList[0]['qrCodePhoto'],
-                        repaymentList[0]['qrCodePhotoName'],
+                        qrcode.photo,
+                        qrcode.string,
                       );
                     }
                   }

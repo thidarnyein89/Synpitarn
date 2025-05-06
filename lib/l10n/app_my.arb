@@ -1,87 +1,71 @@
 {
-   "@mainPage": {
-     "description": "This values for main page"
-   },
-  "welcomeMessage": "Syn Pitarn (ဆင်ပိတန်) မှ ကြိုဆိုပါသည်",
-  "openAccount": "အကောင့်ဖွင့်၍ ချေးငွေလျှောက်ရန်",
-  "login": "သင့်အကောင့်ထဲဝင်ရန်",
-  "or": "သို့မဟုတ်",
-
-  "@loginPage": {
-    "description": "This values for login page"
-  },
-  "pin": "လျို့ဝှက် PIN နံပါတ်",
-  "forgotPinCode": "စကားဝှက်မေ့နေပါသလား",
-  "continueText": "ဆက်လက်၍",
-  "doNotHaveAnAccount": "အကောင့်မရှိသေးဘူးလား? ",
-  "clickHere": "စာရင်းသွင်းပါ",
-
-  "@homePage": {
-    "description": "This values for home page"
-  },
-  "repayment": "ငွေပြန်လည်ပေးချေမှု",
-  "loanSchedule": "ချေးငွေလုပ်ငန်းစဥ်အချိန်ဇယား",
-  "callCenter": "ဝန်ဆောင်မှုဌာန",
-
-  "apply": "အကောင့်ဖွင့်၍ ချေးငွေလျှောက်ခြင်း",
-  "interview": "အင်တာဗျူးဖြေဆိုခြင်း",
-  "preApproved": "ချေးငွေကြိုတင်အတည်ပြုခြင်း",
-  "disbursed": "ချေးငွေထုတ်ချေးခြင်း",
-
-  "@settingPage": {
-    "description": "This values for Setting page"
-  },
-  "changeLanguage": "ဘာသာစကားပြောင်းရန်",
-  "location": "တည်နေရာ",
-  "nearestBranch": "အနီးဆုံးရုံးခွဲ",
-  "nearestATM": "အနီးဆုံး ATM",
-  "helpAndSupport": "App လမ်းညွှန်",
-  "howToApplyLoan": "ချေးငွေလျှောက်ထားခြင်းအဆင့်များ",
-  "getToKnowUs": "ကျွန်ုပ်တို့အကြောင်းသိရှိရန်",
-  "logout": "အကောင့်မှထွက်ရန်",
-
-  "@bottomNavigation": {
-    "description": "This values for bottom Navigation"
-  },
-  "home": "မူလစာမျက်နှာ",
-  "loan": "ချေးငွေ",
-  "profile": "ကိုယ်ရေးအကျဉ်း",
-
-  "@registerStep": {
-    "description": "This values for Register Step"
-  },
-  "workPermit": "အလုပ်ပါမစ်",
-  "customerInformation": "ကိုယ်ရေးအချက်အလက်",
-  "requiredDocuments": "လိုအပ်သောစာရွက်စာတမ်းများ",
-  "additionalInformation": "ထပ်ဆောင်းအချက်အလက်",
-  "loanType": "ချေးငွေအမျိုးအစား",
-  "interviewAppointment": "အင်တာဗျူးရက်ချိန်း",
-  "changePhoneNumber": "ဖုန်းနံပါတ်ပြင်ရန်",
-  "basicInformation": "အခြေခံအချက်အလက်",
   "additionalDocuments": "ထပ်ဆောင်းစာရွက်စာတမ်းများ",
-
-  "@changePhoneNumberPage": {
-    "description": "This values for Change Phone Number page"
-  },
+  "additionalInformation": "ထပ်ဆောင်းအချက်အလက်",
+  "apply": "အကောင့်ဖွင့်၍ ချေးငွေလျှောက်ခြင်း",
+  "basicInformation": "အခြေခံအချက်အလက်",
+  "callCenter": "ဝန်ဆောင်မှုဌာန",
+  "cancel": "ပယ်ဖျက်သည်",
+  "changeLanguage": "ဘာသာစကားပြောင်းရန်",
+  "changePhoneNumber": "ဖုန်းနံပါတ်ပြင်ရန်",
+  "citizen": "နိုင်ငံသား",
+  "clickHere": "စာရင်းသွင်းပါ",
+  "confirmPin": "လျှို့ဝှက် PIN အတည်ပြုခြင်း",
+  "continueText": "ဆက်လက်၍",
   "currentPhoneNumber": "လက်ရှိ ဖုန်းနံပါတ်",
-
-  "@common": {
-    "description": "This values for Button"
-  },
-  "pleaseWait": "ကျေးဇူးပြု၍ ခဏစောင့်ပါ...",
-
-  "@common": {
-    "description": "This values for Setting, BottomNavigation"
-  },
-  "setting": "ဆက်တင်",
-
-  "@common": {
-    "description": "This values for homePage, registerStep"
-  },
+  "customerInformation": "ကိုယ်ရေးအချက်အလက်",
+  "disbursed": "ချေးငွေထုတ်ချေးခြင်း",
+  "doNotHaveAnAccount": "အကောင့်မရှိသေးဘူးလား? ",
   "documents": "စာရွက်စာတမ်းများ",
-
-  "@common": {
-    "description": "This values for loginPage, changePhoneNumberPage"
-  },
-  "phoneNumber": "ဖုန်းနံပါတ်"
+  "download": "ဒေါင်းလုဒ်ရန်",
+  "downloadComplete": "ဒေါင်းလုဒ်ပြီးဆုံးပါပြီ",
+  "downloading": "ဒေါင်းလုဒ်ဆွဲနေသည်...",
+  "existingUser": "သင့်အကောင့်ထဲဝင်ရန်",
+  "forgotPinCode": "စကားဝှက်မေ့နေပါသလား",
+  "getToKnowUs": "ကျွန်ုပ်တို့အကြောင်းသိရှိရန်",
+  "gotIt": "နားလည် သဘောပေါက်သည်",
+  "helpAndSupport": "App လမ်းညွှန်",
+  "home": "မူလစာမျက်နှာ",
+  "howToApplyLoan": "ချေးငွေလျှောက်ထားခြင်းအဆင့်များ",
+  "interview": "အင်တာဗျူးဖြေဆိုခြင်း",
+  "interviewAppointment": "အင်တာဗျူးရက်ချိန်း",
+  "loan": "ချေးငွေ",
+  "loanSchedule": "ချေးငွေလုပ်ငန်းစဥ်အချိန်ဇယား",
+  "loanType": "ချေးငွေအမျိုးအစား",
+  "location": "တည်နေရာ",
+  "login": "သင့်အကောင့်ထဲဝင်ရန်",
+  "logout": "အကောင့်မှထွက်ရန်",
+  "nearestATM": "အနီးဆုံး ATM",
+  "nearestBranch": "အနီးဆုံးရုံးခွဲ",
+  "nrcNumber": "မှတ်ပုံတင်အမှတ်",
+  "ok": "အဆင်ပြေသည်",
+  "openAccount": "အကောင့်ဖွင့်၍ ချေးငွေလျှောက်ရန်",
+  "or": "သို့မဟုတ်",
+  "otpCodeContent": "ပို့ပေးသော ဂဏန်း ၆ လုံးကို ထည့်သွင်း၍ ကျေးဇူးပြုပြီး အောက်တွင်ရှိသော \"အတည်ပြု\" ကို နှိပ်ပါ။",
+  "otpExpireMessage": "OTP ကုဒ်သည် {minutes}:{seconds} မိနစ်တွင် သက်တမ်းကုန်မည်ဖြစ်သည်။",
+  "otpNotReceived": "OTP မရရှိဘူးလား? ",
+  "passport": "ပတ်စ်ပိုစ့်နံပါတ်",
+  "phoneNumber": "ဖုန်းနံပါတ်",
+  "pin": "လျို့ဝှက် PIN နံပါတ်",
+  "pleaseWait": "ကျေးဇူးပြု၍ ခဏစောင့်ပါ...",
+  "preApproved": "ချေးငွေကြိုတင်အတည်ပြုခြင်း",
+  "previous": "ယခင်က",
+  "profile": "ကိုယ်ရေးအကျဉ်း",
+  "rememberPhonePincode1": "သင်၏ Username မှာ သင့်ဖုန်းနံပါတ် ",
+  "rememberPhonePincode2": " ဖြစ်ပါသည်။ သင်၏ PIN Code မှာ ",
+  "rememberPhonePincode3": " ဖြစ်ပါသည်။ အထက်ပါ အချက်အလက်များကို အသုံးပြု၍ သင့်အကောင့်ထဲသို့ အချိန်မရွေးဝင်ရောက်နိုင်ပါသည်။",
+  "repayment": "ငွေပြန်လည်ပေးချေမှု",
+  "requiredDocuments": "လိုအပ်သောစာရွက်စာတမ်းများ",
+  "resendOtpCode": "OTP ကုဒ်ကို ပြန်ပို့ပေးပါ။",
+  "resetPinCode": "သင်၏ လျို့ဝှက် PIN နံပါတ်ကို ပြန်လည်ပြင်ဆင်ရန်",
+  "setNewPassword": "စကားဝှက်အသစ် သတ်မှတ်ပါ",
+  "setPincode": "သင့် PIN နံပါတ်ကို သတ်မှတ်ပါ",
+  "setting": "ဆက်တင်",
+  "state": "ပြည်နယ်",
+  "termConditionAgree": "ကျွန်ပ်သည် Syn Pitarn (ဆင်ပိတန်) ကုမ္ပဏီမှ ချမှတ်ထားသော အချက်အလက်များကို သဘောတူပါသည်။",
+  "termConditionMessage": "ဆက်လက်၍နှိပ်လိုက်ပါက ကျွန်ုပ်တို့ ကုမ္ပဏီမှ ချမှတ်ထားသော အချက်အလက်များကို သဘောတူ ရပါမည်။ သဘောတူပြီးပါက သင် အကောင့်ဖွင့်ထားသောဖုန်းသို့ OTP Code ပို့ပေးပါမည်။",
+  "township": "မြို့နယ်",
+  "verifyOTPCode": "OTP ကုဒ်ကိုအတည်ပြုပါ",
+  "welcomeDescription": "(ဆင်ပိတန်) သည် ဤဖုန်းနံပါတ်ကို အဓိကအထောက်အထား စိစစ်ခြင်းနည်းလမ်းအဖြစ် အသုံးပြုလိမ့်မည်။ သင်အမြဲအသုံးပြုနေသော သင်နှင့်အတူရှိနေသော ဖုန်းနံပါတ်ကိုဖြည့်ပါ။",
+  "welcomeMessage": "Syn Pitarn (ဆင်ပိတန်) မှ ကြိုဆိုပါသည်",
+  "workPermit": "အလုပ်ပါမစ်"
 }

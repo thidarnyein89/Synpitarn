@@ -1,83 +1,71 @@
 {
-  "@mainPage": {
-    "description": "This values for main page"
-  },
-  "welcomeMessage": "Welcome to SynPitarn",
-  "openAccount": "Apply Loan with open account",
+  "additionalDocuments": "Additional Documents",
+  "additionalInformation": "Additional Information",
+  "apply": "Apply",
+  "basicInformation": "Basic Information",
+  "callCenter": "Call Center",
+  "cancel": "Cancel",
+  "changeLanguage": "Change Language",
+  "changePhoneNumber": "Change Phone Number",
+  "citizen": "Citizen",
+  "clickHere": "click here",
+  "confirmPin": "Confirm PIN",
+  "continueText": "Continue",
+  "currentPhoneNumber": "Current Phone Number",
+  "customerInformation": "Customer Information",
+  "disbursed": "Disbursed",
+  "doNotHaveAnAccount": "Don't have an account, ",
+  "documents": "Documents",
+  "download": "Download",
+  "downloadComplete": "Download completed",
+  "downloading": "Downloading...",
+  "existingUser": "Existing User?",
+  "forgotPinCode": "Forgot PIN code",
+  "getToKnowUs": "Get to know us",
+  "gotIt": "Got it",
+  "helpAndSupport": "Help & Support",
+  "home": "Home",
+  "howToApplyLoan": "How To Apply For A Loan",
+  "interview": "Interview",
+  "interviewAppointment": "Interview Appointment",
+  "loan": "Loan",
+  "loanSchedule": "Loan Schedule",
+  "loanType": "Loan Type",
+  "location": "Location",
   "login": "Existing User?",
+  "logout": "Logout",
+  "nearestATM": "Nearest ATM",
+  "nearestBranch": "Nearest Branch",
+  "nrcNumber": "NRC Number",
+  "ok": "Ok",
+  "openAccount": "Apply Loan with open account",
   "or": "OR",
-
-  "@loginPage": {
-    "description": "This values for login page"
-  },
+  "otpCodeContent": "Please enter the 6 digits number that we have sent to you here then click \"Verify OTP Code\" below.",
+  "otpExpireMessage": "OTP Code will expire in {minutes}:{seconds}",
+  "otpNotReceived": "OTP not received? ",
+  "passport": "Passport",
   "phoneNumber": "Phone number",
   "pin": "PIN",
-  "forgotPinCode": "Forgot PIN code",
-  "continueText": "Continue",
-  "doNotHaveAnAccount": "Don't have an account, ",
-  "clickHere": "click here",
-
-  "@homePage": {
-    "description": "This values for home page"
-  },
-  "repayment": "Repayment",
-  "loanSchedule": "Loan Schedule",
-  "callCenter": "Call Center",
-
-  "apply": "Apply",
-  "interview": "Interview",
-  "preApproved": "Pre-approved",
-  "disbursed": "Disbursed",
-
-  "@settingPage": {
-    "description": "This values for Setting page"
-  },
-  "changeLanguage": "Change Language",
-  "location": "Location",
-  "nearestBranch": "Nearest Branch",
-  "nearestATM": "Nearest ATM",
-  "helpAndSupport": "Help & Support",
-  "howToApplyLoan": "How To Apply For A Loan",
-  "getToKnowUs": "Get to know us",
-  "logout": "Logout",
-
-  "@bottomNavigation": {
-    "description": "This values for bottom Navigation"
-  },
-  "home": "Home",
-  "loan": "Loan",
-  "profile": "Profile",
-
-  "@registerStep": {
-    "description": "This values for Register Step"
-  },
-  "workPermit": "Work Permit",
-  "customerInformation": "Customer Information",
-  "requiredDocuments": "Required Documents",
-  "additionalInformation": "Additional Information",
-  "loanType": "Loan Type",
-  "interviewAppointment": "Interview Appointment",
-  "changePhoneNumber": "Change Phone Number",
-  "basicInformation": "Basic Information",
-  "additionalDocuments": "Additional Documents",
-
-  "@changePhoneNumberPage": {
-    "description": "This values for Change Phone Number page"
-  },
-  "currentPhoneNumber": "Current Phone Number",
-
-  "@common": {
-    "description": "This values for Button"
-  },
   "pleaseWait": "Please Wait...",
-
-  "@common": {
-    "description": "This values for Setting, BottomNavigation"
-  },
+  "preApproved": "Pre-approved",
+  "previous": "Previous",
+  "profile": "Profile",
+  "rememberPhonePincode1": "Please remember your phone number which is your username ",
+  "rememberPhonePincode2": " and your PIN code ",
+  "rememberPhonePincode3": " to login to your account at any time.",
+  "repayment": "Repayment",
+  "requiredDocuments": "Required Documents",
+  "resendOtpCode": "Resend OTP Code",
+  "resetPinCode": "Reset PIN code",
+  "setNewPassword": "Set New Password",
+  "setPincode": "Set Your Pin Code",
   "setting": "Setting",
-
-  "@common": {
-    "description": "This values for homePage, registerStep"
-  },
-  "documents": "Documents"
+  "state": "State",
+  "termConditionAgree": "I agree to SynPitarn Co. Ltd's terms and conditions",
+  "termConditionMessage": "When you click continue you will be asked to agree to our terms. After that you will be sent an OTP to the phone number that you gave us.",
+  "township": "Township",
+  "verifyOTPCode": "Verify OTP code",
+  "welcomeDescription": "SynPitarn will use this phone number as the primary authentication method. Please fill in the phone number that you always use and is with you.",
+  "welcomeMessage": "Welcome to SynPitarn",
+  "workPermit": "Work Permit"
 }

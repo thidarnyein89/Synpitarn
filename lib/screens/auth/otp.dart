@@ -9,6 +9,7 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/screens/auth/set_password.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OTPPage extends StatefulWidget {
   User loginUser;
@@ -153,7 +154,7 @@ class OTPState extends State<OTPPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Verify OTP code',
+                        AppLocalizations.of(context)!.verifyOTPCode,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -162,7 +163,8 @@ class OTPState extends State<OTPPage> {
                       ),
                       SizedBox(height: 40),
                       Text(
-                        "Please enter the 6 digits number that we have sent to you here then click \"Verify OTP Code\" below.",
+                        AppLocalizations.of(context)!.otpCodeContent,
+                        textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 14),
                       ),
                       SizedBox(height: 20),
@@ -199,20 +201,24 @@ class OTPState extends State<OTPPage> {
                       SizedBox(height: 20),
                       if (!_canResendOtp)
                         Text(
-                          "OTP Code will expire in ${_minuteRemaining.toString().padLeft(2, '0')}:${_secondsRemaining.toString().padLeft(2, '0')}",
+                          AppLocalizations.of(context)!.otpExpireMessage(
+                            _minuteRemaining.toString().padLeft(2, '0'),
+                            _secondsRemaining.toString().padLeft(2, '0'),
+                          ),
                           style: TextStyle(fontSize: 14, color: Colors.black),
                         ),
                       if (_canResendOtp)
                         RichText(
                           text: TextSpan(
-                            text: "OTP not received? ",
+                            text: AppLocalizations.of(context)!.otpNotReceived,
                             style: TextStyle(
                               color: Colors.black, // Normal text color
                               fontSize: 14,
                             ),
                             children: [
                               TextSpan(
-                                text: "Resend OTP Code",
+                                text:
+                                    AppLocalizations.of(context)!.resendOtpCode,
                                 style: TextStyle(
                                   color: Colors.black,
                                   decoration: TextDecoration.underline,
@@ -231,7 +237,7 @@ class OTPState extends State<OTPPage> {
                           context: context,
                           enabled: isOTPValidate,
                           isLoading: isLoading,
-                          text: 'Verify OTP Code',
+                          text: AppLocalizations.of(context)!.verifyOTPCode,
                           onPressed: handleVerifyOTP),
                       Text("OTP Code $code"),
                     ],

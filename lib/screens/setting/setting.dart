@@ -217,38 +217,29 @@ class SettingState extends State<SettingPage> {
               SingleChildScrollView(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: IntrinsicHeight(
-                      child: Column(
-                    spacing: 0,
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: CustomStyle.pagePadding(),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            createUserInfoSection(),
-                            createSettingSection(),
-                            createLocationSection(),
-                            createHelpSection(),
-                            CustomWidget.verticalSpacing(),
-                            CustomWidget.elevatedButton(
-                                context: context,
-                                text: AppLocalizations.of(context)!.logout, onPressed: handleLogout),
-                            CustomWidget.verticalSpacing(),
-                            Center(
-                              child: Text("v ${packageInfo.version}"),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  )),
+                  child: Padding(
+                    padding: CustomStyle.pagePadding(),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        createUserInfoSection(),
+                        createSettingSection(),
+                        createLocationSection(),
+                        createHelpSection(),
+                        CustomWidget.verticalSpacing(),
+                        CustomWidget.elevatedButton(
+                            context: context,
+                            text: AppLocalizations.of(context)!.logout, onPressed: handleLogout),
+                        CustomWidget.verticalSpacing(),
+                        Center(
+                          child: Text("v ${packageInfo.version}"),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
-              )
+              ),
           ]);
         },
       ),

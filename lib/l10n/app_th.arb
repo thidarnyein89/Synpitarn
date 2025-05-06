@@ -1,83 +1,70 @@
 {
-  "@mainPage": {
-    "description": "This values for main page"
-  },
-  "welcomeMessage": "ยินดีต้อนรับสู่ สินพิธาน",
-  "openAccount": "สมัครขอสินเชื่อ สมัครสินเชื่อด้วยบัญชีที่เปิดอยู่",
+  "additionalDocuments": "เอกสารเพิ่มเติม",
+  "additionalInformation": "ข้อมูลเพิ่มเติม",
+  "apply": "สมัครและยื่นขอสินเชื่อ",
+  "basicInformation": "ข้อมูลพื้นฐาน",
+  "callCenter": "คอลเซ็นเตอร์",
+  "cancel": "ยกเลิก",
+  "changeLanguage": "เปลี่ยนภาษา",
+  "citizen": "สัญชาติ",
+  "changePhoneNumber": "เปลี่ยนหมายเลขโทรศัพท์",
+  "clickHere": "คลิกที่นี่เพื่อสมัครสมาชิก",
+  "confirmPin": "ยืนยันรหัส PIN",
+  "continueText": "ถัดไป",
+  "currentPhoneNumber": "หมายเลขโทรศัพท์ปัจจุบัน",
+  "customerInformation": "ข้อมูลโปรไฟล์",
+  "disbursed": "การเบิกจ่ายเงินกู้",
+  "doNotHaveAnAccount": "ยังไม่มีบัญชีใช่ไหม? ",
+  "documents": "เอกสาร",
+  "download": "ดาวน์โหลด",
+  "downloading": "กำลังดาวน์โหลด...",
+  "downloadComplete": "ดาวน์โหลดเสร็จสิ้นแล้ว",
+  "forgotPinCode": "ลืมรหัสผ่าน",
+  "getToKnowUs": "รู้จักสินพิธาน",
+  "gotIt": "รับทราบ",
+  "helpAndSupport": "แผนที่",
+  "home": "หน้าแรก",
+  "howToApplyLoan": "ขั้นตอนการขอเงินกู้",
+  "interview": "การสัมภาษณ์",
+  "interviewAppointment": "การนัดสัมภาษณ์",
+  "loan": "เงินกู้",
+  "loanSchedule": "ตารางเวลาการให้กู้ยืม",
+  "loanType": "ประเภทเงินกู้",
+  "location": "พื้นที่ให้บริการ",
   "login": "เข้าสู่ระบบ",
+  "logout": "ออกจากระบบ",
+  "nearestATM": "เอทีเอ็มใกล้ฉัน",
+  "nearestBranch": "สาขาใกล้ฉัน",
+  "nrcNumber": "บัตรประจำตัวประชาชน",
+  "ok": "ตกลง",
+  "openAccount": "สมัครขอสินเชื่อ สมัครสินเชื่อด้วยบัญชีที่เปิดอยู่",
   "or": "หรือ",
-
-  "@loginPage": {
-    "description": "This values for login page"
-  },
+  "otpCodeContent": "โปรดกรอกตัวเลข 6 หลักที่คุณได้รับทางข้อความผ่านเบอร์โทรศัพท์ จากนั้นเลือกปุ่ม \"ยืนยัน\" ด้านล่าง",
+  "otpExpireMessage": "รหัสผ่านแบบใช้ครั้งเดียวจะหมดอายุภายใน {minutes}:{seconds} นาที",
+  "otpNotReceived": "ยังไม่ได้รับรหัส OTP ใช่ไหม? ",
+  "passport": "หนังสือเดินทาง",
   "phoneNumber": "เบอร์โทรศัพท์",
   "pin": "รหัสผ่าน",
-  "forgotPinCode": "ลืมรหัสผ่าน",
-  "continueText": "ถัดไป",
-  "doNotHaveAnAccount": "ยังไม่มีบัญชีใช่ไหม? ",
-  "clickHere": "คลิกที่นี่เพื่อสมัครสมาชิก",
-
-  "@homePage": {
-    "description": "This values for home page"
-  },
-  "repayment": "การชำระคืน",
-  "loanSchedule": "ตารางเวลาการให้กู้ยืม",
-  "callCenter": "คอลเซ็นเตอร์",
-
-  "apply": "สมัครและยื่นขอสินเชื่อ",
-  "interview": "การสัมภาษณ์",
-  "preApproved": "การอนุมัติเบื้องต้น",
-  "disbursed": "การเบิกจ่ายเงินกู้",
-
-  "@settingPage": {
-    "description": "This values for Setting page"
-  },
-  "changeLanguage": "เปลี่ยนภาษา",
-  "location": "พื้นที่ให้บริการ",
-  "nearestBranch": "สาขาใกล้ฉัน",
-  "nearestATM": "เอทีเอ็มใกล้ฉัน",
-  "helpAndSupport": "แผนที่",
-  "howToApplyLoan": "ขั้นตอนการขอเงินกู้",
-  "getToKnowUs": "รู้จักสินพิธาน",
-  "logout": "ออกจากระบบ",
-
-  "@bottomNavigation": {
-    "description": "This values for bottom Navigation"
-  },
-  "home": "หน้าแรก",
-  "loan": "เงินกู้",
-  "profile": "โปรไฟล์",
-
-  "@registerStep": {
-    "description": "This values for Register Step"
-  },
-  "workPermit": "ใบอนุญาตทำงาน",
-  "customerInformation": "ข้อมูลโปรไฟล์",
-  "requiredDocuments": "เอกสารที่จำเป็น",
-  "additionalInformation": "ข้อมูลเพิ่มเติม",
-  "loanType": "ประเภทเงินกู้",
-  "interviewAppointment": "การนัดสัมภาษณ์",
-  "changePhoneNumber": "เปลี่ยนหมายเลขโทรศัพท์",
-  "basicInformation": "ข้อมูลพื้นฐาน",
-  "additionalDocuments": "เอกสารเพิ่มเติม",
-
-  "@changePhoneNumberPage": {
-    "description": "This values for Change Phone Number page"
-  },
-  "currentPhoneNumber": "หมายเลขโทรศัพท์ปัจจุบัน",
-
-  "@common": {
-    "description": "This values for Button"
-  },
   "pleaseWait": "กรุณารอสักครู่...",
-
-  "@common": {
-    "description": "This values for Setting, BottomNavigation"
-  },
+  "preApproved": "การอนุมัติเบื้องต้น",
+  "previous": "ย้อนกลับ",
+  "profile": "โปรไฟล์",
+  "rememberPhonePincode1": "โปรดบันทึกเบอร์โทรศัพท์ของคุณซึ่งจะเป็นชื่อผู้ใช้ของคุณ ",
+  "rememberPhonePincode2": " และรหัสผ่านคือตัวเลข 6 หลัก โปรดบันทึกไว้เพื่อเข้าสู่ระบบในครั้งต่อ ๆ ไป ",
+  "rememberPhonePincode3": "",
+  "repayment": "การชำระคืน",
+  "requiredDocuments": "เอกสารที่จำเป็น",
+  "resendOtpCode": "ขอรหัสผ่านแบบใช้ครั้งเดียวอีกครั้ง",
+  "resetPinCode": "รีเซ็ตรหัสผ่าน",
+  "setNewPassword": "ตั้งรหัสผ่านใหม่",
+  "setPincode": "ตั้งรหัสผ่าน",
   "setting": "การตั้งค่า",
-
-  "@common": {
-    "description": "This values for homePage, registerStep"
-  },
-  "documents": "เอกสาร"
+  "state": "รัฐ",
+  "termConditionAgree": "ข้าพเจ้ายอมรับข้อตกลงและเงื่อนไขในการใช้บริการของบริษัท สินพิธาน จำกัด",
+  "termConditionMessage": "เมื่อคุณคลิกปุ่ม ถัดไป ขอให้อ่านและยอมรับข้อตกลงและเงื่อนไข จากนั้น รหัสผ่านแบบใช้ครั้งเดียวจะถูกส่งเข้าเบอร์โทรศัพท์หลักที่คุณให้ไว้ก่อนหน้านี้",
+  "township": "อำเภอ",
+  "verifyOTPCode": "ยืนยันตัวตนผ่านรหัสผ่านแบบใช้ครั้งเดียว",
+  "welcomeDescription": "บริษัทจะใช้การยืนยันตัวตนด้วยเบอร์โทรศัพท์มือถือ โปรดกรอกหมายเลขโทรศัพท์ของคุณและเป็นหมายเลขที่คุณใช้ประจำ",
+  "welcomeMessage": "ยินดีต้อนรับสู่ สินพิธาน",
+  "workPermit": "ใบอนุญาตทำงาน"
 }

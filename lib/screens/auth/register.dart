@@ -8,6 +8,7 @@ import 'package:synpitarn/screens/components/nrc.dart';
 import 'package:synpitarn/screens/auth/otp.dart';
 import 'package:synpitarn/screens/auth/term_conditions.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -204,18 +205,16 @@ class _RegisterPageState extends State<RegisterPage> {
                         height: 180,
                       ),
                       Text(
-                        'Welcome to SynPitarn',
+                        AppLocalizations.of(context)!.welcomeMessage,
                         style: CustomStyle.titleBold(),
                       ),
                       CustomWidget.verticalSpacing(),
                       CustomWidget.verticalSpacing(),
-                      Text(
-                        'SynPitarn will use this phone number as the primary authentication method. Please fill in the phone number that you always use and is with you. ',
-                      ),
+                      Text(AppLocalizations.of(context)!.welcomeDescription),
                       CustomWidget.verticalSpacing(),
                       CustomWidget.phoneTextField(
                           controller: phoneController,
-                          label: 'Phone number',
+                          label: AppLocalizations.of(context)!.phoneNumber,
                           errorText: phoneError),
                       GestureDetector(
                         onTap: () {
@@ -224,13 +223,13 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: AbsorbPointer(
                           child: CustomWidget.textField(
                               controller: nrcController,
-                              label: 'NRC',
+                              label: AppLocalizations.of(context)!.nrcNumber,
                               errorText: nrcError),
                         ),
                       ),
                       CustomWidget.textField(
                           controller: passportController,
-                          label: 'Passport',
+                          label: AppLocalizations.of(context)!.passport,
                           errorText: passportError),
                       Row(
                         children: [
@@ -246,7 +245,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                 showTermAndConditions();
                               },
                               child: Text(
-                                " I agree to SynPitarn Co. Ltd's terms and conditions",
+                                AppLocalizations.of(context)!
+                                    .termConditionAgree,
                                 softWrap: true,
                                 maxLines: 2,
                               ),
@@ -255,9 +255,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ],
                       ),
                       CustomWidget.verticalSpacing(),
-                      Text(
-                        " When you click continue you will be asked to agree to our terms. After that you will be sent an OTP to the phone number that you gave us. ",
-                      ),
+                      Text(AppLocalizations.of(context)!.termConditionMessage),
                       CustomWidget.verticalSpacing(),
                       CustomWidget.elevatedButton(
                           context: context,
@@ -266,7 +264,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               isNRCValidate &&
                               isChecked,
                           isLoading: isLoading,
-                          text: 'Continue',
+                          text: AppLocalizations.of(context)!.continueText,
                           onPressed: handleRegister),
                     ],
                   ),

@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/models/User_response.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/auth/otp.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
-import 'package:synpitarn/screens/components/main_app_bar.dart';
-import 'package:synpitarn/data/app_config.dart';
-import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ForgetPasswordPage extends StatefulWidget {
   const ForgetPasswordPage({super.key});
@@ -89,18 +86,18 @@ class ForgetPasswordState extends State<ForgetPasswordPage> {
                         'assets/images/synpitarn.jpg',
                         height: 180,
                       ),
-                      Text('Forgot PIN code', style: CustomStyle.titleBold()),
+                      Text(AppLocalizations.of(context)!.forgotPinCode, style: CustomStyle.titleBold()),
                       CustomWidget.verticalSpacing(),
                       CustomWidget.verticalSpacing(),
                       CustomWidget.phoneTextField(
                           controller: phoneController,
-                          label: 'Phone number',
+                          label: AppLocalizations.of(context)!.phoneNumber,
                           errorText: phoneError),
                       CustomWidget.elevatedButton(
                           context: context,
                           enabled: isPhoneValidate,
                           isLoading: isLoading,
-                          text: 'Reset PIN code',
+                          text: AppLocalizations.of(context)!.resetPinCode,
                           onPressed: handleResetPin),
                     ],
                   ),

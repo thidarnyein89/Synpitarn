@@ -457,7 +457,7 @@ class CustomWidget {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text("Ok"),
+              child: Text(AppLocalizations.of(context)!.ok),
             ),
           ],
         );
@@ -492,7 +492,7 @@ class CustomWidget {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text("Ok"),
+              child: Text(AppLocalizations.of(context)!.gotIt),
             ),
           ],
         );
@@ -562,13 +562,13 @@ class CustomWidget {
           content: Text(content),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('OK'),
+              child: Text(AppLocalizations.of(context)!.ok),
               onPressed: () {
                 Navigator.of(context).pop();
                 onConfirmed();

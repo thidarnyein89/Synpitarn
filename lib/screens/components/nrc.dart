@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/models/nrc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NRCPage extends StatefulWidget {
   String nrcValue;
@@ -107,7 +108,7 @@ class NRCState extends State<NRCPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               CustomWidget.dropdownButtonSameValue(
-                label: 'State',
+                label: AppLocalizations.of(context)!.state,
                 selectedValue: selectedState,
                 items: nrcList.map((nrc) => nrc.state).toList(),
                 onChanged: (value) {
@@ -118,7 +119,7 @@ class NRCState extends State<NRCPage> {
                 },
               ),
               CustomWidget.dropdownButtonSameValue(
-                label: 'Township',
+                label: AppLocalizations.of(context)!.township,
                 selectedValue: selectedTownship,
                 items: townshipList.map((township) => township.name).toList(),
                 onChanged: (value) {
@@ -128,7 +129,7 @@ class NRCState extends State<NRCPage> {
                 },
               ),
               CustomWidget.dropdownButtonSameValue(
-                label: 'Citizen',
+                label: AppLocalizations.of(context)!.citizen,
                 selectedValue: selectedCitizen,
                 items: citizenList,
                 onChanged: (value) {
@@ -139,7 +140,7 @@ class NRCState extends State<NRCPage> {
               ),
               CustomWidget.numberTextField(
                 controller: nrcController,
-                label: 'NRC Number',
+                label: AppLocalizations.of(context)!.nrcNumber,
                 focusNode: _nrcFocusNode,
               ),
               CustomWidget.elevatedButton(
@@ -149,7 +150,7 @@ class NRCState extends State<NRCPage> {
                       selectedCitizen != null &&
                       (isNRCValidate),
                   isLoading: false,
-                  text: 'Continue',
+                  text: AppLocalizations.of(context)!.continueText,
                   onPressed: handleNRC),
             ],
           ),

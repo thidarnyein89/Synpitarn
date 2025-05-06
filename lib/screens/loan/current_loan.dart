@@ -9,10 +9,12 @@ import 'package:synpitarn/models/loan.dart';
 import 'package:synpitarn/models/loan_application_response.dart';
 import 'package:synpitarn/models/loan_response.dart';
 import 'package:synpitarn/models/loan_schedule.dart';
+import 'package:synpitarn/models/qrcode.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
+import 'package:synpitarn/screens/components/qr_dialog.dart';
 import 'package:synpitarn/screens/loan/branch_appointment.dart';
 import 'package:synpitarn/screens/loan/interview_appointment.dart';
 import 'package:synpitarn/screens/loan/repayment_list.dart';
@@ -40,6 +42,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
   bool isLoading = false;
   int totalLateDay = 0;
   String repaymentAmount = "";
+  QrCode qrcode = QrCode.defaultQrCode();
 
   @override
   void initState() {
@@ -116,10 +119,15 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
           if (lateSchedule.loanId != 0) {
             totalLateDay = CommonService.getDayCount(lateSchedule.pmtDate);
             repaymentAmount = lateSchedule.pmtAmount;
+          }
 
-            if (mounted) {
-              setState(() {});
-            }
+          if (loanResponse.data[0].qrcode != null) {
+            qrcode.photo = loanResponse.data[0].qrcode.photo;
+            qrcode.string = loanResponse.data[0].qrcode.string;
+          }
+
+          if (mounted) {
+            setState(() {});
           }
         }
       } else if (loanResponse.response.code == 403) {
@@ -202,6 +210,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
                             padding: CustomStyle.pagePadding(),
                             child: createLoanStatusSection(),
                           ),
+                          if (qrcode.photo != "") qrCodeSection()
                         ],
                       ),
                     ),
@@ -210,6 +219,33 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget qrCodeSection() {
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onTap: () {
+              QRDialog.showQRDialog(context, qrcode.photo, qrcode.string);
+            },
+            child: FadeInImage(
+              placeholder: AssetImage('assets/images/spinner.gif'),
+              image: NetworkImage(qrcode.photo),
+              fit: BoxFit.contain,
+              width: 200,
+              height: 200,
+              imageErrorBuilder: (context, error, stackTrace) =>
+                  Icon(Icons.broken_image),
+            ),
+          ),
+          Text(qrcode.string),
+          CustomWidget.verticalSpacing(),
+        ],
       ),
     );
   }
@@ -263,7 +299,6 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
       ],
     );
   }
-
 
   Widget noApplyLoanSection() {
     return Column(
@@ -391,7 +426,8 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         ),
         CustomWidget.buildRow(
           "Repayment amount",
-          CommonService.formatWithThousandSeparator(applicationData.repaymentAmountPerPeriod),
+          CommonService.formatWithThousandSeparator(
+              applicationData.repaymentAmountPerPeriod),
         ),
         CustomWidget.buildRow(
           "Loan Size",
@@ -460,7 +496,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
   Future<void> _openMessenger() async {
     try {
       final messengerUri =
-      Uri.parse("fb-messenger://user-thread/${ConstantData.MESSENGER_ID}");
+          Uri.parse("fb-messenger://user-thread/${ConstantData.MESSENGER_ID}");
 
       await launchUrl(messengerUri, mode: LaunchMode.platformDefault);
     } catch (e) {
