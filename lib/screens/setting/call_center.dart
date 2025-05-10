@@ -14,7 +14,7 @@ class CallCenterPage extends StatefulWidget {
 }
 
 class CallCenterState extends State<CallCenterPage> {
-  final String phone = '+6620242424';
+  final String phone = '+66818225285';
 
   @override
   void initState() {

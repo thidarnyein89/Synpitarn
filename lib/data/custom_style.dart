@@ -63,17 +63,21 @@ class CustomStyle {
   }
 
   static TextStyle bodyRedColor() {
-    return TextStyle(
-      fontSize: body().fontSize,
-      color: Colors.red,
-      height: 1.5
-    );
+    return TextStyle(fontSize: body().fontSize, color: Colors.red, height: 1.5);
   }
 
   static TextStyle bodyBold() {
+    return TextStyle(fontSize: body().fontSize, fontWeight: FontWeight.bold);
+  }
+
+  static TextStyle bodyItalic() {
+    return TextStyle(fontSize: body().fontSize, fontStyle: FontStyle.italic);
+  }
+
+  static TextStyle bodyLineThrough() {
     return TextStyle(
       fontSize: body().fontSize,
-      fontWeight: FontWeight.bold
+      decoration: TextDecoration.lineThrough,
     );
   }
 
@@ -95,6 +99,14 @@ class CustomStyle {
     return TextStyle(
       fontSize: body().fontSize,
       color: Colors.grey[600],
+    );
+  }
+
+  static TextStyle linkStyle() {
+    return TextStyle(
+      fontSize: body().fontSize,
+      color: Colors.blue,
+      decoration: TextDecoration.none,
     );
   }
 

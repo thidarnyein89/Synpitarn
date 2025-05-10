@@ -29,7 +29,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late Future<bool> _loginStatusFuture;
 
-  Locale? currentLocale;
+  Locale? currentLocale = Locale('en');
 
   @override
   void initState() {
@@ -101,7 +101,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  Locale? currentLocale;
+  Locale? currentLocale = Locale('en');
 
   @override
   void initState() {

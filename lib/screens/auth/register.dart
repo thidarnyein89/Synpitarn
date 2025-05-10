@@ -70,8 +70,7 @@ class _RegisterPageState extends State<RegisterPage> {
   void _validatePassportValue() {
     setState(() {
       passportError = null;
-      isPassportValidate = passportController.text.isNotEmpty &&
-          passportController.text.length == 6;
+      isPassportValidate = passportController.text.isNotEmpty;
     });
   }
 
@@ -186,6 +185,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: LayoutBuilder(

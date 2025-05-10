@@ -1,6 +1,7 @@
 {
   "additionalDocuments": "Additional Documents",
   "additionalInformation": "Additional Information",
+  "agreeTermCondition": "Agree Term & Condition",
   "apply": "Apply",
   "basicInformation": "Basic Information",
   "callCenter": "Call Center",
@@ -61,6 +62,7 @@
   "setPincode": "Set Your Pin Code",
   "setting": "Setting",
   "state": "State",
+  "termCondition": "Term and Condtions",
   "termConditionAgree": "I agree to SynPitarn Co. Ltd's terms and conditions",
   "termConditionMessage": "When you click continue you will be asked to agree to our terms. After that you will be sent an OTP to the phone number that you gave us.",
   "township": "Township",
