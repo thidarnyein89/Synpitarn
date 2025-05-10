@@ -888,7 +888,10 @@ class TermConditionEnglish {
       Data(text: 'Duangrat Wattapongchat'),
     ]),
     ContentBlock.text(paddingLeft: 20, [
-      Data(text: 'Tel. +၆၆၈၁-၈၂၂-၅၂၈၅'),
+      Data(
+          text: 'Tel. +6681-822-5285',
+          phoneNumber: '+66818225285',
+          style: CustomStyle.linkStyle()),
     ]),
     ContentBlock.text(paddingLeft: 20, [
       Data(
