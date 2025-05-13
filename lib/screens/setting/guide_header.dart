@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/data/language.dart';
+import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/models/guide.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/screens/setting/guide.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GuideHeaderPage extends StatefulWidget {
 
@@ -18,7 +21,6 @@ class GuideHeaderState extends State<GuideHeaderPage> {
   final CommonService _commonService = CommonService();
 
   List<Guide> guideList = [];
-
   int activeStep = 0;
 
   @override
@@ -57,7 +59,7 @@ class GuideHeaderState extends State<GuideHeaderPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("How To Apply For A Loan", style: CustomStyle.titleBold()),
+          Text(AppLocalizations.of(context)!.howToApplyLoan, style: CustomStyle.titleBold()),
           EasyStepper(
             activeStep: activeStep,
             maxReachedStep: 3,
@@ -85,9 +87,11 @@ class GuideHeaderState extends State<GuideHeaderPage> {
                   return EasyStep(
                     customStep: Icon(guide.icon, color: CustomStyle.icon_color),
                     customTitle: Text(
-                      guide.titleEN,
+                      guide.getTitle(),
                       style: CustomStyle.body(),
                       textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 5,
                     ),
                   );
                 }).toList(),

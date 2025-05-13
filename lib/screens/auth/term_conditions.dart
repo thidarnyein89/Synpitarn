@@ -1,11 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/data/shared_value.dart';
-import 'package:synpitarn/data/term_condition/common.dart';
-import 'package:synpitarn/data/term_condition/en.dart';
-import 'package:synpitarn/data/term_condition/mm.dart';
-import 'package:synpitarn/data/term_condition/th.dart';
+import 'package:synpitarn/data/json_data/common.dart';
+import 'package:synpitarn/data/json_data/term_condition/en.dart';
+import 'package:synpitarn/data/json_data/term_condition/mm.dart';
+import 'package:synpitarn/data/json_data/term_condition/th.dart';
+import 'package:synpitarn/data/language.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -33,15 +33,14 @@ class TermAndConditionsState extends State<TermAndConditionsPage> {
   }
 
   getInitData() async {
-     String currentLanguage = await getLanguage();
 
-     if(currentLanguage == 'en') {
+     if(Language.currentLanguage == LanguageType.en.name) {
        allContent = TermConditionEnglish.allContent;
      }
-     else if(currentLanguage == 'my') {
+     else if(Language.currentLanguage == LanguageType.my.name) {
        allContent = TermConditionMyanmar.allContent;
      }
-     else if(currentLanguage == 'th') {
+     else if(Language.currentLanguage == LanguageType.th.name) {
        allContent = TermConditionThai.allContent;
      }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/data/term_condition/common.dart';
+import 'package:synpitarn/data/json_data/common.dart';
 
 class TermConditionThai {
   static List<ContentBlock> allContent = [

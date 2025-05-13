@@ -1,14 +1,21 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
 import 'package:easy_stepper/easy_stepper.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/data/json_data/common.dart';
+import 'package:synpitarn/data/json_data/guide/en.dart';
+import 'package:synpitarn/data/json_data/guide/mm.dart';
+import 'package:synpitarn/data/json_data/guide/th.dart';
+import 'package:synpitarn/data/language.dart';
+import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/models/guide.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:synpitarn/screens/components/dashed_circle_painter.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/services/common_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GuidePage extends StatefulWidget {
   int activeStep;
@@ -21,17 +28,20 @@ class GuidePage extends StatefulWidget {
 
 class GuideState extends State<GuidePage> {
   final CommonService _commonService = CommonService();
+
   ScrollController _scrollController = ScrollController();
+  bool hasScrolledToInitialStep = false;
 
   List<Guide> guideList = [];
-  List<double> _htmlHeight = [];
+  List<double> contentHeight = [];
+  List<List<ContentBlock>> allContent = [];
 
   int activeStep = 0;
 
   @override
   void initState() {
     super.initState();
-    readGuideData();
+    getInitData();
   }
 
   @override
@@ -40,18 +50,24 @@ class GuideState extends State<GuidePage> {
     super.dispose();
   }
 
-  Future<void> readGuideData() async {
+  Future<void> getInitData() async {
+
+    if (Language.currentLanguage == LanguageType.en) {
+      allContent = GuideEnglish.allContent;
+    }
+    else if(Language.currentLanguage == LanguageType.my) {
+      allContent = GuideMyanmar.allContent;
+    }
+    else if(Language.currentLanguage == LanguageType.th) {
+      allContent = GuideThai.allContent;
+    }
+
     guideList = await _commonService.readGuideData();
 
-    _htmlHeight = List.generate(guideList.length, (index) => 0);
+    contentHeight = List.generate(guideList.length, (index) => 0);
     activeStep = widget.activeStep;
 
     setState(() {});
-
-    // Wait until layout is built, then scroll
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToStep(widget.activeStep);
-    });
   }
 
   @override
@@ -60,15 +76,14 @@ class GuideState extends State<GuidePage> {
     int numberOfSteps = 3;
     double borderThickness = 3;
 
-    double lineLength =
-        (screenWidth -
-            (CustomStyle.pagePadding().horizontal * 6) -
-            (borderThickness * 3)) /
+    double lineLength = (screenWidth -
+        (CustomStyle.pagePadding().horizontal * 6) -
+        (borderThickness * 3)) /
         numberOfSteps;
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: 'How To Apply For A Loan'),
+      appBar: PageAppBar(title: AppLocalizations.of(context)!.howToApplyLoan),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return ConstrainedBox(
@@ -79,7 +94,8 @@ class GuideState extends State<GuidePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("How To Apply For A Loan", style: CustomStyle.titleBold()),
+                    Text(AppLocalizations.of(context)!.howToApplyLoan,
+                        style: CustomStyle.titleBold()),
                     EasyStepper(
                       activeStep: activeStep,
                       maxReachedStep: 3,
@@ -102,31 +118,33 @@ class GuideState extends State<GuidePage> {
                         lineThickness: 2,
                         lineSpace: 0.5,
                       ),
-                      steps:
-                          guideList.map((guide) {
-                            return EasyStep(
-                              customStep: Icon(
-                                guide.icon,
-                                color: CustomStyle.icon_color,
-                              ),
-                              customTitle: Text(
-                                guide.titleEN,
-                                style: CustomStyle.body(),
-                                textAlign: TextAlign.center,
-                              ),
-                            );
-                          }).toList(),
+                      steps: guideList.map((guide) {
+                        return EasyStep(
+                          customStep: Icon(
+                            guide.icon,
+                            color: CustomStyle.icon_color,
+                          ),
+                          customTitle: Text(
+                            guide.getTitle(),
+                            style: CustomStyle.body(),
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 5,
+                          ),
+                        );
+                      }).toList(),
                       onStepReached: (index) {
-                        setState(() {
-                          activeStep = index;
-                        });
+                        widget.activeStep = 0;
+                        activeStep = index;
+
+                        setState(() { });
+
                         _scrollToStep(index);
                       },
                     ),
                     CustomWidget.verticalSpacing(),
                     CustomWidget.verticalSpacing(),
                     CustomWidget.verticalSpacing(),
-
                     Expanded(
                       child: ListView.builder(
                         controller: _scrollController,
@@ -147,25 +165,27 @@ class GuideState extends State<GuidePage> {
   }
 
   Widget stepWidget({required int index}) {
-    GlobalKey htmlKey = GlobalKey();
+    GlobalKey contentKey = GlobalKey();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final context = htmlKey.currentContext;
+      final context = contentKey.currentContext;
       if (context != null) {
         final box = context.findRenderObject() as RenderBox?;
         if (box != null) {
           final newHeight = box.size.height;
 
-          if (_htmlHeight[index] != newHeight) {
-            _htmlHeight[index] = newHeight;
-            setState(() {});
+          if (contentHeight[index] != newHeight) {
+            setState(() {
+              contentHeight[index] = newHeight;
+            });
           }
         }
       }
 
-      if (widget.activeStep > 0 && widget.activeStep == activeStep) {
+      if(widget.activeStep > 0) {
         _scrollToStep(widget.activeStep);
       }
+
     });
 
     return Column(
@@ -193,8 +213,8 @@ class GuideState extends State<GuidePage> {
             CustomWidget.horizontalSpacing(),
             Expanded(
               child: Text(
-                "${guideList[index].stepEN} ${guideList[index].titleEN}",
-                style: CustomStyle.titleBold(),
+                "${guideList[index].getStep()} ${guideList[index].getTitle()}",
+                style: CustomStyle.bodyBold(),
                 softWrap: true,
                 overflow: TextOverflow.visible,
               ),
@@ -202,40 +222,42 @@ class GuideState extends State<GuidePage> {
           ],
         ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
               width: 50,
               child: Align(
                 alignment: Alignment.topCenter,
-                child:
-                    _htmlHeight.isNotEmpty && _htmlHeight[index] > 0
-                        ? DottedLine(
-                          direction: Axis.vertical,
-                          lineLength: _htmlHeight[index],
-                          dashLength: 3,
-                          dashColor: Colors.yellow,
-                          lineThickness: 2,
-                        )
-                        : SizedBox.shrink(),
+                child: contentHeight.length > index && contentHeight[index] > 0
+                    ? DottedLine(
+                  direction: Axis.vertical,
+                  lineLength: contentHeight[index],
+                  dashLength: 3,
+                  dashColor: Colors.yellow,
+                  lineThickness: 2,
+                )
+                    : SizedBox.shrink(),
               ),
             ),
             CustomWidget.horizontalSpacing(),
             Expanded(
-              child: Html(
-                key: htmlKey,
-                data: guideList[index].descriptionEN,
-                style: {
-                  "ul": Style(margin: Margins.zero, padding: HtmlPaddings.zero),
-                  "li": Style(
-                    margin: Margins.zero,
-                    padding: HtmlPaddings.only(left: 0),
-                  ),
-                },
+              child: Column(
+                key: contentKey,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomWidget.verticalSpacing(),
+                  ...allContent[index].map((block) {
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        left: block.paddingLeft!.toDouble(),
+                        bottom: 20,
+                      ),
+                      child: buildTextSpan(context, block.textData!),
+                    );
+                  }),
+                ],
               ),
             ),
-            CustomWidget.verticalSpacing(),
           ],
         ),
       ],
@@ -246,13 +268,39 @@ class GuideState extends State<GuidePage> {
     double position = 0.0;
 
     for (var i = 0; i < index; i++) {
-      position += _htmlHeight[i] + 50;
+      position += contentHeight[i] + 50;
     }
 
     _scrollController.animateTo(
       position,
       duration: Duration(milliseconds: 300),
       curve: Curves.easeInOut,
+    );
+  }
+
+  RichText buildTextSpan(BuildContext context, List<Data> dataList) {
+    return RichText(
+      text: TextSpan(
+        children: dataList.map((data) {
+          if (data.url != null) {
+            return TextSpan(
+              style: data.style,
+              text: data.text,
+              recognizer: TapGestureRecognizer()..onTap = () async {
+                final Uri uri = Uri.parse(data.url!);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              },
+            );
+          } else {
+            return TextSpan(
+              style: data.style ?? CustomStyle.body(),
+              text: data.text,
+            );
+          }
+        }).toList(),
+      ),
     );
   }
 }

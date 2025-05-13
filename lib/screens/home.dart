@@ -27,6 +27,7 @@ import 'package:remixicon/remixicon.dart';
 import 'package:synpitarn/services/language_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/models/qrcode.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -184,14 +185,15 @@ class HomeState extends State<HomePage> {
 
             return {
               'dueDate': CommonService.formatDate(loanSchedule.pmtDate),
-              'amount': CommonService.formatWithThousandSeparator(loanSchedule.pmtAmount),
+              'amount': CommonService.formatWithThousandSeparator(
+                  loanSchedule.pmtAmount),
               'status': loanSchedule.isPaymentDone == 0 ? 'Unpaid' : 'Paid',
               'dayCount': dayCount,
               'isLate': isLate
             };
           }).toList();
 
-          if(loanResponse.data[0].qrcode != null) {
+          if (loanResponse.data[0].qrcode != null) {
             qrcode.photo = loanResponse.data[0].qrcode.photo;
             qrcode.string = loanResponse.data[0].qrcode.string;
           }
@@ -403,8 +405,8 @@ class HomeState extends State<HomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Your Loan Status', style: CustomStyle.subTitleBold()),
-              Text('View All', style: CustomStyle.body()),
+              Text(AppLocalizations.of(context)!.yourLoanStatus, style: CustomStyle.subTitleBold()),
+              Text(AppLocalizations.of(context)!.viewAll, style: CustomStyle.body()),
             ],
           ),
           CustomWidget.verticalSpacing(),
@@ -431,7 +433,8 @@ class HomeState extends State<HomePage> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: createLoanStep(
-                      label: LanguageService.translateKey(context, step['label']),
+                      label:
+                          LanguageService.translateKey(context, step['label']),
                       isActive: step['isActive'],
                     ),
                   );
@@ -469,10 +472,11 @@ class HomeState extends State<HomePage> {
 
   Widget createPendingLoanSection() {
     final int activeIndex = loanSteps.indexWhere((step) => step['isActive']);
-    String loanStatus = CommonService.getLoanStatus(
-        applicationData.status.toString());
+    String loanStatus =
+        CommonService.getLoanStatus(applicationData.status.toString());
     if (activeIndex == 1) {
-      loanStatus = LanguageService.translateKey(context, loanSteps[activeIndex]["label"]);
+      loanStatus = LanguageService.translateKey(
+          context, loanSteps[activeIndex]["label"]);
     }
 
     return Padding(
@@ -487,28 +491,28 @@ class HomeState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomWidget.buildRow(
-                "Contract No",
+                AppLocalizations.of(context)!.contractNo,
                 applicationData.contractNo.toString(),
               ),
               if (LoanStatus.PRE_APPROVE_STATUS.contains(
                 applicationData.status,
               )) ...[
                 CustomWidget.buildRow(
-                  "Loan Size",
+                  AppLocalizations.of(context)!.loanSize,
                   CommonService.getLoanSize(applicationData),
                 ),
                 CustomWidget.buildRow(
-                  "Loan Term",
-                  "${applicationData.loanTerm.toString()} Months",
+                  AppLocalizations.of(context)!.loanTerm,
+                  "${applicationData.loanTerm.toString()} ${AppLocalizations.of(context)!.months}",
                 ),
                 CustomWidget.buildRow(
-                  "Branch Appointment Date",
+                  AppLocalizations.of(context)!.branchAppointmentDate,
                   CommonService.formatDate(
                     applicationData.appointmentBranchDate.toString(),
                   ),
                 ),
                 CustomWidget.buildRow(
-                  "Branch Appointment Time",
+                  AppLocalizations.of(context)!.branchAppointmentTime,
                   applicationData.appointmentBranchTime.toString(),
                 ),
               ],
@@ -516,25 +520,25 @@ class HomeState extends State<HomePage> {
                 applicationData.status,
               )) ...[
                 CustomWidget.buildRow(
-                  "Loan Applied Date",
+                  AppLocalizations.of(context)!.loanAppliedDate,
                   CommonService.formatDate(
                     applicationData.createdAt.toString(),
                   ),
                 ),
                 CustomWidget.buildRow(
-                  "Request Interview Date",
+                  AppLocalizations.of(context)!.requestInterviewDate,
                   CommonService.formatDate(
                     applicationData.appointmentDate.toString(),
                   ),
                 ),
                 CustomWidget.buildRow(
-                  "Request Interview Time",
+                  AppLocalizations.of(context)!.requestInterviewTime,
                   CommonService.formatTime(
                     applicationData.appointmentTime.toString(),
                   ),
                 ),
               ],
-              CustomWidget.buildRow("Loan Status", loanStatus),
+              CustomWidget.buildRow(AppLocalizations.of(context)!.loanStatus, loanStatus),
             ],
           ),
         ),
@@ -555,18 +559,18 @@ class HomeState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomWidget.buildRow(
-                  "Contract No",
+                  AppLocalizations.of(context)!.contractNo,
                   applicationData.contractNoRef != ""
                       ? applicationData.contractNoRef.toString()
                       : applicationData.contractNo.toString()),
               CustomWidget.buildRow(
-                  "Loan Status",
+                  AppLocalizations.of(context)!.loanStatus,
                   CommonService.getLoanStatus(
                       applicationData.status.toString())),
               CustomWidget.buildRow(
-                  "Loan Size", CommonService.getLoanSize(applicationData)),
+                  AppLocalizations.of(context)!.loanSize, CommonService.getLoanSize(applicationData)),
               CustomWidget.buildRow(
-                  "Loan Term", "${applicationData.loanTerm} Months"),
+                  AppLocalizations.of(context)!.loanTerm, "${applicationData.loanTerm} ${AppLocalizations.of(context)!.months}"),
             ],
           ),
         ),
@@ -583,8 +587,8 @@ class HomeState extends State<HomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Repayment Schedule', style: CustomStyle.subTitleBold()),
-              Text('View All', style: CustomStyle.body()),
+              Text(AppLocalizations.of(context)!.repaymentSchedule, style: CustomStyle.subTitleBold()),
+              Text(AppLocalizations.of(context)!.viewAll, style: CustomStyle.body()),
             ],
           ),
           if (totalLateDay > 0) ...[
@@ -727,7 +731,8 @@ class HomeState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Get To Know Us", style: CustomStyle.subTitleBold()),
+              Text(AppLocalizations.of(context)!.getToKnowUs,
+                  style: CustomStyle.subTitleBold()),
               CustomWidget.verticalSpacing(),
               GridView.count(
                 crossAxisCount: crossAxisCount,
@@ -767,16 +772,17 @@ class HomeState extends State<HomePage> {
             backgroundColor: CustomStyle.secondary_color,
             child: Icon(aboutList[index].icon, color: CustomStyle.icon_color),
           ),
+          SizedBox(height: 5),
           Expanded(
             child: Text(
-              aboutList[index].titleEN,
+              aboutList[index].getTitle(),
               textAlign: TextAlign.center,
               style: CustomStyle.body(),
-              softWrap: true,
               overflow: TextOverflow.visible,
               maxLines: 5,
             ),
           ),
+          CustomWidget.verticalSpacing(),
           CustomWidget.verticalSpacing(),
         ],
       ),

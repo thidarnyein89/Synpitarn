@@ -1,15 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:remixicon/remixicon.dart';
+import 'package:synpitarn/data/language.dart';
 
 class AboutUS {
   IconData icon = Icons.home;
   String titleMM = "";
   String titleEN = "";
   String titleTHAI = "";
-  String descriptionMM = "";
-  String descriptionEN = "";
-  String descriptionTHAI = "";
+  bool isAboutUs = false;
 
   static const Map<String, IconData> iconMap = {
     "group": RemixIcons.group_line,
@@ -27,9 +26,7 @@ class AboutUS {
     required this.titleMM,
     required this.titleEN,
     required this.titleTHAI,
-    required this.descriptionMM,
-    required this.descriptionEN,
-    required this.descriptionTHAI,
+    required this.isAboutUs,
   });
 
   factory AboutUS.fromJson(Map<String, dynamic> json) {
@@ -38,9 +35,7 @@ class AboutUS {
       titleMM: json['title_mm'],
       titleEN: json['title_en'],
       titleTHAI: json['title_thai'],
-      descriptionMM: json['description_mm'],
-      descriptionEN: json['description_en'],
-      descriptionTHAI: json['description_thai'],
+      isAboutUs: json['is_about_us'],
     );
   }
 
@@ -50,9 +45,7 @@ class AboutUS {
       'titleMM': titleMM,
       'titleEN': titleEN,
       'titleTHAI': titleTHAI,
-      'descriptionMM': descriptionMM,
-      'descriptionEN': descriptionEN,
-      'descriptionTHAI': descriptionTHAI,
+      'isAboutUs': isAboutUs,
     };
   }
 
@@ -62,5 +55,16 @@ class AboutUS {
 
   static IconData getIconFromString(String iconName) {
     return iconMap[iconName] ?? RemixIcons.error_warning_line;
+  }
+
+  String getTitle() {
+    switch (Language.currentLanguage) {
+      case LanguageType.my:
+        return titleMM;
+      case LanguageType.th:
+        return titleTHAI;
+      default:
+        return titleEN;
+    }
   }
 }

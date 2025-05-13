@@ -29,7 +29,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late Future<bool> _loginStatusFuture;
 
-  Locale? currentLocale = Locale('en');
+  Locale? currentLocale = Locale(LanguageType.my.toString());
 
   @override
   void initState() {
@@ -40,19 +40,25 @@ class _MyAppState extends State<MyApp> {
   Future<void> getInitData() async {
     _loginStatusFuture = getLoginStatus();
 
-    String language = await getLanguage();
-    currentLocale = Locale(language);
+    LanguageType language = await getLanguage();
+    currentLocale = Locale(language.name);
 
     setState(() {});
   }
 
   void changeLanguage(Locale newLocale) {
-    setLanguage(newLocale.languageCode);
+    final langType = LanguageType.values.firstWhere(
+          (e) => e.name == newLocale.languageCode,
+      orElse: () => LanguageType.en,
+    );
+
+    setLanguage(langType);
 
     setState(() {
       currentLocale = newLocale;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +107,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  Locale? currentLocale = Locale('en');
+  Locale? currentLocale;
 
   @override
   void initState() {
@@ -110,8 +116,9 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<void> getInitData() async {
-    String language = await getLanguage();
-    currentLocale = Locale(language);
+    LanguageType language = await getLanguage();
+    Language.currentLanguage = language;
+    currentLocale = Locale(language.name);
 
     setState(() {});
   }

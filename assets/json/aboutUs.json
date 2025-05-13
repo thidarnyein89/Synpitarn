@@ -4,53 +4,41 @@
     "title_mm": "ဆင်ပိတန် ဆိုသည်မှာ",
     "title_en": "Who is Syn Pitarn?",
     "title_thai": "สินพิธานคือ",
-    "description_mm": "<div><ul><li>ဆင်ပိတန်သည် လူတစ်ဦးချင်းအတွက် ချေးငွေဝန်ဆောင်မှု ပြုလုပ်ပေးနေသော အသေးစားငွေရေးကြေးရေးလုပ်ငန်း တစ်ခု ဖြစ်ပါသည်။</li><li>ထိုင်းနိုင်ငံငွေကြေးနှင့်ဘဏ္ဍာရေးဌာန၏ လိုင်စင်ရ အသေးစားငွေရေးကြေးရေး ကုမ္ပဏီလည်း ဖြစ်ပါသည်။</li><li>လိုင်စင်နံပါတ်မှာ (<a href=\"./assets/Pico_license_SPTP.pdf\" target=\"_blank\" download=\"\">ဤနေရာတွင်နှိပ်ပါ</a>)</li></ul></div>",
-    "description_en": "<div><ul><li>We are a Thai pico finance company that focuses on lending to individuals</li><li>Licensed by the Thai Ministry of Finance to operate in Pathumthani</li><li>License number [(<a href=\"./assets/Pico_license_SPTP.pdf\" target=\"_blank\" download=\"\">Click Here</a>)]</li></ul></div>",
-    "description_thai": "<div><ul><li>สินพิธานเป็นผู้ประกอบธุุรกิจการให้สินเชื่อรายย่อยระดับจังหวัดผ่านใบอนุญาตพิโก้ไฟแนนซ์ </li><li>สินพิธานได้รับอนุญาตจากสำนักงานเศรษฐกิจการคลังโดยกระทรวงการคลังให้ประกอบกิจการในจังหวัดปทุมธานี </li><li>ภายใต้ใบอนุญาตเลขที่ [(<a href=\"./assets/Pico_license_SPTP.pdf\" target=\"_blank\" download=\"\">Click Here</a>)] </li></ul></div>"
+    "is_about_us": true
   },
   {
     "icon": "profile",
     "title_mm": "ကျွန်ုပ်တို့၏ ချေးငွေများအကြောင်း",
     "title_en": "Our loans",
     "title_thai": "รายละเอียดเงินกู้",
-    "description_mm": "<div><ul><li>အတိုးနှုန်းအနေဖြင့် ထိုင်းနိုင်ငံငွေကြေးနှင့်ဘဏ္ဍာရေးဌာနမှ သတ်မှတ်သည့်အတိုင်း ၁လ လျှင်  အများဆုံး ၃% ဖြစ်ပါသည်။ </li><li>ချေးငွေကာလမှာ အနည်းဆုံး ၂-လ ဖြစ်ပါသည်။ </li><li>ပထမဆုံးအကြိမ် ချေးငွေအနေဖြင့် အများဆုံး ဘတ် ၅၀၀၀ ချေးယူနိုင်ပါသည်။ သင်၏ချေးငွေပြန်ဆပ်မှုရာဇဝင်ပေါ်မူတည်၍ ချေးငွေပမာဏတိုးခြင်း နှင့် ချေးငွေကာလတိုးခြင်းတို့အား လျှောက်ထားလုပ်ဆောင်နိုင်ပါသည်။ </li><li>ချေးငွေ ပေးဆပ်မှုပုံစံမှာ ၂ပတ်လျှင် ၁ကြိမ် ဖြစ်ပါသည်။ </li><li>ချေးငွေလျောက်ထားသူ၏ လိုအပ်သော ငွေကြေးပြန်လည်ပေးဆပ်နိုင်မှုပေါ် အခြေခံ၍ ချေးငွေပမာဏအား ထိုင်းဘတ်ငွေ ၃ဝဝဝ မှ ၂၅ဝဝဝ ထိ သတ်မှတ်ထားပါသည်။ <br></li>ဥပမာ-ချေးငွေ ဘတ် ၁ဝဝဝဝ ၏ ချေးငွေသက်တမ်း ၂-လအတွက် ချေးငွေပြန်လည်ပေးချေမှု ထိုင်းဘတ်ငွေ ၂၅၉၃.၁၄ ပမာဏဖြင့် ၄-ကြိမ် ပြုလုပ်ရမည်ဖြစ်ပါသည်။ </ul></div>",
-    "description_en": "<div><ul><li>Our maximum interest rate of 3% per month is set by the Ministry of Finance</li><li>Minimum term is 2 months</li><li>Your first loan will be a maximum of Baht 5,000. With good repayment history this amount can be increased and the terms can be longer. </li><li>Repayments must be made every 2 weeks</li><li>We lend between Baht 3,000 and Baht 25,000 with loan terms tailored to meet your ability</li></ul>Example: a Baht 10,000 loan with a 2 months term will be 4 repayments of Baht 2,593.14</div>",
-    "description_thai": "<div><ul><li>อัตราดอกเบี้ยสูงสุดอยู่ที่ร้อยละ 3 บาทต่อเดือน ตามประกาศกระทรวงการคลัง </li><li>ระยะเวลากู้ขั้นต่ำคือ 2 เดือน </li><li>นาย ก กู้เงิน 5,000 บาท ระยะเวลาชำระคืน 3 เดือน กำหนดการชำระคืนทั้งหมดจะเป็น 6 ครั้ง ครั้งละ 877.01 บาท</li> <li>ต้องชำระคืนทุก 2 สัปดาห์ </li><li>ยอดเงินกู้ของเราอยู่ระหว่าง 3,000 ถึง 25,000 บาท โดยสามารถวางแผนการชำระตามความสามารถในการชำระของผู้กู้ </li></ul> ตัวอย่าง: นาย ก กู้เงิน 10,000 บาท ระยะเวลาชำระคืน 2 เดือน กำหนดการชำระคืนทั้งหมดจะเป็น  4 ครั้ง  ครั้งละ 2,593.14 บาท </div>"
+    "is_about_us": true
   },
   {
     "icon": "auction",
     "title_mm": "အခြေခံမူဝါဒ",
     "title_en": "Core Principles",
     "title_thai": "หลักการของบริษัท",
-    "description_mm": "<div><ul><li>လွယ်ကူအဆင်ပြေစေခြင်း<br>မိမိအားလပ်ချိန်တွင် မိုဘိုင်းဖုန်းမှတဆင့် မြန်မာဘာသာစကားဖြင့် အသုံးပြုနိုင်ခြင်း</li><li>ဥပဒေနှင့်အညီဖြစ်ခြင်း</li><li>ပွင့်လင်းမြင်သာမှုရှိခြင်း</li><li>ယုံကြည်စိတ်ချရခြင်း</li></ul></div>",
-    "description_en": "<div><ul><li>Convenient<br>You can access us in  Myanmar language from your mobile phone at a time convenient to you</li><li>Regulated</li><li>Transparent</li><li>Confidential</li></ul></div>",
-    "description_thai": "<div><ul><li>สะดวก โดยคุณสามารถเลือกโหมดภาษาที่คุณถนัด และเข้าถึงเว็บไซต์เราได้ทุกเวลาที่คุณสะดวก จากโทรศัพท์มือถือของคุณ </li><li>ถูกต้องตามกฎหมาย </li><li>โปร่งใส </li><li>รักษาความเป็นส่วนตัว </li></ul></div>"
+    "is_about_us": true
   },
   {
     "icon": "award",
     "title_mm": "လျှောက်ထားနိုင်မည့်သူများ",
     "title_en": "Do you qualify?",
     "title_thai": "คุณสมบัติผู้กู้",
-    "description_mm": "<div><ul><li>အသက် 20 အထက်ရှိသူဖြစ်ရမည်။</li><li>ထိုင်းနိုင်ငံတွင် နေထိုင်မှု သက်တမ်း ၂ နှစ် အနည်းဆုံးရှိရမည်။ လက်ရှိအလုပ်တွင် အလုပ်သက်တမ်း ၁နှစ် အနည်းဆုံးရှိရမည်။ </li><li>ပထုမ်ထားနီးခရိုင်မြို့နယ်ထဲတွင် အလုပ်လုပ်ကိုင်သူ /နေထိုင်သူ ဖြစ်ရမည်။</li><li>ထိုင်းနိုင်ငံတွင်းတရားဝင်လုပ်ကိုင်ခွင့်ရသော အလုပ်သမားကတ် သို့ ပန်းရောင်ကဒ်ရှိရမည်။</li><li>ထိုင်းဘဏ်အကောင့်ရှိရမည်။</li><li>စမတ်မိုဘိုင်းဖုန်းရှိရမည်။</li></ul></div>",
-    "description_en": "<div><ul><li>At least 20 years old</li><li>Have been living in Thailand for at least 2 years and working in the current company for at least 1 year</li><li>Work or live in Pathumthani</li><li>Have a valid pink card or work permit</li><li>Have a Thai bank account</li><li>Have a smart phone</li></ul></div>",
-    "description_thai": "<div><ul><li>อายุ 20 ปีบริบูรณ์ขึ้นไป&nbsp;</li><li>เป็นผู้อยู่ในประเทศไทยมาแล้วไม่น้อยกว่า 2  ปี และทำงานกับนายจ้างปัจจุบันมาแล้วไม่น้อยกว่า 1 ปี</li><li>ทำงานหรืออาศัยอยู่ในเขตจังหวัดปทุมธานี&nbsp;</li><li>มีใบอนุญาตการทำงาน&nbsp;</li><li>มีบัญชีธนาคารในประเทศไทย&nbsp;</li><li>มีโทรศัพท์มือถือ&nbsp;</li></ul></div>"
+    "is_about_us": true
   },
   {
     "icon": "question",
     "title_mm": "အမေးများသောမေးခွန်းများ",
     "title_en": "FAQ",
     "title_thai": "คำถามที่พบบ่อย",
-    "description_mm": "",
-    "description_en": "",
-    "description_thai": ""
+    "is_about_us": false
   },
   {
     "icon": "file",
     "title_mm": "ကြေငြာချက်များ",
     "title_en": "Announcements",
     "title_thai": "ประกาศ",
-    "description_mm": "",
-    "description_en": "",
-    "description_thai": ""
+    "is_about_us": false
   }
 ]

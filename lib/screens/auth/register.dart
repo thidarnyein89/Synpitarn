@@ -4,6 +4,7 @@ import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/models/User_response.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/screens/auth/login.dart';
 import 'package:synpitarn/screens/components/nrc.dart';
 import 'package:synpitarn/screens/auth/otp.dart';
 import 'package:synpitarn/screens/auth/term_conditions.dart';
@@ -185,7 +186,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: LayoutBuilder(
@@ -266,6 +266,29 @@ class _RegisterPageState extends State<RegisterPage> {
                           isLoading: isLoading,
                           text: AppLocalizations.of(context)!.continueText,
                           onPressed: handleRegister),
+                      CustomWidget.verticalSpacing(),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(),
+                            ),
+                          );
+                        },
+                        child: RichText(
+                          text: TextSpan(
+                            text: AppLocalizations.of(context)!.doHaveAnAccount,
+                            style: CustomStyle.body(),
+                            children: [
+                              TextSpan(
+                                text: AppLocalizations.of(context)!.login,
+                                style: CustomStyle.bodyUnderline(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -276,4 +299,8 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
     );
   }
+}
+
+extension on AppLocalizations {
+  get doHaveAnAccount => null;
 }

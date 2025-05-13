@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 enum ContentType { text, table }
 
@@ -25,17 +24,4 @@ class ContentBlock {
   ContentBlock.table(this.tableData)
       : type = ContentType.table,
         textData = null;
-
-  Future<void> _callNow(String phoneNumber) async {
-    final Uri uri = Uri.parse('tel:$phoneNumber');
-
-    final bool launched = await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
-    );
-
-    if (!launched) {
-      debugPrint('Cannot launch phone dialer');
-    }
-  }
 }

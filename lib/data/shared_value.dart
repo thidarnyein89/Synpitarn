@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:synpitarn/data/language.dart';
 import 'package:synpitarn/models/default/default_data.dart';
 import 'package:synpitarn/models/loan.dart';
 
@@ -39,14 +40,19 @@ Future<User> getLoginUser() async {
   }
 }
 
-Future<void> setLanguage(String language) async {
+Future<void> setLanguage(LanguageType languageType) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString('language', language);
+  await prefs.setString('language', languageType.name);
+  Language.currentLanguage = languageType;
 }
 
-Future<String> getLanguage() async {
+Future<LanguageType> getLanguage() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getString('language') ?? "en";
+  String langString = prefs.getString('language') ?? LanguageType.my.name;
+  return LanguageType.values.firstWhere(
+        (e) => e.name == langString,
+    orElse: () => LanguageType.my,
+  );
 }
 
 

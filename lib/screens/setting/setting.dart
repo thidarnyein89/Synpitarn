@@ -8,6 +8,7 @@ import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/screens/location/branch.dart';
 import 'package:synpitarn/screens/setting/about_us.dart';
 import 'package:synpitarn/screens/setting/call_center.dart';
 import 'package:synpitarn/screens/setting/guide.dart';
@@ -107,7 +108,7 @@ class SettingState extends State<SettingPage> {
         CustomWidget.verticalSpacing(),
         Text(AppLocalizations.of(context)!.location, style: CustomStyle.subTitleBold()),
         CustomWidget.verticalSmallSpacing(),
-        buildSettingTile(Icons.apartment, AppLocalizations.of(context)!.nearestBranch, () => {}),
+        buildSettingTile(Icons.apartment, AppLocalizations.of(context)!.nearestBranch, goToBranchPage),
         buildSettingTile(Icons.money, AppLocalizations.of(context)!.nearestATM, () => {}),
       ],
     );
@@ -200,6 +201,15 @@ class SettingState extends State<SettingPage> {
           ),
         );
       },
+    );
+  }
+
+  void goToBranchPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BranchPage(),
+      ),
     );
   }
 

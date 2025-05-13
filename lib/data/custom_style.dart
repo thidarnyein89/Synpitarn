@@ -42,9 +42,10 @@ class CustomStyle {
 
   static TextStyle body() {
     return TextStyle(
-      fontSize: 14,
-      color: Colors.black,
-    );
+        fontSize: 14,
+        color: Colors.black,
+        decoration: TextDecoration.none,
+        fontWeight: FontWeight.normal);
   }
 
   static TextStyle bodyOpacity() {

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:synpitarn/data/language.dart';
 
 class Guide {
   IconData icon = Icons.home;
@@ -9,9 +10,6 @@ class Guide {
   String stepMM = "";
   String stepEN = "";
   String stepTHAI = "";
-  String descriptionMM = "";
-  String descriptionEN = "";
-  String descriptionTHAI = "";
 
   static const Map<String, IconData> iconMap = {
     "feed": Icons.feed_outlined,
@@ -29,9 +27,6 @@ class Guide {
     required this.stepMM,
     required this.stepEN,
     required this.stepTHAI,
-    required this.descriptionMM,
-    required this.descriptionEN,
-    required this.descriptionTHAI,
   });
 
   factory Guide.fromJson(Map<String, dynamic> json) {
@@ -43,9 +38,6 @@ class Guide {
       stepMM: json['step_mm'],
       stepEN: json['step_en'],
       stepTHAI: json['step_thai'],
-      descriptionMM: json['description_mm'],
-      descriptionEN: json['description_en'],
-      descriptionTHAI: json['description_thai'],
     );
   }
 
@@ -58,9 +50,6 @@ class Guide {
       'stepMM': stepMM,
       'stepEN': stepEN,
       'stepTHAI': stepTHAI,
-      'descriptionMM': descriptionMM,
-      'descriptionEN': descriptionEN,
-      'descriptionTHAI': descriptionTHAI,
     };
   }
 
@@ -70,5 +59,27 @@ class Guide {
 
   static IconData getIconFromString(String iconName) {
     return iconMap[iconName] ?? Icons.error;
+  }
+
+  String getTitle() {
+    switch (Language.currentLanguage) {
+      case LanguageType.my:
+        return titleMM;
+      case LanguageType.th:
+        return titleTHAI;
+      default:
+        return titleEN;
+    }
+  }
+
+  String getStep() {
+    switch (Language.currentLanguage) {
+      case LanguageType.my:
+        return stepMM;
+      case LanguageType.th:
+        return stepTHAI;
+      default:
+        return stepEN;
+    }
   }
 }

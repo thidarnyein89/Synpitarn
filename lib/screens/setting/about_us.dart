@@ -1,10 +1,17 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/data/json_data/about_us/en.dart';
+import 'package:synpitarn/data/json_data/about_us/mm.dart';
+import 'package:synpitarn/data/json_data/about_us/th.dart';
+import 'package:synpitarn/data/json_data/common.dart';
+import 'package:synpitarn/data/language.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/models/aboutUs.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/services/common_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AboutUsPage extends StatefulWidget {
   int activeIndex;
@@ -20,14 +27,15 @@ class AboutUsState extends State<AboutUsPage> {
   ScrollController _scrollController = ScrollController();
 
   List<AboutUS> aboutList = [];
-  List<double> _htmlHeight = [];
+  List<double> contentHeight = [];
+  List<List<ContentBlock>> allContent = [];
 
   double containerHeight = 150;
 
   @override
   void initState() {
     super.initState();
-    readAboutUsData();
+    getInitData();
   }
 
   @override
@@ -36,16 +44,27 @@ class AboutUsState extends State<AboutUsPage> {
     super.dispose();
   }
 
-  Future<void> readAboutUsData() async {
+  Future<void> getInitData() async {
+
+    if (Language.currentLanguage == LanguageType.en) {
+      allContent = AboutUsEnglish.allContent;
+    }
+    else if(Language.currentLanguage == LanguageType.my) {
+      allContent = AboutUsMyanmar.allContent;
+    }
+    else if(Language.currentLanguage == LanguageType.th) {
+      allContent = AboutUsThai.allContent;
+    }
+
     aboutList = await _commonService.readAboutUsData();
 
     //For Remove FAQ, Announcement Data
     aboutList =
         aboutList.where((aboutData) {
-          return aboutData.descriptionEN.isNotEmpty;
+          return aboutData.isAboutUs;
         }).toList();
 
-    _htmlHeight = List.generate(aboutList.length, (index) => 0);
+    contentHeight = List.generate(aboutList.length, (index) => 0);
     setState(() {});
   }
 
@@ -53,7 +72,7 @@ class AboutUsState extends State<AboutUsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: 'About  Us'),
+      appBar: PageAppBar(title: AppLocalizations.of(context)!.getToKnowUs),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -84,25 +103,27 @@ class AboutUsState extends State<AboutUsPage> {
   }
 
   Widget _buildCard(int index) {
-    GlobalKey htmlKey = GlobalKey();
+    GlobalKey contentKey = GlobalKey();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final context = htmlKey.currentContext;
+      final context = contentKey.currentContext;
       if (context != null) {
         final box = context.findRenderObject() as RenderBox?;
         if (box != null) {
           final newHeight = box.size.height;
 
-          if (_htmlHeight[index] != newHeight) {
-            _htmlHeight[index] = newHeight;
-            setState(() {});
+          if (contentHeight[index] != newHeight) {
+            setState(() {
+              contentHeight[index] = newHeight;
+            });
           }
         }
       }
 
-      if (widget.activeIndex == index) {
+      if(widget.activeIndex > 0) {
         _scrollToStep(widget.activeIndex);
       }
+
     });
 
     return Column(
@@ -126,7 +147,7 @@ class AboutUsState extends State<AboutUsPage> {
                       ),
                     ),
                     CustomWidget.horizontalSpacing(),
-                    Text(aboutList[index].titleEN, style: CustomStyle.subTitle()),
+                    Text(aboutList[index].getTitle(), style: CustomStyle.subTitle()),
                   ],
                 ),
               ),
@@ -141,16 +162,21 @@ class AboutUsState extends State<AboutUsPage> {
         CustomWidget.verticalSpacing(),
         Container(
           padding: EdgeInsets.zero, // Adjust padding as needed
-          child: Html(
-            key: htmlKey,
-            data: aboutList[index].descriptionEN,
-            style: {
-              "ul": Style(margin: Margins.zero, padding: HtmlPaddings.zero),
-              "li": Style(
-                margin: Margins.zero,
-                padding: HtmlPaddings.only(left: 0),
-              ),
-            },
+          child: Column(
+            key: contentKey,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomWidget.verticalSpacing(),
+              ...allContent[index].map((block) {
+                return Padding(
+                  padding: EdgeInsets.only(
+                    left: block.paddingLeft!.toDouble(),
+                    bottom: 20,
+                  ),
+                  child: buildTextSpan(context, block.textData!),
+                );
+              }),
+            ],
           ),
         ),
         CustomWidget.verticalSpacing(),
@@ -163,7 +189,7 @@ class AboutUsState extends State<AboutUsPage> {
 
     for (var i = 0; i < index; i++) {
       position +=
-          _htmlHeight[i] +
+          contentHeight[i] +
           containerHeight +
           CustomWidget.verticalSpacing().height!.toInt() +
           CustomWidget.verticalSpacing().height!.toInt();
@@ -173,6 +199,53 @@ class AboutUsState extends State<AboutUsPage> {
       position,
       duration: Duration(milliseconds: 300),
       curve: Curves.easeInOut,
+    );
+  }
+
+  RichText buildTextSpan(BuildContext context, List<Data> dataList) {
+    return RichText(
+      text: TextSpan(
+        children: dataList.map((data) {
+          if (data.url != null) {
+            return TextSpan(
+              style: data.style,
+              text: data.text,
+              recognizer: TapGestureRecognizer()..onTap = () async {
+                showScaffoldMessenger(AppLocalizations.of(context)!.downloading);
+
+                try {
+                  FileDownloader.downloadFile(
+                    url: data.url!,
+                    name: 'license.pdf',
+                    onDownloadCompleted: (path) {
+                      showScaffoldMessenger(AppLocalizations.of(context)!.downloadComplete);
+                    },
+                    onDownloadError: (errorMessage) {
+                      showScaffoldMessenger("Error downloading: $errorMessage");
+                    },
+                  );
+                } catch (e) {
+                  showScaffoldMessenger("Error downloading");
+                }
+              },
+            );
+          } else {
+            return TextSpan(
+              style: data.style ?? CustomStyle.body(),
+              text: data.text,
+            );
+          }
+        }).toList(),
+      ),
+    );
+  }
+
+  void showScaffoldMessenger(String downloadMessage) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(downloadMessage),
+        duration: Duration(seconds: 2),
+      ),
     );
   }
 }
