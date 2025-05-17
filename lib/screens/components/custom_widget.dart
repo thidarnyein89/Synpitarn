@@ -388,7 +388,7 @@ class CustomWidget {
                     ),
                   ),
         ),
-        if (!isSmall!) verticalSpacing(),
+        // if (!isSmall!) verticalSpacing(),
       ],
     );
   }
@@ -483,7 +483,9 @@ class CustomWidget {
                   msg.map((item) {
                     return TextSpan(
                       text: item['text'].toString(),
-                      style: (item['style'] as TextStyle?)?.copyWith(height: 1.5),
+                      style: (item['style'] as TextStyle?)?.copyWith(
+                        height: 1.5,
+                      ),
                     );
                   }).toList(),
             ),
