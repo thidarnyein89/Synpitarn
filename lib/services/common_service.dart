@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:synpitarn/data/loan_status.dart';
@@ -7,6 +8,7 @@ import 'package:synpitarn/models/guide.dart';
 import 'package:synpitarn/models/loan.dart';
 import 'package:synpitarn/models/nrc.dart';
 import 'package:synpitarn/models/aboutUs.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommonService {
 
@@ -75,7 +77,7 @@ class CommonService {
     return loanStatus;
   }
 
-  static String getLoanSize(Loan loanData) {
+  static String getLoanSize(BuildContext context, Loan loanData) {
     String loanSize = "";
     String? loanStatus = "";
 
@@ -97,10 +99,10 @@ class CommonService {
       loanSize = loanData.appliedAmount ?? "0";
     }
 
-    return formatWithThousandSeparator(loanSize);
+    return formatWithThousandSeparator(context, loanSize);
   }
 
-  static String formatWithThousandSeparator(dynamic value) {
+  static String formatWithThousandSeparator(BuildContext context, dynamic value) {
     if (value == null || value.toString().trim().isEmpty) {
       return '0';
     }
@@ -108,9 +110,9 @@ class CommonService {
     try {
       final num parsedValue = value is num ? value : num.parse(value.toString());
       final formatter = NumberFormat("#,##0.00", "en_US");
-      return "${formatter.format(parsedValue)} Baht";
+      return "${formatter.format(parsedValue)} ${AppLocalizations.of(context)!.bahts}";
     } catch (e) {
-      return '0 Baht';
+      return '0 ${AppLocalizations.of(context)!.bahts}';
     }
   }
 

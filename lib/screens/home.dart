@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/data/loan_status.dart';
-import 'package:synpitarn/data/message.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/loan.dart';
 import 'package:synpitarn/models/loan_application_response.dart';
@@ -58,6 +57,7 @@ class HomeState extends State<HomePage> {
     {"icon": Icons.support_agent, "label": "callCenter"},
   ];
 
+  List<GlobalKey> loanStepKeys = [];
   List<Map<String, dynamic>> loanSteps = [
     {'label': 'apply', 'isActive': true},
     {'label': 'interview', 'isActive': false},
@@ -80,6 +80,9 @@ class HomeState extends State<HomePage> {
     readAboutUsData();
     getInitData();
     slideImage();
+
+    loanStepKeys = List.generate(loanSteps.length, (_) => GlobalKey());
+    setState(() {});
   }
 
   @override
@@ -186,7 +189,7 @@ class HomeState extends State<HomePage> {
             return {
               'dueDate': CommonService.formatDate(loanSchedule.pmtDate),
               'amount': CommonService.formatWithThousandSeparator(
-                  loanSchedule.pmtAmount),
+                  context, loanSchedule.pmtAmount),
               'status': loanSchedule.isPaymentDone == 0 ? 'Unpaid' : 'Paid',
               'dayCount': dayCount,
               'isLate': isLate
@@ -341,7 +344,8 @@ class HomeState extends State<HomePage> {
                 onTap: () {
                   if (index == 0) {
                     if (qrcode.photo == "") {
-                      showErrorDialog(Message.NO_CURRENT_LOAN);
+                      showErrorDialog(
+                          AppLocalizations.of(context)!.noApplyLoan);
                     } else {
                       QRDialog.showQRDialog(
                         context,
@@ -405,8 +409,8 @@ class HomeState extends State<HomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(AppLocalizations.of(context)!.yourLoanStatus, style: CustomStyle.subTitleBold()),
-              Text(AppLocalizations.of(context)!.viewAll, style: CustomStyle.body()),
+              Text(AppLocalizations.of(context)!.loanStatus,
+                  style: CustomStyle.subTitleBold()),
             ],
           ),
           CustomWidget.verticalSpacing(),
@@ -432,10 +436,13 @@ class HomeState extends State<HomePage> {
                   final step = loanSteps[stepIndex];
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: createLoanStep(
-                      label:
-                          LanguageService.translateKey(context, step['label']),
-                      isActive: step['isActive'],
+                    child: Container(
+                      key: loanStepKeys[stepIndex],
+                      child: createLoanStep(
+                        label: LanguageService.translateKey(
+                            context, step['label']),
+                        isActive: step['isActive'],
+                      ),
                     ),
                   );
                 }),
@@ -499,7 +506,7 @@ class HomeState extends State<HomePage> {
               )) ...[
                 CustomWidget.buildRow(
                   AppLocalizations.of(context)!.loanSize,
-                  CommonService.getLoanSize(applicationData),
+                  CommonService.getLoanSize(context, applicationData),
                 ),
                 CustomWidget.buildRow(
                   AppLocalizations.of(context)!.loanTerm,
@@ -538,7 +545,8 @@ class HomeState extends State<HomePage> {
                   ),
                 ),
               ],
-              CustomWidget.buildRow(AppLocalizations.of(context)!.loanStatus, loanStatus),
+              CustomWidget.buildRow(
+                  AppLocalizations.of(context)!.loanStatus, loanStatus),
             ],
           ),
         ),
@@ -567,10 +575,10 @@ class HomeState extends State<HomePage> {
                   AppLocalizations.of(context)!.loanStatus,
                   CommonService.getLoanStatus(
                       applicationData.status.toString())),
-              CustomWidget.buildRow(
-                  AppLocalizations.of(context)!.loanSize, CommonService.getLoanSize(applicationData)),
-              CustomWidget.buildRow(
-                  AppLocalizations.of(context)!.loanTerm, "${applicationData.loanTerm} ${AppLocalizations.of(context)!.months}"),
+              CustomWidget.buildRow(AppLocalizations.of(context)!.loanSize,
+                  CommonService.getLoanSize(context, applicationData)),
+              CustomWidget.buildRow(AppLocalizations.of(context)!.loanTerm,
+                  "${applicationData.loanTerm} ${AppLocalizations.of(context)!.months}"),
             ],
           ),
         ),
@@ -587,18 +595,18 @@ class HomeState extends State<HomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(AppLocalizations.of(context)!.repaymentSchedule, style: CustomStyle.subTitleBold()),
-              Text(AppLocalizations.of(context)!.viewAll, style: CustomStyle.body()),
+              Text(AppLocalizations.of(context)!.repaymentSchedule,
+                  style: CustomStyle.subTitleBold()),
             ],
           ),
           if (totalLateDay > 0) ...[
             CustomWidget.verticalSpacing(),
             Text(
-              'Your repayment is $totalLateDay days late.',
+              AppLocalizations.of(context)!.repaymentLateDay(totalLateDay),
               style: CustomStyle.bodyRedColor(),
             ),
             Text(
-              'Please make a payment to maintain good credit.',
+              AppLocalizations.of(context)!.repaymentLateMessage,
               style: CustomStyle.bodyRedColor(),
             ),
           ],
@@ -611,7 +619,7 @@ class HomeState extends State<HomePage> {
 
   Widget createRepaymentCard({required Map<String, dynamic> item}) {
     return SizedBox(
-      height: 80,
+      height: 100,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: 1,
@@ -632,7 +640,8 @@ class HomeState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Due Date', style: CustomStyle.bodyBold()),
+                    Text(AppLocalizations.of(context)!.dueDate,
+                        style: CustomStyle.bodyBold()),
                     const SizedBox(height: 8),
                     Text(
                       item['dueDate'],
@@ -647,7 +656,8 @@ class HomeState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Amount', style: CustomStyle.bodyBold()),
+                    Text(AppLocalizations.of(context)!.amount,
+                        style: CustomStyle.bodyBold()),
                     const SizedBox(height: 8),
                     Text(
                       item['amount'],
@@ -662,7 +672,8 @@ class HomeState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Status', style: CustomStyle.bodyBold()),
+                    Text(AppLocalizations.of(context)!.status,
+                        style: CustomStyle.bodyBold()),
                     const SizedBox(height: 8),
                     Text(
                       item['status'],
@@ -680,7 +691,9 @@ class HomeState extends State<HomePage> {
                     CustomWidget.elevatedButton(
                       context: context,
                       isLoading: false,
-                      text: item['status'] == 0 ? 'Complete' : 'Pay Now',
+                      text: item['status'] == 0
+                          ? AppLocalizations.of(context)!.complete
+                          : AppLocalizations.of(context)!.payNow,
                       isSmall: true,
                       onPressed: handleContinue,
                     ),
@@ -698,15 +711,27 @@ class HomeState extends State<HomePage> {
     final int activeIndex = loanSteps.indexWhere((step) => step['isActive']);
     if (activeIndex == -1) return;
 
-    double itemWidth = 100;
-    double scrollOffset = itemWidth * activeIndex;
-
-    while (!_scrollController.hasClients) {
+    while (!_scrollController.hasClients ||
+        loanStepKeys[activeIndex].currentContext == null) {
       await Future.delayed(Duration(milliseconds: 50));
     }
 
+    double offset = 0;
+
+    for (int i = 0; i < activeIndex; i++) {
+      final context = loanStepKeys[i].currentContext;
+      if (context != null) {
+        final RenderBox box = context.findRenderObject() as RenderBox;
+        offset += box.size.width + 20;
+      }
+
+      if (i < activeIndex) {
+        offset += 8 + 8;
+      }
+    }
+
     _scrollController.animateTo(
-      scrollOffset,
+      offset,
       duration: Duration(milliseconds: 800),
       curve: Curves.easeInOut,
     );
@@ -793,7 +818,7 @@ class HomeState extends State<HomePage> {
 
   void goToDocumentPage(BuildContext context) {
     if (!loginUser.loanApplicationSubmitted) {
-      showErrorDialog(Message.NO_CURRENT_LOAN);
+      showErrorDialog(AppLocalizations.of(context)!.noApplyLoan);
     } else {
       RouteService.goToNavigator(context, DocumentHomePage());
     }
@@ -801,7 +826,7 @@ class HomeState extends State<HomePage> {
 
   void goToLoanSchedulePage(BuildContext context) {
     if (repaymentList.isEmpty) {
-      showErrorDialog(Message.NO_CURRENT_REPAYMENT);
+      showErrorDialog(AppLocalizations.of(context)!.noRepaymentSchedule);
     } else {
       RouteService.goToNavigator(
           context, RepaymentListPage(loan: loanList.first));

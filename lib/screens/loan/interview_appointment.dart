@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/data_response.dart';
@@ -12,6 +11,7 @@ import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/loan/success.dart';
 import 'package:synpitarn/services/auth_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class InterviewAppointmentPage extends StatefulWidget {
   Loan? applicationData;
@@ -221,7 +221,7 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: 'Interview Appointment'),
+      appBar: PageAppBar(title: AppLocalizations.of(context)!.interviewAppointment),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -237,12 +237,12 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
                         CustomWidget.datePicker(
                             context: context,
                             controller: textControllers['date']!,
-                            label: 'Appointment Date',
+                            label: AppLocalizations.of(context)!.interviewAppointmentDate,
                             readOnly: true,
                             maxDate: maxDate,
                             minDate: minDate),
                         CustomWidget.dropdownButtonSameValue(
-                          label: 'Available Time',
+                          label: AppLocalizations.of(context)!.interviewAppointmentTime,
                           selectedValue: dropdownControllers['time'],
                           items: itemDataList['time'],
                           onChanged: (value) {
@@ -253,7 +253,7 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
                           },
                         ),
                         CustomWidget.dropdownButtonSameValue(
-                          label: 'Social Media Channel',
+                          label: AppLocalizations.of(context)!.socialMediaChannel,
                           selectedValue: dropdownControllers['channel'],
                           items: itemDataList['channel'],
                           onChanged: (value) {
@@ -265,12 +265,12 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
                         ),
                         CustomWidget.textField(
                             controller: textControllers['url']!,
-                            label: 'Social Media Url'),
+                            label: AppLocalizations.of(context)!.socialMediaURL),
                         CustomWidget.elevatedButton(
                           context: context,
                           enabled: inValidFields.isEmpty,
                           isLoading: isLoading,
-                          text: 'Make Appointment',
+                          text: AppLocalizations.of(context)!.makeAppointment,
                           onPressed: handleAppointment,
                         ),
                       ]),

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/data.dart';
@@ -14,8 +13,10 @@ import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/profile/document_file.dart';
 import 'package:synpitarn/services/auth_service.dart';
+import 'package:synpitarn/services/language_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Information2Page extends StatefulWidget {
   const Information2Page({super.key});
@@ -27,6 +28,8 @@ class Information2Page extends StatefulWidget {
 class Information2State extends State<Information2Page> {
   User loginUser = User.defaultUser();
   DefaultData defaultData = new DefaultData.defaultDefaultData();
+
+  late Map<String, String> formLabel = {};
 
   final Map<String, TextEditingController> textControllers = {
     'debit': TextEditingController(),
@@ -68,7 +71,7 @@ class Information2State extends State<Information2Page> {
   @override
   void initState() {
     super.initState();
-    getDefaultData();
+    getInitData();
   }
 
   @override
@@ -77,35 +80,54 @@ class Information2State extends State<Information2Page> {
     textControllers.values.forEach((controller) => controller.dispose());
   }
 
-  Future<void> getDefaultData() async {
+  Future<void> getInitData() async {
     isPageLoading = true;
+    loginUser = await getLoginUser();
     setState(() {});
 
+    await getDefaultData();
+
+    if (defaultData.pages.length > 0) {
+      Map<String, dynamic>? inputData = defaultData.inputData;
+
+      var controls = defaultData.pages[pageIndex].formData.controls;
+
+      setFormLabel(controls);
+      setItemDataList(controls);
+      setSavedData(inputData!);
+      inValidFieldsAdd();
+    }
+
+    isPageLoading = false;
+    setState(() {});
+  }
+
+  Future<void> getDefaultData() async {
     defaultData = new DefaultData.defaultDefaultData();
-    loginUser = await getLoginUser();
 
     DefaultResponse defaultResponse =
         await DefaultRepository().getDefaultData(loginUser);
 
     if (defaultResponse.response.code == 200) {
       defaultData = defaultResponse.data;
-      Map<String, dynamic>? inputData = defaultData.inputData;
-
-      var controls = defaultData.pages[pageIndex].formData.controls;
-
-      setItemDataList(controls);
-      setSavedData(inputData!);
     } else if (defaultResponse.response.code == 403) {
       await showErrorDialog(defaultResponse.response.message);
+      isPageLoading = false;
+      setState(() {});
       AuthService().logout(context);
     } else {
       showErrorDialog(defaultResponse.response.message);
+      isPageLoading = false;
+      setState(() {});
     }
+  }
 
-    inValidFieldsAdd();
-
-    isPageLoading = false;
-    setState(() {});
+  void setFormLabel(var controls) {
+    formLabel = {};
+    for (var control in controls) {
+      Item item = Item.named(value: control.name, text: control.label);
+      formLabel[control.name] = LanguageService.translateLabel(item);
+    }
   }
 
   void setItemDataList(var controls) {
@@ -247,7 +269,7 @@ class Information2State extends State<Information2Page> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: 'Additional Information'),
+      appBar: PageAppBar(title: AppLocalizations.of(context)!.additionalInformation),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Stack(children: [
@@ -271,12 +293,12 @@ class Information2State extends State<Information2Page> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Length of time at current employer",
+                                AppLocalizations.of(context)!.lengthTimeCurrentEmployer,
                                 style: CustomStyle.subTitleBold(),
                               ),
                               CustomWidget.verticalSpacing(),
                               CustomWidget.dropdownButtonDiffValue(
-                                label: 'Year',
+                                label: formLabel['year_working_in_thailand']!,
                                 selectedValue: dropdownControllers[
                                     'year_working_in_thailand'],
                                 items:
@@ -291,7 +313,7 @@ class Information2State extends State<Information2Page> {
                                 },
                               ),
                               CustomWidget.dropdownButtonDiffValue(
-                                label: 'Month',
+                                label: formLabel['month_working_in_thailand']!,
                                 selectedValue: dropdownControllers[
                                     'month_working_in_thailand'],
                                 items:
@@ -306,7 +328,7 @@ class Information2State extends State<Information2Page> {
                                 },
                               ),
                               CustomWidget.dropdownButtonDiffValue(
-                                label: 'Type of Work',
+                                label: formLabel['type_of_work']!,
                                 selectedValue:
                                     dropdownControllers['type_of_work'],
                                 items: itemDataList['type_of_work']!,
@@ -319,7 +341,7 @@ class Information2State extends State<Information2Page> {
                                 },
                               ),
                               CustomWidget.dropdownButtonDiffValue(
-                                label: 'Industry',
+                                label: formLabel['industry']!,
                                 selectedValue: dropdownControllers['industry'],
                                 items: itemDataList['industry']!,
                                 onChanged: (value) {
@@ -331,25 +353,24 @@ class Information2State extends State<Information2Page> {
                               ),
                               CustomWidget.textField(
                                   controller: textControllers['debit']!,
-                                  label:
-                                      'How much debit do you owe currently?'),
+                                  label: formLabel['debit']!),
                               CustomWidget.numberTextField(
                                   controller: textControllers[
                                       'monthly_repayment_for_debit']!,
-                                  label: 'Monthly repayment for debit'),
+                                  label: formLabel['monthly_repayment_for_debit']!),
                               CustomWidget.numberTextField(
                                   controller: textControllers['salary']!,
-                                  label: 'Salary'),
+                                  label: formLabel['salary']!),
                               CustomWidget.numberTextField(
                                   controller: textControllers['loan_amount']!,
-                                  label: 'Loan amount'),
+                                  label: formLabel['loan_amount']!),
                               Text(
-                                "Loan Term",
+                                AppLocalizations.of(context)!.loanTerm,
                                 style: CustomStyle.subTitleBold(),
                               ),
                               CustomWidget.verticalSpacing(),
                               CustomWidget.dropdownButtonDiffValue(
-                                label: 'Year',
+                                label: formLabel['loan_term_year']!,
                                 selectedValue:
                                     dropdownControllers['loan_term_year'],
                                 items: itemDataList['loan_term_year']!,
@@ -362,7 +383,7 @@ class Information2State extends State<Information2Page> {
                                 },
                               ),
                               CustomWidget.dropdownButtonDiffValue(
-                                label: 'Month',
+                                label: formLabel['loan_term_month']!,
                                 selectedValue:
                                     dropdownControllers['loan_term_month'],
                                 items: itemDataList['loan_term_month']!,
@@ -379,7 +400,7 @@ class Information2State extends State<Information2Page> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Main purpose of loan",
+                                    AppLocalizations.of(context)!.mainPurposeLoan,
                                     style: CustomStyle.subTitleBold(),
                                   ),
                                   CustomWidget.verticalSpacing(),
@@ -445,14 +466,14 @@ class Information2State extends State<Information2Page> {
                                 CustomWidget.textField(
                                     controller: textControllers[
                                         'other_reason_for_main_purpose_of_loan']!,
-                                    label: 'Other reasons'),
+                                    label: AppLocalizations.of(context)!.otherReasons),
                               CustomWidget.verticalSpacing(),
                               CustomWidget.textField(
                                   controller: textControllers['social_links']!,
-                                  label: 'Facebook account profile link'),
+                                  label: formLabel['social_links']!),
                               CustomWidget.textField(
                                   controller: textControllers['referral_code']!,
-                                  label: 'Referral Code'),
+                                  label: formLabel['referral_code']!),
                               Row(
                                 children: [
                                   Expanded(
@@ -460,7 +481,7 @@ class Information2State extends State<Information2Page> {
                                       context: context,
                                       enabled: true,
                                       isLoading: false,
-                                      text: 'Previous',
+                                      text: AppLocalizations.of(context)!.previous,
                                       onPressed: handlePrevious,
                                     ),
                                   ),
@@ -470,7 +491,7 @@ class Information2State extends State<Information2Page> {
                                       context: context,
                                       enabled: inValidFields.isEmpty,
                                       isLoading: isLoading,
-                                      text: 'Continue',
+                                      text: AppLocalizations.of(context)!.continueText,
                                       onPressed: handleContinue,
                                     ),
                                   ),

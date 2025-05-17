@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/data/message.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
@@ -53,7 +52,7 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       RouteService.goToReplaceNavigator(context, HomePage());
     } else if (index == ConstantData.LOAN_INDEX) {
       if(!loginUser.loanApplicationSubmitted) {
-        showErrorDialog(Message.NO_CURRENT_LOAN);
+        showErrorDialog(AppLocalizations.of(context)!.noApplyLoan);
       }
       else {
         RouteService.goToReplaceNavigator(context, LoanHistoryPage());

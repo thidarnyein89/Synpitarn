@@ -1,9 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/data/language.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/loan.dart';
 import 'package:synpitarn/models/loan_application_response.dart';
@@ -18,6 +16,7 @@ import 'package:synpitarn/screens/loan/previous_loan.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoanHistoryPage extends StatefulWidget {
   const LoanHistoryPage({super.key});
@@ -134,7 +133,7 @@ class LoanHistoryState extends State<LoanHistoryPage> {
                     const BorderRadius.vertical(top: Radius.circular(10)),
               ),
               child: Text(
-                "Current Apply Loan",
+                AppLocalizations.of(context)!.currentApplyLoan,
                 style: CustomStyle.bodyWhiteColor(),
               ),
             ),
@@ -143,18 +142,18 @@ class LoanHistoryState extends State<LoanHistoryPage> {
               child: Column(
                 children: [
                   CustomWidget.buildRow(
-                      "Contract No",
+                      AppLocalizations.of(context)!.contractNo,
                       applicationData.contractNoRef != ""
                           ? applicationData.contractNoRef.toString()
                           : applicationData.contractNo.toString()),
                   CustomWidget.buildRow(
-                      "Loan Status",
+                      AppLocalizations.of(context)!.loanStatus,
                       CommonService.getLoanStatus(
                           applicationData.status.toString())),
-                  CustomWidget.buildRow(
-                      "Loan Size", CommonService.getLoanSize(applicationData)),
-                  CustomWidget.buildRow(
-                      "Loan Term", "${applicationData.loanTerm} Months"),
+                  CustomWidget.buildRow(AppLocalizations.of(context)!.loanSize,
+                      CommonService.getLoanSize(context, applicationData)),
+                  CustomWidget.buildRow(AppLocalizations.of(context)!.loanTerm,
+                      "${applicationData.loanTerm} ${AppLocalizations.of(context)!.months}"),
                 ],
               ),
             )
@@ -192,21 +191,22 @@ class LoanHistoryState extends State<LoanHistoryPage> {
               child: Column(
                 children: [
                   CustomWidget.buildRow(
-                      "Contract No", loanData.contractNoRef.toString()),
+                      AppLocalizations.of(context)!.contractNo,
+                      loanData.contractNoRef.toString()),
                   CustomWidget.buildRow(
-                      "Loan Status",
+                      AppLocalizations.of(context)!.loanStatus,
                       CommonService.getLoanStatus(
                           loanData.loanApplicationStatus.toString())),
+                  CustomWidget.buildRow(AppLocalizations.of(context)!.loanSize,
+                      CommonService.getLoanSize(context, loanData)),
+                  CustomWidget.buildRow(AppLocalizations.of(context)!.loanTerm,
+                      "${loanData.termPeriod} ${AppLocalizations.of(context)!.months}"),
                   CustomWidget.buildRow(
-                      "Loan Size", CommonService.getLoanSize(loanData)),
-                  CustomWidget.buildRow(
-                      "Loan Term", "${loanData.termPeriod} Months"),
-                  CustomWidget.buildRow(
-                      "First Payment Date",
+                      AppLocalizations.of(context)!.firstPaymentDate,
                       CommonService.formatDate(
                           loanData.firstRepaymentDate.toString())),
                   CustomWidget.buildRow(
-                      "Last Payment Date",
+                      AppLocalizations.of(context)!.lastPaymentDate,
                       CommonService.formatDate(
                           loanData.lastRepaymentDate.toString())),
                 ],
@@ -218,11 +218,30 @@ class LoanHistoryState extends State<LoanHistoryPage> {
     );
   }
 
+  String toMyanmarNumber(int n) {
+    const myanmarDigits = ['၀', '၁', '၂', '၃', '၄', '၅', '၆', '၇', '၈', '၉'];
+    return n.toString().split('').map((d) => myanmarDigits[int.parse(d)]).join();
+  }
+
+  String toEnglishNumber(int n) {
+    if(n == 1) return "1st";
+    if (n == 2) return '2nd';
+    if (n == 3) return '3rd';
+    return '${n}th';
+  }
+
   String getLoopText(int n) {
-    if (n == 1) return '1st Loan';
-    if (n == 2) return '2nd Loan';
-    if (n == 3) return '3rd Loan';
-    return '${n}th Loan';
+    String title = "";
+
+    if(Language.currentLanguage == LanguageType.my) {
+      title = toMyanmarNumber(n);
+    }
+    else if (Language.currentLanguage == LanguageType.en) {
+      title = toEnglishNumber(n);
+    }
+
+    title = "$title${AppLocalizations.of(context)!.time} ${AppLocalizations.of(context)!.applyLoan(n)}";
+    return title;
   }
 
   @override

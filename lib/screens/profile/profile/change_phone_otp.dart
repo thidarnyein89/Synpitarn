@@ -13,6 +13,7 @@ import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/profile/profile_home.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/route_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChangePhoneOTPPage extends StatefulWidget {
   User loginUser;
@@ -150,7 +151,8 @@ class ChangePhoneOTPState extends State<ChangePhoneOTPPage> {
   }
 
   Future<void> showErrorDialog(String errorMessage) async {
-    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+    await CustomWidget.showDialogWithoutStyle(
+        context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }
@@ -159,7 +161,7 @@ class ChangePhoneOTPState extends State<ChangePhoneOTPPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: 'Verify OTP Code'),
+      appBar: PageAppBar(title: AppLocalizations.of(context)!.verifyOTPCode),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -173,7 +175,7 @@ class ChangePhoneOTPState extends State<ChangePhoneOTPPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        "Please enter the 6 digits number that we have sent to you here then click \"Verify OTP Code\" below.",
+                        AppLocalizations.of(context)!.otpCodeContent,
                         style: TextStyle(fontSize: 14),
                       ),
                       SizedBox(height: 20),
@@ -210,20 +212,24 @@ class ChangePhoneOTPState extends State<ChangePhoneOTPPage> {
                       SizedBox(height: 20),
                       if (!_canResendOtp)
                         Text(
-                          "OTP Code will expire in ${_minuteRemaining.toString().padLeft(2, '0')}:${_secondsRemaining.toString().padLeft(2, '0')}",
+                          AppLocalizations.of(context)!.otpExpireMessage(
+                            _minuteRemaining.toString().padLeft(2, '0'),
+                            _secondsRemaining.toString().padLeft(2, '0'),
+                          ),
                           style: TextStyle(fontSize: 14, color: Colors.black),
                         ),
                       if (_canResendOtp)
                         RichText(
                           text: TextSpan(
-                            text: "OTP not received? ",
+                            text: AppLocalizations.of(context)!.otpNotReceived,
                             style: TextStyle(
                               color: Colors.black, // Normal text color
                               fontSize: 14,
                             ),
                             children: [
                               TextSpan(
-                                text: "Resend OTP Code",
+                                text:
+                                    AppLocalizations.of(context)!.resendOtpCode,
                                 style: TextStyle(
                                   color: Colors.black,
                                   decoration: TextDecoration.underline,
@@ -242,7 +248,7 @@ class ChangePhoneOTPState extends State<ChangePhoneOTPPage> {
                           context: context,
                           enabled: isOTPValidate,
                           isLoading: isLoading,
-                          text: 'Verify OTP Code',
+                          text: AppLocalizations.of(context)!.verifyOTPCode,
                           onPressed: handleVerifyOTP),
                       Text("OTP Code $code"),
                     ],

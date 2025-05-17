@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/data/language.dart';
-import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/models/guide.dart';
 import 'package:synpitarn/services/common_service.dart';

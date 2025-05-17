@@ -17,6 +17,7 @@ import 'package:synpitarn/screens/profile/register/additional_information.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoanTypePage extends StatefulWidget {
   const LoanTypePage({super.key});
@@ -51,14 +52,25 @@ class LoanTypeState extends State<LoanTypePage> {
   @override
   void initState() {
     super.initState();
-    inValidFieldsAdd();
-    getDefaultData();
-    getData();
+    getInitData();
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  Future<void> getInitData() async {
+    isPageLoading = true;
+    loginUser = await getLoginUser();
+    setState(() {});
+
+    await getDefaultData();
+    getData();
+    inValidFieldsAdd();
+
+    isPageLoading = false;
+    setState(() {});
   }
 
   void inValidFieldsAdd() {
@@ -100,7 +112,7 @@ class LoanTypeState extends State<LoanTypePage> {
       final loanTypeItems = dataResponse.data.map<Item>((data) {
         return Item.named(
           value: data.id.toString(),
-          text: data.en,
+          text: data.getText(),
         );
       }).toList();
 
@@ -117,7 +129,7 @@ class LoanTypeState extends State<LoanTypePage> {
       final timesPerMonth = dataResponse.data.map<Item>((data) {
         return Item.named(
           value: data.id.toString(),
-          text: data.en,
+          text: data.getText(),
         );
       }).toList();
 
@@ -134,7 +146,7 @@ class LoanTypeState extends State<LoanTypePage> {
       final province = dataResponse.data.map<Item>((data) {
         return Item.named(
           value: data.id.toString(),
-          text: data.en,
+          text: data.getText(),
         );
       }).toList();
 
@@ -198,7 +210,7 @@ class LoanTypeState extends State<LoanTypePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: 'Loan Application'),
+      appBar: PageAppBar(title: AppLocalizations.of(context)!.loanApplication),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Stack(children: [
@@ -222,7 +234,7 @@ class LoanTypeState extends State<LoanTypePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               CustomWidget.dropdownButtonDiffValue(
-                                label: 'Loan Type',
+                                label: AppLocalizations.of(context)!.loanType,
                                 selectedValue:
                                     dropdownControllers['loan_type_id'],
                                 items: itemDataList['loan_type']!,
@@ -235,7 +247,7 @@ class LoanTypeState extends State<LoanTypePage> {
                                 },
                               ),
                               CustomWidget.dropdownButtonDiffValue(
-                                label: 'Repayment Term',
+                                label: AppLocalizations.of(context)!.repaymentTerm,
                                 selectedValue:
                                     dropdownControllers['times_per_month'],
                                 items: itemDataList['times_per_month']!,
@@ -248,7 +260,7 @@ class LoanTypeState extends State<LoanTypePage> {
                                 },
                               ),
                               CustomWidget.dropdownButtonDiffValue(
-                                label: 'Province of work',
+                                label: AppLocalizations.of(context)!.provinceWork,
                                 selectedValue:
                                     dropdownControllers['province_work'],
                                 items: itemDataList['province']!,
@@ -261,7 +273,7 @@ class LoanTypeState extends State<LoanTypePage> {
                                 },
                               ),
                               CustomWidget.dropdownButtonDiffValue(
-                                label: 'Province of residence',
+                                label: AppLocalizations.of(context)!.provinceResidence,
                                 selectedValue:
                                     dropdownControllers['province_resident'],
                                 items: itemDataList['province']!,
@@ -280,7 +292,7 @@ class LoanTypeState extends State<LoanTypePage> {
                                       context: context,
                                       enabled: true,
                                       isLoading: false,
-                                      text: 'Previous',
+                                      text: AppLocalizations.of(context)!.previous,
                                       onPressed: handlePrevious,
                                     ),
                                   ),
@@ -290,7 +302,7 @@ class LoanTypeState extends State<LoanTypePage> {
                                       context: context,
                                       enabled: inValidFields.isEmpty,
                                       isLoading: isLoading,
-                                      text: 'Apply Loan',
+                                      text: AppLocalizations.of(context)!.applyLoanButton,
                                       onPressed: handleApplyLoan,
                                     ),
                                   ),

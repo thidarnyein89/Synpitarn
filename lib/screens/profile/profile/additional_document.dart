@@ -11,6 +11,7 @@ import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/services/auth_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdditionalDocumentPage extends StatefulWidget {
   const AdditionalDocumentPage({super.key});
@@ -115,14 +116,14 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: 'Additional Document'),
+      appBar: PageAppBar(title: AppLocalizations.of(context)!.additionalDocuments),
       body: SafeArea(
         child: isLoading
             ? CustomWidget.loading()
             : documentList.isEmpty
                 ? Center(
                     child: Text(
-                      'There is no additional documents.',
+                      AppLocalizations.of(context)!.noAdditionalDocuments,
                       style: CustomStyle.bodyGreyColor(),
                     ),
                   )

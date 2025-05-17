@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:synpitarn/data/app_config.dart';
+import 'package:flutter/services.dart';
 import 'package:synpitarn/models/data.dart';
 import 'package:synpitarn/models/data_response.dart';
 import 'package:synpitarn/models/default/default_data.dart';
@@ -15,7 +15,9 @@ import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/services/auth_service.dart';
+import 'package:synpitarn/services/language_service.dart';
 import 'package:synpitarn/services/route_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CustomerInformationPage extends StatefulWidget {
   User? client = User.defaultUser();
@@ -29,6 +31,8 @@ class CustomerInformationPage extends StatefulWidget {
 class CustomerInformationState extends State<CustomerInformationPage> {
   User loginUser = User.defaultUser();
   DefaultData defaultData = new DefaultData.defaultDefaultData();
+
+  late Map<String, String> formLabel = {};
 
   final Map<String, TextEditingController> textControllers = {
     'name': TextEditingController(),
@@ -65,7 +69,7 @@ class CustomerInformationState extends State<CustomerInformationPage> {
   @override
   void initState() {
     super.initState();
-    getDefaultData();
+    getInitData();
   }
 
   @override
@@ -74,10 +78,28 @@ class CustomerInformationState extends State<CustomerInformationPage> {
     super.dispose();
   }
 
-  Future<void> getDefaultData() async {
+  Future<void> getInitData() async {
     isPageLoading = true;
     setState(() {});
 
+    await getDefaultData();
+
+    if (defaultData.pages.length > 0) {
+      Map<String, dynamic>? inputData = defaultData.inputData;
+
+      var controls = defaultData.pages[pageIndex].formData.controls;
+
+      setFormLabel(controls);
+      setItemDataList(controls);
+      setSavedData(inputData!);
+      inValidFieldsAdd();
+    }
+
+    isPageLoading = false;
+    setState(() {});
+  }
+
+  Future<void> getDefaultData() async {
     defaultData = new DefaultData.defaultDefaultData();
     loginUser = await getLoginUser();
 
@@ -86,23 +108,24 @@ class CustomerInformationState extends State<CustomerInformationPage> {
 
     if (defaultResponse.response.code == 200) {
       defaultData = defaultResponse.data;
-      Map<String, dynamic>? inputData = defaultData.inputData;
-
-      var controls = defaultData.pages[pageIndex].formData.controls;
-
-      setItemDataList(controls);
-      setSavedData(inputData!);
     } else if (defaultResponse.response.code == 403) {
       await showErrorDialog(defaultResponse.response.message);
+      isPageLoading = false;
+      setState(() {});
       AuthService().logout(context);
     } else {
       showErrorDialog(defaultResponse.response.message);
+      isPageLoading = false;
+      setState(() {});
     }
+  }
 
-    inValidFieldsAdd();
-
-    isPageLoading = false;
-    setState(() {});
+  void setFormLabel(var controls) {
+    formLabel = {};
+    for (var control in controls) {
+      Item item = Item.named(value: control.name, text: control.label);
+      formLabel[control.name] = LanguageService.translateLabel(item);
+    }
   }
 
   void setItemDataList(var controls) {
@@ -214,7 +237,8 @@ class CustomerInformationState extends State<CustomerInformationPage> {
   }
 
   Future<void> showErrorDialog(String errorMessage) async {
-    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+    await CustomWidget.showDialogWithoutStyle(
+        context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }
@@ -227,7 +251,8 @@ class CustomerInformationState extends State<CustomerInformationPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: 'Customer Information'),
+      appBar:
+          PageAppBar(title: AppLocalizations.of(context)!.customerInformation),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Stack(children: [
@@ -252,17 +277,21 @@ class CustomerInformationState extends State<CustomerInformationPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CustomWidget.textField(
+                                inputFormat: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'[ -~]')),
+                                ],
                                 controller: textControllers['name']!,
-                                label: 'Name (in English)'),
+                                label: formLabel['name']!),
                             CustomWidget.datePicker(
                                 context: context,
                                 controller: textControllers['dob']!,
-                                label: 'Date of Birth',
+                                label: formLabel['dob']!,
                                 readOnly: true,
                                 maxDate: maxDate,
                                 minDate: minDate),
                             CustomWidget.dropdownButtonDiffValue(
-                              label: 'Gender',
+                              label: formLabel['gender']!,
                               selectedValue: dropdownControllers['gender'],
                               items: itemDataList['gender']!,
                               onChanged: (value) {
@@ -273,7 +302,7 @@ class CustomerInformationState extends State<CustomerInformationPage> {
                               },
                             ),
                             CustomWidget.dropdownButtonDiffValue(
-                              label: 'Marital Status',
+                              label: formLabel['martial_status']!,
                               selectedValue:
                                   dropdownControllers['martial_status'],
                               items: itemDataList['martial_status']!,
@@ -286,7 +315,7 @@ class CustomerInformationState extends State<CustomerInformationPage> {
                               },
                             ),
                             CustomWidget.dropdownButtonDiffValue(
-                              label: 'Nationality',
+                              label: formLabel['nationality']!,
                               selectedValue: dropdownControllers['nationality'],
                               items: itemDataList['nationality']!,
                               onChanged: (value) {
@@ -297,7 +326,7 @@ class CustomerInformationState extends State<CustomerInformationPage> {
                               },
                             ),
                             CustomWidget.dropdownButtonDiffValue(
-                              label: 'Education',
+                              label: formLabel['education']!,
                               selectedValue: dropdownControllers['education'],
                               items: itemDataList['education']!,
                               onChanged: (value) {
@@ -309,16 +338,16 @@ class CustomerInformationState extends State<CustomerInformationPage> {
                             ),
                             CustomWidget.textField(
                                 controller: textControllers['residence']!,
-                                label: 'Residence'),
+                                label: formLabel['residence']!),
                             CustomWidget.textField(
                                 controller:
                                     textControllers['name_of_employment']!,
-                                label: 'Name of Employment'),
+                                label: formLabel['name_of_employment']!),
                             CustomWidget.textField(
                                 controller: textControllers['office_location']!,
-                                label: 'Current Work Address'),
+                                label: formLabel['office_location']!),
                             CustomWidget.dropdownButtonDiffValue(
-                              label: 'Branch',
+                              label: formLabel['branch']!,
                               selectedValue: dropdownControllers['branch'],
                               items: itemDataList['branch']!,
                               onChanged: (value) {
@@ -330,12 +359,13 @@ class CustomerInformationState extends State<CustomerInformationPage> {
                             ),
                             CustomWidget.textField(
                                 controller: textControllers['testing']!,
-                                label: 'Testing'),
+                                label: formLabel['testing']!),
                             CustomWidget.elevatedButton(
                                 context: context,
                                 enabled: inValidFields.isEmpty,
                                 isLoading: isLoading,
-                                text: 'Continue',
+                                text:
+                                    AppLocalizations.of(context)!.continueText,
                                 onPressed: handleContinue)
                           ],
                         ),

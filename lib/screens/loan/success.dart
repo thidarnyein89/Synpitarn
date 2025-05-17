@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/services/route_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SuccessPage extends StatefulWidget {
   const SuccessPage({super.key});
@@ -29,7 +29,8 @@ class SuccessState extends State<SuccessPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: PageAppBar(title: 'Appointment Success'),
+        appBar: PageAppBar(
+            title: AppLocalizations.of(context)!.applyLoan("")),
         body: Scaffold(
           backgroundColor: Colors.white,
           body: LayoutBuilder(
@@ -49,13 +50,13 @@ class SuccessState extends State<SuccessPage> {
                             height: 180,
                           ),
                           Text(
-                            'Thank you for submitting your loan application form.',
+                            AppLocalizations.of(context)!.appointmentSuccess1,
                             style: CustomStyle.subTitleBold(),
                           ),
                           CustomWidget.verticalSpacing(),
                           CustomWidget.verticalSpacing(),
                           Text(
-                            'Syn Pitarn staff are reviewing your loan application. We may have to contact you to re-upload any document that is not clear. The next step is for you to have a quick video call with our staff at the time and date you previously selected.',
+                            AppLocalizations.of(context)!.appointmentSuccess2,
                             style: CustomStyle.body(),
                           ),
                           CustomWidget.verticalSpacing(),
@@ -63,7 +64,7 @@ class SuccessState extends State<SuccessPage> {
                               context: context,
                               enabled: true,
                               isLoading: false,
-                              text: 'Go To Home Page',
+                              text: AppLocalizations.of(context)!.goToHomePage,
                               onPressed: () => RouteService.goToHome(context)),
                         ],
                       ),

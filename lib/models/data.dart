@@ -1,3 +1,5 @@
+import 'package:synpitarn/data/language.dart';
+
 class Item {
   String value = "";
   Data? text;
@@ -38,9 +40,19 @@ class Data {
 
   Data.defaultData();
 
-  Data({
-    required this.id,  required this.key, required this.en, required this.mm, required this.th
-  });
+  Data(
+      {required this.id,
+      required this.key,
+      required this.en,
+      required this.mm,
+      required this.th});
+
+  Data.named(this.id, this.key, String text) {
+    List<String> parts = text.split("|").map((e) => e.trim()).toList();
+    mm = parts.length > 0 ? parts[0] : parts[0];
+    en = parts.length > 1 ? parts[1] : parts[0];
+    th = parts.length > 2 ? parts[2] : parts[0];
+  }
 
   factory Data.fromJson(Map<String, dynamic> json) {
     return Data(
@@ -60,5 +72,16 @@ class Data {
       'mm': mm,
       'th': th,
     };
+  }
+
+  String getText() {
+    switch (Language.currentLanguage) {
+      case LanguageType.my:
+        return mm;
+      case LanguageType.th:
+        return th;
+      default:
+        return en;
+    }
   }
 }

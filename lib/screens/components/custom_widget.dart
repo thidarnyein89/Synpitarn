@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/data/language.dart';
 import 'package:synpitarn/models/data.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/services/language_service.dart';
 
 class CustomWidget {
   static Widget loading() {
@@ -19,6 +21,7 @@ class CustomWidget {
   }
 
   static Widget textField({
+    List<TextInputFormatter>? inputFormat,
     required TextEditingController controller,
     required String label,
     bool readOnly = false,
@@ -30,9 +33,7 @@ class CustomWidget {
         TextField(
           readOnly: readOnly,
           controller: controller,
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'[ -~]')),
-          ],
+          inputFormatters: inputFormat,
           decoration: InputDecoration(
             labelText: label,
             border: OutlineInputBorder(),
@@ -179,7 +180,7 @@ class CustomWidget {
                 return DropdownMenuItem<Item>(
                   value: item,
                   child: Text(
-                    item.text?.en ?? '',
+                    LanguageService.translateLabel(item),
                     overflow: TextOverflow.ellipsis,
                     softWrap: false,
                     maxLines: 1,
@@ -189,7 +190,7 @@ class CustomWidget {
           selectedItemBuilder: (BuildContext context) {
             return items.map<Widget>((Item item) {
               return Text(
-                item.text?.en ?? '',
+                LanguageService.translateLabel(item),
                 overflow: TextOverflow.ellipsis,
                 softWrap: false,
                 maxLines: 1,
@@ -420,7 +421,7 @@ class CustomWidget {
                 ),
               ),
               horizontalSpacing(),
-              Expanded(child: Text(data.text!.en)),
+              Expanded(child: Text(LanguageService.translateLabel(data))),
             ],
           ),
           verticalSpacing(),
@@ -516,6 +517,7 @@ class CustomWidget {
       initialDate: initialDate,
       firstDate: minDate,
       lastDate: maxDate,
+      locale: Locale(LanguageType.en.name),
       builder: (context, child) {
         return Theme(
           data: ThemeData(
@@ -568,11 +570,11 @@ class CustomWidget {
               },
             ),
             TextButton(
-              child: Text(AppLocalizations.of(context)!.ok),
+              child: Text(AppLocalizations.of(context)!.confirmOk),
               onPressed: () {
                 Navigator.of(context).pop();
                 onConfirmed();
-              },
+              }
             ),
           ],
         );

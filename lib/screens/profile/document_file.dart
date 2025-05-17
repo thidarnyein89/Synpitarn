@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/shared_value.dart';
+import 'package:synpitarn/models/data.dart';
 import 'package:synpitarn/models/data_response.dart';
 import 'package:synpitarn/models/default/default_data.dart';
 import 'package:synpitarn/models/default/default_response.dart';
@@ -19,9 +20,11 @@ import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/profile/register/customer_information.dart';
 import 'package:synpitarn/services/auth_service.dart';
+import 'package:synpitarn/services/language_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:synpitarn/models/image_file.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DocumentFilePage extends StatefulWidget {
   Loan? applicationData = Loan.defaultLoan();
@@ -34,24 +37,7 @@ class DocumentFilePage extends StatefulWidget {
 }
 
 class DocumentFileState extends State<DocumentFilePage> {
-  final Map<String, ImageFile?> imageList = {
-    'Bank Book': ImageFile(
-      uniqueId: "control-281301e7-fdd5-4a66-be40-1b2debcf9697",
-    ),
-    'Pay Slip / Bank Transaction': ImageFile(
-      uniqueId: "control-0d77d53e-7951-4bab-92d5-3cc5e5900f1e",
-    ),
-    'Visa': ImageFile(uniqueId: "control-44072091-4923-4eb8-ac1d-7f2be8e4155c"),
-    'Passport First Page': ImageFile(
-      uniqueId: "control-d3522d45-9d03-4ef8-9b88-44781291c7df",
-    ),
-    'Work Permit (Front)': ImageFile(
-      uniqueId: "control-74593ce7-2c66-48aa-bd48-764c4bb3c165",
-    ),
-    'Work Permit (Back)': ImageFile(
-      uniqueId: "control-fe42f126-d6f3-4970-a907-1aba299c6ba3",
-    ),
-  };
+  late Map<String, ImageFile?> imageList = {};
 
   final ImagePicker _picker = ImagePicker();
 
@@ -59,7 +45,9 @@ class DocumentFileState extends State<DocumentFilePage> {
   DefaultData defaultData = new DefaultData.defaultDefaultData();
   List<Document> documentList = [];
 
+  int pageIndex = 1;
   String stepName = "required_documents";
+
   bool isPageLoading = true;
   bool isLoading = false;
   bool isEnabled = true;
@@ -67,7 +55,7 @@ class DocumentFileState extends State<DocumentFilePage> {
   @override
   void initState() {
     super.initState();
-    getDefaultData();
+    getInitData();
   }
 
   @override
@@ -75,11 +63,38 @@ class DocumentFileState extends State<DocumentFilePage> {
     super.dispose();
   }
 
-  Future<void> getDefaultData() async {
+  Future<void> getInitData() async {
     isPageLoading = true;
     loginUser = await getLoginUser();
     setState(() {});
 
+    await getDefaultData();
+
+    if (defaultData.pages.length > 0) {
+      var allControls = defaultData.pages[pageIndex].formData.controls;
+      var controls = allControls.where((control) => control.name != "").toList();
+
+      imageList.clear();
+      for (var control in controls) {
+        if (control.name != null && control.uniqueId != null) {
+          Item item = Item.named(value: control.name, text: control.label);
+          imageList[LanguageService.translateLabel(item)] = ImageFile(uniqueId: control.uniqueId);
+        }
+      }
+    }
+
+    if ((widget.documentList ?? []).isEmpty) {
+      getUploadDocumentData();
+    } else {
+      showReUploadMsgDialog();
+      showReUploadDocumentFile();
+    }
+
+    isPageLoading = false;
+    setState(() {});
+  }
+
+  Future<void> getDefaultData() async {
     DefaultResponse defaultResponse = await DefaultRepository().getDefaultData(
       loginUser,
     );
@@ -93,39 +108,35 @@ class DocumentFileState extends State<DocumentFilePage> {
     } else {
       showErrorDialog(defaultResponse.response.message);
     }
-
-    if ((widget.documentList ?? []).isEmpty) {
-      getUploadDocumentData();
-    } else {
-      showReUploadDocumentFileName();
-
-      final Set<String> documentIds =
-          widget.documentList!.map((doc) => doc.controlId).toSet();
-
-      final List<String> keysToRemove = [];
-
-      imageList.forEach((key, imageFile) {
-        if (imageFile != null && documentIds.contains(imageFile.uniqueId)) {
-          imageFile.isRequest = true;
-        } else {
-          keysToRemove.add(key);
-        }
-      });
-
-      for (String key in keysToRemove) {
-        imageList.remove(key);
-      }
-
-      isPageLoading = false;
-      setState(() {});
-    }
   }
 
-  void showReUploadDocumentFileName() {
+  void showReUploadDocumentFile() {
+    final Set<String> documentIds =
+    widget.documentList!.map((doc) => doc.controlId).toSet();
+
+    final List<String> keysToRemove = [];
+
+    imageList.forEach((key, imageFile) {
+      if (imageFile != null && documentIds.contains(imageFile.uniqueId)) {
+        imageFile.isRequest = true;
+      } else {
+        keysToRemove.add(key);
+      }
+    });
+
+    for (String key in keysToRemove) {
+      imageList.remove(key);
+    }
+
+    isPageLoading = false;
+    setState(() {});
+  }
+
+  void showReUploadMsgDialog() {
     List<Map<String, dynamic>> msg = [];
 
     msg.add({
-      "text": "We found out that your ",
+      "text": AppLocalizations.of(context)!.reUploadMsg1,
       "style": TextStyle(color: Colors.black)
     });
 
@@ -145,7 +156,7 @@ class DocumentFileState extends State<DocumentFilePage> {
     }
 
     msg.add({
-      "text": " is blurred and we would like you to upload that document again for your loan application.",
+      "text": AppLocalizations.of(context)!.reUploadMsg2,
       "style": TextStyle(color: Colors.black)
     });
 
@@ -271,7 +282,7 @@ class DocumentFileState extends State<DocumentFilePage> {
   Future<void> deleteImage(ImageFile imageFile) async {
     CustomWidget().showConfirmDialog(
       context: context,
-      content: 'Are you sure to delete this image?',
+      content: AppLocalizations.of(context)!.confirmDeleteImage,
       onConfirmed: () async {
         imageFile.isDeleteLoading = true;
         isEnabled = false;
@@ -399,13 +410,13 @@ class DocumentFileState extends State<DocumentFilePage> {
                           ),
                         ),
                       ),
-                    if (!(imageFile?.isDeleteLoading ?? false))
+                    if (!(imageFile.isDeleteLoading ?? false))
                       Positioned(
                         top: 4,
                         right: 4,
                         child: GestureDetector(
                           onTap: () {
-                            deleteImage(imageFile!);
+                            deleteImage(imageFile);
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -423,14 +434,14 @@ class DocumentFileState extends State<DocumentFilePage> {
                       ),
                   ],
                 )
-              : Center(child: Text('No file selected')),
+              : Center(child: Text(AppLocalizations.of(context)!.noFileSelected)),
         ),
         CustomWidget.verticalSpacing(),
         CustomWidget.elevatedButton(
           context: context,
           enabled: imageFile?.filePath == null,
           isLoading: imageFile!.isLoading ?? false,
-          text: 'Upload',
+          text: AppLocalizations.of(context)!.uploadImage,
           icon: Icons.image_outlined,
           onPressed: () => pickImage(imageFile),
         ),
@@ -452,8 +463,8 @@ class DocumentFileState extends State<DocumentFilePage> {
       backgroundColor: Colors.white,
       appBar: PageAppBar(
         title: (loginUser.loanApplicationSubmitted)
-            ? 'Documents'
-            : 'Required Documents',
+            ? AppLocalizations.of(context)!.documents
+            : AppLocalizations.of(context)!.requiredDocuments,
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -512,7 +523,7 @@ class DocumentFileState extends State<DocumentFilePage> {
               context: context,
               enabled: true,
               isLoading: false,
-              text: 'Previous',
+              text: AppLocalizations.of(context)!.previous,
               onPressed: handlePrevious,
             ),
           ),
@@ -522,7 +533,7 @@ class DocumentFileState extends State<DocumentFilePage> {
               context: context,
               enabled: isEnabled,
               isLoading: isLoading,
-              text: 'Continue',
+              text: AppLocalizations.of(context)!.continueText,
               onPressed: handleContinue,
             ),
           ),
@@ -539,7 +550,7 @@ class DocumentFileState extends State<DocumentFilePage> {
         context: context,
         enabled: allFilesHavePath,
         isLoading: isLoading,
-        text: 'Reupload Request',
+        text: AppLocalizations.of(context)!.reUploadRequest,
         onPressed: handleReUpload,
       );
     }

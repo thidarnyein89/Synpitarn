@@ -1,25 +1,20 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/models/User_response.dart';
 import 'package:synpitarn/models/data.dart';
 import 'package:synpitarn/models/data_response.dart';
-import 'package:synpitarn/models/default/default_data.dart';
-import 'package:synpitarn/models/default/default_response.dart';
 import 'package:synpitarn/repositories/data_repository.dart';
-import 'package:synpitarn/repositories/default_repository.dart';
 import 'package:synpitarn/repositories/profile_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
-import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/nrc.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/services/auth_service.dart';
-import 'package:synpitarn/services/route_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditInformationPage extends StatefulWidget {
   User editUser = User.defaultUser();
@@ -87,7 +82,7 @@ class EditInformationState extends State<EditInformationPage> {
       itemDataList['income_type'] = dataResponse.data.map<Item>((data) {
         return Item.named(
           value: data.key.toString(),
-          text: data.en,
+          text: data.getText(),
         );
       }).toList();
 
@@ -265,7 +260,7 @@ class EditInformationState extends State<EditInformationPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: 'Edit Information'),
+      appBar: PageAppBar(title: AppLocalizations.of(context)!.editInformation),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Stack(children: [
@@ -291,7 +286,7 @@ class EditInformationState extends State<EditInformationPage> {
                           children: [
                             CustomWidget.textField(
                                 controller: textControllers['name']!,
-                                label: 'Name'),
+                                label: AppLocalizations.of(context)!.name),
                             GestureDetector(
                               onTap: () {
                                 showNRCDialog();
@@ -300,15 +295,15 @@ class EditInformationState extends State<EditInformationPage> {
                                 child: CustomWidget.textField(
                                   controller:
                                       textControllers['identity_number']!,
-                                  label: 'NRC',
+                                  label: AppLocalizations.of(context)!.nrcNumber,
                                 ),
                               ),
                             ),
                             CustomWidget.textField(
                                 controller: textControllers['passport']!,
-                                label: 'Passport'),
+                                label: AppLocalizations.of(context)!.passport),
                             CustomWidget.dropdownButtonDiffValue(
-                              label: 'How often are you paid',
+                              label: AppLocalizations.of(context)!.incomeType,
                               selectedValue: dropdownControllers['income_type'],
                               items: itemDataList['income_type']!,
                               onChanged: (value) {
@@ -320,13 +315,12 @@ class EditInformationState extends State<EditInformationPage> {
                             ),
                             CustomWidget.numberTextField(
                                 controller: textControllers['salary']!,
-                                label:
-                                    'Total income (Salary + Overtime + Other Income) (Baht) (Baht)'),
+                                label: AppLocalizations.of(context)!.salary),
                             CustomWidget.elevatedButton(
                                 context: context,
                                 enabled: inValidFields.isEmpty,
                                 isLoading: isLoading,
-                                text: 'Continue',
+                                text: AppLocalizations.of(context)!.continueText,
                                 onPressed: handleContinue),
                           ],
                         ),

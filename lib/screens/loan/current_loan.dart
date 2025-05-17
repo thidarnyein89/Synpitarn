@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/loan_status.dart';
-import 'package:synpitarn/data/message.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/loan.dart';
 import 'package:synpitarn/models/loan_application_response.dart';
@@ -24,6 +23,7 @@ import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
@@ -121,7 +121,8 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
             repaymentAmount = lateSchedule.pmtAmount;
           }
 
-          if (loanResponse.data[0].qrcode != null) {
+          if (!LoanStatus.REJECT_STATUS.contains(applicationData.status) &&
+              loanResponse.data[0].qrcode != null) {
             qrcode.photo = loanResponse.data[0].qrcode.photo;
             qrcode.string = loanResponse.data[0].qrcode.string;
           }
@@ -186,7 +187,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
 
   Widget createLoanStatusPage() {
     return Scaffold(
-      appBar: PageAppBar(title: 'Current Apply Loan'),
+      appBar: PageAppBar(title: AppLocalizations.of(context)!.currentApplyLoan),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Stack(
@@ -287,13 +288,13 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "We are sorry to inform you that your loan information needs updated information. Please update your information.",
+          AppLocalizations.of(context)!.documentRequestMessage,
           style: CustomStyle.bodyRedColor(),
         ),
         CustomWidget.verticalSpacing(),
         CustomWidget.elevatedButton(
           context: context,
-          text: 'Reupload Request',
+          text: AppLocalizations.of(context)!.reUploadRequest,
           onPressed: handleReUpload,
         ),
       ],
@@ -305,10 +306,11 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(Message.NO_CURRENT_LOAN, style: CustomStyle.titleBold()),
+        Text(AppLocalizations.of(context)!.noApplyLoan,
+            style: CustomStyle.titleBold()),
         CustomWidget.elevatedButton(
           context: context,
-          text: 'Apply Loan',
+          text: AppLocalizations.of(context)!.applyLoanButton,
           onPressed: () {
             RouteService.goToNavigator(context, ProfileHomePage());
           },
@@ -322,37 +324,39 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Pending Loan Application', style: CustomStyle.titleBold()),
+        Text(AppLocalizations.of(context)!.pendingLoan,
+            style: CustomStyle.titleBold()),
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
-          "Contract No",
+          AppLocalizations.of(context)!.contractNo,
           applicationData.contractNoRef != ""
               ? applicationData.contractNoRef.toString()
               : applicationData.contractNo.toString(),
         ),
         CustomWidget.buildRow(
-          "Loan Applied Date",
+          AppLocalizations.of(context)!.loanAppliedDate,
           CommonService.formatDate(applicationData.createdAt.toString()),
         ),
         CustomWidget.buildRow(
-          "Request Interview Date",
+          AppLocalizations.of(context)!.requestInterviewDate,
           CommonService.formatDate(applicationData.appointmentDate.toString()),
         ),
         CustomWidget.buildRow(
-          "Request Interview Time",
+          AppLocalizations.of(context)!.requestInterviewTime,
           CommonService.formatTime(applicationData.appointmentTime.toString()),
         ),
-        CustomWidget.buildRow("Loan Status", 'pending'),
+        CustomWidget.buildRow(
+            AppLocalizations.of(context)!.loanStatus, 'pending'),
         CustomWidget.verticalSpacing(),
         if (applicationData.appointmentResubmit) ...[
           Text(
-            "You need to take interview appointment again",
+            AppLocalizations.of(context)!.interviewAppointmentMessage,
             style: CustomStyle.bodyRedColor(),
           ),
           CustomWidget.verticalSpacing(),
           CustomWidget.elevatedButton(
             context: context,
-            text: 'Resubmit Interview Appointment',
+            text: AppLocalizations.of(context)!.interviewAppointmentButton,
             onPressed: handleReSubmit,
           ),
         ],
@@ -366,29 +370,31 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Pre Approved Loan', style: CustomStyle.titleBold()),
+        Text(AppLocalizations.of(context)!.preApprovedLoan,
+            style: CustomStyle.titleBold()),
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
-          "Contract No",
-          applicationData.contractNoRef ??
-              applicationData.contractNo.toString(),
+          AppLocalizations.of(context)!.contractNo,
+          applicationData.contractNoRef != ""
+              ? applicationData.contractNoRef.toString()
+              : applicationData.contractNo.toString(),
         ),
         CustomWidget.buildRow(
-          "Loan Size",
-          CommonService.getLoanSize(applicationData),
+          AppLocalizations.of(context)!.loanSize,
+          CommonService.getLoanSize(context, applicationData),
         ),
         CustomWidget.buildRow(
-          "Loan Term",
-          "${applicationData.loanTerm.toString()} Months",
+          AppLocalizations.of(context)!.loanTerm,
+          "${applicationData.loanTerm.toString()} ${AppLocalizations.of(context)!.months}",
         ),
         CustomWidget.buildRow(
-          "Branch Appointment Date",
+          AppLocalizations.of(context)!.branchAppointmentDate,
           CommonService.formatDate(
             applicationData.appointmentBranchDate.toString(),
           ),
         ),
         CustomWidget.buildRow(
-          "Branch Appointment Time",
+          AppLocalizations.of(context)!.branchAppointmentTime,
           applicationData.appointmentBranchTime.toString(),
         ),
         CustomWidget.verticalSpacing(),
@@ -397,7 +403,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
           CustomWidget.verticalSpacing(),
           CustomWidget.elevatedButton(
             context: context,
-            text: 'Resubmit Interview Appointment',
+            text: AppLocalizations.of(context)!.interviewAppointmentButton,
             onPressed: handleBranchAppointment,
           ),
         ],
@@ -411,31 +417,33 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Approved Loan', style: CustomStyle.titleBold()),
+        Text(AppLocalizations.of(context)!.approvedLoan,
+            style: CustomStyle.titleBold()),
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
-          "Contract No",
-          applicationData.contractNoRef ??
-              applicationData.contractNo.toString(),
+          AppLocalizations.of(context)!.contractNo,
+          applicationData.contractNoRef != ""
+              ? applicationData.contractNoRef.toString()
+              : applicationData.contractNo.toString(),
         ),
         CustomWidget.buildRow(
-          "Repayment date",
+          AppLocalizations.of(context)!.repaymentDate,
           CommonService.formatDate(
             applicationData.firstRepaymentDate.toString(),
           ),
         ),
         CustomWidget.buildRow(
-          "Repayment amount",
+          AppLocalizations.of(context)!.repaymentAmount,
           CommonService.formatWithThousandSeparator(
-              applicationData.repaymentAmountPerPeriod),
+              context, applicationData.repaymentAmountPerPeriod),
         ),
         CustomWidget.buildRow(
-          "Loan Size",
-          CommonService.getLoanSize(applicationData),
+          AppLocalizations.of(context)!.loanSize,
+          CommonService.getLoanSize(context, applicationData),
         ),
         CustomWidget.buildRow(
-          "Loan Term",
-          "${applicationData.loanTerm.toString()} Months",
+          AppLocalizations.of(context)!.loanTerm,
+          "${applicationData.loanTerm.toString()} ${AppLocalizations.of(context)!.months}",
         ),
         CustomWidget.verticalSpacing(),
         if (totalLateDay > 0) ...[
@@ -443,23 +451,19 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text:
-                      "Your repayment is now $totalLateDay days late. Please make a payment of ${CommonService.formatWithThousandSeparator(repaymentAmount)} immediately or click ",
+                  text: AppLocalizations.of(context)!.repaymentLateDescription1(
+                      totalLateDay,
+                      CommonService.formatWithThousandSeparator(
+                          context, repaymentAmount)),
                   style: CustomStyle.bodyRedColor(),
                 ),
                 TextSpan(
-                  text: "here (messenger link)",
-                  style: CustomStyle.bodyBold(),
+                  text: AppLocalizations.of(context)!.repaymentLateDescription2,
+                  style: CustomStyle.linkStyle(),
                   recognizer: TapGestureRecognizer()..onTap = _openMessenger,
-                  // recognizer:
-                  //     TapGestureRecognizer()
-                  //       ..onTap = () {
-                  //         // Replace this with your actual messenger link
-                  //         print('Messenger link tapped');
-                  //       },
                 ),
                 TextSpan(
-                  text: " to contact your loan officer",
+                  text: AppLocalizations.of(context)!.repaymentLateDescription3,
                   style: CustomStyle.bodyRedColor(),
                 ),
               ],
@@ -469,22 +473,22 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         ],
         CustomWidget.elevatedButtonOutline(
           context: context,
-          text: 'Repay at a branch',
+          text: AppLocalizations.of(context)!.repayAtBranch,
           onPressed: () {},
         ),
         CustomWidget.elevatedButtonOutline(
           context: context,
-          text: 'Repayment at ATM',
+          text: AppLocalizations.of(context)!.paymentAtATM,
           onPressed: () {},
         ),
         CustomWidget.elevatedButtonOutline(
           context: context,
-          text: 'Repayment via mobile banking',
+          text: AppLocalizations.of(context)!.paymentAtOnline,
           onPressed: () {},
         ),
         CustomWidget.elevatedButton(
           context: context,
-          text: 'View Repayment Schedule',
+          text: AppLocalizations.of(context)!.viewRepaymentSchedule,
           onPressed: () {
             goToRepaymentList();
           },
@@ -501,11 +505,18 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
       await launchUrl(messengerUri, mode: LaunchMode.platformDefault);
     } catch (e) {
       await CustomWidget.showDialogWithoutStyle(
-          context: context, msg: "Could not launch Messenger");
+          context: context, msg: AppLocalizations.of(context)!.canNotOpenMessenger);
     }
   }
 
   Widget rejectSection() {
+    DateTime createdDate = DateTime.parse(applicationData.createdAt.toString());
+    createdDate = DateTime(
+      createdDate.year,
+      createdDate.month + 6,
+      createdDate.day,
+    );
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -516,13 +527,13 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
           child: Column(
             children: [
               Text(
-                'We are sorry to say that your loan application is rejected',
+                AppLocalizations.of(context)!.rejectedMessage1,
                 style: CustomStyle.body(),
                 textAlign: TextAlign.center,
               ),
               CustomWidget.verticalSpacing(),
               Text(
-                'Your Application has expired please login and resubmit again',
+                AppLocalizations.of(context)!.rejectedMessage2,
                 style: CustomStyle.body(),
                 textAlign: TextAlign.center,
               ),
@@ -540,13 +551,18 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
                 TextSpan(
                   children: [
                     TextSpan(
-                      text:
-                          'Sorry, you can’t request another loan currently. But don’t worry, you can request again on ',
+                      text: AppLocalizations.of(context)!.rejectedMessage3,
                       style: CustomStyle.body(),
                     ),
                     TextSpan(
-                      text: '20 October 2025',
+                      text: CommonService.formatDate(
+                        createdDate.toString(),
+                      ),
                       style: CustomStyle.bodyBold(),
+                    ),
+                    TextSpan(
+                      text: AppLocalizations.of(context)!.rejectedMessage4,
+                      style: CustomStyle.body(),
                     ),
                   ],
                 ),
@@ -564,24 +580,25 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(' Your loan has been postponed', style: CustomStyle.titleBold()),
+        Text(AppLocalizations.of(context)!.postponedLoan, style: CustomStyle.titleBold()),
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
-          "Contract No",
-          applicationData.contractNoRef ??
-              applicationData.contractNo.toString(),
+          AppLocalizations.of(context)!.contractNo,
+          applicationData.contractNoRef != ""
+              ? applicationData.contractNoRef.toString()
+              : applicationData.contractNo.toString(),
         ),
         CustomWidget.buildRow(
-          "Loan Size",
-          CommonService.getLoanSize(applicationData),
+          AppLocalizations.of(context)!.loanSize,
+          CommonService.getLoanSize(context, applicationData),
         ),
         CustomWidget.buildRow(
-          "Loan Term",
-          "${applicationData.loanTerm.toString()} Months",
+          AppLocalizations.of(context)!.loanTerm,
+          "${applicationData.loanTerm.toString()} ${AppLocalizations.of(context)!.months}",
         ),
         if (applicationData.appointmentBranchDate != '') ...[
           CustomWidget.buildRow(
-            "Branch Appointment Date",
+            AppLocalizations.of(context)!.branchAppointmentDate,
             CommonService.formatDate(
               applicationData.appointmentBranchDate.toString(),
             ),
@@ -589,7 +606,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         ],
         if (applicationData.appointmentBranchTime != '') ...[
           CustomWidget.buildRow(
-            "Branch Appointment Time",
+            AppLocalizations.of(context)!.branchAppointmentTime,
             applicationData.appointmentBranchTime.toString(),
           ),
         ],
@@ -597,7 +614,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         if (applicationData.appointmentResubmit) ...[
           CustomWidget.elevatedButton(
             context: context,
-            text: 'Resubmit Interview Appointment',
+            text: AppLocalizations.of(context)!.interviewAppointmentButton,
             onPressed: handleReSubmit,
           ),
         ],

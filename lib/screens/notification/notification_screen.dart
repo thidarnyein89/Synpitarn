@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/shared_value.dart';
-import 'package:synpitarn/models/meta.dart';
 import 'package:synpitarn/models/notification.dart';
 import 'package:synpitarn/models/notification_response.dart' as model;
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/notification_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/services/auth_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -106,29 +105,28 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PageAppBar(title: "Notification"),
-      body:
-          notificationList.isEmpty
-              ? Center(
-                child: Text(
-                  'There is no notification.',
-                  style: CustomStyle.bodyGreyColor(),
-                ),
-              )
-              : Padding(
-                padding: const EdgeInsets.all(16),
-                child: ListView.builder(
-                  controller: _scrollController,
-                  itemCount: notificationList.length + (_isLoading ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index < notificationList.length) {
-                      return _buildNotificationTile(notificationList[index]);
-                    } else {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                  },
-                ),
+      appBar: PageAppBar(title: AppLocalizations.of(context)!.notification),
+      body: notificationList.isEmpty
+          ? Center(
+              child: Text(
+                AppLocalizations.of(context)!.notificationNothing,
+                style: CustomStyle.bodyGreyColor(),
               ),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(16),
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: notificationList.length + (_isLoading ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index < notificationList.length) {
+                    return _buildNotificationTile(notificationList[index]);
+                  } else {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
+            ),
     );
   }
 

@@ -11,6 +11,7 @@ import 'package:synpitarn/repositories/branch_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/services/auth_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BranchAppointmentPage extends StatefulWidget {
   Loan? applicationData;
@@ -166,7 +167,7 @@ class BranchAppointmentState extends State<BranchAppointmentPage> {
     final minDate = DateTime(today.year, today.month, today.day + 1);
 
     return Scaffold(
-      appBar: PageAppBar(title: "Branch Appointment"),
+      appBar: PageAppBar(title: AppLocalizations.of(context)!.branchAppointment),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Stack(
@@ -185,39 +186,39 @@ class BranchAppointmentState extends State<BranchAppointmentPage> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Loan Information",
+                              Text(AppLocalizations.of(context)!.loanInformation,
                                   style: CustomStyle.subTitleBold()),
                               CustomWidget.verticalSpacing(),
                               CustomWidget.textField(
                                   readOnly: true,
                                   controller:
                                       textControllers['applied_amount']!,
-                                  label: 'Loan Size'),
+                                  label: AppLocalizations.of(context)!.loanSize),
                               CustomWidget.textField(
                                   readOnly: true,
                                   controller: textControllers['loan_term']!,
-                                  label: 'Loan Term'),
+                                  label: AppLocalizations.of(context)!.loanTerm),
                               CustomWidget.textField(
                                   readOnly: true,
                                   controller: textControllers['status']!,
-                                  label: 'Status'),
+                                  label: AppLocalizations.of(context)!.loanStatus),
                               CustomWidget.verticalSpacing(),
-                              Text(" Appointment Information ",
+                              Text(AppLocalizations.of(context)!.appointmentInformation,
                                   style: CustomStyle.subTitleBold()),
                               CustomWidget.verticalSpacing(),
                               CustomWidget.textField(
                                   readOnly: true,
                                   controller: textControllers['branch_name']!,
-                                  label: 'Appointment Branch'),
+                                  label: AppLocalizations.of(context)!.appointmentBranch),
                               CustomWidget.datePicker(
                                   context: context,
                                   controller: textControllers['date']!,
-                                  label: 'Appointment Date',
+                                  label: AppLocalizations.of(context)!.appointmentDate,
                                   readOnly: true,
                                   maxDate: maxDate,
                                   minDate: minDate),
                               CustomWidget.dropdownButtonSameValue(
-                                label: 'Available Time',
+                                label: AppLocalizations.of(context)!.appointmentTime,
                                 selectedValue: dropdownControllers['time'],
                                 items: itemDataList['time'],
                                 onChanged: (value) {
@@ -232,7 +233,7 @@ class BranchAppointmentState extends State<BranchAppointmentPage> {
                                 context: context,
                                 enabled: inValidFields.isEmpty,
                                 isLoading: isLoading,
-                                text: 'Make Appointment',
+                                text: AppLocalizations.of(context)!.makeAppointment,
                                 onPressed: handleAppointment,
                               ),
                             ]),

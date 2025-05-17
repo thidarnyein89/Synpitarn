@@ -12,6 +12,7 @@ import 'package:synpitarn/screens/profile/profile/edit_information.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BasicInformationPage extends StatefulWidget {
   BasicInformationPage({super.key});
@@ -71,7 +72,8 @@ class BasicInformationState extends State<BasicInformationPage>
   }
 
   Future<void> showErrorDialog(String errorMessage) async {
-    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+    await CustomWidget.showDialogWithoutStyle(
+        context: context, msg: errorMessage);
     isLoading = false;
     setState(() {});
   }
@@ -88,7 +90,7 @@ class BasicInformationState extends State<BasicInformationPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: 'Basic Information'),
+      appBar: PageAppBar(title: AppLocalizations.of(context)!.basicInformation),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Stack(
@@ -114,44 +116,48 @@ class BasicInformationState extends State<BasicInformationPage>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 CustomWidget.buildRow(
-                                  "Name",
+                                  AppLocalizations.of(context)!.name,
                                   loginUser.name,
                                 ),
                                 CustomWidget.buildRow(
-                                  "Phone Number",
+                                  AppLocalizations.of(context)!.phoneNumber,
                                   loginUser.phoneNumber,
                                 ),
                                 CustomWidget.buildRow(
-                                  "Date of Birth",
+                                  AppLocalizations.of(context)!.dob,
                                   loginUser.dob,
                                 ),
                                 CustomWidget.buildRow(
-                                  "Province of Work",
+                                  AppLocalizations.of(context)!.provinceWork,
                                   loginUser.provinceOfWorkText,
                                 ),
                                 CustomWidget.buildRow(
-                                  "Province of Residence",
+                                  AppLocalizations.of(context)!
+                                      .provinceResidence,
                                   loginUser.provinceOfResidentText,
                                 ),
                                 CustomWidget.buildRow(
-                                  "How often are you paid",
+                                  AppLocalizations.of(context)!.incomeType,
                                   loginUser.incomeType,
                                 ),
                                 CustomWidget.buildRow(
-                                  "Identity Number",
+                                  AppLocalizations.of(context)!.nrcNumber,
                                   loginUser.identityNumber,
                                 ),
                                 CustomWidget.buildRow(
-                                  "Passport",
+                                  AppLocalizations.of(context)!.passport,
                                   loginUser.passport,
                                 ),
                                 CustomWidget.buildRow(
-                                  "Total income (Salary + Overtime + Other Income) (Baht)",
-                                  CommonService.formatWithThousandSeparator(loginUser.salary),
+                                  AppLocalizations.of(context)!.salary,
+                                  CommonService.formatWithThousandSeparator(
+                                      context, loginUser.salary),
                                 ),
+                                CustomWidget.verticalSpacing(),
                                 CustomWidget.elevatedButton(
                                   context: context,
-                                  text: 'Edit Information',
+                                  text: AppLocalizations.of(context)!
+                                      .editInformationButton,
                                   onPressed: handleEdit,
                                 ),
                               ],

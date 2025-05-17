@@ -5,6 +5,7 @@ import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CallCenterPage extends StatefulWidget {
   const CallCenterPage({super.key});
@@ -35,7 +36,7 @@ class CallCenterState extends State<CallCenterPage> {
     );
 
     if (!launched) {
-      debugPrint('Cannot launch phone dialer');
+      debugPrint(AppLocalizations.of(context)!.canNotCallPhone);
     }
   }
 
@@ -47,7 +48,7 @@ class CallCenterState extends State<CallCenterPage> {
       await launchUrl(messengerUri, mode: LaunchMode.platformDefault);
     } catch (e) {
       await CustomWidget.showDialogWithoutStyle(
-          context: context, msg: "Could not launch Messenger");
+          context: context, msg: AppLocalizations.of(context)!.canNotOpenMessenger);
     }
   }
 
@@ -55,7 +56,7 @@ class CallCenterState extends State<CallCenterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: 'Call Centre'),
+      appBar: PageAppBar(title: AppLocalizations.of(context)!.callCenter),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16),
@@ -63,7 +64,7 @@ class CallCenterState extends State<CallCenterPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Call us on mobile',
+                AppLocalizations.of(context)!.callMobile,
                 style: TextStyle(
                   color: Colors.black, // Normal text color
                   fontSize: 14,
@@ -75,12 +76,12 @@ class CallCenterState extends State<CallCenterPage> {
                 context: context,
                 onPressed: _callNow,
                 icon: CupertinoIcons.phone,
-                text: 'Call Centre',
+                text: AppLocalizations.of(context)!.callMobileButton,
               ),
               Divider(thickness: 1, color: Colors.grey),
               SizedBox(height: 16),
               Text(
-                'Reach us online',
+                AppLocalizations.of(context)!.reachOnline,
                 style: TextStyle(
                   color: Colors.black, // Normal text color
                   fontSize: 14,
@@ -92,7 +93,7 @@ class CallCenterState extends State<CallCenterPage> {
                 context: context,
                 onPressed: _openMessengerChat,
                 icon: Iconsax.message_text,
-                text: 'Messenger',
+                text: AppLocalizations.of(context)!.sendMessage,
               ),
             ],
           ),

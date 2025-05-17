@@ -9,6 +9,7 @@ import 'package:synpitarn/screens/components/qr_dialog.dart';
 import 'package:synpitarn/screens/loan/repayment_list.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PreviousLoanPage extends StatefulWidget {
   Loan? loan = Loan.defaultLoan();
@@ -63,20 +64,20 @@ class PreviousLoanState extends State<PreviousLoanPage> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CustomWidget.buildRow(
-            "Contract No", widget.loan!.contractNoRef.toString()),
+            AppLocalizations.of(context)!.contractNo, widget.loan!.contractNoRef.toString()),
         CustomWidget.buildRow(
-            "Loan Status",
+            AppLocalizations.of(context)!.loanStatus,
             CommonService.getLoanStatus(
                 widget.loan!.loanApplicationStatus.toString())),
         CustomWidget.buildRow(
-            "Loan Size", CommonService.getLoanSize(widget.loan!)),
-        CustomWidget.buildRow("Loan Term", "${widget.loan!.termPeriod} Months"),
+            AppLocalizations.of(context)!.loanSize, CommonService.getLoanSize(context, widget.loan!)),
+        CustomWidget.buildRow(AppLocalizations.of(context)!.loanTerm, "${widget.loan!.termPeriod} ${AppLocalizations.of(context)!.months}"),
         CustomWidget.buildRow(
-            "First Payment Date",
+            AppLocalizations.of(context)!.firstPaymentDate,
             CommonService.formatDate(
                 widget.loan!.firstRepaymentDate.toString())),
         CustomWidget.buildRow(
-            "Last Payment Date",
+            AppLocalizations.of(context)!.lastPaymentDate,
             CommonService.formatDate(
                 widget.loan!.lastRepaymentDate.toString())),
         CustomWidget.verticalSpacing(),
@@ -106,7 +107,7 @@ class PreviousLoanState extends State<PreviousLoanPage> {
         if ((widget.loan?.schedules ?? []).isNotEmpty)
           CustomWidget.elevatedButton(
             context: context,
-            text: 'View Repayment Schedule',
+            text: AppLocalizations.of(context)!.viewRepaymentSchedule,
             onPressed: handleViewRepayment,
           ),
       ],

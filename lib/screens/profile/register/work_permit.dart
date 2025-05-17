@@ -10,22 +10,20 @@ import 'package:synpitarn/models/default/default_data.dart';
 import 'package:synpitarn/models/default/default_response.dart';
 import 'package:synpitarn/repositories/default_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/components/scanner_error_widget.dart';
 import 'package:synpitarn/screens/components/toggle_flashlight_button.dart';
 import 'package:synpitarn/screens/components/scan_window_overlay.dart';
-import 'package:synpitarn/data/app_config.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/user.dart';
-import 'package:synpitarn/models/workpermit_response.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/switch_camera_button.dart';
 import 'package:synpitarn/screens/profile/register/customer_information.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/route_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class WorkPermitPage extends StatefulWidget {
   const WorkPermitPage({super.key});
@@ -123,7 +121,7 @@ class WorkPermitState extends State<WorkPermitPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: 'Work Permit'),
+      appBar: PageAppBar(title: AppLocalizations.of(context)!.workPermit),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -187,7 +185,7 @@ class WorkPermitState extends State<WorkPermitPage> {
                     context: context,
                     enabled: !isLoading,
                     isLoading: false,
-                    text: 'Manual Fill',
+                    text: AppLocalizations.of(context)!.manualFill,
                     onPressed: saveWorkPermitStep,
                   ),
                 )

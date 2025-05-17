@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/data/language.dart';
+import 'package:synpitarn/models/data.dart';
 
 class LanguageService {
 
@@ -39,9 +41,19 @@ class LanguageService {
         return AppLocalizations.of(context)!.basicInformation;
       case 'additionalDocuments':
         return AppLocalizations.of(context)!.additionalDocuments;
-
       default:
         return key;
+    }
+  }
+
+  static String translateLabel(Item item) {
+    switch (Language.currentLanguage) {
+      case LanguageType.en:
+        return item.text?.en ?? '';
+      case LanguageType.th:
+        return item.text?.th ?? '';
+      default:
+        return item.text?.mm ?? '';
     }
   }
 

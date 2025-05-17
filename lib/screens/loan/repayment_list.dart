@@ -6,6 +6,7 @@ import 'package:synpitarn/models/loan_schedule.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/services/common_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RepaymentListPage extends StatefulWidget {
   Loan loan = Loan.defaultLoan();
@@ -32,11 +33,12 @@ class RepaymentListState extends State<RepaymentListPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomWidget.buildRow(
-            "Contract No", widget.loan.contractNoRef.toString()),
-        CustomWidget.buildRow(
-            "Loan Size", CommonService.getLoanSize(widget.loan)),
-        CustomWidget.buildRow("Loan Term", "${widget.loan.termPeriod} Months"),
+        CustomWidget.buildRow(AppLocalizations.of(context)!.contractNo,
+            widget.loan.contractNoRef.toString()),
+        CustomWidget.buildRow(AppLocalizations.of(context)!.loanSize,
+            CommonService.getLoanSize(context, widget.loan)),
+        CustomWidget.buildRow(AppLocalizations.of(context)!.loanTerm,
+            "${widget.loan.termPeriod} ${AppLocalizations.of(context)!.months}"),
       ],
     );
   }
@@ -69,7 +71,8 @@ class RepaymentListState extends State<RepaymentListPage> {
     TextStyle overdueStyle = const TextStyle();
 
     if (isPaid) {
-      lineThroughStyle = const TextStyle(decoration: TextDecoration.lineThrough);
+      lineThroughStyle =
+          const TextStyle(decoration: TextDecoration.lineThrough);
     } else if (dayCount > 0) {
       scheduleStatus = "Overdue $dayCount Days";
       overdueStyle = const TextStyle(color: Colors.red);
@@ -85,12 +88,14 @@ class RepaymentListState extends State<RepaymentListPage> {
           style: CustomStyle.subTitleBold(),
         ),
         CustomWidget.verticalSmallSpacing(),
-        CustomWidget.buildRow("Repayment amount", schedule.pmtAmount,
+        CustomWidget.buildRow(
+            AppLocalizations.of(context)!.repaymentAmount, schedule.pmtAmount,
+            otherStyle: lineThroughStyle),
+        CustomWidget.buildRow(AppLocalizations.of(context)!.repaymentDate,
+            CommonService.formatDate(schedule.pmtDate),
             otherStyle: lineThroughStyle),
         CustomWidget.buildRow(
-            "Repayment date", CommonService.formatDate(schedule.pmtDate),
-            otherStyle: lineThroughStyle),
-        CustomWidget.buildRow("Repayment status", scheduleStatus,
+            AppLocalizations.of(context)!.status, scheduleStatus,
             otherStyle: lineThroughStyle.merge(overdueStyle)),
         CustomWidget.verticalSmallSpacing(),
         if (!isLast) Divider(thickness: 1, color: Colors.grey),
