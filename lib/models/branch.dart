@@ -7,8 +7,8 @@ class Branch {
   final String nameMm;
   final String branchCode;
   final int provinceId;
-  final String latitude;
-  final String longitude;
+  final double latitude;
+  final double longitude;
   final String address;
   final String addressMm;
   final String addressTh;
@@ -51,8 +51,8 @@ class Branch {
       nameMm: json['name_mm'] ?? "",
       branchCode: json['branch_code'] ?? "",
       provinceId: json['province_id'] ?? 0,
-      latitude: json['latitude'] ?? "",
-      longitude: json['longitude'] ?? "",
+      latitude: double.tryParse(json['latitude']?.toString() ?? '') ?? 0.0,
+      longitude: double.tryParse(json['longitude']?.toString() ?? '') ?? 0.0,
       address: json['address'] ?? "",
       addressMm: json['address_mm'] ?? "",
       addressTh: json['address_th'] ?? "",
