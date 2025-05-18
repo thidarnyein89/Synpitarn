@@ -10,6 +10,7 @@ import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BranchPage extends StatefulWidget {
   const BranchPage({super.key});
@@ -93,7 +94,7 @@ class BranchState extends State<BranchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: "Branches"),
+      appBar: PageAppBar(title: AppLocalizations.of(context)!.branches),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child:
@@ -109,6 +110,17 @@ class BranchState extends State<BranchPage> {
 
                           /* For Lacalization */
                           final String address;
+                          final String name;
+
+                          if (Language.currentLanguage == LanguageType.en) {
+                            name = branch!.nameEn;
+                          } else if (Language.currentLanguage ==
+                              LanguageType.my) {
+                            name = branch!.nameMm;
+                          } else {
+                            name = branch!.nameTh;
+                          }
+
                           if (Language.currentLanguage == LanguageType.en) {
                             address = branch!.address;
                           } else if (Language.currentLanguage ==
@@ -139,7 +151,7 @@ class BranchState extends State<BranchPage> {
                                     ),
                                   ),
                                   child: Text(
-                                    'Branch ${index + 1}',
+                                    name,
                                     style: CustomStyle.bodyWhiteColor(),
                                   ),
                                 ),
@@ -186,7 +198,9 @@ class BranchState extends State<BranchPage> {
                                               branch.longitude,
                                             ),
                                         child: Text(
-                                          'Go To Direction',
+                                          AppLocalizations.of(
+                                            context,
+                                          )!.goToDirection,
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.w500,

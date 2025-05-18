@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/data/language.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/notification.dart';
 import 'package:synpitarn/models/notification_response.dart' as model;
@@ -106,31 +107,49 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PageAppBar(title: AppLocalizations.of(context)!.notification),
-      body: notificationList.isEmpty
-          ? Center(
-              child: Text(
-                AppLocalizations.of(context)!.notificationNothing,
-                style: CustomStyle.bodyGreyColor(),
+      body:
+          notificationList.isEmpty
+              ? Center(
+                child: Text(
+                  AppLocalizations.of(context)!.notificationNothing,
+                  style: CustomStyle.bodyGreyColor(),
+                ),
+              )
+              : Padding(
+                padding: const EdgeInsets.all(16),
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount: notificationList.length + (_isLoading ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index < notificationList.length) {
+                      return _buildNotificationTile(notificationList[index]);
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
               ),
-            )
-          : Padding(
-              padding: const EdgeInsets.all(16),
-              child: ListView.builder(
-                controller: _scrollController,
-                itemCount: notificationList.length + (_isLoading ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index < notificationList.length) {
-                    return _buildNotificationTile(notificationList[index]);
-                  } else {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                },
-              ),
-            ),
     );
   }
 
   Widget _buildNotificationTile(NotificationModel item) {
+    final String title;
+    final String content;
+    if (Language.currentLanguage == LanguageType.en) {
+      title = item.data!.enTitle;
+    } else if (Language.currentLanguage == LanguageType.my) {
+      title = item.data!.mmTitle;
+    } else {
+      title = item.data!.thTitle;
+    }
+
+    if (Language.currentLanguage == LanguageType.en) {
+      content = item.data!.enContent;
+    } else if (Language.currentLanguage == LanguageType.my) {
+      content = item.data!.mmContent;
+    } else {
+      content = item.data!.thContent;
+    }
     return Card(
       margin: EdgeInsets.only(bottom: 16),
       elevation: 1,
@@ -146,7 +165,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    item.data.enTitle,
+                    title,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
@@ -159,7 +178,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ],
             ),
             SizedBox(height: 8),
-            Text(item.data.enContent, style: TextStyle(fontSize: 14)),
+            Text(content, style: TextStyle(fontSize: 14)),
           ],
         ),
       ),
