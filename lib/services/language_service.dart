@@ -11,6 +11,8 @@ class LanguageService {
         return AppLocalizations.of(context)!.repayment;
       case 'loanSchedule':
         return AppLocalizations.of(context)!.loanSchedule;
+      case 'applyLoan':
+        return AppLocalizations.of(context)!.applyLoan("");
       case 'documents':
         return AppLocalizations.of(context)!.documents;
       case 'callCenter':

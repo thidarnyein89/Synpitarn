@@ -52,7 +52,7 @@ class HomeState extends State<HomePage> {
 
   final List<Map<String, dynamic>> features = const [
     {"icon": RemixIcons.hand_coin_line, "label": "repayment"},
-    {"icon": Icons.edit_note, "label": "loanSchedule"},
+    {"icon": Icons.edit_note, "label": "applyLoan"},
     {"icon": Icons.description, "label": "documents"},
     {"icon": Icons.support_agent, "label": "callCenter"},
   ];
