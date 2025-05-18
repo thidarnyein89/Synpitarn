@@ -34,7 +34,7 @@ class LoanTypeState extends State<LoanTypePage> {
     'loan_type_id': null,
     'times_per_month': null,
     'province_work': null,
-    'province_resident': null
+    'province_resident': null,
   };
 
   Map<String, List<Item>> itemDataList = {
@@ -85,8 +85,9 @@ class LoanTypeState extends State<LoanTypePage> {
     loginUser = await getLoginUser();
     setState(() {});
 
-    DefaultResponse defaultResponse =
-        await DefaultRepository().getDefaultData(loginUser);
+    DefaultResponse defaultResponse = await DefaultRepository().getDefaultData(
+      loginUser,
+    );
 
     if (defaultResponse.response.code == 200) {
       defaultData = defaultResponse.data;
@@ -109,12 +110,10 @@ class LoanTypeState extends State<LoanTypePage> {
 
     dataResponse = await DataRepository().getLoanTypes();
     if (dataResponse.response.code == 200) {
-      final loanTypeItems = dataResponse.data.map<Item>((data) {
-        return Item.named(
-          value: data.id.toString(),
-          text: data.getText(),
-        );
-      }).toList();
+      final loanTypeItems =
+          dataResponse.data.map<Item>((data) {
+            return Item.named(value: data.id.toString(), text: data.getText());
+          }).toList();
 
       itemDataList["loan_type"] = loanTypeItems;
     } else if (dataResponse.response.code == 403) {
@@ -126,12 +125,10 @@ class LoanTypeState extends State<LoanTypePage> {
 
     dataResponse = await DataRepository().getTimesPerMonth();
     if (dataResponse.response.code == 200) {
-      final timesPerMonth = dataResponse.data.map<Item>((data) {
-        return Item.named(
-          value: data.id.toString(),
-          text: data.getText(),
-        );
-      }).toList();
+      final timesPerMonth =
+          dataResponse.data.map<Item>((data) {
+            return Item.named(value: data.id.toString(), text: data.getText());
+          }).toList();
 
       itemDataList["times_per_month"] = timesPerMonth;
     } else if (dataResponse.response.code == 403) {
@@ -143,12 +140,10 @@ class LoanTypeState extends State<LoanTypePage> {
 
     dataResponse = await DataRepository().getProvinces();
     if (dataResponse.response.code == 200) {
-      final province = dataResponse.data.map<Item>((data) {
-        return Item.named(
-          value: data.id.toString(),
-          text: data.getText(),
-        );
-      }).toList();
+      final province =
+          dataResponse.data.map<Item>((data) {
+            return Item.named(value: data.id.toString(), text: data.getText());
+          }).toList();
 
       itemDataList["province"] = province;
     } else if (dataResponse.response.code == 403) {
@@ -176,8 +171,11 @@ class LoanTypeState extends State<LoanTypePage> {
       'province_resident': dropdownControllers['province_resident']!.value,
     };
 
-    DataResponse saveResponse = await LoanRepository()
-        .saveLoanApplicationStep(postBody, loginUser, stepName);
+    DataResponse saveResponse = await LoanRepository().saveLoanApplicationStep(
+      postBody,
+      loginUser,
+      stepName,
+    );
     if (saveResponse.response.code == 200) {
       loginUser.loanFormState = "choose_loan_type";
       await setLoginUser(loginUser);
@@ -200,8 +198,11 @@ class LoanTypeState extends State<LoanTypePage> {
     );
   }
 
-  Future<void> showErrorDialog(String errorMessage) async{
-    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+  Future<void> showErrorDialog(String errorMessage) async {
+    await CustomWidget.showDialogWithoutStyle(
+      context: context,
+      msg: errorMessage,
+    );
     isLoading = false;
     setState(() {});
   }
@@ -213,14 +214,16 @@ class LoanTypeState extends State<LoanTypePage> {
       appBar: PageAppBar(title: AppLocalizations.of(context)!.loanApplication),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          return Stack(children: [
-            if (isPageLoading)
-              CustomWidget.loading()
-            else
-              SingleChildScrollView(
-                child: ConstrainedBox(
-                    constraints:
-                        BoxConstraints(minHeight: constraints.maxHeight),
+          return Stack(
+            children: [
+              if (isPageLoading)
+                CustomWidget.loading()
+              else
+                SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
                     child: Column(
                       spacing: 0,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -247,7 +250,8 @@ class LoanTypeState extends State<LoanTypePage> {
                                 },
                               ),
                               CustomWidget.dropdownButtonDiffValue(
-                                label: AppLocalizations.of(context)!.repaymentTerm,
+                                label:
+                                    AppLocalizations.of(context)!.repaymentTerm,
                                 selectedValue:
                                     dropdownControllers['times_per_month'],
                                 items: itemDataList['times_per_month']!,
@@ -260,7 +264,8 @@ class LoanTypeState extends State<LoanTypePage> {
                                 },
                               ),
                               CustomWidget.dropdownButtonDiffValue(
-                                label: AppLocalizations.of(context)!.provinceWork,
+                                label:
+                                    AppLocalizations.of(context)!.provinceWork,
                                 selectedValue:
                                     dropdownControllers['province_work'],
                                 items: itemDataList['province']!,
@@ -273,7 +278,10 @@ class LoanTypeState extends State<LoanTypePage> {
                                 },
                               ),
                               CustomWidget.dropdownButtonDiffValue(
-                                label: AppLocalizations.of(context)!.provinceResidence,
+                                label:
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.provinceResidence,
                                 selectedValue:
                                     dropdownControllers['province_resident'],
                                 items: itemDataList['province']!,
@@ -285,36 +293,44 @@ class LoanTypeState extends State<LoanTypePage> {
                                   });
                                 },
                               ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: CustomWidget.elevatedButton(
-                                      context: context,
-                                      enabled: true,
-                                      isLoading: false,
-                                      text: AppLocalizations.of(context)!.previous,
-                                      onPressed: handlePrevious,
-                                    ),
-                                  ),
-                                  CustomWidget.horizontalSpacing(),
-                                  Expanded(
-                                    child: CustomWidget.elevatedButton(
-                                      context: context,
-                                      enabled: inValidFields.isEmpty,
-                                      isLoading: isLoading,
-                                      text: AppLocalizations.of(context)!.applyLoanButton,
-                                      onPressed: handleApplyLoan,
-                                    ),
-                                  ),
-                                ],
-                              )
+                              CustomWidget.elevatedButton(
+                                context: context,
+                                enabled: true,
+                                isLoading: false,
+                                text: AppLocalizations.of(context)!.previous,
+                                onPressed: handlePrevious,
+                              ),
+
+                              CustomWidget.elevatedButton(
+                                context: context,
+                                enabled: inValidFields.isEmpty,
+                                isLoading: isLoading,
+                                text:
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.applyLoanButton,
+                                onPressed: handleApplyLoan,
+                              ),
+                              // Row(
+                              //   children: [
+                              //     Expanded(
+                              //       child:
+                              //     ),
+                              //     CustomWidget.horizontalSpacing(),
+                              //     Expanded(
+                              //       child:
+                              //     ),
+                              //   ],
+                              // )
                             ],
                           ),
                         ),
                       ],
-                    )),
-              )
-          ]);
+                    ),
+                  ),
+                ),
+            ],
+          );
         },
       ),
     );
