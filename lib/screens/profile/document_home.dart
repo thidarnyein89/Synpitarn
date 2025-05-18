@@ -7,10 +7,11 @@ import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:synpitarn/screens/components/main_app_bar.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
+import 'package:synpitarn/services/language_service.dart';
 import 'package:synpitarn/services/route_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DocumentHomePage extends StatefulWidget {
   const DocumentHomePage({super.key});
@@ -48,7 +49,7 @@ class DocumentHomeState extends State<DocumentHomePage>  {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PageAppBar(title: "Documents"),
+      appBar: PageAppBar(title: AppLocalizations.of(context)!.documents),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -106,7 +107,7 @@ class DocumentHomeState extends State<DocumentHomePage>  {
                         ),
                         CustomWidget.verticalSpacing(),
                         Text(
-                          item.text,
+                          LanguageService.translateKey(context, item.text),
                           textAlign: TextAlign.center,
                           style: CustomStyle.body(),
                         )

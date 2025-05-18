@@ -140,7 +140,7 @@ class DocumentFileState extends State<DocumentFilePage> {
       "style": TextStyle(color: Colors.black)
     });
 
-    final docNames = widget.documentList?.map((doc) => doc.name).toList() ?? [];
+    final docNames = widget.documentList?.map((doc) => doc.getName()).toList() ?? [];
     for (int i = 0; i < docNames.length; i++) {
       msg.add({
         "text": docNames[i],

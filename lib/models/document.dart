@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:synpitarn/data/language.dart';
+
 class Document {
   int id = 0;
   int userId = 0;
@@ -114,4 +116,15 @@ class Document {
 
   factory Document.documentResponseToJson(String source) =>
       Document.fromJson(json.decode(source));
+
+  String getName() {
+    switch (Language.currentLanguage) {
+      case LanguageType.my:
+        return nameMM;
+      case LanguageType.th:
+        return nameTH;
+      default:
+        return nameEN;
+    }
+  }
 }
