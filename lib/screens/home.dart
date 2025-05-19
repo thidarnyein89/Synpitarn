@@ -11,8 +11,10 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/qr_dialog.dart';
+import 'package:synpitarn/screens/loan/loan_history.dart';
 import 'package:synpitarn/screens/loan/repayment_list.dart';
 import 'package:synpitarn/screens/profile/document_home.dart';
+import 'package:synpitarn/screens/profile/profile_home.dart';
 import 'package:synpitarn/screens/setting/about_us.dart';
 import 'package:synpitarn/screens/setting/call_center.dart';
 import 'package:synpitarn/screens/setting/guide_header.dart';
@@ -355,7 +357,7 @@ class HomeState extends State<HomePage> {
                     }
                   }
                   if (index == 1) {
-                    goToLoanSchedulePage(context);
+                    goToLoanApply(context);
                   }
                   if (index == 2) {
                     goToDocumentPage(context);
@@ -824,12 +826,12 @@ class HomeState extends State<HomePage> {
     }
   }
 
-  void goToLoanSchedulePage(BuildContext context) {
-    if (repaymentList.isEmpty) {
-      showErrorDialog(AppLocalizations.of(context)!.noRepaymentSchedule);
-    } else {
-      RouteService.goToNavigator(
-          context, RepaymentListPage(loan: loanList.first));
+  void goToLoanApply(BuildContext context) {
+    if(!loginUser.loanApplicationSubmitted) {
+      RouteService.goToReplaceNavigator(context, ProfileHomePage());
+    }
+    else {
+      RouteService.goToReplaceNavigator(context, LoanHistoryPage());
     }
   }
 }

@@ -476,16 +476,19 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
           text: AppLocalizations.of(context)!.repayAtBranch,
           onPressed: () {},
         ),
+        CustomWidget.verticalSpacing(),
         CustomWidget.elevatedButtonOutline(
           context: context,
           text: AppLocalizations.of(context)!.paymentAtATM,
           onPressed: () {},
         ),
+        CustomWidget.verticalSpacing(),
         CustomWidget.elevatedButtonOutline(
           context: context,
           text: AppLocalizations.of(context)!.paymentAtOnline,
           onPressed: () {},
         ),
+        CustomWidget.verticalSpacing(),
         CustomWidget.elevatedButton(
           context: context,
           text: AppLocalizations.of(context)!.viewRepaymentSchedule,
