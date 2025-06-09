@@ -2,12 +2,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/data/loan_status.dart';
+import 'package:synpitarn/data/shared_rsa_value.dart';
 import 'package:synpitarn/data/shared_value.dart';
+import 'package:synpitarn/models/biometric.dart';
+import 'package:synpitarn/models/biometric_response.dart';
 import 'package:synpitarn/models/loan.dart';
 import 'package:synpitarn/models/loan_application_response.dart';
 import 'package:synpitarn/models/loan_response.dart';
 import 'package:synpitarn/models/loan_schedule.dart';
 import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/repositories/biometric_repository.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/qr_dialog.dart';
@@ -28,7 +32,10 @@ import 'package:remixicon/remixicon.dart';
 import 'package:synpitarn/services/language_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/models/qrcode.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:lottie/lottie.dart';
+import 'package:synpitarn/util/rsaUtil.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -38,6 +45,8 @@ class HomePage extends StatefulWidget {
 }
 
 class HomeState extends State<HomePage> {
+  final LocalAuthentication auth = LocalAuthentication();
+
   final ScrollController _scrollController = ScrollController();
   final CommonService _commonService = CommonService();
   final PageController _pageController = PageController();
@@ -103,11 +112,13 @@ class HomeState extends State<HomePage> {
 
     getApplicationData();
     getLoanHistory();
+
+    createBiometricDialog(context);
   }
 
   Future<void> getApplicationData() async {
-    LoanApplicationResponse applicationResponse =
-        await LoanRepository().getLoanApplication(loginUser);
+    LoanApplicationResponse applicationResponse = await LoanRepository()
+        .getLoanApplication(loginUser);
 
     if (applicationResponse.response.code == 200) {
       applicationData = applicationResponse.data;
@@ -185,18 +196,20 @@ class HomeState extends State<HomePage> {
         if (loanResponse.data.isNotEmpty) {
           repaymentList =
               loanResponse.data[0].schedules!.map((LoanSchedule loanSchedule) {
-            int dayCount = CommonService.getDayCount(loanSchedule.pmtDate);
-            bool isLate = loanSchedule.isPaymentDone == 0 && dayCount > 0;
+                int dayCount = CommonService.getDayCount(loanSchedule.pmtDate);
+                bool isLate = loanSchedule.isPaymentDone == 0 && dayCount > 0;
 
-            return {
-              'dueDate': CommonService.formatDate(loanSchedule.pmtDate),
-              'amount': CommonService.formatWithThousandSeparator(
-                  context, loanSchedule.pmtAmount),
-              'status': loanSchedule.isPaymentDone == 0 ? 'Unpaid' : 'Paid',
-              'dayCount': dayCount,
-              'isLate': isLate
-            };
-          }).toList();
+                return {
+                  'dueDate': CommonService.formatDate(loanSchedule.pmtDate),
+                  'amount': CommonService.formatWithThousandSeparator(
+                    context,
+                    loanSchedule.pmtAmount,
+                  ),
+                  'status': loanSchedule.isPaymentDone == 0 ? 'Unpaid' : 'Paid',
+                  'dayCount': dayCount,
+                  'isLate': isLate,
+                };
+              }).toList();
 
           if (loanResponse.data[0].qrcode != null) {
             qrcode.photo = loanResponse.data[0].qrcode.photo;
@@ -257,30 +270,185 @@ class HomeState extends State<HomePage> {
     setState(() {});
   }
 
+  Future<void> handleBiometricRegister() async {
+    Biometric biometric = Biometric.defaultBiometric();
+    biometric.publicKey = await getPublicKey();
+
+    BiometricResponse biometricResponse = await BiometricRepository().register(
+      biometric,
+      loginUser,
+    );
+
+    if (biometricResponse.response.code != 200) {
+      String msg = biometricResponse.response.message.toLowerCase();
+      showErrorDialog(msg);
+    } else {
+      await setBiometricUUID(biometricResponse.data.biometricUuid);
+      await setNeedBiometricLogin(false);
+      print("Successfully Biometric Register");
+    }
+  }
+
+  Future<void> createBiometricDialog(BuildContext context) async {
+    bool need = await getNeedBiometricLogin();
+    if (!need) {
+      return;
+    }
+
+    bool isBiometricSupported = await auth.canCheckBiometrics;
+    bool isDeviceSupported = await auth.isDeviceSupported();
+    String authState = "initial";
+
+    if (!isBiometricSupported || !isDeviceSupported) {
+      print("Biometric authentication not available");
+      return;
+    }
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            Future<void> biometricAuthenticate() async {
+              try {
+                bool didAuthenticate = await auth.authenticate(
+                  localizedReason: 'Please authenticate to continue',
+                  options: const AuthenticationOptions(
+                    biometricOnly: true,
+                    stickyAuth: true,
+                  ),
+                );
+
+                if (didAuthenticate) {
+                  print("Authenticated successfully!");
+                  handleBiometricRegister();
+                  setState(() => authState = "success");
+                } else {
+                  print("Authentication failed");
+                  setState(() => authState = "failed");
+                }
+              } catch (e) {
+                print("Error during authentication: $e");
+                setState(() => authState = "failed");
+              }
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                top: 20,
+                left: 20,
+                right: 20,
+              ),
+              child: Wrap(
+                children: [
+                  Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'Is this your personal device?',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          "We will remember you next time login",
+                          style: const TextStyle(color: Colors.black54),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 30),
+                        SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: Builder(
+                            builder: (_) {
+                              if (authState == "success") {
+                                final AnimationController controller =
+                                    AnimationController(
+                                      vsync: Navigator.of(context),
+                                    );
+                                return Lottie.asset(
+                                  'assets/lottie/success.json',
+                                  controller: controller,
+                                  onLoaded: (composition) {
+                                    controller.duration = composition.duration;
+                                    controller.forward();
+                                    controller.addStatusListener((status) {
+                                      if (status == AnimationStatus.completed) {
+                                        Navigator.pop(context);
+                                      }
+                                    });
+                                  },
+                                );
+                              } else if (authState == "failed") {
+                                return Lottie.asset(
+                                  'assets/lottie/fail.json',
+                                  repeat: false,
+                                );
+                              } else {
+                                return Icon(
+                                  Icons.fingerprint,
+                                  size: 50,
+                                  color: CustomStyle.primary_color,
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 30),
+                        CustomWidget.elevatedButton(
+                          context: context,
+                          enabled: true,
+                          isLoading: false,
+                          text: "YES",
+                          onPressed: biometricAuthenticate,
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MainAppBar(),
-      body: isLoading
-          ? Center(
-              child: CircularProgressIndicator(
-                color: CustomStyle.primary_color,
-              ),
-            )
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  createSliderSection(),
-                  createFeatureSection(),
-                  createLoanStatusSection(),
-                  createLoanSection(),
-                  if (!loginUser.loanApplicationSubmitted) ...[
-                    GuideHeaderPage(),
-                    createAboutUs(),
+      body:
+          isLoading
+              ? Center(
+                child: CircularProgressIndicator(
+                  color: CustomStyle.primary_color,
+                ),
+              )
+              : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    createSliderSection(),
+                    createFeatureSection(),
+                    createLoanStatusSection(),
+                    createLoanSection(),
+                    if (!loginUser.loanApplicationSubmitted) ...[
+                      GuideHeaderPage(),
+                      createAboutUs(),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: ConstantData.HOME_INDEX,
         onItemTapped: (index) {
@@ -347,7 +515,8 @@ class HomeState extends State<HomePage> {
                   if (index == 0) {
                     if (qrcode.photo == "") {
                       showErrorDialog(
-                          AppLocalizations.of(context)!.noApplyLoan);
+                        AppLocalizations.of(context)!.noApplyLoan,
+                      );
                     } else {
                       QRDialog.showQRDialog(
                         context,
@@ -411,8 +580,10 @@ class HomeState extends State<HomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(AppLocalizations.of(context)!.loanStatus,
-                  style: CustomStyle.subTitleBold()),
+              Text(
+                AppLocalizations.of(context)!.loanStatus,
+                style: CustomStyle.subTitleBold(),
+              ),
             ],
           ),
           CustomWidget.verticalSpacing(),
@@ -442,7 +613,9 @@ class HomeState extends State<HomePage> {
                       key: loanStepKeys[stepIndex],
                       child: createLoanStep(
                         label: LanguageService.translateKey(
-                            context, step['label']),
+                          context,
+                          step['label'],
+                        ),
                         isActive: step['isActive'],
                       ),
                     ),
@@ -481,11 +654,14 @@ class HomeState extends State<HomePage> {
 
   Widget createPendingLoanSection() {
     final int activeIndex = loanSteps.indexWhere((step) => step['isActive']);
-    String loanStatus =
-        CommonService.getLoanStatus(applicationData.status.toString());
+    String loanStatus = CommonService.getLoanStatus(
+      applicationData.status.toString(),
+    );
     if (activeIndex == 1) {
       loanStatus = LanguageService.translateKey(
-          context, loanSteps[activeIndex]["label"]);
+        context,
+        loanSteps[activeIndex]["label"],
+      );
     }
 
     return Padding(
@@ -548,7 +724,9 @@ class HomeState extends State<HomePage> {
                 ),
               ],
               CustomWidget.buildRow(
-                  AppLocalizations.of(context)!.loanStatus, loanStatus),
+                AppLocalizations.of(context)!.loanStatus,
+                loanStatus,
+              ),
             ],
           ),
         ),
@@ -569,18 +747,23 @@ class HomeState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomWidget.buildRow(
-                  AppLocalizations.of(context)!.contractNo,
-                  applicationData.contractNoRef != ""
-                      ? applicationData.contractNoRef.toString()
-                      : applicationData.contractNo.toString()),
+                AppLocalizations.of(context)!.contractNo,
+                applicationData.contractNoRef != ""
+                    ? applicationData.contractNoRef.toString()
+                    : applicationData.contractNo.toString(),
+              ),
               CustomWidget.buildRow(
-                  AppLocalizations.of(context)!.loanStatus,
-                  CommonService.getLoanStatus(
-                      applicationData.status.toString())),
-              CustomWidget.buildRow(AppLocalizations.of(context)!.loanSize,
-                  CommonService.getLoanSize(context, applicationData)),
-              CustomWidget.buildRow(AppLocalizations.of(context)!.loanTerm,
-                  "${applicationData.loanTerm} ${AppLocalizations.of(context)!.months}"),
+                AppLocalizations.of(context)!.loanStatus,
+                CommonService.getLoanStatus(applicationData.status.toString()),
+              ),
+              CustomWidget.buildRow(
+                AppLocalizations.of(context)!.loanSize,
+                CommonService.getLoanSize(context, applicationData),
+              ),
+              CustomWidget.buildRow(
+                AppLocalizations.of(context)!.loanTerm,
+                "${applicationData.loanTerm} ${AppLocalizations.of(context)!.months}",
+              ),
             ],
           ),
         ),
@@ -597,8 +780,10 @@ class HomeState extends State<HomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(AppLocalizations.of(context)!.repaymentSchedule,
-                  style: CustomStyle.subTitleBold()),
+              Text(
+                AppLocalizations.of(context)!.repaymentSchedule,
+                style: CustomStyle.subTitleBold(),
+              ),
             ],
           ),
           if (totalLateDay > 0) ...[
@@ -642,14 +827,17 @@ class HomeState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(AppLocalizations.of(context)!.dueDate,
-                        style: CustomStyle.bodyBold()),
+                    Text(
+                      AppLocalizations.of(context)!.dueDate,
+                      style: CustomStyle.bodyBold(),
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       item['dueDate'],
-                      style: item['isLate']
-                          ? CustomStyle.bodyRedColor()
-                          : CustomStyle.body(),
+                      style:
+                          item['isLate']
+                              ? CustomStyle.bodyRedColor()
+                              : CustomStyle.body(),
                     ),
                   ],
                 ),
@@ -658,14 +846,17 @@ class HomeState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(AppLocalizations.of(context)!.amount,
-                        style: CustomStyle.bodyBold()),
+                    Text(
+                      AppLocalizations.of(context)!.amount,
+                      style: CustomStyle.bodyBold(),
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       item['amount'],
-                      style: item['isLate']
-                          ? CustomStyle.bodyRedColor()
-                          : CustomStyle.body(),
+                      style:
+                          item['isLate']
+                              ? CustomStyle.bodyRedColor()
+                              : CustomStyle.body(),
                     ),
                   ],
                 ),
@@ -674,14 +865,17 @@ class HomeState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(AppLocalizations.of(context)!.status,
-                        style: CustomStyle.bodyBold()),
+                    Text(
+                      AppLocalizations.of(context)!.status,
+                      style: CustomStyle.bodyBold(),
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       item['status'],
-                      style: item['isLate']
-                          ? CustomStyle.bodyRedColor()
-                          : CustomStyle.body(),
+                      style:
+                          item['isLate']
+                              ? CustomStyle.bodyRedColor()
+                              : CustomStyle.body(),
                     ),
                   ],
                 ),
@@ -693,9 +887,10 @@ class HomeState extends State<HomePage> {
                     CustomWidget.elevatedButton(
                       context: context,
                       isLoading: false,
-                      text: item['status'] == 0
-                          ? AppLocalizations.of(context)!.complete
-                          : AppLocalizations.of(context)!.payNow,
+                      text:
+                          item['status'] == 0
+                              ? AppLocalizations.of(context)!.complete
+                              : AppLocalizations.of(context)!.payNow,
                       isSmall: true,
                       onPressed: handleContinue,
                     ),
@@ -758,21 +953,24 @@ class HomeState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(AppLocalizations.of(context)!.getToKnowUs,
-                  style: CustomStyle.subTitleBold()),
+              Text(
+                AppLocalizations.of(context)!.getToKnowUs,
+                style: CustomStyle.subTitleBold(),
+              ),
               CustomWidget.verticalSpacing(),
               GridView.count(
                 crossAxisCount: crossAxisCount,
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
                 shrinkWrap: true,
-                children: aboutList
-                    .asMap()
-                    .map((index, aboutData) {
-                      return MapEntry(index, gridItem(index));
-                    })
-                    .values
-                    .toList(),
+                children:
+                    aboutList
+                        .asMap()
+                        .map((index, aboutData) {
+                          return MapEntry(index, gridItem(index));
+                        })
+                        .values
+                        .toList(),
               ),
             ],
           ),
@@ -827,10 +1025,9 @@ class HomeState extends State<HomePage> {
   }
 
   void goToLoanApply(BuildContext context) {
-    if(!loginUser.loanApplicationSubmitted) {
+    if (!loginUser.loanApplicationSubmitted) {
       RouteService.goToReplaceNavigator(context, ProfileHomePage());
-    }
-    else {
+    } else {
       RouteService.goToReplaceNavigator(context, LoanHistoryPage());
     }
   }

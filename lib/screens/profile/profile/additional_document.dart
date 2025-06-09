@@ -11,7 +11,7 @@ import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/services/auth_service.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class AdditionalDocumentPage extends StatefulWidget {
   const AdditionalDocumentPage({super.key});
@@ -52,8 +52,8 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
   }
 
   Future<void> getApplicationData() async {
-    LoanApplicationResponse applicationResponse =
-        await LoanRepository().getLoanApplication(loginUser);
+    LoanApplicationResponse applicationResponse = await LoanRepository()
+        .getLoanApplication(loginUser);
 
     if (applicationResponse.response.code == 200) {
       applicationData = applicationResponse.data;
@@ -94,7 +94,10 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
   }
 
   Future<void> showErrorDialog(String errorMessage) async {
-    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+    await CustomWidget.showDialogWithoutStyle(
+      context: context,
+      msg: errorMessage,
+    );
     isLoading = false;
     if (mounted) {
       setState(() {});
@@ -116,107 +119,113 @@ class AdditionalDocumentState extends State<AdditionalDocumentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: AppLocalizations.of(context)!.additionalDocuments),
+      appBar: PageAppBar(
+        title: AppLocalizations.of(context)!.additionalDocuments,
+      ),
       body: SafeArea(
-        child: isLoading
-            ? CustomWidget.loading()
-            : documentList.isEmpty
+        child:
+            isLoading
+                ? CustomWidget.loading()
+                : documentList.isEmpty
                 ? Center(
-                    child: Text(
-                      AppLocalizations.of(context)!.noAdditionalDocuments,
-                      style: CustomStyle.bodyGreyColor(),
-                    ),
-                  )
+                  child: Text(
+                    AppLocalizations.of(context)!.noAdditionalDocuments,
+                    style: CustomStyle.bodyGreyColor(),
+                  ),
+                )
                 : Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        const Spacer(),
-                        SizedBox(
-                          height: 300,
-                          child: PageView.builder(
-                            controller: _pageController,
-                            itemCount: documentList.length,
-                            onPageChanged: (index) {
-                              setState(() {
-                                selectedIndex = index;
-                              });
-                            },
-                            itemBuilder: (context, index) {
-                              return Image.network(
-                                documentList[index].file,
-                                fit: BoxFit.contain,
-                                loadingBuilder: (
-                                  context,
-                                  child,
-                                  loadingProgress,
-                                ) {
-                                  if (loadingProgress == null) return child;
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                },
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Icon(Icons.broken_image),
-                              );
-                            },
-                          ),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      const Spacer(),
+                      SizedBox(
+                        height: 300,
+                        child: PageView.builder(
+                          controller: _pageController,
+                          itemCount: documentList.length,
+                          onPageChanged: (index) {
+                            setState(() {
+                              selectedIndex = index;
+                            });
+                          },
+                          itemBuilder: (context, index) {
+                            return Image.network(
+                              documentList[index].file,
+                              fit: BoxFit.contain,
+                              loadingBuilder: (
+                                context,
+                                child,
+                                loadingProgress,
+                              ) {
+                                if (loadingProgress == null) return child;
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              },
+                              errorBuilder:
+                                  (context, error, stackTrace) =>
+                                      Icon(Icons.broken_image),
+                            );
+                          },
                         ),
-                        const Spacer(),
-                        SizedBox(
-                          height: 80,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: documentList.length,
-                            itemBuilder: (context, index) {
-                              final doc = documentList[index];
-                              return GestureDetector(
-                                onTap: () => onThumbnailTap(index),
-                                child: Container(
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                  ),
-                                  padding: selectedIndex == index
-                                      ? const EdgeInsets.all(2)
-                                      : EdgeInsets.zero,
-                                  decoration: BoxDecoration(
-                                    border: selectedIndex == index
-                                        ? Border.all(
+                      ),
+                      const Spacer(),
+                      SizedBox(
+                        height: 80,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: documentList.length,
+                          itemBuilder: (context, index) {
+                            final doc = documentList[index];
+                            return GestureDetector(
+                              onTap: () => onThumbnailTap(index),
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                ),
+                                padding:
+                                    selectedIndex == index
+                                        ? const EdgeInsets.all(2)
+                                        : EdgeInsets.zero,
+                                decoration: BoxDecoration(
+                                  border:
+                                      selectedIndex == index
+                                          ? Border.all(
                                             color: Colors.blue,
                                             width: 2,
                                           )
-                                        : null,
-                                  ),
-                                  child: Image.network(
-                                    doc.file,
-                                    width: 70,
-                                    height: 70,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder: (
-                                      context,
-                                      child,
-                                      loadingProgress,
-                                    ) {
-                                      if (loadingProgress == null) return child;
-                                      return const Center(
-                                        child: CircularProgressIndicator(),
-                                      );
-                                    },
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return const Center(
-                                        child: Icon(Icons.broken_image),
-                                      );
-                                    },
-                                  ),
+                                          : null,
                                 ),
-                              );
-                            },
-                          ),
+                                child: Image.network(
+                                  doc.file,
+                                  width: 70,
+                                  height: 70,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder: (
+                                    context,
+                                    child,
+                                    loadingProgress,
+                                  ) {
+                                    if (loadingProgress == null) return child;
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  },
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Center(
+                                      child: Icon(Icons.broken_image),
+                                    );
+                                  },
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                        const SizedBox(height: 10),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
                   ),
+                ),
       ),
     );
   }

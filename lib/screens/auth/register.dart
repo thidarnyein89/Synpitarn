@@ -9,7 +9,7 @@ import 'package:synpitarn/screens/components/nrc.dart';
 import 'package:synpitarn/screens/auth/otp.dart';
 import 'package:synpitarn/screens/auth/term_conditions.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -200,10 +200,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Image.asset(
-                        'assets/images/synpitarn.jpg',
-                        height: 180,
-                      ),
+                      Image.asset('assets/images/synpitarn.jpg', height: 180),
                       Text(
                         AppLocalizations.of(context)!.welcomeMessage,
                         style: CustomStyle.titleBold(),
@@ -213,24 +210,27 @@ class _RegisterPageState extends State<RegisterPage> {
                       Text(AppLocalizations.of(context)!.welcomeDescription),
                       CustomWidget.verticalSpacing(),
                       CustomWidget.phoneTextField(
-                          controller: phoneController,
-                          label: AppLocalizations.of(context)!.phoneNumber,
-                          errorText: phoneError),
+                        controller: phoneController,
+                        label: AppLocalizations.of(context)!.phoneNumber,
+                        errorText: phoneError,
+                      ),
                       GestureDetector(
                         onTap: () {
                           showNRCDialog();
                         },
                         child: AbsorbPointer(
                           child: CustomWidget.textField(
-                              controller: nrcController,
-                              label: AppLocalizations.of(context)!.nrcNumber,
-                              errorText: nrcError),
+                            controller: nrcController,
+                            label: AppLocalizations.of(context)!.nrcNumber,
+                            errorText: nrcError,
+                          ),
                         ),
                       ),
                       CustomWidget.textField(
-                          controller: passportController,
-                          label: AppLocalizations.of(context)!.passport,
-                          errorText: passportError),
+                        controller: passportController,
+                        label: AppLocalizations.of(context)!.passport,
+                        errorText: passportError,
+                      ),
                       Row(
                         children: [
                           Checkbox(
@@ -245,8 +245,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                 showTermAndConditions();
                               },
                               child: Text(
-                                AppLocalizations.of(context)!
-                                    .termConditionAgree,
+                                AppLocalizations.of(
+                                  context,
+                                )!.termConditionAgree,
                                 softWrap: true,
                                 maxLines: 2,
                               ),
@@ -258,14 +259,16 @@ class _RegisterPageState extends State<RegisterPage> {
                       Text(AppLocalizations.of(context)!.termConditionMessage),
                       CustomWidget.verticalSpacing(),
                       CustomWidget.elevatedButton(
-                          context: context,
-                          enabled: isPhoneValidate &&
-                              isPassportValidate &&
-                              isNRCValidate &&
-                              isChecked,
-                          isLoading: isLoading,
-                          text: AppLocalizations.of(context)!.continueText,
-                          onPressed: handleRegister),
+                        context: context,
+                        enabled:
+                            isPhoneValidate &&
+                            isPassportValidate &&
+                            isNRCValidate &&
+                            isChecked,
+                        isLoading: isLoading,
+                        text: AppLocalizations.of(context)!.continueText,
+                        onPressed: handleRegister,
+                      ),
                       CustomWidget.verticalSpacing(),
                       GestureDetector(
                         onTap: () {

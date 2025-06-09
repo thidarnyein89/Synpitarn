@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/models/nrc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class NRCPage extends StatefulWidget {
   String nrcValue;
@@ -59,10 +59,11 @@ class NRCState extends State<NRCPage> {
               : null;
       setState(() {});
 
-      townshipList = nrcList
-          .where((nrc) => nrc.state == selectedState)
-          .expand((nrc) => nrc.townshipList)
-          .toList();
+      townshipList =
+          nrcList
+              .where((nrc) => nrc.state == selectedState)
+              .expand((nrc) => nrc.townshipList)
+              .toList();
       townshipList.sort((a, b) => a.name.compareTo(b.name));
 
       setState(() {});
@@ -144,14 +145,16 @@ class NRCState extends State<NRCPage> {
                 focusNode: _nrcFocusNode,
               ),
               CustomWidget.elevatedButton(
-                  context: context,
-                  enabled: selectedState != null &&
-                      selectedTownship != null &&
-                      selectedCitizen != null &&
-                      (isNRCValidate),
-                  isLoading: false,
-                  text: AppLocalizations.of(context)!.continueText,
-                  onPressed: handleNRC),
+                context: context,
+                enabled:
+                    selectedState != null &&
+                    selectedTownship != null &&
+                    selectedCitizen != null &&
+                    (isNRCValidate),
+                isLoading: false,
+                text: AppLocalizations.of(context)!.continueText,
+                onPressed: handleNRC,
+              ),
             ],
           ),
         ),

@@ -9,7 +9,7 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/screens/auth/set_password.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class OTPPage extends StatefulWidget {
   User loginUser;
@@ -224,21 +224,23 @@ class OTPState extends State<OTPPage> {
                                   decoration: TextDecoration.underline,
                                   fontWeight: FontWeight.bold,
                                 ),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    getOTP();
-                                  },
+                                recognizer:
+                                    TapGestureRecognizer()
+                                      ..onTap = () {
+                                        getOTP();
+                                      },
                               ),
                             ],
                           ),
                         ),
                       SizedBox(height: 20),
                       CustomWidget.elevatedButton(
-                          context: context,
-                          enabled: isOTPValidate,
-                          isLoading: isLoading,
-                          text: AppLocalizations.of(context)!.verifyOTPCode,
-                          onPressed: handleVerifyOTP),
+                        context: context,
+                        enabled: isOTPValidate,
+                        isLoading: isLoading,
+                        text: AppLocalizations.of(context)!.verifyOTPCode,
+                        onPressed: handleVerifyOTP,
+                      ),
                       Text("OTP Code $code"),
                     ],
                   ),

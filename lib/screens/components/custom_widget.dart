@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/language.dart';
 import 'package:synpitarn/models/data.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 import 'package:synpitarn/services/language_service.dart';
 
 class CustomWidget {
@@ -530,8 +530,11 @@ class CustomWidget {
               onPrimary: Colors.white,
               onSurface: Colors.black,
             ),
-            dialogTheme: DialogTheme(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+            dialogTheme: DialogThemeData(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
             datePickerTheme: DatePickerThemeData(
               headerBackgroundColor: CustomStyle.primary_color,
@@ -576,7 +579,7 @@ class CustomWidget {
               onPressed: () {
                 Navigator.of(context).pop();
                 onConfirmed();
-              }
+              },
             ),
           ],
         );

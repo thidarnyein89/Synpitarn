@@ -13,7 +13,7 @@ import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/profile/profile_home.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/route_service.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class ChangePhoneOTPPage extends StatefulWidget {
   User loginUser;
@@ -100,11 +100,13 @@ class ChangePhoneOTPState extends State<ChangePhoneOTPPage> {
 
     var postBody = {
       "forget_password": false,
-      "phone_number": widget.loginUser.phoneNumber
+      "phone_number": widget.loginUser.phoneNumber,
     };
 
-    UserResponse userResponse =
-        await ProfileRepository().getOTP(postBody, loginUser);
+    UserResponse userResponse = await ProfileRepository().getOTP(
+      postBody,
+      loginUser,
+    );
 
     if (userResponse.response.code == 200) {
       code = userResponse.data.code;
@@ -133,8 +135,10 @@ class ChangePhoneOTPState extends State<ChangePhoneOTPPage> {
       'code': otpController.text,
     };
 
-    UserResponse profileResponse =
-        await ProfileRepository().changePhoneNumber(postBody, loginUser);
+    UserResponse profileResponse = await ProfileRepository().changePhoneNumber(
+      postBody,
+      loginUser,
+    );
     if (profileResponse.response.code == 200) {
       await setLoginUser(widget.loginUser);
       _timer.cancel();
@@ -152,7 +156,9 @@ class ChangePhoneOTPState extends State<ChangePhoneOTPPage> {
 
   Future<void> showErrorDialog(String errorMessage) async {
     await CustomWidget.showDialogWithoutStyle(
-        context: context, msg: errorMessage);
+      context: context,
+      msg: errorMessage,
+    );
     isLoading = false;
     setState(() {});
   }
@@ -235,21 +241,23 @@ class ChangePhoneOTPState extends State<ChangePhoneOTPPage> {
                                   decoration: TextDecoration.underline,
                                   fontWeight: FontWeight.bold,
                                 ),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    getOTP();
-                                  },
+                                recognizer:
+                                    TapGestureRecognizer()
+                                      ..onTap = () {
+                                        getOTP();
+                                      },
                               ),
                             ],
                           ),
                         ),
                       SizedBox(height: 20),
                       CustomWidget.elevatedButton(
-                          context: context,
-                          enabled: isOTPValidate,
-                          isLoading: isLoading,
-                          text: AppLocalizations.of(context)!.verifyOTPCode,
-                          onPressed: handleVerifyOTP),
+                        context: context,
+                        enabled: isOTPValidate,
+                        isLoading: isLoading,
+                        text: AppLocalizations.of(context)!.verifyOTPCode,
+                        onPressed: handleVerifyOTP,
+                      ),
                       Text("OTP Code $code"),
                     ],
                   ),

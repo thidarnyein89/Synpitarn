@@ -7,7 +7,7 @@ import 'package:synpitarn/data/json_data/term_condition/mm.dart';
 import 'package:synpitarn/data/json_data/term_condition/th.dart';
 import 'package:synpitarn/data/language.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TermAndConditionsPage extends StatefulWidget {
@@ -18,7 +18,6 @@ class TermAndConditionsPage extends StatefulWidget {
 }
 
 class TermAndConditionsState extends State<TermAndConditionsPage> {
-
   List<ContentBlock> allContent = [];
 
   @override
@@ -33,52 +32,53 @@ class TermAndConditionsState extends State<TermAndConditionsPage> {
   }
 
   getInitData() async {
+    if (Language.currentLanguage == LanguageType.my) {
+      allContent = TermConditionMyanmar.allContent;
+    } else if (Language.currentLanguage == LanguageType.th) {
+      allContent = TermConditionThai.allContent;
+    } else {
+      allContent = TermConditionEnglish.allContent;
+    }
 
-     if(Language.currentLanguage == LanguageType.en.name) {
-       allContent = TermConditionEnglish.allContent;
-     }
-     else if(Language.currentLanguage == LanguageType.my.name) {
-       allContent = TermConditionMyanmar.allContent;
-     }
-     else if(Language.currentLanguage == LanguageType.th.name) {
-       allContent = TermConditionThai.allContent;
-     }
-
-     setState(() { });
+    setState(() {});
   }
 
   RichText buildTextSpan(BuildContext context, List<Data> data) {
     return RichText(
       text: TextSpan(
         style: DefaultTextStyle.of(context).style.copyWith(fontSize: 14),
-        children: data.map((span) {
-          if (span.url != null) {
-            return TextSpan(
-              text: span.text,
-              style: span.style,
-              recognizer: TapGestureRecognizer()
-                ..onTap = () async {
-                  final Uri uri = Uri.parse(span.url!);
-                  if (await canLaunchUrl(uri)) {
-                    await launchUrl(uri, mode: LaunchMode.externalApplication);
-                  }
-                },
-            );
-          }
-          else if (span.phoneNumber != null) {
-            return TextSpan(
-              text: span.text,
-              style: span.style,
-              recognizer: TapGestureRecognizer()
-                ..onTap = () async {
-                  _callNow(span.phoneNumber);
-                },
-            );
-          }
-          else {
-            return TextSpan(text: span.text, style: span.style);
-          }
-        }).toList(),
+        children:
+            data.map((span) {
+              if (span.url != null) {
+                return TextSpan(
+                  text: span.text,
+                  style: span.style,
+                  recognizer:
+                      TapGestureRecognizer()
+                        ..onTap = () async {
+                          final Uri uri = Uri.parse(span.url!);
+                          if (await canLaunchUrl(uri)) {
+                            await launchUrl(
+                              uri,
+                              mode: LaunchMode.externalApplication,
+                            );
+                          }
+                        },
+                );
+              } else if (span.phoneNumber != null) {
+                return TextSpan(
+                  text: span.text,
+                  style: span.style,
+                  recognizer:
+                      TapGestureRecognizer()
+                        ..onTap = () async {
+                          _callNow(span.phoneNumber);
+                        },
+                );
+              } else {
+                return TextSpan(text: span.text, style: span.style);
+              }
+            }).toList(),
       ),
     );
   }
@@ -90,9 +90,10 @@ class TermAndConditionsState extends State<TermAndConditionsPage> {
         child: RichText(
           text: TextSpan(
             style: DefaultTextStyle.of(context).style.copyWith(fontSize: 14),
-            children: data
-                .map((span) => TextSpan(text: span.text, style: span.style))
-                .toList(),
+            children:
+                data
+                    .map((span) => TextSpan(text: span.text, style: span.style))
+                    .toList(),
           ),
         ),
       ),
@@ -100,9 +101,7 @@ class TermAndConditionsState extends State<TermAndConditionsPage> {
   }
 
   TableRow buildTableRow(List<Widget> cells) {
-    return TableRow(
-      children: cells,
-    );
+    return TableRow(children: cells);
   }
 
   Future<void> _callNow(String? phoneNumber) async {
@@ -120,7 +119,6 @@ class TermAndConditionsState extends State<TermAndConditionsPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -149,17 +147,16 @@ class TermAndConditionsState extends State<TermAndConditionsPage> {
               } else if (block.type == ContentType.table &&
                   block.tableData != null) {
                 return Padding(
-                  padding: EdgeInsets.only(
-                    bottom: 16,
-                  ),
+                  padding: EdgeInsets.only(bottom: 16),
                   child: Table(
                     border: TableBorder.all(color: Colors.grey, width: 1),
-                    children: block.tableData!.map((item) {
-                      return buildTableRow([
-                        buildRichTextCell(context, item['type']!),
-                        buildRichTextCell(context, item['period']!),
-                      ]);
-                    }).toList(),
+                    children:
+                        block.tableData!.map((item) {
+                          return buildTableRow([
+                            buildRichTextCell(context, item['type']!),
+                            buildRichTextCell(context, item['period']!),
+                          ]);
+                        }).toList(),
                   ),
                 );
               }
@@ -172,7 +169,7 @@ class TermAndConditionsState extends State<TermAndConditionsPage> {
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
-            )
+            ),
           ],
         ),
       ),

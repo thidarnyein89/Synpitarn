@@ -6,7 +6,7 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/data/custom_style.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class SetPasswordPage extends StatefulWidget {
   User loginUser;
@@ -88,29 +88,26 @@ class SetPasswordState extends State<SetPasswordPage> {
 
         msg.add({
           "text": AppLocalizations.of(context)!.rememberPhonePincode1,
-          "style": TextStyle(color: Colors.black)
+          "style": TextStyle(color: Colors.black),
         });
         msg.add({
           "text": user.phoneNumber,
-          "style": TextStyle(color: Colors.black, fontWeight: FontWeight.bold)
+          "style": TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         });
         msg.add({
           "text": AppLocalizations.of(context)!.rememberPhonePincode2,
-          "style": TextStyle(color: Colors.black)
+          "style": TextStyle(color: Colors.black),
         });
         msg.add({
           "text": user.code,
-          "style": TextStyle(color: Colors.black, fontWeight: FontWeight.bold)
+          "style": TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         });
         msg.add({
           "text": AppLocalizations.of(context)!.rememberPhonePincode3,
-          "style": TextStyle(color: Colors.black)
+          "style": TextStyle(color: Colors.black),
         });
 
-        CustomWidget.showDialogWithStyle(
-          context: context,
-          msg: msg,
-        ).then((_) {
+        CustomWidget.showDialogWithStyle(context: context, msg: msg).then((_) {
           RouteService.login(context, loginResponse.data);
         });
       }
@@ -136,10 +133,7 @@ class SetPasswordState extends State<SetPasswordPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Image.asset(
-                        'assets/images/synpitarn.jpg',
-                        height: 180,
-                      ),
+                      Image.asset('assets/images/synpitarn.jpg', height: 180),
                       Text(
                         AppLocalizations.of(context)!.setPincode,
                         style: TextStyle(
@@ -150,35 +144,39 @@ class SetPasswordState extends State<SetPasswordPage> {
                       ),
                       CustomWidget.verticalSpacing(),
                       CustomWidget.phoneTextField(
-                          controller: phoneController,
-                          label: AppLocalizations.of(context)!.phoneNumber,
-                          readOnly: true),
+                        controller: phoneController,
+                        label: AppLocalizations.of(context)!.phoneNumber,
+                        readOnly: true,
+                      ),
                       CustomWidget.pinTextField(
-                          controller: pin1Controller,
-                          label: AppLocalizations.of(context)!.pin,
-                          errorText: pin1Error,
-                          isObscured: _isObscured1,
-                          onPressed: () {
-                            setState(() {
-                              _isObscured1 = !_isObscured1;
-                            });
-                          }),
+                        controller: pin1Controller,
+                        label: AppLocalizations.of(context)!.pin,
+                        errorText: pin1Error,
+                        isObscured: _isObscured1,
+                        onPressed: () {
+                          setState(() {
+                            _isObscured1 = !_isObscured1;
+                          });
+                        },
+                      ),
                       CustomWidget.pinTextField(
-                          controller: pin2Controller,
-                          label: AppLocalizations.of(context)!.confirmPin,
-                          errorText: pin2Error,
-                          isObscured: _isObscured2,
-                          onPressed: () {
-                            setState(() {
-                              _isObscured2 = !_isObscured2;
-                            });
-                          }),
+                        controller: pin2Controller,
+                        label: AppLocalizations.of(context)!.confirmPin,
+                        errorText: pin2Error,
+                        isObscured: _isObscured2,
+                        onPressed: () {
+                          setState(() {
+                            _isObscured2 = !_isObscured2;
+                          });
+                        },
+                      ),
                       CustomWidget.elevatedButton(
-                          context: context,
-                          enabled: isPin1Validate && isPin2Validate,
-                          isLoading: isLoading,
-                          text: AppLocalizations.of(context)!.setNewPassword,
-                          onPressed: handleSetPassowrd),
+                        context: context,
+                        enabled: isPin1Validate && isPin2Validate,
+                        isLoading: isLoading,
+                        text: AppLocalizations.of(context)!.setNewPassword,
+                        onPressed: handleSetPassowrd,
+                      ),
                     ],
                   ),
                 ),

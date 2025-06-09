@@ -23,7 +23,7 @@ import 'package:synpitarn/screens/components/switch_camera_button.dart';
 import 'package:synpitarn/screens/profile/register/customer_information.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/route_service.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class WorkPermitPage extends StatefulWidget {
   const WorkPermitPage({super.key});
@@ -54,12 +54,12 @@ class WorkPermitState extends State<WorkPermitPage> {
   List<BarcodeFormat> selectedFormats = [BarcodeFormat.all];
 
   MobileScannerController initController() => MobileScannerController(
-        autoStart: false,
-        cameraResolution: desiredCameraResolution,
-        detectionSpeed: detectionSpeed,
-        detectionTimeoutMs: detectionTimeoutMs,
-        formats: selectedFormats,
-      );
+    autoStart: false,
+    cameraResolution: desiredCameraResolution,
+    detectionSpeed: detectionSpeed,
+    detectionTimeoutMs: detectionTimeoutMs,
+    formats: selectedFormats,
+  );
 
   String stepName = "qr_scan";
   bool isLoading = false;
@@ -81,8 +81,9 @@ class WorkPermitState extends State<WorkPermitPage> {
     defaultData = new DefaultData.defaultDefaultData();
     loginUser = await getLoginUser();
 
-    DefaultResponse defaultResponse =
-        await DefaultRepository().getDefaultData(loginUser);
+    DefaultResponse defaultResponse = await DefaultRepository().getDefaultData(
+      loginUser,
+    );
 
     if (defaultResponse.response.code == 200) {
       defaultData = defaultResponse.data;
@@ -157,10 +158,7 @@ class WorkPermitState extends State<WorkPermitPage> {
           onDetect: _onDetect,
         ),
         if (!kIsWeb && useScanWindow)
-          ScanWindowOverlay(
-            scanWindow: scanWindow,
-            controller: controller,
-          ),
+          ScanWindowOverlay(scanWindow: scanWindow, controller: controller),
         Align(
           alignment: Alignment.bottomCenter,
           child: Container(
@@ -188,12 +186,12 @@ class WorkPermitState extends State<WorkPermitPage> {
                     text: AppLocalizations.of(context)!.manualFill,
                     onPressed: saveWorkPermitStep,
                   ),
-                )
+                ),
               ],
             ),
           ),
         ),
-        if (isLoading) loadingScreen()
+        if (isLoading) loadingScreen(),
       ],
     );
   }
@@ -201,11 +199,7 @@ class WorkPermitState extends State<WorkPermitPage> {
   Widget loadingScreen() {
     return Container(
       color: Color.fromRGBO(0, 0, 0, 0.5),
-      child: Center(
-        child: CircularProgressIndicator(
-          color: Colors.white,
-        ),
-      ),
+      child: Center(child: CircularProgressIndicator(color: Colors.white)),
     );
   }
 
@@ -228,9 +222,7 @@ class WorkPermitState extends State<WorkPermitPage> {
     }
     final picker = ImagePicker();
 
-    final image = await picker.pickImage(
-      source: ImageSource.gallery,
-    );
+    final image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image == null) {
       isLoading = false;
@@ -238,9 +230,7 @@ class WorkPermitState extends State<WorkPermitPage> {
       return;
     }
 
-    final barcodes = await controller.analyzeImage(
-      image.path,
-    );
+    final barcodes = await controller.analyzeImage(image.path);
 
     if (!context.mounted) {
       return;
@@ -259,8 +249,10 @@ class WorkPermitState extends State<WorkPermitPage> {
 
     await LoanRepository().saveWorkpermit(loginUser);
 
-    Map<String, dynamic> response = await LoanRepository()
-        .checkWorkpermit(defaultData.versionId, loginUser);
+    Map<String, dynamic> response = await LoanRepository().checkWorkpermit(
+      defaultData.versionId,
+      loginUser,
+    );
 
     if (response['message'] != "" &&
         !response['message'].contains("successfully")) {
@@ -297,8 +289,11 @@ class WorkPermitState extends State<WorkPermitPage> {
       'input_data': "{}",
     };
 
-    DataResponse saveResponse = await LoanRepository()
-        .saveLoanApplicationStep(postBody, loginUser, stepName);
+    DataResponse saveResponse = await LoanRepository().saveLoanApplicationStep(
+      postBody,
+      loginUser,
+      stepName,
+    );
     if (saveResponse.response.code == 200) {
       loginUser.loanFormState = stepName;
       await setLoginUser(loginUser);
@@ -315,7 +310,10 @@ class WorkPermitState extends State<WorkPermitPage> {
   }
 
   Future<void> showErrorDialog(String errorMessage) async {
-    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+    await CustomWidget.showDialogWithoutStyle(
+      context: context,
+      msg: errorMessage,
+    );
     isLoading = false;
     setState(() {});
   }

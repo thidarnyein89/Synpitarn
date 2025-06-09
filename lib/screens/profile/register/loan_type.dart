@@ -17,7 +17,7 @@ import 'package:synpitarn/screens/profile/register/additional_information.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class LoanTypePage extends StatefulWidget {
   const LoanTypePage({super.key});

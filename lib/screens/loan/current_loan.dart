@@ -23,7 +23,7 @@ import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
@@ -82,8 +82,8 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
       setState(() {});
     }
 
-    LoanApplicationResponse applicationResponse =
-        await LoanRepository().getLoanApplication(loginUser);
+    LoanApplicationResponse applicationResponse = await LoanRepository()
+        .getLoanApplication(loginUser);
 
     if (applicationResponse.response.code == 200) {
       applicationData = applicationResponse.data;
@@ -108,13 +108,14 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
 
       if (loanResponse.response.code == 200) {
         if (loanResponse.data.isNotEmpty) {
-          LoanSchedule? lateSchedule =
-              loanResponse.data[0].schedules!.cast<LoanSchedule>().firstWhere(
-                    (loanSchedule) =>
-                        loanSchedule.isPaymentDone == 0 &&
-                        CommonService.getDayCount(loanSchedule.pmtDate) > 0,
-                    orElse: () => LoanSchedule.defaultLoanSchedule(),
-                  );
+          LoanSchedule? lateSchedule = loanResponse.data[0].schedules!
+              .cast<LoanSchedule>()
+              .firstWhere(
+                (loanSchedule) =>
+                    loanSchedule.isPaymentDone == 0 &&
+                    CommonService.getDayCount(loanSchedule.pmtDate) > 0,
+                orElse: () => LoanSchedule.defaultLoanSchedule(),
+              );
 
           if (lateSchedule.loanId != 0) {
             totalLateDay = CommonService.getDayCount(lateSchedule.pmtDate);
@@ -151,10 +152,12 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
     RouteService.goToNavigator(
       context,
       DocumentFilePage(
-          applicationData: applicationData,
-          documentList: applicationData.documentsRequest
-              ?.where((doc) => doc.status == "true")
-              .toList()),
+        applicationData: applicationData,
+        documentList:
+            applicationData.documentsRequest
+                ?.where((doc) => doc.status == "true")
+                .toList(),
+      ),
     );
   }
 
@@ -211,7 +214,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
                             padding: CustomStyle.pagePadding(),
                             child: createLoanStatusSection(),
                           ),
-                          if (qrcode.photo != "") qrCodeSection()
+                          if (qrcode.photo != "") qrCodeSection(),
                         ],
                       ),
                     ),
@@ -240,8 +243,8 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
               fit: BoxFit.contain,
               width: 200,
               height: 200,
-              imageErrorBuilder: (context, error, stackTrace) =>
-                  Icon(Icons.broken_image),
+              imageErrorBuilder:
+                  (context, error, stackTrace) => Icon(Icons.broken_image),
             ),
           ),
           Text(qrcode.string),
@@ -306,8 +309,10 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(AppLocalizations.of(context)!.noApplyLoan,
-            style: CustomStyle.titleBold()),
+        Text(
+          AppLocalizations.of(context)!.noApplyLoan,
+          style: CustomStyle.titleBold(),
+        ),
         CustomWidget.elevatedButton(
           context: context,
           text: AppLocalizations.of(context)!.applyLoanButton,
@@ -324,8 +329,10 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(AppLocalizations.of(context)!.pendingLoan,
-            style: CustomStyle.titleBold()),
+        Text(
+          AppLocalizations.of(context)!.pendingLoan,
+          style: CustomStyle.titleBold(),
+        ),
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
           AppLocalizations.of(context)!.contractNo,
@@ -346,7 +353,9 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
           CommonService.formatTime(applicationData.appointmentTime.toString()),
         ),
         CustomWidget.buildRow(
-            AppLocalizations.of(context)!.loanStatus, 'pending'),
+          AppLocalizations.of(context)!.loanStatus,
+          'pending',
+        ),
         CustomWidget.verticalSpacing(),
         if (applicationData.appointmentResubmit) ...[
           Text(
@@ -360,7 +369,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
             onPressed: handleReSubmit,
           ),
         ],
-        documentRequestSection()
+        documentRequestSection(),
       ],
     );
   }
@@ -370,8 +379,10 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(AppLocalizations.of(context)!.preApprovedLoan,
-            style: CustomStyle.titleBold()),
+        Text(
+          AppLocalizations.of(context)!.preApprovedLoan,
+          style: CustomStyle.titleBold(),
+        ),
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
           AppLocalizations.of(context)!.contractNo,
@@ -407,7 +418,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
             onPressed: handleBranchAppointment,
           ),
         ],
-        documentRequestSection()
+        documentRequestSection(),
       ],
     );
   }
@@ -417,8 +428,10 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(AppLocalizations.of(context)!.approvedLoan,
-            style: CustomStyle.titleBold()),
+        Text(
+          AppLocalizations.of(context)!.approvedLoan,
+          style: CustomStyle.titleBold(),
+        ),
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
           AppLocalizations.of(context)!.contractNo,
@@ -435,7 +448,9 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
         CustomWidget.buildRow(
           AppLocalizations.of(context)!.repaymentAmount,
           CommonService.formatWithThousandSeparator(
-              context, applicationData.repaymentAmountPerPeriod),
+            context,
+            applicationData.repaymentAmountPerPeriod,
+          ),
         ),
         CustomWidget.buildRow(
           AppLocalizations.of(context)!.loanSize,
@@ -452,9 +467,12 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
               children: [
                 TextSpan(
                   text: AppLocalizations.of(context)!.repaymentLateDescription1(
-                      totalLateDay,
-                      CommonService.formatWithThousandSeparator(
-                          context, repaymentAmount)),
+                    totalLateDay,
+                    CommonService.formatWithThousandSeparator(
+                      context,
+                      repaymentAmount,
+                    ),
+                  ),
                   style: CustomStyle.bodyRedColor(),
                 ),
                 TextSpan(
@@ -502,13 +520,16 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
 
   Future<void> _openMessenger() async {
     try {
-      final messengerUri =
-          Uri.parse("fb-messenger://user-thread/${ConstantData.MESSENGER_ID}");
+      final messengerUri = Uri.parse(
+        "fb-messenger://user-thread/${ConstantData.MESSENGER_ID}",
+      );
 
       await launchUrl(messengerUri, mode: LaunchMode.platformDefault);
     } catch (e) {
       await CustomWidget.showDialogWithoutStyle(
-          context: context, msg: AppLocalizations.of(context)!.canNotOpenMessenger);
+        context: context,
+        msg: AppLocalizations.of(context)!.canNotOpenMessenger,
+      );
     }
   }
 
@@ -558,9 +579,7 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
                       style: CustomStyle.body(),
                     ),
                     TextSpan(
-                      text: CommonService.formatDate(
-                        createdDate.toString(),
-                      ),
+                      text: CommonService.formatDate(createdDate.toString()),
                       style: CustomStyle.bodyBold(),
                     ),
                     TextSpan(
@@ -583,7 +602,10 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(AppLocalizations.of(context)!.postponedLoan, style: CustomStyle.titleBold()),
+        Text(
+          AppLocalizations.of(context)!.postponedLoan,
+          style: CustomStyle.titleBold(),
+        ),
         CustomWidget.verticalSpacing(),
         CustomWidget.buildRow(
           AppLocalizations.of(context)!.contractNo,
@@ -626,8 +648,8 @@ class CurrentLoanState extends State<CurrentLoanPage> with RouteAware {
   }
 
   Future<void> goToRepaymentList() async {
-    LoanApplicationResponse response =
-        await LoanRepository().getLoanInformation(loginUser);
+    LoanApplicationResponse response = await LoanRepository()
+        .getLoanInformation(loginUser);
     if (response.response.code == 200) {
       Loan currentLoan = response.data;
       RouteService.goToNavigator(context, RepaymentListPage(loan: currentLoan));

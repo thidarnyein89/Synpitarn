@@ -14,7 +14,7 @@ import 'package:synpitarn/screens/setting/call_center.dart';
 import 'package:synpitarn/screens/setting/guide.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -94,9 +94,16 @@ class SettingState extends State<SettingPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomWidget.verticalSpacing(),
-        Text(AppLocalizations.of(context)!.setting, style: CustomStyle.subTitleBold()),
+        Text(
+          AppLocalizations.of(context)!.setting,
+          style: CustomStyle.subTitleBold(),
+        ),
         CustomWidget.verticalSmallSpacing(),
-        buildSettingTile(Icons.language, AppLocalizations.of(context)!.changeLanguage, showLanguageDialog),
+        buildSettingTile(
+          Icons.language,
+          AppLocalizations.of(context)!.changeLanguage,
+          showLanguageDialog,
+        ),
       ],
     );
   }
@@ -106,10 +113,21 @@ class SettingState extends State<SettingPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomWidget.verticalSpacing(),
-        Text(AppLocalizations.of(context)!.location, style: CustomStyle.subTitleBold()),
+        Text(
+          AppLocalizations.of(context)!.location,
+          style: CustomStyle.subTitleBold(),
+        ),
         CustomWidget.verticalSmallSpacing(),
-        buildSettingTile(Icons.apartment, AppLocalizations.of(context)!.nearestBranch, goToBranchPage),
-        buildSettingTile(Icons.money, AppLocalizations.of(context)!.nearestATM, () => {}),
+        buildSettingTile(
+          Icons.apartment,
+          AppLocalizations.of(context)!.nearestBranch,
+          goToBranchPage,
+        ),
+        buildSettingTile(
+          Icons.money,
+          AppLocalizations.of(context)!.nearestATM,
+          () => {},
+        ),
       ],
     );
   }
@@ -119,13 +137,26 @@ class SettingState extends State<SettingPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomWidget.verticalSpacing(),
-        Text(AppLocalizations.of(context)!.helpAndSupport, style: CustomStyle.subTitleBold()),
+        Text(
+          AppLocalizations.of(context)!.helpAndSupport,
+          style: CustomStyle.subTitleBold(),
+        ),
         CustomWidget.verticalSmallSpacing(),
-        buildSettingTile(Icons.help_outline,
-            AppLocalizations.of(context)!.howToApplyLoan, goToGuidePage),
-        buildSettingTile(Icons.info_outline, AppLocalizations.of(context)!.getToKnowUs, goToAboutUsPage),
         buildSettingTile(
-            Icons.support_agent, AppLocalizations.of(context)!.callCenter, goToCallCenterPage),
+          Icons.help_outline,
+          AppLocalizations.of(context)!.howToApplyLoan,
+          goToGuidePage,
+        ),
+        buildSettingTile(
+          Icons.info_outline,
+          AppLocalizations.of(context)!.getToKnowUs,
+          goToAboutUsPage,
+        ),
+        buildSettingTile(
+          Icons.support_agent,
+          AppLocalizations.of(context)!.callCenter,
+          goToCallCenterPage,
+        ),
       ],
     );
   }
@@ -133,27 +164,21 @@ class SettingState extends State<SettingPage> {
   void goToGuidePage() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => GuidePage(activeStep: 0),
-      ),
+      MaterialPageRoute(builder: (context) => GuidePage(activeStep: 0)),
     );
   }
 
   void goToAboutUsPage() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => AboutUsPage(activeIndex: 0),
-      ),
+      MaterialPageRoute(builder: (context) => AboutUsPage(activeIndex: 0)),
     );
   }
 
   void goToCallCenterPage() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => CallCenterPage(),
-      ),
+      MaterialPageRoute(builder: (context) => CallCenterPage()),
     );
   }
 
@@ -189,9 +214,13 @@ class SettingState extends State<SettingPage> {
                   ),
                 ),
                 title: Text(lang.label),
-                trailing: lang.locale == currentLocale
-                    ? const Icon(Icons.check, color: CustomStyle.primary_color)
-                    : null,
+                trailing:
+                    lang.locale == currentLocale
+                        ? const Icon(
+                          Icons.check,
+                          color: CustomStyle.primary_color,
+                        )
+                        : null,
                 onTap: () {
                   MyApp.setLocale(context, lang.locale);
                   Navigator.pop(context, lang);
@@ -207,9 +236,7 @@ class SettingState extends State<SettingPage> {
   void goToBranchPage() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => BranchPage(),
-      ),
+      MaterialPageRoute(builder: (context) => BranchPage()),
     );
   }
 
@@ -220,37 +247,41 @@ class SettingState extends State<SettingPage> {
       appBar: PageAppBar(title: AppLocalizations.of(context)!.setting),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          return Stack(children: [
-            if (isPageLoading)
-              CustomWidget.loading()
-            else
-              SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: Padding(
-                    padding: CustomStyle.pagePadding(),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        createUserInfoSection(),
-                        createSettingSection(),
-                        createLocationSection(),
-                        createHelpSection(),
-                        CustomWidget.verticalSpacing(),
-                        CustomWidget.elevatedButton(
+          return Stack(
+            children: [
+              if (isPageLoading)
+                CustomWidget.loading()
+              else
+                SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: Padding(
+                      padding: CustomStyle.pagePadding(),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          createUserInfoSection(),
+                          createSettingSection(),
+                          createLocationSection(),
+                          createHelpSection(),
+                          CustomWidget.verticalSpacing(),
+                          CustomWidget.elevatedButton(
                             context: context,
-                            text: AppLocalizations.of(context)!.logout, onPressed: handleLogout),
-                        CustomWidget.verticalSpacing(),
-                        Center(
-                          child: Text("v ${packageInfo.version}"),
-                        )
-                      ],
+                            text: AppLocalizations.of(context)!.logout,
+                            onPressed: handleLogout,
+                          ),
+                          CustomWidget.verticalSpacing(),
+                          Center(child: Text("v ${packageInfo.version}")),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-          ]);
+            ],
+          );
         },
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
@@ -273,11 +304,7 @@ class SettingState extends State<SettingPage> {
           children: [
             Icon(icon, size: 24),
             SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                title,
-              ),
-            ),
+            Expanded(child: Text(title)),
             Icon(Icons.arrow_forward_ios, size: 16),
           ],
         ),

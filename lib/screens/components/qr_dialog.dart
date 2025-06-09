@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class QRDialog {
   static void showQRDialog(
-      BuildContext context, String imageUrl, String fileName) async {
+    BuildContext context,
+    String imageUrl,
+    String fileName,
+  ) async {
     bool isDownloading = false;
     bool isFinish = false;
     String downloadMessage = "";
@@ -34,7 +37,8 @@ class QRDialog {
                   },
                   onDownloadCompleted: (path) {
                     setState(() {
-                      downloadMessage = AppLocalizations.of(context)!.downloadComplete;
+                      downloadMessage =
+                          AppLocalizations.of(context)!.downloadComplete;
                       isDownloading = false;
                       isFinish = true;
                     });
@@ -58,7 +62,8 @@ class QRDialog {
 
             return AlertDialog(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5)),
+                borderRadius: BorderRadius.circular(5),
+              ),
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
@@ -69,8 +74,9 @@ class QRDialog {
                     fit: BoxFit.contain,
                     width: 200,
                     height: 200,
-                    imageErrorBuilder: (context, error, stackTrace) =>
-                        Icon(Icons.broken_image),
+                    imageErrorBuilder:
+                        (context, error, stackTrace) =>
+                            Icon(Icons.broken_image),
                   ),
                   CustomWidget.verticalSpacing(),
                   Text(fileName),
@@ -79,12 +85,14 @@ class QRDialog {
                     Row(
                       spacing: 5,
                       children: [
-                        Icon(isFinish
-                            ? Icons.done_outlined
-                            : Icons.download_outlined),
+                        Icon(
+                          isFinish
+                              ? Icons.done_outlined
+                              : Icons.download_outlined,
+                        ),
                         Text(downloadMessage),
                       ],
-                    )
+                    ),
                 ],
               ),
               actions: [

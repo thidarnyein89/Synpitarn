@@ -10,7 +10,7 @@ import 'package:synpitarn/screens/profile/profile_home.dart';
 import 'package:synpitarn/screens/setting/setting.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:remixicon/remixicon.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget
     implements PreferredSizeWidget {
@@ -51,16 +51,14 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     if (index == ConstantData.HOME_INDEX) {
       RouteService.goToReplaceNavigator(context, HomePage());
     } else if (index == ConstantData.LOAN_INDEX) {
-      if(!loginUser.loanApplicationSubmitted) {
+      if (!loginUser.loanApplicationSubmitted) {
         showErrorDialog(AppLocalizations.of(context)!.noApplyLoan);
-      }
-      else {
+      } else {
         RouteService.goToReplaceNavigator(context, LoanHistoryPage());
       }
     } else if (index == ConstantData.PROFILE_INDEX) {
       RouteService.goToReplaceNavigator(context, ProfileHomePage());
-    }
-    else if (index == ConstantData.SETTING_INDEX) {
+    } else if (index == ConstantData.SETTING_INDEX) {
       RouteService.goToReplaceNavigator(context, SettingPage());
     }
   }
@@ -78,12 +76,22 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       unselectedItemColor: Colors.grey,
       type: BottomNavigationBarType.fixed,
       items: [
-        BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: AppLocalizations.of(context)!.home),
         BottomNavigationBarItem(
-            icon: Icon(RemixIcons.hand_coin_line), label: AppLocalizations.of(context)!.loan),
+          icon: Icon(Icons.home_outlined),
+          label: AppLocalizations.of(context)!.home,
+        ),
         BottomNavigationBarItem(
-            icon: Icon(RemixIcons.file_copy_2_line), label: AppLocalizations.of(context)!.profile),
-        BottomNavigationBarItem(icon: Icon(Icons.settings), label: AppLocalizations.of(context)!.setting),
+          icon: Icon(RemixIcons.hand_coin_line),
+          label: AppLocalizations.of(context)!.loan,
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(RemixIcons.file_copy_2_line),
+          label: AppLocalizations.of(context)!.profile,
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.settings),
+          label: AppLocalizations.of(context)!.setting,
+        ),
       ],
     );
   }

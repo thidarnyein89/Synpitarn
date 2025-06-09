@@ -8,28 +8,35 @@ import 'package:synpitarn/models/guide.dart';
 import 'package:synpitarn/models/loan.dart';
 import 'package:synpitarn/models/nrc.dart';
 import 'package:synpitarn/models/aboutUs.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class CommonService {
-
   Future<List<NRC>> readNRCData() async {
-    final String response = await rootBundle.loadString('assets/json/nrcData.json');
+    final String response = await rootBundle.loadString(
+      'assets/json/nrcData.json',
+    );
     List<dynamic> jsonData = json.decode(response);
     List<NRC> nrcList = jsonData.map((data) => NRC.fromJson(data)).toList();
     return nrcList;
   }
 
   Future<List<Guide>> readGuideData() async {
-    final String response = await rootBundle.loadString('assets/json/guide.json');
+    final String response = await rootBundle.loadString(
+      'assets/json/guide.json',
+    );
     List<dynamic> jsonData = json.decode(response);
-    List<Guide> guideList = jsonData.map((data) => Guide.fromJson(data)).toList();
+    List<Guide> guideList =
+        jsonData.map((data) => Guide.fromJson(data)).toList();
     return guideList;
   }
 
   Future<List<AboutUS>> readAboutUsData() async {
-    final String response = await rootBundle.loadString('assets/json/aboutUs.json');
+    final String response = await rootBundle.loadString(
+      'assets/json/aboutUs.json',
+    );
     List<dynamic> jsonData = json.decode(response);
-    List<AboutUS> aboutList = jsonData.map((data) => AboutUS.fromJson(data)).toList();
+    List<AboutUS> aboutList =
+        jsonData.map((data) => AboutUS.fromJson(data)).toList();
     return aboutList;
   }
 
@@ -82,38 +89,38 @@ class CommonService {
     String? loanStatus = "";
 
     //For can be work both application data and loan data
-    if(loanData.loanApplicationStatus != "") {
+    if (loanData.loanApplicationStatus != "") {
       loanStatus = loanData.loanApplicationStatus;
-    }
-    else {
+    } else {
       loanStatus = loanData.status;
     }
 
     if (LoanStatus.PRE_APPROVE_STATUS.contains(loanStatus)) {
       loanSize = loanData.approvedAmount ?? "0";
-    }
-    else if (LoanStatus.DISBURSE_STATUS.contains(loanStatus)) {
+    } else if (LoanStatus.DISBURSE_STATUS.contains(loanStatus)) {
       loanSize = loanData.disbursedAmount ?? "0";
-    }
-    else {
+    } else {
       loanSize = loanData.appliedAmount ?? "0";
     }
 
     return formatWithThousandSeparator(context, loanSize);
   }
 
-  static String formatWithThousandSeparator(BuildContext context, dynamic value) {
+  static String formatWithThousandSeparator(
+    BuildContext context,
+    dynamic value,
+  ) {
     if (value == null || value.toString().trim().isEmpty) {
       return '0';
     }
 
     try {
-      final num parsedValue = value is num ? value : num.parse(value.toString());
+      final num parsedValue =
+          value is num ? value : num.parse(value.toString());
       final formatter = NumberFormat("#,##0.00", "en_US");
       return "${formatter.format(parsedValue)} ${AppLocalizations.of(context)!.bahts}";
     } catch (e) {
       return '0 ${AppLocalizations.of(context)!.bahts}';
     }
   }
-
 }

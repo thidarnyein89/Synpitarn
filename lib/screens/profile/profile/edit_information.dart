@@ -14,7 +14,7 @@ import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/services/auth_service.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class EditInformationPage extends StatefulWidget {
   User editUser = User.defaultUser();
@@ -35,9 +35,7 @@ class EditInformationState extends State<EditInformationPage> {
     'passport': TextEditingController(),
   };
 
-  Map<String, dynamic> dropdownControllers = {
-    'income_type': null,
-  };
+  Map<String, dynamic> dropdownControllers = {'income_type': null};
 
   Map<String, List<Item>> itemDataList = {
     "income_type": [Item.defaultItem()],
@@ -75,16 +73,15 @@ class EditInformationState extends State<EditInformationPage> {
   }
 
   Future<void> getIncomeTypes() async {
-    DataResponse dataResponse =
-        await DataRepository().getIncomeTypes(loginUser);
+    DataResponse dataResponse = await DataRepository().getIncomeTypes(
+      loginUser,
+    );
 
     if (dataResponse.response.code == 200) {
-      itemDataList['income_type'] = dataResponse.data.map<Item>((data) {
-        return Item.named(
-          value: data.key.toString(),
-          text: data.getText(),
-        );
-      }).toList();
+      itemDataList['income_type'] =
+          dataResponse.data.map<Item>((data) {
+            return Item.named(value: data.key.toString(), text: data.getText());
+          }).toList();
 
       setState(() {});
     } else if (dataResponse.response.code == 403) {
@@ -105,15 +102,18 @@ class EditInformationState extends State<EditInformationPage> {
 
     dropdownControllers.forEach((key, dynamic) {
       dropdownControllers[key] = findMatchData(
-          itemDataList[key]!, widget.editUser.toJson()[key].toString());
+        itemDataList[key]!,
+        widget.editUser.toJson()[key].toString(),
+      );
     });
 
     setState(() {});
   }
 
   Item? findMatchData(List<Item> itemList, String value) {
-    Iterable<Item> matchingItems =
-        itemList.where((item) => item.value == value);
+    Iterable<Item> matchingItems = itemList.where(
+      (item) => item.value == value,
+    );
     return matchingItems.isNotEmpty ? matchingItems.first : null;
   }
 
@@ -175,8 +175,10 @@ class EditInformationState extends State<EditInformationPage> {
         'province_of_resident': widget.editUser.provinceOfResident,
       };
 
-      UserResponse response =
-          await ProfileRepository().editProfile(postBody, loginUser);
+      UserResponse response = await ProfileRepository().editProfile(
+        postBody,
+        loginUser,
+      );
 
       if (response.response.code == 200) {
         Navigator.pop(context);
@@ -263,73 +265,91 @@ class EditInformationState extends State<EditInformationPage> {
       appBar: PageAppBar(title: AppLocalizations.of(context)!.editInformation),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          return Stack(children: [
-            if (isPageLoading)
-              CustomWidget.loading()
-            else
-              SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: IntrinsicHeight(
+          return Stack(
+            children: [
+              if (isPageLoading)
+                CustomWidget.loading()
+              else
+                SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: IntrinsicHeight(
                       child: Column(
-                    spacing: 0,
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RegisterTabBar(activeStep: 0),
-                      Padding(
-                        padding: CustomStyle.pageWithoutTopPadding(),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomWidget.textField(
-                                controller: textControllers['name']!,
-                                label: AppLocalizations.of(context)!.name),
-                            GestureDetector(
-                              onTap: () {
-                                showNRCDialog();
-                              },
-                              child: AbsorbPointer(
-                                child: CustomWidget.textField(
-                                  controller:
-                                      textControllers['identity_number']!,
-                                  label: AppLocalizations.of(context)!.nrcNumber,
+                        spacing: 0,
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RegisterTabBar(activeStep: 0),
+                          Padding(
+                            padding: CustomStyle.pageWithoutTopPadding(),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomWidget.textField(
+                                  controller: textControllers['name']!,
+                                  label: AppLocalizations.of(context)!.name,
                                 ),
-                              ),
+                                GestureDetector(
+                                  onTap: () {
+                                    showNRCDialog();
+                                  },
+                                  child: AbsorbPointer(
+                                    child: CustomWidget.textField(
+                                      controller:
+                                          textControllers['identity_number']!,
+                                      label:
+                                          AppLocalizations.of(
+                                            context,
+                                          )!.nrcNumber,
+                                    ),
+                                  ),
+                                ),
+                                CustomWidget.textField(
+                                  controller: textControllers['passport']!,
+                                  label: AppLocalizations.of(context)!.passport,
+                                ),
+                                CustomWidget.dropdownButtonDiffValue(
+                                  label:
+                                      AppLocalizations.of(context)!.incomeType,
+                                  selectedValue:
+                                      dropdownControllers['income_type'],
+                                  items: itemDataList['income_type']!,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      inValidFields.remove('income_type');
+                                      dropdownControllers['income_type'] =
+                                          value!;
+                                    });
+                                  },
+                                ),
+                                CustomWidget.numberTextField(
+                                  controller: textControllers['salary']!,
+                                  label: AppLocalizations.of(context)!.salary,
+                                ),
+                                CustomWidget.elevatedButton(
+                                  context: context,
+                                  enabled: inValidFields.isEmpty,
+                                  isLoading: isLoading,
+                                  text:
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.continueText,
+                                  onPressed: handleContinue,
+                                ),
+                              ],
                             ),
-                            CustomWidget.textField(
-                                controller: textControllers['passport']!,
-                                label: AppLocalizations.of(context)!.passport),
-                            CustomWidget.dropdownButtonDiffValue(
-                              label: AppLocalizations.of(context)!.incomeType,
-                              selectedValue: dropdownControllers['income_type'],
-                              items: itemDataList['income_type']!,
-                              onChanged: (value) {
-                                setState(() {
-                                  inValidFields.remove('income_type');
-                                  dropdownControllers['income_type'] = value!;
-                                });
-                              },
-                            ),
-                            CustomWidget.numberTextField(
-                                controller: textControllers['salary']!,
-                                label: AppLocalizations.of(context)!.salary),
-                            CustomWidget.elevatedButton(
-                                context: context,
-                                enabled: inValidFields.isEmpty,
-                                isLoading: isLoading,
-                                text: AppLocalizations.of(context)!.continueText,
-                                onPressed: handleContinue),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  )),
+                    ),
+                  ),
                 ),
-              )
-          ]);
+            ],
+          );
         },
       ),
     );

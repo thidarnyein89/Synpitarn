@@ -7,16 +7,20 @@ import 'package:synpitarn/screens/components/language_dropdown.dart';
 import 'package:synpitarn/screens/home.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
+import 'package:synpitarn/util/rsaUtil.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 void main() {
   runApp(MyApp());
+
+  Future.microtask(() {
+    runRSAKeyGenerator();
+  });
 }
 
 class MyApp extends StatefulWidget {
-
   @override
   _MyAppState createState() => _MyAppState();
 
@@ -48,7 +52,7 @@ class _MyAppState extends State<MyApp> {
 
   void changeLanguage(Locale newLocale) {
     final langType = LanguageType.values.firstWhere(
-          (e) => e.name == newLocale.languageCode,
+      (e) => e.name == newLocale.languageCode,
       orElse: () => LanguageType.en,
     );
 
@@ -58,7 +62,6 @@ class _MyAppState extends State<MyApp> {
       currentLocale = newLocale;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -86,9 +89,10 @@ class _MyAppState extends State<MyApp> {
             return Banner(
               message: 'Synpitarn',
               location: BannerLocation.bottomStart,
-              child: snapshot.data!
-                  ? HomePage()
-                  : MainPage(onLanguageChanged: changeLanguage),
+              child:
+                  snapshot.data!
+                      ? HomePage()
+                      : MainPage(onLanguageChanged: changeLanguage),
             );
           }
         },
@@ -155,9 +159,9 @@ class _MainPageState extends State<MainPage> {
                       AppLocalizations.of(context)!.welcomeMessage,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: CustomStyle.primary_color,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: CustomStyle.primary_color,
                       ),
                     ),
                     SizedBox(height: 100),
@@ -166,13 +170,16 @@ class _MainPageState extends State<MainPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => RegisterPage()),
+                            builder: (context) => RegisterPage(),
+                          ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: CustomStyle.primary_color,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 40,
+                          vertical: 12,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5),
                         ),
@@ -195,8 +202,10 @@ class _MainPageState extends State<MainPage> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: CustomStyle.primary_color,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 40,
+                          vertical: 12,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5),
                         ),

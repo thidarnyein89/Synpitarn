@@ -11,7 +11,7 @@ import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/screens/loan/success.dart';
 import 'package:synpitarn/services/auth_service.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class InterviewAppointmentPage extends StatefulWidget {
   Loan? applicationData;
@@ -28,13 +28,10 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
 
   final Map<String, TextEditingController> textControllers = {
     'date': TextEditingController(),
-    'url': TextEditingController()
+    'url': TextEditingController(),
   };
 
-  Map<String, dynamic> dropdownControllers = {
-    'time': null,
-    'channel': null,
-  };
+  Map<String, dynamic> dropdownControllers = {'time': null, 'channel': null};
 
   Map<String, dynamic> itemDataList = {
     'time': <String>[],
@@ -107,8 +104,11 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
 
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
-    DateTime selected =
-        DateTime(chooseDate.year, chooseDate.month, chooseDate.day);
+    DateTime selected = DateTime(
+      chooseDate.year,
+      chooseDate.month,
+      chooseDate.day,
+    );
 
     DateTime earliestTime = DateTime(0, 1, 1, 7, 0);
     DateTime latestTime = DateTime(0, 1, 1, 20, 0);
@@ -116,8 +116,13 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
     DateTime start;
 
     if (selected.isAtSameMomentAs(today)) {
-      DateTime current =
-          DateTime(0, 1, 1, now.hour, now.minute).add(Duration(minutes: 30));
+      DateTime current = DateTime(
+        0,
+        1,
+        1,
+        now.hour,
+        now.minute,
+      ).add(Duration(minutes: 30));
       int remainder = current.minute % 30;
       if (remainder != 0) {
         current = current.add(Duration(minutes: 30 - remainder));
@@ -132,8 +137,9 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
       final minute = start.minute.toString().padLeft(2, '0');
       final period = start.hour >= 12 ? 'PM' : 'AM';
 
-      itemDataList["time"]
-          .add('${hour.toString().padLeft(2, '0')}:$minute $period');
+      itemDataList["time"].add(
+        '${hour.toString().padLeft(2, '0')}:$minute $period',
+      );
       start = start.add(Duration(minutes: 30));
     }
 
@@ -147,8 +153,10 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
       'date': textControllers['date']?.text,
     };
 
-    DataResponse dataResponse =
-        await DataRepository().getAvailableTime(postBody, loginUser);
+    DataResponse dataResponse = await DataRepository().getAvailableTime(
+      postBody,
+      loginUser,
+    );
     if (dataResponse.response.code == 200) {
       itemDataList["time"] =
           dataResponse.data.map((d) => d.toString()).toList();
@@ -176,11 +184,16 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
 
     DataResponse response;
     if (widget.applicationData == null) {
-      response =
-          await LoanRepository().saveInterviewAppointment(postBody, loginUser);
+      response = await LoanRepository().saveInterviewAppointment(
+        postBody,
+        loginUser,
+      );
     } else {
       response = await LoanRepository().updateInterviewAppointment(
-          widget.applicationData!.id, postBody, loginUser);
+        widget.applicationData!.id,
+        postBody,
+        loginUser,
+      );
     }
 
     if (response.response.code == 200) {
@@ -203,7 +216,10 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
   }
 
   Future<void> showErrorDialog(String errorMessage) async {
-    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+    await CustomWidget.showDialogWithoutStyle(
+      context: context,
+      msg: errorMessage,
+    );
     isLoading = false;
     setState(() {});
   }
@@ -221,7 +237,9 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: AppLocalizations.of(context)!.interviewAppointment),
+      appBar: PageAppBar(
+        title: AppLocalizations.of(context)!.interviewAppointment,
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -231,49 +249,58 @@ class InterviewAppointmentState extends State<InterviewAppointmentPage> {
                 child: Padding(
                   padding: CustomStyle.pagePadding(),
                   child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CustomWidget.datePicker(
-                            context: context,
-                            controller: textControllers['date']!,
-                            label: AppLocalizations.of(context)!.interviewAppointmentDate,
-                            readOnly: true,
-                            maxDate: maxDate,
-                            minDate: minDate),
-                        CustomWidget.dropdownButtonSameValue(
-                          label: AppLocalizations.of(context)!.interviewAppointmentTime,
-                          selectedValue: dropdownControllers['time'],
-                          items: itemDataList['time'],
-                          onChanged: (value) {
-                            setState(() {
-                              inValidFields.remove('time');
-                              dropdownControllers['time'] = value.toString();
-                            });
-                          },
-                        ),
-                        CustomWidget.dropdownButtonSameValue(
-                          label: AppLocalizations.of(context)!.socialMediaChannel,
-                          selectedValue: dropdownControllers['channel'],
-                          items: itemDataList['channel'],
-                          onChanged: (value) {
-                            setState(() {
-                              inValidFields.remove('channel');
-                              dropdownControllers['channel'] = value.toString();
-                            });
-                          },
-                        ),
-                        CustomWidget.textField(
-                            controller: textControllers['url']!,
-                            label: AppLocalizations.of(context)!.socialMediaURL),
-                        CustomWidget.elevatedButton(
-                          context: context,
-                          enabled: inValidFields.isEmpty,
-                          isLoading: isLoading,
-                          text: AppLocalizations.of(context)!.makeAppointment,
-                          onPressed: handleAppointment,
-                        ),
-                      ]),
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CustomWidget.datePicker(
+                        context: context,
+                        controller: textControllers['date']!,
+                        label:
+                            AppLocalizations.of(
+                              context,
+                            )!.interviewAppointmentDate,
+                        readOnly: true,
+                        maxDate: maxDate,
+                        minDate: minDate,
+                      ),
+                      CustomWidget.dropdownButtonSameValue(
+                        label:
+                            AppLocalizations.of(
+                              context,
+                            )!.interviewAppointmentTime,
+                        selectedValue: dropdownControllers['time'],
+                        items: itemDataList['time'],
+                        onChanged: (value) {
+                          setState(() {
+                            inValidFields.remove('time');
+                            dropdownControllers['time'] = value.toString();
+                          });
+                        },
+                      ),
+                      CustomWidget.dropdownButtonSameValue(
+                        label: AppLocalizations.of(context)!.socialMediaChannel,
+                        selectedValue: dropdownControllers['channel'],
+                        items: itemDataList['channel'],
+                        onChanged: (value) {
+                          setState(() {
+                            inValidFields.remove('channel');
+                            dropdownControllers['channel'] = value.toString();
+                          });
+                        },
+                      ),
+                      CustomWidget.textField(
+                        controller: textControllers['url']!,
+                        label: AppLocalizations.of(context)!.socialMediaURL,
+                      ),
+                      CustomWidget.elevatedButton(
+                        context: context,
+                        enabled: inValidFields.isEmpty,
+                        isLoading: isLoading,
+                        text: AppLocalizations.of(context)!.makeAppointment,
+                        onPressed: handleAppointment,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

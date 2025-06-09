@@ -11,7 +11,7 @@ import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/models/aboutUs.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/services/common_service.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class AboutUsPage extends StatefulWidget {
   int activeIndex;
@@ -45,14 +45,11 @@ class AboutUsState extends State<AboutUsPage> {
   }
 
   Future<void> getInitData() async {
-
     if (Language.currentLanguage == LanguageType.en) {
       allContent = AboutUsEnglish.allContent;
-    }
-    else if(Language.currentLanguage == LanguageType.my) {
+    } else if (Language.currentLanguage == LanguageType.my) {
       allContent = AboutUsMyanmar.allContent;
-    }
-    else if(Language.currentLanguage == LanguageType.th) {
+    } else if (Language.currentLanguage == LanguageType.th) {
       allContent = AboutUsThai.allContent;
     }
 
@@ -120,10 +117,9 @@ class AboutUsState extends State<AboutUsPage> {
         }
       }
 
-      if(widget.activeIndex > 0) {
+      if (widget.activeIndex > 0) {
         _scrollToStep(widget.activeIndex);
       }
-
     });
 
     return Column(
@@ -147,7 +143,10 @@ class AboutUsState extends State<AboutUsPage> {
                       ),
                     ),
                     CustomWidget.horizontalSpacing(),
-                    Text(aboutList[index].getTitle(), style: CustomStyle.subTitle()),
+                    Text(
+                      aboutList[index].getTitle(),
+                      style: CustomStyle.subTitle(),
+                    ),
                   ],
                 ),
               ),
@@ -205,47 +204,55 @@ class AboutUsState extends State<AboutUsPage> {
   RichText buildTextSpan(BuildContext context, List<Data> dataList) {
     return RichText(
       text: TextSpan(
-        children: dataList.map((data) {
-          if (data.url != null) {
-            return TextSpan(
-              style: data.style,
-              text: data.text,
-              recognizer: TapGestureRecognizer()..onTap = () async {
-                showScaffoldMessenger(AppLocalizations.of(context)!.downloading);
+        children:
+            dataList.map((data) {
+              if (data.url != null) {
+                return TextSpan(
+                  style: data.style,
+                  text: data.text,
+                  recognizer:
+                      TapGestureRecognizer()
+                        ..onTap = () async {
+                          showScaffoldMessenger(
+                            AppLocalizations.of(context)!.downloading,
+                          );
 
-                try {
-                  FileDownloader.downloadFile(
-                    url: data.url!,
-                    name: 'license.pdf',
-                    onDownloadCompleted: (path) {
-                      showScaffoldMessenger(AppLocalizations.of(context)!.downloadComplete);
-                    },
-                    onDownloadError: (errorMessage) {
-                      showScaffoldMessenger("Error downloading: $errorMessage");
-                    },
-                  );
-                } catch (e) {
-                  showScaffoldMessenger("Error downloading");
-                }
-              },
-            );
-          } else {
-            return TextSpan(
-              style: data.style ?? CustomStyle.body(),
-              text: data.text,
-            );
-          }
-        }).toList(),
+                          try {
+                            FileDownloader.downloadFile(
+                              url: data.url!,
+                              name: 'license.pdf',
+                              onDownloadCompleted: (path) {
+                                showScaffoldMessenger(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.downloadComplete,
+                                );
+                              },
+                              onDownloadError: (errorMessage) {
+                                showScaffoldMessenger(
+                                  "Error downloading: $errorMessage",
+                                );
+                              },
+                            );
+                          } catch (e) {
+                            showScaffoldMessenger("Error downloading");
+                          }
+                        },
+                );
+              } else {
+                return TextSpan(
+                  style: data.style ?? CustomStyle.body(),
+                  text: data.text,
+                );
+              }
+            }).toList(),
       ),
     );
   }
 
   void showScaffoldMessenger(String downloadMessage) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(downloadMessage),
-        duration: Duration(seconds: 2),
-      ),
+      SnackBar(content: Text(downloadMessage), duration: Duration(seconds: 2)),
     );
   }
 }

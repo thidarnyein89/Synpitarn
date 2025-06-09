@@ -12,7 +12,7 @@ import 'package:synpitarn/screens/profile/profile/edit_information.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class BasicInformationPage extends StatefulWidget {
   BasicInformationPage({super.key});
@@ -56,8 +56,9 @@ class BasicInformationState extends State<BasicInformationPage>
 
     loginUser = await getLoginUser();
 
-    UserResponse profileResponse =
-        await ProfileRepository().getProfile(loginUser);
+    UserResponse profileResponse = await ProfileRepository().getProfile(
+      loginUser,
+    );
     if (profileResponse.response.code == 200) {
       loginUser = profileResponse.data;
     } else if (profileResponse.response.code == 403) {
@@ -73,17 +74,18 @@ class BasicInformationState extends State<BasicInformationPage>
 
   Future<void> showErrorDialog(String errorMessage) async {
     await CustomWidget.showDialogWithoutStyle(
-        context: context, msg: errorMessage);
+      context: context,
+      msg: errorMessage,
+    );
     isLoading = false;
     setState(() {});
   }
 
   void handleEdit() {
     RouteService.goToNavigator(
-        context,
-        EditInformationPage(
-          editUser: loginUser,
-        ));
+      context,
+      EditInformationPage(editUser: loginUser),
+    );
   }
 
   @override
@@ -100,8 +102,9 @@ class BasicInformationState extends State<BasicInformationPage>
               else
                 SingleChildScrollView(
                   child: ConstrainedBox(
-                    constraints:
-                        BoxConstraints(minHeight: constraints.maxHeight),
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
                     child: IntrinsicHeight(
                       child: Column(
                         spacing: 0,
@@ -132,8 +135,9 @@ class BasicInformationState extends State<BasicInformationPage>
                                   loginUser.provinceOfWorkText,
                                 ),
                                 CustomWidget.buildRow(
-                                  AppLocalizations.of(context)!
-                                      .provinceResidence,
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.provinceResidence,
                                   loginUser.provinceOfResidentText,
                                 ),
                                 CustomWidget.buildRow(
@@ -151,13 +155,17 @@ class BasicInformationState extends State<BasicInformationPage>
                                 CustomWidget.buildRow(
                                   AppLocalizations.of(context)!.salary,
                                   CommonService.formatWithThousandSeparator(
-                                      context, loginUser.salary),
+                                    context,
+                                    loginUser.salary,
+                                  ),
                                 ),
                                 CustomWidget.verticalSpacing(),
                                 CustomWidget.elevatedButton(
                                   context: context,
-                                  text: AppLocalizations.of(context)!
-                                      .editInformationButton,
+                                  text:
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.editInformationButton,
                                   onPressed: handleEdit,
                                 ),
                               ],

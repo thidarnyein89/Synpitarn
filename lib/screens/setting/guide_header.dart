@@ -5,10 +5,9 @@ import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/models/guide.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/screens/setting/guide.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class GuideHeaderPage extends StatefulWidget {
-
   const GuideHeaderPage({super.key});
 
   @override
@@ -35,8 +34,8 @@ class GuideHeaderState extends State<GuideHeaderPage> {
   Future<void> readGuideData() async {
     guideList = await _commonService.readGuideData();
 
-    if(mounted) {
-      setState(() { });
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -57,7 +56,10 @@ class GuideHeaderState extends State<GuideHeaderPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.of(context)!.howToApplyLoan, style: CustomStyle.titleBold()),
+          Text(
+            AppLocalizations.of(context)!.howToApplyLoan,
+            style: CustomStyle.titleBold(),
+          ),
           EasyStepper(
             activeStep: activeStep,
             maxReachedStep: 3,
@@ -96,8 +98,8 @@ class GuideHeaderState extends State<GuideHeaderPage> {
             onStepReached: (index) {
               activeStep = index;
 
-              if(mounted) {
-                setState(() { });
+              if (mounted) {
+                setState(() {});
               }
 
               Navigator.push(

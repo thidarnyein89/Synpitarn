@@ -9,7 +9,7 @@ import 'package:synpitarn/screens/components/qr_dialog.dart';
 import 'package:synpitarn/screens/loan/repayment_list.dart';
 import 'package:synpitarn/services/common_service.dart';
 import 'package:synpitarn/services/route_service.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class PreviousLoanPage extends StatefulWidget {
   Loan? loan = Loan.defaultLoan();
@@ -45,11 +45,7 @@ class PreviousLoanState extends State<PreviousLoanPage> {
   }
 
   handleViewRepayment() {
-    RouteService.goToNavigator(
-        context,
-        RepaymentListPage(
-          loan: widget.loan!,
-        ));
+    RouteService.goToNavigator(context, RepaymentListPage(loan: widget.loan!));
   }
 
   void showErrorDialog(String errorMessage) {
@@ -64,22 +60,31 @@ class PreviousLoanState extends State<PreviousLoanPage> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CustomWidget.buildRow(
-            AppLocalizations.of(context)!.contractNo, widget.loan!.contractNoRef.toString()),
+          AppLocalizations.of(context)!.contractNo,
+          widget.loan!.contractNoRef.toString(),
+        ),
         CustomWidget.buildRow(
-            AppLocalizations.of(context)!.loanStatus,
-            CommonService.getLoanStatus(
-                widget.loan!.loanApplicationStatus.toString())),
+          AppLocalizations.of(context)!.loanStatus,
+          CommonService.getLoanStatus(
+            widget.loan!.loanApplicationStatus.toString(),
+          ),
+        ),
         CustomWidget.buildRow(
-            AppLocalizations.of(context)!.loanSize, CommonService.getLoanSize(context, widget.loan!)),
-        CustomWidget.buildRow(AppLocalizations.of(context)!.loanTerm, "${widget.loan!.termPeriod} ${AppLocalizations.of(context)!.months}"),
+          AppLocalizations.of(context)!.loanSize,
+          CommonService.getLoanSize(context, widget.loan!),
+        ),
         CustomWidget.buildRow(
-            AppLocalizations.of(context)!.firstPaymentDate,
-            CommonService.formatDate(
-                widget.loan!.firstRepaymentDate.toString())),
+          AppLocalizations.of(context)!.loanTerm,
+          "${widget.loan!.termPeriod} ${AppLocalizations.of(context)!.months}",
+        ),
         CustomWidget.buildRow(
-            AppLocalizations.of(context)!.lastPaymentDate,
-            CommonService.formatDate(
-                widget.loan!.lastRepaymentDate.toString())),
+          AppLocalizations.of(context)!.firstPaymentDate,
+          CommonService.formatDate(widget.loan!.firstRepaymentDate.toString()),
+        ),
+        CustomWidget.buildRow(
+          AppLocalizations.of(context)!.lastPaymentDate,
+          CommonService.formatDate(widget.loan!.lastRepaymentDate.toString()),
+        ),
         CustomWidget.verticalSpacing(),
         if (widget.loan!.qrcode.photo != "")
           Column(
@@ -87,8 +92,11 @@ class PreviousLoanState extends State<PreviousLoanPage> {
             children: [
               GestureDetector(
                 onTap: () {
-                  QRDialog.showQRDialog(context, widget.loan!.qrcode.photo,
-                      widget.loan!.qrcode.string);
+                  QRDialog.showQRDialog(
+                    context,
+                    widget.loan!.qrcode.photo,
+                    widget.loan!.qrcode.string,
+                  );
                 },
                 child: FadeInImage(
                   placeholder: AssetImage('assets/images/spinner.gif'),
@@ -96,8 +104,8 @@ class PreviousLoanState extends State<PreviousLoanPage> {
                   fit: BoxFit.contain,
                   width: 200,
                   height: 200,
-                  imageErrorBuilder: (context, error, stackTrace) =>
-                      Icon(Icons.broken_image),
+                  imageErrorBuilder:
+                      (context, error, stackTrace) => Icon(Icons.broken_image),
                 ),
               ),
               Text(widget.loan!.qrcode.string),
@@ -118,36 +126,38 @@ class PreviousLoanState extends State<PreviousLoanPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PageAppBar(title: widget.loan!.contractNoRef),
-      body: LayoutBuilder(builder: (context, constraints) {
-        return Stack(
-          children: [
-            if (isLoading)
-              CustomWidget.loading()
-            else
-              SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight,
-                  ),
-                  child: IntrinsicHeight(
-                    child: Column(
-                      spacing: 0,
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: CustomStyle.pagePadding(),
-                          child: createLoanCard(),
-                        ),
-                      ],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return Stack(
+            children: [
+              if (isLoading)
+                CustomWidget.loading()
+              else
+                SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        spacing: 0,
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: CustomStyle.pagePadding(),
+                            child: createLoanCard(),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-          ],
-        );
-      }),
+            ],
+          );
+        },
+      ),
     );
   }
 }

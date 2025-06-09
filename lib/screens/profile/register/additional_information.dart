@@ -16,7 +16,7 @@ import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/language_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/screens/components/register_tab_bar.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class Information2Page extends StatefulWidget {
   const Information2Page({super.key});
@@ -48,7 +48,7 @@ class Information2State extends State<Information2Page> {
     'loan_term_year': null,
     'type_of_work': null,
     'industry': null,
-    'main_purpose_of_loan': [Item.defaultItem()]
+    'main_purpose_of_loan': [Item.defaultItem()],
   };
 
   Map<String, List<Item>> itemDataList = {
@@ -58,7 +58,7 @@ class Information2State extends State<Information2Page> {
     "industry": [Item.defaultItem()],
     "loan_term_year": [Item.defaultItem()],
     "loan_term_month": [Item.defaultItem()],
-    "main_purpose_of_loan": [Item.defaultItem()]
+    "main_purpose_of_loan": [Item.defaultItem()],
   };
 
   final Set<String> inValidFields = {};
@@ -105,8 +105,9 @@ class Information2State extends State<Information2Page> {
   Future<void> getDefaultData() async {
     defaultData = new DefaultData.defaultDefaultData();
 
-    DefaultResponse defaultResponse =
-        await DefaultRepository().getDefaultData(loginUser);
+    DefaultResponse defaultResponse = await DefaultRepository().getDefaultData(
+      loginUser,
+    );
 
     if (defaultResponse.response.code == 200) {
       defaultData = defaultResponse.data;
@@ -135,10 +136,13 @@ class Information2State extends State<Information2Page> {
       var control = controls.firstWhere((control) => control.name == key);
 
       if (control.items != null) {
-        itemDataList[key] = control.items!
-            .where((item) => item.value != "")
-            .map<Item>((item) => Item.named(value: item.value, text: item.text))
-            .toList();
+        itemDataList[key] =
+            control.items!
+                .where((item) => item.value != "")
+                .map<Item>(
+                  (item) => Item.named(value: item.value, text: item.text),
+                )
+                .toList();
         setState(() {});
       }
     });
@@ -155,19 +159,24 @@ class Information2State extends State<Information2Page> {
       if (inputData.containsKey(key)) {
         if (key == 'main_purpose_of_loan') {
           List<String> values = (inputData[key] as List).cast<String>();
-          dropdownControllers[key] =
-              findMultipleMatchData(itemDataList[key]!, values);
+          dropdownControllers[key] = findMultipleMatchData(
+            itemDataList[key]!,
+            values,
+          );
         } else {
-          dropdownControllers[key] =
-              findMatchData(itemDataList[key]!, inputData[key]);
+          dropdownControllers[key] = findMatchData(
+            itemDataList[key]!,
+            inputData[key],
+          );
         }
       }
     });
   }
 
   Item? findMatchData(List<Item> itemList, String value) {
-    Iterable<Item> matchingItems =
-        itemList.where((item) => item.value == value);
+    Iterable<Item> matchingItems = itemList.where(
+      (item) => item.value == value,
+    );
     return matchingItems.isNotEmpty ? matchingItems.first : null;
   }
 
@@ -214,7 +223,7 @@ class Information2State extends State<Information2Page> {
     setState(() {});
 
     final Map<String, dynamic> additionalInformation = {
-      ...?defaultData.inputData
+      ...?defaultData.inputData,
     };
 
     textControllers.forEach((key, controller) {
@@ -235,8 +244,11 @@ class Information2State extends State<Information2Page> {
       'input_data': jsonEncode(additionalInformation),
     };
 
-    DataResponse saveResponse = await LoanRepository()
-        .saveLoanApplicationStep(postBody, loginUser, stepName);
+    DataResponse saveResponse = await LoanRepository().saveLoanApplicationStep(
+      postBody,
+      loginUser,
+      stepName,
+    );
     if (saveResponse.response.code == 200) {
       loginUser.loanFormState = stepName;
       await setLoginUser(loginUser);
@@ -260,7 +272,10 @@ class Information2State extends State<Information2Page> {
   }
 
   Future<void> showErrorDialog(String errorMessage) async {
-    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+    await CustomWidget.showDialogWithoutStyle(
+      context: context,
+      msg: errorMessage,
+    );
     isLoading = false;
     setState(() {});
   }
@@ -269,17 +284,21 @@ class Information2State extends State<Information2Page> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PageAppBar(title: AppLocalizations.of(context)!.additionalInformation),
+      appBar: PageAppBar(
+        title: AppLocalizations.of(context)!.additionalInformation,
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          return Stack(children: [
-            if (isPageLoading)
-              CustomWidget.loading()
-            else
-              SingleChildScrollView(
-                child: ConstrainedBox(
-                    constraints:
-                        BoxConstraints(minHeight: constraints.maxHeight),
+          return Stack(
+            children: [
+              if (isPageLoading)
+                CustomWidget.loading()
+              else
+                SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
                     child: Column(
                       spacing: 0,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -293,37 +312,41 @@ class Information2State extends State<Information2Page> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                AppLocalizations.of(context)!.lengthTimeCurrentEmployer,
+                                AppLocalizations.of(
+                                  context,
+                                )!.lengthTimeCurrentEmployer,
                                 style: CustomStyle.subTitleBold(),
                               ),
                               CustomWidget.verticalSpacing(),
                               CustomWidget.dropdownButtonDiffValue(
                                 label: formLabel['year_working_in_thailand']!,
-                                selectedValue: dropdownControllers[
-                                    'year_working_in_thailand'],
+                                selectedValue:
+                                    dropdownControllers['year_working_in_thailand'],
                                 items:
                                     itemDataList['year_working_in_thailand']!,
                                 onChanged: (value) {
                                   setState(() {
-                                    inValidFields
-                                        .remove('year_working_in_thailand');
-                                    dropdownControllers[
-                                        'year_working_in_thailand'] = value!;
+                                    inValidFields.remove(
+                                      'year_working_in_thailand',
+                                    );
+                                    dropdownControllers['year_working_in_thailand'] =
+                                        value!;
                                   });
                                 },
                               ),
                               CustomWidget.dropdownButtonDiffValue(
                                 label: formLabel['month_working_in_thailand']!,
-                                selectedValue: dropdownControllers[
-                                    'month_working_in_thailand'],
+                                selectedValue:
+                                    dropdownControllers['month_working_in_thailand'],
                                 items:
                                     itemDataList['month_working_in_thailand']!,
                                 onChanged: (value) {
                                   setState(() {
-                                    inValidFields
-                                        .remove('month_working_in_thailand');
-                                    dropdownControllers[
-                                        'month_working_in_thailand'] = value!;
+                                    inValidFields.remove(
+                                      'month_working_in_thailand',
+                                    );
+                                    dropdownControllers['month_working_in_thailand'] =
+                                        value!;
                                   });
                                 },
                               ),
@@ -352,18 +375,23 @@ class Information2State extends State<Information2Page> {
                                 },
                               ),
                               CustomWidget.textField(
-                                  controller: textControllers['debit']!,
-                                  label: formLabel['debit']!),
+                                controller: textControllers['debit']!,
+                                label: formLabel['debit']!,
+                              ),
                               CustomWidget.numberTextField(
-                                  controller: textControllers[
-                                      'monthly_repayment_for_debit']!,
-                                  label: formLabel['monthly_repayment_for_debit']!),
+                                controller:
+                                    textControllers['monthly_repayment_for_debit']!,
+                                label:
+                                    formLabel['monthly_repayment_for_debit']!,
+                              ),
                               CustomWidget.numberTextField(
-                                  controller: textControllers['salary']!,
-                                  label: formLabel['salary']!),
+                                controller: textControllers['salary']!,
+                                label: formLabel['salary']!,
+                              ),
                               CustomWidget.numberTextField(
-                                  controller: textControllers['loan_amount']!,
-                                  label: formLabel['loan_amount']!),
+                                controller: textControllers['loan_amount']!,
+                                label: formLabel['loan_amount']!,
+                              ),
                               Text(
                                 AppLocalizations.of(context)!.loanTerm,
                                 style: CustomStyle.subTitleBold(),
@@ -400,80 +428,93 @@ class Information2State extends State<Information2Page> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    AppLocalizations.of(context)!.mainPurposeLoan,
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.mainPurposeLoan,
                                     style: CustomStyle.subTitleBold(),
                                   ),
                                   CustomWidget.verticalSpacing(),
                                   ...itemDataList['main_purpose_of_loan']!.map(
-                                      (purpose) => CustomWidget.checkbox(
-                                              dropdownControllers[
-                                                  'main_purpose_of_loan'],
-                                              purpose, () {
-                                            setState(() {
-                                              if (dropdownControllers[
-                                                      'main_purpose_of_loan']
-                                                  .any((item) =>
+                                    (purpose) => CustomWidget.checkbox(
+                                      dropdownControllers['main_purpose_of_loan'],
+                                      purpose,
+                                      () {
+                                        setState(() {
+                                          if (dropdownControllers['main_purpose_of_loan']
+                                              .any(
+                                                (item) =>
+                                                    item.value == purpose.value,
+                                              )) {
+                                            dropdownControllers['main_purpose_of_loan']
+                                                .removeWhere(
+                                                  (item) =>
                                                       item.value ==
-                                                      purpose.value)) {
-                                                dropdownControllers[
-                                                        'main_purpose_of_loan']
-                                                    .removeWhere((item) =>
-                                                        item.value ==
-                                                        purpose.value);
-                                              } else {
-                                                dropdownControllers[
-                                                        'main_purpose_of_loan']
-                                                    .add(purpose);
-                                              }
+                                                      purpose.value,
+                                                );
+                                          } else {
+                                            dropdownControllers['main_purpose_of_loan']
+                                                .add(purpose);
+                                          }
 
-                                              if (dropdownControllers[
-                                                      'main_purpose_of_loan']
-                                                  .isNotEmpty) {
-                                                inValidFields.remove(
-                                                    "main_purpose_of_loan");
-                                              } else {
-                                                inValidFields.add(
-                                                    "main_purpose_of_loan");
-                                              }
+                                          if (dropdownControllers['main_purpose_of_loan']
+                                              .isNotEmpty) {
+                                            inValidFields.remove(
+                                              "main_purpose_of_loan",
+                                            );
+                                          } else {
+                                            inValidFields.add(
+                                              "main_purpose_of_loan",
+                                            );
+                                          }
 
-                                              if (purpose.value ==
-                                                  'other_reasons') {
-                                                textControllers[
-                                                        'other_reason_for_main_purpose_of_loan']
-                                                    ?.text = "";
+                                          if (purpose.value ==
+                                              'other_reasons') {
+                                            textControllers['other_reason_for_main_purpose_of_loan']
+                                                ?.text = "";
 
-                                                bool isOtherSelected =
-                                                    dropdownControllers[
-                                                            'main_purpose_of_loan']
-                                                        .any((item) =>
-                                                            item.value ==
-                                                            'other_reasons');
+                                            bool isOtherSelected =
+                                                dropdownControllers['main_purpose_of_loan']
+                                                    .any(
+                                                      (item) =>
+                                                          item.value ==
+                                                          'other_reasons',
+                                                    );
 
-                                                if (isOtherSelected) {
-                                                  inValidFields.add(
-                                                      "other_reason_for_main_purpose_of_loan");
-                                                } else {
-                                                  inValidFields.remove(
-                                                      "other_reason_for_main_purpose_of_loan");
-                                                }
-                                              }
-                                            });
-                                          })),
+                                            if (isOtherSelected) {
+                                              inValidFields.add(
+                                                "other_reason_for_main_purpose_of_loan",
+                                              );
+                                            } else {
+                                              inValidFields.remove(
+                                                "other_reason_for_main_purpose_of_loan",
+                                              );
+                                            }
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  ),
                                 ],
                               ),
                               if (dropdownControllers['main_purpose_of_loan']
                                   .any((item) => item.value == 'other_reasons'))
                                 CustomWidget.textField(
-                                    controller: textControllers[
-                                        'other_reason_for_main_purpose_of_loan']!,
-                                    label: AppLocalizations.of(context)!.otherReasons),
+                                  controller:
+                                      textControllers['other_reason_for_main_purpose_of_loan']!,
+                                  label:
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.otherReasons,
+                                ),
                               CustomWidget.verticalSpacing(),
                               CustomWidget.textField(
-                                  controller: textControllers['social_links']!,
-                                  label: formLabel['social_links']!),
+                                controller: textControllers['social_links']!,
+                                label: formLabel['social_links']!,
+                              ),
                               CustomWidget.textField(
-                                  controller: textControllers['referral_code']!,
-                                  label: formLabel['referral_code']!),
+                                controller: textControllers['referral_code']!,
+                                label: formLabel['referral_code']!,
+                              ),
                               Row(
                                 children: [
                                   Expanded(
@@ -481,7 +522,10 @@ class Information2State extends State<Information2Page> {
                                       context: context,
                                       enabled: true,
                                       isLoading: false,
-                                      text: AppLocalizations.of(context)!.previous,
+                                      text:
+                                          AppLocalizations.of(
+                                            context,
+                                          )!.previous,
                                       onPressed: handlePrevious,
                                     ),
                                   ),
@@ -491,19 +535,24 @@ class Information2State extends State<Information2Page> {
                                       context: context,
                                       enabled: inValidFields.isEmpty,
                                       isLoading: isLoading,
-                                      text: AppLocalizations.of(context)!.continueText,
+                                      text:
+                                          AppLocalizations.of(
+                                            context,
+                                          )!.continueText,
                                       onPressed: handleContinue,
                                     ),
                                   ),
                                 ],
-                              )
+                              ),
                             ],
                           ),
                         ),
                       ],
-                    )),
-              ),
-          ]);
+                    ),
+                  ),
+                ),
+            ],
+          );
         },
       ),
     );

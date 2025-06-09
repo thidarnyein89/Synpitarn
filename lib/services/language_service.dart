@@ -1,10 +1,9 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 import 'package:synpitarn/data/language.dart';
 import 'package:synpitarn/models/data.dart';
 
 class LanguageService {
-
   static String translateKey(BuildContext context, String key) {
     switch (key) {
       case 'repayment':
@@ -58,5 +57,4 @@ class LanguageService {
         return item.text?.mm ?? '';
     }
   }
-
 }

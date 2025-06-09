@@ -24,7 +24,7 @@ import 'package:synpitarn/services/language_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:synpitarn/models/image_file.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class DocumentFilePage extends StatefulWidget {
   Loan? applicationData = Loan.defaultLoan();
@@ -72,13 +72,16 @@ class DocumentFileState extends State<DocumentFilePage> {
 
     if (defaultData.pages.length > 0) {
       var allControls = defaultData.pages[pageIndex].formData.controls;
-      var controls = allControls.where((control) => control.name != "").toList();
+      var controls =
+          allControls.where((control) => control.name != "").toList();
 
       imageList.clear();
       for (var control in controls) {
         if (control.name != null && control.uniqueId != null) {
           Item item = Item.named(value: control.name, text: control.label);
-          imageList[LanguageService.translateLabel(item)] = ImageFile(uniqueId: control.uniqueId);
+          imageList[LanguageService.translateLabel(item)] = ImageFile(
+            uniqueId: control.uniqueId,
+          );
         }
       }
     }
@@ -112,7 +115,7 @@ class DocumentFileState extends State<DocumentFilePage> {
 
   void showReUploadDocumentFile() {
     final Set<String> documentIds =
-    widget.documentList!.map((doc) => doc.controlId).toSet();
+        widget.documentList!.map((doc) => doc.controlId).toSet();
 
     final List<String> keysToRemove = [];
 
@@ -137,33 +140,28 @@ class DocumentFileState extends State<DocumentFilePage> {
 
     msg.add({
       "text": AppLocalizations.of(context)!.reUploadMsg1,
-      "style": TextStyle(color: Colors.black)
+      "style": TextStyle(color: Colors.black),
     });
 
-    final docNames = widget.documentList?.map((doc) => doc.getName()).toList() ?? [];
+    final docNames =
+        widget.documentList?.map((doc) => doc.getName()).toList() ?? [];
     for (int i = 0; i < docNames.length; i++) {
       msg.add({
         "text": docNames[i],
-        "style": TextStyle(color: Colors.black, fontWeight: FontWeight.bold)
+        "style": TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
       });
 
       if (i != docNames.length - 1) {
-        msg.add({
-          "text": ", ",
-          "style": TextStyle(color: Colors.black)
-        });
+        msg.add({"text": ", ", "style": TextStyle(color: Colors.black)});
       }
     }
 
     msg.add({
       "text": AppLocalizations.of(context)!.reUploadMsg2,
-      "style": TextStyle(color: Colors.black)
+      "style": TextStyle(color: Colors.black),
     });
 
-    CustomWidget.showDialogWithStyle(
-      context: context,
-      msg: msg,
-    );
+    CustomWidget.showDialogWithStyle(context: context, msg: msg);
   }
 
   Future<void> getUploadDocumentData() async {
@@ -174,9 +172,10 @@ class DocumentFileState extends State<DocumentFilePage> {
       documentList = documentResponse.data;
 
       imageList.forEach((key, imageFile) async {
-        Document? document = documentList
-            .where((document) => document.uniqueId == imageFile?.uniqueId)
-            .firstOrNull;
+        Document? document =
+            documentList
+                .where((document) => document.uniqueId == imageFile?.uniqueId)
+                .firstOrNull;
         if (document != null) {
           imageFile?.isDeleteLoading = true;
           setState(() {});
@@ -215,8 +214,8 @@ class DocumentFileState extends State<DocumentFilePage> {
         'file_path': file.path,
       };
 
-      DocumentResponse documentResponse =
-          await DocumentRepository().uploadDocument(postBody, loginUser);
+      DocumentResponse documentResponse = await DocumentRepository()
+          .uploadDocument(postBody, loginUser);
       if (documentResponse.response.code == 200) {
         setState(() {
           imageFile.isLoading = false;
@@ -294,8 +293,8 @@ class DocumentFileState extends State<DocumentFilePage> {
           'version_id': defaultData.versionId,
         };
 
-        DocumentResponse documentResponse =
-            await DocumentRepository().deleteDocument(postBody, loginUser);
+        DocumentResponse documentResponse = await DocumentRepository()
+            .deleteDocument(postBody, loginUser);
         if (documentResponse.response.code == 200) {
           setState(() {
             imageFile.file = null;
@@ -355,7 +354,7 @@ class DocumentFileState extends State<DocumentFilePage> {
     setState(() {});
 
     final Map<String, dynamic> postBody = {
-      'loan_application_id': widget.applicationData?.id
+      'loan_application_id': widget.applicationData?.id,
     };
 
     DocumentResponse saveResponse = await DocumentRepository()
@@ -383,58 +382,63 @@ class DocumentFileState extends State<DocumentFilePage> {
           height: 120,
           width: double.infinity,
           color: Colors.grey[300],
-          child: (imageFile?.filePath != null)
-              ? Stack(
-                  children: [
-                    Positioned.fill(
-                      child: (imageFile?.file != null)
-                          ? Image.file(imageFile!.file!)
-                          : FadeInImage(
-                              placeholder: AssetImage(
-                                'assets/images/spinner.gif',
-                              ),
-                              image: NetworkImage(imageFile!.filePath!),
-                              fit: BoxFit.contain,
-                              imageErrorBuilder: (context, error, stackTrace) =>
-                                  Icon(Icons.broken_image),
-                            ),
-                    ),
-                    if (imageFile.isDeleteLoading ?? false)
+          child:
+              (imageFile?.filePath != null)
+                  ? Stack(
+                    children: [
                       Positioned.fill(
-                        child: Container(
-                          color: Color.fromRGBO(0, 0, 0, 0.5),
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
+                        child:
+                            (imageFile?.file != null)
+                                ? Image.file(imageFile!.file!)
+                                : FadeInImage(
+                                  placeholder: AssetImage(
+                                    'assets/images/spinner.gif',
+                                  ),
+                                  image: NetworkImage(imageFile!.filePath!),
+                                  fit: BoxFit.contain,
+                                  imageErrorBuilder:
+                                      (context, error, stackTrace) =>
+                                          Icon(Icons.broken_image),
+                                ),
                       ),
-                    if (!(imageFile.isDeleteLoading ?? false))
-                      Positioned(
-                        top: 4,
-                        right: 4,
-                        child: GestureDetector(
-                          onTap: () {
-                            deleteImage(imageFile);
-                          },
+                      if (imageFile.isDeleteLoading ?? false)
+                        Positioned.fill(
                           child: Container(
-                            decoration: BoxDecoration(
-                              color: Color.fromRGBO(0, 0, 0, 0.5),
-                              shape: BoxShape.circle,
-                            ),
-                            padding: EdgeInsets.all(4),
-                            child: Icon(
-                              Icons.close,
-                              color: Colors.red,
-                              size: 20,
+                            color: Color.fromRGBO(0, 0, 0, 0.5),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                  ],
-                )
-              : Center(child: Text(AppLocalizations.of(context)!.noFileSelected)),
+                      if (!(imageFile.isDeleteLoading ?? false))
+                        Positioned(
+                          top: 4,
+                          right: 4,
+                          child: GestureDetector(
+                            onTap: () {
+                              deleteImage(imageFile);
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Color.fromRGBO(0, 0, 0, 0.5),
+                                shape: BoxShape.circle,
+                              ),
+                              padding: EdgeInsets.all(4),
+                              child: Icon(
+                                Icons.close,
+                                color: Colors.red,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  )
+                  : Center(
+                    child: Text(AppLocalizations.of(context)!.noFileSelected),
+                  ),
         ),
         CustomWidget.verticalSpacing(),
         CustomWidget.elevatedButton(
@@ -462,9 +466,10 @@ class DocumentFileState extends State<DocumentFilePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PageAppBar(
-        title: (loginUser.loanApplicationSubmitted)
-            ? AppLocalizations.of(context)!.documents
-            : AppLocalizations.of(context)!.requiredDocuments,
+        title:
+            (loginUser.loanApplicationSubmitted)
+                ? AppLocalizations.of(context)!.documents
+                : AppLocalizations.of(context)!.requiredDocuments,
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -515,7 +520,8 @@ class DocumentFileState extends State<DocumentFilePage> {
   }
 
   Widget createButtonSection() {
-    if (!loginUser.loanApplicationSubmitted && (widget.documentList ?? []).isEmpty) {
+    if (!loginUser.loanApplicationSubmitted &&
+        (widget.documentList ?? []).isEmpty) {
       return Row(
         children: [
           Expanded(

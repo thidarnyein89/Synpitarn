@@ -12,7 +12,7 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/profile/profile/change_phone_otp.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:synpitarn/services/route_service.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class ChangePhoneNumberPage extends StatefulWidget {
   const ChangePhoneNumberPage({super.key});
@@ -65,11 +65,13 @@ class ChangePhoneNumberState extends State<ChangePhoneNumberPage> {
 
     var postBody = {
       "forget_password": false,
-      "phone_number": phoneController.text
+      "phone_number": phoneController.text,
     };
 
-    UserResponse userResponse =
-        await ProfileRepository().getOTP(postBody, loginUser);
+    UserResponse userResponse = await ProfileRepository().getOTP(
+      postBody,
+      loginUser,
+    );
 
     if (userResponse.response.code == 200) {
       loginUser.code = userResponse.data.code;
@@ -77,7 +79,9 @@ class ChangePhoneNumberState extends State<ChangePhoneNumberPage> {
       loginUser.forgetPassword = false;
 
       RouteService.goToReplaceNavigator(
-          context, ChangePhoneOTPPage(loginUser: loginUser));
+        context,
+        ChangePhoneOTPPage(loginUser: loginUser),
+      );
     } else if (userResponse.response.code == 403) {
       await showErrorDialog(userResponse.response.message);
       AuthService().logout(context);
@@ -91,7 +95,9 @@ class ChangePhoneNumberState extends State<ChangePhoneNumberPage> {
 
   Future<void> showErrorDialog(String errorMessage) async {
     await CustomWidget.showDialogWithoutStyle(
-        context: context, msg: errorMessage);
+      context: context,
+      msg: errorMessage,
+    );
     isLoading = false;
     setState(() {});
   }
@@ -100,52 +106,64 @@ class ChangePhoneNumberState extends State<ChangePhoneNumberPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar:
-          PageAppBar(title: AppLocalizations.of(context)!.changePhoneNumber),
+      appBar: PageAppBar(
+        title: AppLocalizations.of(context)!.changePhoneNumber,
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          return Stack(children: [
-            SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: IntrinsicHeight(
+          return Stack(
+            children: [
+              SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: IntrinsicHeight(
                     child: Column(
-                  spacing: 0,
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    RegisterTabBar(activeStep: 0),
-                    Padding(
-                      padding: CustomStyle.pageWithoutTopPadding(),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomWidget.phoneTextField(
-                              controller: currentPhoneController,
-                              label: AppLocalizations.of(context)!
-                                  .currentPhoneNumber,
-                              readOnly: true),
-                          CustomWidget.phoneTextField(
-                              controller: phoneController,
-                              label: AppLocalizations.of(context)!.phoneNumber,
-                              errorText: phoneError),
-                          CustomWidget.elevatedButton(
-                              context: context,
-                              enabled: isPhoneValidate,
-                              isLoading: isLoading,
-                              text: AppLocalizations.of(context)!
-                                  .changePhoneNumber,
-                              onPressed: handleContinue),
-                        ],
-                      ),
+                      spacing: 0,
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RegisterTabBar(activeStep: 0),
+                        Padding(
+                          padding: CustomStyle.pageWithoutTopPadding(),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomWidget.phoneTextField(
+                                controller: currentPhoneController,
+                                label:
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.currentPhoneNumber,
+                                readOnly: true,
+                              ),
+                              CustomWidget.phoneTextField(
+                                controller: phoneController,
+                                label:
+                                    AppLocalizations.of(context)!.phoneNumber,
+                                errorText: phoneError,
+                              ),
+                              CustomWidget.elevatedButton(
+                                context: context,
+                                enabled: isPhoneValidate,
+                                isLoading: isLoading,
+                                text:
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.changePhoneNumber,
+                                onPressed: handleContinue,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                )),
+                  ),
+                ),
               ),
-            )
-          ]);
+            ],
+          );
         },
       ),
     );

@@ -11,7 +11,7 @@ import 'package:synpitarn/repositories/branch_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/services/auth_service.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class BranchAppointmentPage extends StatefulWidget {
   Loan? applicationData;
@@ -35,13 +35,9 @@ class BranchAppointmentState extends State<BranchAppointmentPage> {
     'status': TextEditingController(),
   };
 
-  Map<String, dynamic> dropdownControllers = {
-    'time': null,
-  };
+  Map<String, dynamic> dropdownControllers = {'time': null};
 
-  Map<String, dynamic> itemDataList = {
-    'time': <String>[],
-  };
+  Map<String, dynamic> itemDataList = {'time': <String>[]};
 
   final Set<String> inValidFields = {};
 
@@ -63,17 +59,20 @@ class BranchAppointmentState extends State<BranchAppointmentPage> {
     loginUser = await getLoginUser();
     await getBranches();
 
-    itemDataList["time"] =
-        List<String>.from(widget.applicationData?.branchSectionTimeSlot ?? []);
+    itemDataList["time"] = List<String>.from(
+      widget.applicationData?.branchSectionTimeSlot ?? [],
+    );
     textControllers['applied_amount']?.text =
         widget.applicationData?.approvedAmount.toString() ?? "";
     textControllers['loan_term']?.text =
         "${widget.applicationData?.loanTerm.toString()} Months" ?? "";
     textControllers['status']?.text = "Pending branch visit";
 
-    textControllers['branch_name']?.text = branchList!
+    textControllers['branch_name']?.text =
+        branchList!
             .firstWhere(
-                (branch) => branch.id == widget.applicationData?.branchId)
+              (branch) => branch.id == widget.applicationData?.branchId,
+            )
             .nameEn ??
         "";
 
@@ -125,7 +124,12 @@ class BranchAppointmentState extends State<BranchAppointmentPage> {
   DateTime parseTime(String timeStr, DateTime baseDate) {
     final time = TimeOfDay.fromDateTime(DateFormat.jm().parse(timeStr));
     return DateTime(
-        baseDate.year, baseDate.month, baseDate.day, time.hour, time.minute);
+      baseDate.year,
+      baseDate.month,
+      baseDate.day,
+      time.hour,
+      time.minute,
+    );
   }
 
   Future<void> handleAppointment() async {
@@ -138,8 +142,10 @@ class BranchAppointmentState extends State<BranchAppointmentPage> {
       'time': dropdownControllers['time'],
     };
 
-    BranchResponse response =
-        await BranchRepository().saveAppointment(postBody, loginUser);
+    BranchResponse response = await BranchRepository().saveAppointment(
+      postBody,
+      loginUser,
+    );
 
     if (response.response.code == 200) {
       isLoading = false;
@@ -155,7 +161,10 @@ class BranchAppointmentState extends State<BranchAppointmentPage> {
   }
 
   Future<void> showErrorDialog(String errorMessage) async {
-    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+    await CustomWidget.showDialogWithoutStyle(
+      context: context,
+      msg: errorMessage,
+    );
     isLoading = false;
     setState(() {});
   }
@@ -167,7 +176,9 @@ class BranchAppointmentState extends State<BranchAppointmentPage> {
     final minDate = DateTime(today.year, today.month, today.day + 1);
 
     return Scaffold(
-      appBar: PageAppBar(title: AppLocalizations.of(context)!.branchAppointment),
+      appBar: PageAppBar(
+        title: AppLocalizations.of(context)!.branchAppointment,
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Stack(
@@ -177,66 +188,84 @@ class BranchAppointmentState extends State<BranchAppointmentPage> {
               else
                 SingleChildScrollView(
                   child: ConstrainedBox(
-                    constraints:
-                        BoxConstraints(minHeight: constraints.maxHeight),
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
                     child: IntrinsicHeight(
                       child: Padding(
                         padding: CustomStyle.pagePadding(),
                         child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(AppLocalizations.of(context)!.loanInformation,
-                                  style: CustomStyle.subTitleBold()),
-                              CustomWidget.verticalSpacing(),
-                              CustomWidget.textField(
-                                  readOnly: true,
-                                  controller:
-                                      textControllers['applied_amount']!,
-                                  label: AppLocalizations.of(context)!.loanSize),
-                              CustomWidget.textField(
-                                  readOnly: true,
-                                  controller: textControllers['loan_term']!,
-                                  label: AppLocalizations.of(context)!.loanTerm),
-                              CustomWidget.textField(
-                                  readOnly: true,
-                                  controller: textControllers['status']!,
-                                  label: AppLocalizations.of(context)!.loanStatus),
-                              CustomWidget.verticalSpacing(),
-                              Text(AppLocalizations.of(context)!.appointmentInformation,
-                                  style: CustomStyle.subTitleBold()),
-                              CustomWidget.verticalSpacing(),
-                              CustomWidget.textField(
-                                  readOnly: true,
-                                  controller: textControllers['branch_name']!,
-                                  label: AppLocalizations.of(context)!.appointmentBranch),
-                              CustomWidget.datePicker(
-                                  context: context,
-                                  controller: textControllers['date']!,
-                                  label: AppLocalizations.of(context)!.appointmentDate,
-                                  readOnly: true,
-                                  maxDate: maxDate,
-                                  minDate: minDate),
-                              CustomWidget.dropdownButtonSameValue(
-                                label: AppLocalizations.of(context)!.appointmentTime,
-                                selectedValue: dropdownControllers['time'],
-                                items: itemDataList['time'],
-                                onChanged: (value) {
-                                  setState(() {
-                                    inValidFields.remove('time');
-                                    dropdownControllers['time'] =
-                                        value.toString();
-                                  });
-                                },
-                              ),
-                              CustomWidget.elevatedButton(
-                                context: context,
-                                enabled: inValidFields.isEmpty,
-                                isLoading: isLoading,
-                                text: AppLocalizations.of(context)!.makeAppointment,
-                                onPressed: handleAppointment,
-                              ),
-                            ]),
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              AppLocalizations.of(context)!.loanInformation,
+                              style: CustomStyle.subTitleBold(),
+                            ),
+                            CustomWidget.verticalSpacing(),
+                            CustomWidget.textField(
+                              readOnly: true,
+                              controller: textControllers['applied_amount']!,
+                              label: AppLocalizations.of(context)!.loanSize,
+                            ),
+                            CustomWidget.textField(
+                              readOnly: true,
+                              controller: textControllers['loan_term']!,
+                              label: AppLocalizations.of(context)!.loanTerm,
+                            ),
+                            CustomWidget.textField(
+                              readOnly: true,
+                              controller: textControllers['status']!,
+                              label: AppLocalizations.of(context)!.loanStatus,
+                            ),
+                            CustomWidget.verticalSpacing(),
+                            Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.appointmentInformation,
+                              style: CustomStyle.subTitleBold(),
+                            ),
+                            CustomWidget.verticalSpacing(),
+                            CustomWidget.textField(
+                              readOnly: true,
+                              controller: textControllers['branch_name']!,
+                              label:
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.appointmentBranch,
+                            ),
+                            CustomWidget.datePicker(
+                              context: context,
+                              controller: textControllers['date']!,
+                              label:
+                                  AppLocalizations.of(context)!.appointmentDate,
+                              readOnly: true,
+                              maxDate: maxDate,
+                              minDate: minDate,
+                            ),
+                            CustomWidget.dropdownButtonSameValue(
+                              label:
+                                  AppLocalizations.of(context)!.appointmentTime,
+                              selectedValue: dropdownControllers['time'],
+                              items: itemDataList['time'],
+                              onChanged: (value) {
+                                setState(() {
+                                  inValidFields.remove('time');
+                                  dropdownControllers['time'] =
+                                      value.toString();
+                                });
+                              },
+                            ),
+                            CustomWidget.elevatedButton(
+                              context: context,
+                              enabled: inValidFields.isEmpty,
+                              isLoading: isLoading,
+                              text:
+                                  AppLocalizations.of(context)!.makeAppointment,
+                              onPressed: handleAppointment,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

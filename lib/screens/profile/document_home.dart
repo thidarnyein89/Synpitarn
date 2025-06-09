@@ -11,7 +11,7 @@ import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/services/language_service.dart';
 import 'package:synpitarn/services/route_service.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:synpitarn/l10n/app_localizations.dart';
 
 class DocumentHomePage extends StatefulWidget {
   const DocumentHomePage({super.key});
@@ -20,7 +20,7 @@ class DocumentHomePage extends StatefulWidget {
   DocumentHomeState createState() => DocumentHomeState();
 }
 
-class DocumentHomeState extends State<DocumentHomePage>  {
+class DocumentHomeState extends State<DocumentHomePage> {
   final PageController _pageController = PageController();
   User loginUser = User.defaultUser();
   List<StepData> stepList = [];
@@ -51,11 +51,7 @@ class DocumentHomeState extends State<DocumentHomePage>  {
     return Scaffold(
       appBar: PageAppBar(title: AppLocalizations.of(context)!.documents),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            createProfileCard()
-          ],
-        ),
+        child: Column(children: [createProfileCard()]),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: ConstantData.HOME_INDEX,
@@ -110,7 +106,7 @@ class DocumentHomeState extends State<DocumentHomePage>  {
                           LanguageService.translateKey(context, item.text),
                           textAlign: TextAlign.center,
                           style: CustomStyle.body(),
-                        )
+                        ),
                       ],
                     ),
                   ),
