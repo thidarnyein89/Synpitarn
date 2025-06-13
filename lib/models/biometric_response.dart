@@ -20,8 +20,12 @@ class BiometricResponse {
   factory BiometricResponse.fromJson(Map<String, dynamic> json) {
     Biometric biometric = Biometric.defaultBiometric();
 
-    if (json.containsKey("data")) {
-      biometric = Biometric.fromJson(json["data"]);
+    final data = json['data'];
+
+    if (data is Map<String, dynamic>) {
+      biometric = Biometric.fromJson(data);
+    } else {
+      print("Warning: 'data' is not an object. Defaulting biometric.");
     }
 
     return BiometricResponse(

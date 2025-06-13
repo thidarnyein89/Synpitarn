@@ -2,21 +2,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/data/loan_status.dart';
-import 'package:synpitarn/data/shared_rsa_value.dart';
 import 'package:synpitarn/data/shared_value.dart';
-import 'package:synpitarn/models/biometric.dart';
-import 'package:synpitarn/models/biometric_response.dart';
 import 'package:synpitarn/models/loan.dart';
 import 'package:synpitarn/models/loan_application_response.dart';
 import 'package:synpitarn/models/loan_response.dart';
 import 'package:synpitarn/models/loan_schedule.dart';
 import 'package:synpitarn/models/user.dart';
-import 'package:synpitarn/repositories/biometric_repository.dart';
 import 'package:synpitarn/repositories/loan_repository.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/screens/components/qr_dialog.dart';
 import 'package:synpitarn/screens/loan/loan_history.dart';
-import 'package:synpitarn/screens/loan/repayment_list.dart';
 import 'package:synpitarn/screens/profile/document_home.dart';
 import 'package:synpitarn/screens/profile/profile_home.dart';
 import 'package:synpitarn/screens/setting/about_us.dart';
@@ -33,9 +28,6 @@ import 'package:synpitarn/services/language_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/models/qrcode.dart';
 import 'package:synpitarn/l10n/app_localizations.dart';
-import 'package:local_auth/local_auth.dart';
-import 'package:lottie/lottie.dart';
-import 'package:synpitarn/util/rsaUtil.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -45,8 +37,6 @@ class HomePage extends StatefulWidget {
 }
 
 class HomeState extends State<HomePage> {
-  final LocalAuthentication auth = LocalAuthentication();
-
   final ScrollController _scrollController = ScrollController();
   final CommonService _commonService = CommonService();
   final PageController _pageController = PageController();
@@ -112,8 +102,6 @@ class HomeState extends State<HomePage> {
 
     getApplicationData();
     getLoanHistory();
-
-    createBiometricDialog(context);
   }
 
   Future<void> getApplicationData() async {
@@ -268,160 +256,6 @@ class HomeState extends State<HomePage> {
     );
     isLoading = false;
     setState(() {});
-  }
-
-  Future<void> handleBiometricRegister() async {
-    Biometric biometric = Biometric.defaultBiometric();
-    biometric.publicKey = await getPublicKey();
-
-    BiometricResponse biometricResponse = await BiometricRepository().register(
-      biometric,
-      loginUser,
-    );
-
-    if (biometricResponse.response.code != 200) {
-      String msg = biometricResponse.response.message.toLowerCase();
-      showErrorDialog(msg);
-    } else {
-      await setBiometricUUID(biometricResponse.data.biometricUuid);
-      await setNeedBiometricLogin(false);
-      print("Successfully Biometric Register");
-    }
-  }
-
-  Future<void> createBiometricDialog(BuildContext context) async {
-    bool need = await getNeedBiometricLogin();
-    if (!need) {
-      return;
-    }
-
-    bool isBiometricSupported = await auth.canCheckBiometrics;
-    bool isDeviceSupported = await auth.isDeviceSupported();
-    String authState = "initial";
-
-    if (!isBiometricSupported || !isDeviceSupported) {
-      print("Biometric authentication not available");
-      return;
-    }
-
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-      ),
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            Future<void> biometricAuthenticate() async {
-              try {
-                bool didAuthenticate = await auth.authenticate(
-                  localizedReason: 'Please authenticate to continue',
-                  options: const AuthenticationOptions(
-                    biometricOnly: true,
-                    stickyAuth: true,
-                  ),
-                );
-
-                if (didAuthenticate) {
-                  print("Authenticated successfully!");
-                  handleBiometricRegister();
-                  setState(() => authState = "success");
-                } else {
-                  print("Authentication failed");
-                  setState(() => authState = "failed");
-                }
-              } catch (e) {
-                print("Error during authentication: $e");
-                setState(() => authState = "failed");
-              }
-            }
-
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-                top: 20,
-                left: 20,
-                right: 20,
-              ),
-              child: Wrap(
-                children: [
-                  Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          'Is this your personal device?',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          "We will remember you next time login",
-                          style: const TextStyle(color: Colors.black54),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 30),
-                        SizedBox(
-                          width: 100,
-                          height: 100,
-                          child: Builder(
-                            builder: (_) {
-                              if (authState == "success") {
-                                final AnimationController controller =
-                                    AnimationController(
-                                      vsync: Navigator.of(context),
-                                    );
-                                return Lottie.asset(
-                                  'assets/lottie/success.json',
-                                  controller: controller,
-                                  onLoaded: (composition) {
-                                    controller.duration = composition.duration;
-                                    controller.forward();
-                                    controller.addStatusListener((status) {
-                                      if (status == AnimationStatus.completed) {
-                                        Navigator.pop(context);
-                                      }
-                                    });
-                                  },
-                                );
-                              } else if (authState == "failed") {
-                                return Lottie.asset(
-                                  'assets/lottie/fail.json',
-                                  repeat: false,
-                                );
-                              } else {
-                                return Icon(
-                                  Icons.fingerprint,
-                                  size: 50,
-                                  color: CustomStyle.primary_color,
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 30),
-                        CustomWidget.elevatedButton(
-                          context: context,
-                          enabled: true,
-                          isLoading: false,
-                          text: "YES",
-                          onPressed: biometricAuthenticate,
-                        ),
-                        const SizedBox(height: 10),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
   }
 
   @override

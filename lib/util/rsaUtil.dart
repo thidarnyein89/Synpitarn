@@ -1,5 +1,8 @@
 // ignore_for_file: file_names
 
+import 'dart:convert';
+
+import 'package:convert/convert.dart';
 import 'dart:typed_data';
 import 'package:pointycastle/export.dart';
 import 'package:basic_utils/basic_utils.dart';
@@ -41,6 +44,10 @@ bool rsaVerify(Uint8List data, Uint8List signature, RSAPublicKey publicKey) {
 }
 
 Future<void> runRSAKeyGenerator() async {
+  if (await getPrivateKey() != "") {
+    return;
+  }
+
   final pair = generateRSAKeyPair();
   final privateKey = pair.privateKey;
   final publicKey = pair.publicKey;
@@ -50,12 +57,23 @@ Future<void> runRSAKeyGenerator() async {
 
   final publicPEM = CryptoUtils.encodeRSAPublicKeyToPem(publicKey);
   await setPublicKey(publicPEM);
+}
 
-  // final message = utf8.encode("Hello, RSA!");
-  // final messageBytes = Uint8List.fromList(message);
+Future<void> runRSASignatureGenerator(String challenge) async {
+  final privatePem = await getPrivateKey();
+  final publicPem = await getPublicKey();
 
-  // final signature = rsaSign(messageBytes, privateKey);
-  // final isValid = rsaVerify(messageBytes, signature, publicKey);
+  final privateKey = CryptoUtils.rsaPrivateKeyFromPem(privatePem);
+  final publicKey = CryptoUtils.rsaPublicKeyFromPem(publicPem);
 
-  // await setSignature(hex.encode(signature));
+  final messageBytes = Uint8List.fromList(utf8.encode(challenge));
+
+  final signature = rsaSign(messageBytes, privateKey);
+  final isValid = rsaVerify(messageBytes, signature, publicKey);
+
+  if (isValid) {
+    await setSignature(base64Encode(signature));
+  } else {
+    throw Exception("RSA Signature verification failed");
+  }
 }

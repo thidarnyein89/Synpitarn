@@ -59,6 +59,9 @@ class AppLocalizationsTh extends AppLocalizations {
   String get basicInformation => 'ข้อมูลพื้นฐาน';
 
   @override
+  String get biometric => 'ไบโอเมตริก';
+
+  @override
   String get branchAppointment => 'การนัดหมายเพื่อไปที่สาขา Sinpyitan';
 
   @override

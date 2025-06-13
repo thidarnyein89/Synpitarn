@@ -193,6 +193,12 @@ abstract class AppLocalizations {
   /// **'Basic Information'**
   String get basicInformation;
 
+  /// No description provided for @biometric.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric'**
+  String get biometric;
+
   /// No description provided for @branchAppointment.
   ///
   /// In en, this message translates to:

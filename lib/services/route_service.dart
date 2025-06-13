@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:synpitarn/data/shared_rsa_value.dart';
 import 'package:synpitarn/main.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/data/shared_value.dart';
@@ -19,9 +20,7 @@ class RouteService {
     "customer_information": DocumentFilePage(),
     "required_documents": Information2Page(),
     "additional_information": LoanTypePage(),
-    "choose_loan_type": InterviewAppointmentPage(
-      applicationData: null,
-    ),
+    "choose_loan_type": InterviewAppointmentPage(applicationData: null),
   };
 
   static Future<void> login(BuildContext context, User loginUser) async {
@@ -41,10 +40,7 @@ class RouteService {
   }
 
   static void goToNavigator(BuildContext context, Widget page) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => page),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 
   static void goToReplaceNavigator(BuildContext context, Widget page) {
@@ -66,7 +62,7 @@ class RouteService {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => HomePage()),
-          (Route<dynamic> route) => false,
+      (Route<dynamic> route) => false,
     );
   }
 }
