@@ -1,18 +1,25 @@
+import 'dart:io';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/language.dart';
 import 'package:synpitarn/screens/auth/login.dart';
 import 'package:synpitarn/screens/auth/register.dart';
-import 'package:synpitarn/screens/components/language_dropdown.dart';
 import 'package:synpitarn/screens/home.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:synpitarn/l10n/app_localizations.dart';
+import 'package:synpitarn/services/firebase_service.dart';
 import 'package:synpitarn/util/rsaUtil.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 
   Future.microtask(() {
@@ -33,12 +40,16 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late Future<bool> _loginStatusFuture;
 
-  Locale? currentLocale = Locale(LanguageType.my.toString());
+  Locale? currentLocale = Locale(LanguageType.my.toString())!;
+  // String? _token;
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
     super.initState();
     getInitData();
+    FirebaseService().init();
   }
 
   Future<void> getInitData() async {
@@ -134,18 +145,18 @@ class _MainPageState extends State<MainPage> {
       body: SafeArea(
         child: Stack(
           children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: LanguageDropdown(
-                  selectedLocale: currentLocale!,
-                  onLanguageChanged: (locale) {
-                    widget.onLanguageChanged!(locale);
-                  },
-                ),
-              ),
-            ),
+            // Align(
+            //   alignment: Alignment.topRight,
+            //   child: Padding(
+            //     padding: const EdgeInsets.all(12.0),
+            //     child: LanguageDropdown(
+            //       selectedLocale: currentLocale,
+            //       onLanguageChanged: (locale) {
+            //         widget.onLanguageChanged!(locale);
+            //       },
+            //     ),
+            //   ),
+            // ),
             Center(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),

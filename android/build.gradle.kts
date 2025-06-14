@@ -1,3 +1,14 @@
+buildscript {
+    repositories {
+        google()  // Required for google-services plugin
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.android.tools.build:gradle:8.10.0") // or whatever is latest/used
+        classpath("com.google.gms:google-services:4.4.1")
+    }
+}
+
 allprojects {
     repositories {
         google()

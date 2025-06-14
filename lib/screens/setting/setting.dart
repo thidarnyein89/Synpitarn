@@ -12,9 +12,12 @@ import 'package:synpitarn/screens/location/branch.dart';
 import 'package:synpitarn/screens/setting/about_us.dart';
 import 'package:synpitarn/screens/setting/call_center.dart';
 import 'package:synpitarn/screens/setting/guide.dart';
+import 'package:synpitarn/screens/videocall/admin_screen.dart';
+import 'package:synpitarn/screens/videocall/video_call_screen.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:synpitarn/l10n/app_localizations.dart';
+import 'package:synpitarn/services/firebase_service.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -127,6 +130,27 @@ class SettingState extends State<SettingPage> {
           Icons.money,
           AppLocalizations.of(context)!.nearestATM,
           () => {},
+        ),
+      ],
+    );
+  }
+
+  Widget createVcallSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildSettingTile(
+          Icons.video_call,
+          'Video Call',
+          () => {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => VideoCallScreen(channelId: 'kyawgyi'),
+              ),
+            ),
+            // FCMService().init(),
+          },
         ),
       ],
     );
@@ -265,6 +289,7 @@ class SettingState extends State<SettingPage> {
                         children: [
                           createUserInfoSection(),
                           createSettingSection(),
+                          createVcallSection(),
                           createLocationSection(),
                           createHelpSection(),
                           CustomWidget.verticalSpacing(),
