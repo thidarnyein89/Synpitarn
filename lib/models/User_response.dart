@@ -14,13 +14,14 @@ class UserResponse {
     required this.data,
   });
 
-  factory UserResponse.userResponseFromJson(String str) => UserResponse.fromJson(json.decode(str));
+  factory UserResponse.userResponseFromJson(String str) =>
+      UserResponse.fromJson(json.decode(str));
 
   factory UserResponse.fromJson(Map<String, dynamic> json) {
     User user = User.defaultUser();
 
-    if(json.containsKey("data")) {
-      if(json["data"] is int) {
+    if (json.containsKey("data")) {
+      if (json["data"] is int) {
         user.code = json["data"].toString();
       } else if (json["data"] is! List<dynamic>) {
         user = User.fromJson(json["data"]);
@@ -34,7 +35,3 @@ class UserResponse {
     );
   }
 }
-
-
-
-

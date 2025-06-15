@@ -59,6 +59,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get basicInformation => 'Basic Information';
 
   @override
+  String get biometric => 'Biometric';
+
+  @override
   String get branchAppointment => 'Branch Appointment';
 
   @override

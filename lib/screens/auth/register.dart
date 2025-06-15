@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/data/shared_rsa_value.dart';
 import 'package:synpitarn/models/User_response.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
@@ -167,6 +168,11 @@ class _RegisterPageState extends State<RegisterPage> {
         phoneError = otpResponse.response.message;
       } else {
         user.code = otpResponse.data.code;
+
+        await removeBiometricUUID();
+        await removeSignature();
+        await removeBiometricLogin();
+
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => OTPPage(loginUser: user)),

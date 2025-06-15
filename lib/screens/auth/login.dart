@@ -7,9 +7,9 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/screens/auth/register.dart';
 import 'package:synpitarn/screens/auth/forget_password.dart';
+import 'package:synpitarn/screens/auth/biometric_helper.dart';
 import 'package:synpitarn/l10n/app_localizations.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:lottie/lottie.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -35,7 +35,7 @@ class LoginState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    checkBiometricAvailable();
+    createBiometricDialog(context);
     phoneController.addListener(_validatePhoneValue);
     pinController.addListener(_validatePinValue);
   }
@@ -45,148 +45,6 @@ class LoginState extends State<LoginPage> {
     phoneController.dispose();
     pinController.dispose();
     super.dispose();
-  }
-
-  checkBiometricAvailable() async {
-    bool biometricAvailable = await auth.canCheckBiometrics;
-    if (biometricAvailable) {
-      createBiometricDialog(context);
-    }
-  }
-
-  Future<void> createBiometricDialog(BuildContext context) async {
-    String authState = "initial";
-
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-      ),
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            // State: "initial", "success", "failed"
-
-            Future<void> biometricAuthenticate() async {
-              try {
-                bool isBiometricSupported = await auth.canCheckBiometrics;
-                bool isDeviceSupported = await auth.isDeviceSupported();
-
-                if (!isBiometricSupported || !isDeviceSupported) {
-                  print("Biometric authentication not available");
-                  setState(() => authState = "failed");
-                  return;
-                }
-
-                bool didAuthenticate = await auth.authenticate(
-                  localizedReason: 'Please authenticate to continue',
-                  options: const AuthenticationOptions(
-                    biometricOnly: true,
-                    stickyAuth: true,
-                  ),
-                );
-
-                if (didAuthenticate) {
-                  print("Authenticated successfully!");
-                  setState(() => authState = "success");
-                } else {
-                  print("Authentication failed");
-                  setState(() => authState = "failed");
-                }
-              } catch (e) {
-                print("Error during authentication: $e");
-                setState(() => authState = "failed");
-              }
-            }
-
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-                top: 20,
-                left: 20,
-                right: 20,
-              ),
-              child: Wrap(
-                children: [
-                  Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          'Quick and Easier Login',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          "Place your finger on fingerprint button to log in",
-                          style: const TextStyle(color: Colors.black54),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 30),
-                        GestureDetector(
-                          onTap: biometricAuthenticate,
-                          child: SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: Builder(
-                              builder: (_) {
-                                if (authState == "success") {
-                                  final AnimationController controller =
-                                      AnimationController(
-                                        vsync: Navigator.of(context),
-                                      );
-                                  return Lottie.asset(
-                                    'assets/lottie/success.json',
-                                    controller: controller,
-                                    onLoaded: (composition) {
-                                      controller.duration =
-                                          composition.duration;
-                                      controller.forward();
-                                      controller.addStatusListener((status) {
-                                        if (status ==
-                                            AnimationStatus.completed) {
-                                          Navigator.pop(context);
-                                        }
-                                      });
-                                    },
-                                  );
-                                } else if (authState == "failed") {
-                                  return Lottie.asset(
-                                    'assets/lottie/fail.json',
-                                    repeat: false,
-                                  );
-                                } else {
-                                  return Icon(
-                                    Icons.fingerprint,
-                                    size: 50,
-                                    color: CustomStyle.primary_color,
-                                  );
-                                }
-                              },
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 50),
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('CANCEL'),
-                        ),
-                        const SizedBox(height: 10),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
   }
 
   void _validatePhoneValue() {

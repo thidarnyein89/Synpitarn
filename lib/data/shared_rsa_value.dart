@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> setPrivateKey(String privateKey) async {
@@ -30,6 +28,21 @@ Future<void> removePublicKey() async {
 Future<String> getPublicKey() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   return prefs.getString('publicKey') ?? "";
+}
+
+Future<void> setBiometricUserID(String userID) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('biometricUserID', userID);
+}
+
+Future<void> removeBiometricUserID() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.remove('biometricUserID');
+}
+
+Future<String> getBiometricUserID() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('biometricUserID') ?? "";
 }
 
 Future<void> setBiometricUUID(String biometricUUID) async {
@@ -65,6 +78,11 @@ Future<String> getSignature() async {
 Future<void> setNeedBiometricLogin(bool need) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setBool('needBiometricLogin', need);
+}
+
+Future<void> removeBiometricLogin() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.remove('needBiometricLogin');
 }
 
 Future<bool> getNeedBiometricLogin() async {

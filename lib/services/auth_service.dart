@@ -5,11 +5,9 @@ import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/services/route_service.dart';
 
 class AuthService {
-  void logout(BuildContext context) {
+  Future<void> logout(BuildContext context) async {
     setLoginUser(User.defaultUser());
     setLoginStatus(false);
-
-    setNeedBiometricLogin(true);
 
     RouteService.goToMain(context);
   }

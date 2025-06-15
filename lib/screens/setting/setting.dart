@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/data/language.dart';
+import 'package:synpitarn/data/shared_rsa_value.dart';
 import 'package:synpitarn/main.dart';
 import 'package:synpitarn/screens/components/bottom_navigation_bar.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
@@ -12,12 +13,11 @@ import 'package:synpitarn/screens/location/branch.dart';
 import 'package:synpitarn/screens/setting/about_us.dart';
 import 'package:synpitarn/screens/setting/call_center.dart';
 import 'package:synpitarn/screens/setting/guide.dart';
-import 'package:synpitarn/screens/videocall/admin_screen.dart';
 import 'package:synpitarn/screens/videocall/video_call_screen.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:synpitarn/l10n/app_localizations.dart';
-import 'package:synpitarn/services/firebase_service.dart';
+import 'package:synpitarn/screens/auth/biometric_helper.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -30,6 +30,7 @@ class SettingState extends State<SettingPage> {
   User loginUser = User.defaultUser();
   late PackageInfo packageInfo;
 
+  bool biometricEnabled = false;
   bool isPageLoading = true;
 
   @override
@@ -49,6 +50,14 @@ class SettingState extends State<SettingPage> {
 
     loginUser = await getLoginUser();
     packageInfo = await PackageInfo.fromPlatform();
+
+    bool needBiometricLogin = await getNeedBiometricLogin();
+    String biometricUserID = await getBiometricUserID();
+    if (needBiometricLogin && biometricUserID == loginUser.id.toString()) {
+      biometricEnabled = true;
+    } else {
+      biometricEnabled = false;
+    }
 
     isPageLoading = false;
     setState(() {});
@@ -107,6 +116,7 @@ class SettingState extends State<SettingPage> {
           AppLocalizations.of(context)!.changeLanguage,
           showLanguageDialog,
         ),
+        createBiometricSetting(),
       ],
     );
   }
@@ -146,7 +156,7 @@ class SettingState extends State<SettingPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => VideoCallScreen(channelId: 'kyawgyi'),
+                builder: (context) => VideoCallScreen(channelId: 'synpitarn'),
               ),
             ),
             // FCMService().init(),
@@ -333,6 +343,50 @@ class SettingState extends State<SettingPage> {
             Icon(Icons.arrow_forward_ios, size: 16),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget createBiometricSetting() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 12),
+      child: Row(
+        children: [
+          Icon(Icons.fingerprint_outlined, size: 24),
+          SizedBox(width: 16),
+          Expanded(child: Text(AppLocalizations.of(context)!.biometric)),
+          SwitchTheme(
+            data: SwitchThemeData(
+              trackOutlineColor: WidgetStatePropertyAll(
+                biometricEnabled ? CustomStyle.primary_color : Colors.grey,
+              ),
+            ),
+            child: Transform.scale(
+              scale: 0.8,
+              child: Switch(
+                value: biometricEnabled,
+                onChanged: (value) async {
+                  setState(() {
+                    biometricEnabled = value;
+                  });
+
+                  await removeBiometricUserID();
+                  await removeBiometricUUID();
+                  if (biometricEnabled) {
+                    await setNeedBiometricLogin(true);
+                    createBiometricDialog(context);
+                  } else {
+                    await setNeedBiometricLogin(false);
+                  }
+                },
+                activeTrackColor: CustomStyle.primary_color,
+                activeColor: Colors.white,
+                inactiveThumbColor: Colors.white,
+                inactiveTrackColor: Colors.grey,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

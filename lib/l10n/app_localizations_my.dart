@@ -59,6 +59,9 @@ class AppLocalizationsMy extends AppLocalizations {
   String get basicInformation => 'အခြေခံအချက်အလက်';
 
   @override
+  String get biometric => 'ဘိုင်အိုမက်ထရစ်';
+
+  @override
   String get branchAppointment => 'ဆင်ပိတန် ရုံးခွဲသို့သွားရန် ချိန်းဆိုခြင်း';
 
   @override
