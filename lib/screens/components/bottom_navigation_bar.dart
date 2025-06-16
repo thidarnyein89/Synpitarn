@@ -43,6 +43,8 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   }
 
   Future<void> _onItemTapped(int index) async {
+    if (index == widget.selectedIndex) return;
+
     User loginUser = await getLoginUser();
 
     widget.onItemTapped(index);

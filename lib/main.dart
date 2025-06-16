@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/language.dart';
+import 'package:synpitarn/data/shared_rsa_value.dart';
 import 'package:synpitarn/screens/auth/login.dart';
 import 'package:synpitarn/screens/auth/register.dart';
 import 'package:synpitarn/screens/home.dart';
@@ -37,8 +38,10 @@ class MyApp extends StatefulWidget {
   }
 }
 
+enum AppStartStatus { loggedIn, needBiometricLogin, notLoggedIn }
+
 class _MyAppState extends State<MyApp> {
-  late Future<bool> _loginStatusFuture;
+  late Future<AppStartStatus> _loginStatusFuture;
 
   Locale? currentLocale = Locale(LanguageType.my.toString())!;
   // String? _token;
@@ -53,12 +56,26 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> getInitData() async {
-    _loginStatusFuture = getLoginStatus();
+    _loginStatusFuture = checkAppStartStatus();
 
     LanguageType language = await getLanguage();
     currentLocale = Locale(language.name);
 
     setState(() {});
+  }
+
+  Future<AppStartStatus> checkAppStartStatus() async {
+    bool isLoggedIn = await getLoginStatus();
+    if (isLoggedIn) {
+      return AppStartStatus.loggedIn;
+    }
+
+    bool needBiometric = await getNeedBiometricLogin();
+    if (needBiometric) {
+      return AppStartStatus.needBiometricLogin;
+    }
+
+    return AppStartStatus.notLoggedIn;
   }
 
   void changeLanguage(Locale newLocale) {
@@ -89,7 +106,7 @@ class _MyAppState extends State<MyApp> {
       navigatorObservers: [routeObserver],
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Poppins'),
-      home: FutureBuilder<bool>(
+      home: FutureBuilder<AppStartStatus>(
         future: _loginStatusFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -97,14 +114,28 @@ class _MyAppState extends State<MyApp> {
           } else if (snapshot.hasError) {
             return const Center(child: Text('Something went wrong.'));
           } else {
-            return Banner(
-              message: 'Synpitarn',
-              location: BannerLocation.bottomStart,
-              child:
-                  snapshot.data!
-                      ? HomePage()
-                      : MainPage(onLanguageChanged: changeLanguage),
-            );
+            final status = snapshot.data!;
+            switch (status) {
+              case AppStartStatus.loggedIn:
+                return Banner(
+                  message: 'Synpitarn',
+                  location: BannerLocation.bottomStart,
+                  child: HomePage(),
+                );
+              case AppStartStatus.needBiometricLogin:
+                return Banner(
+                  message: 'Synpitarn',
+                  location: BannerLocation.bottomStart,
+                  child: LoginPage(),
+                );
+              case AppStartStatus.notLoggedIn:
+              default:
+                return Banner(
+                  message: 'Synpitarn',
+                  location: BannerLocation.bottomStart,
+                  child: MainPage(onLanguageChanged: changeLanguage),
+                );
+            }
           }
         },
       ),
