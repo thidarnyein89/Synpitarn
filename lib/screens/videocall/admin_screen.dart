@@ -13,58 +13,65 @@ class AdminScreen extends StatefulWidget {
 }
 
 class _AdminScreenState extends State<AdminScreen> {
-  // final TextEditingController _calleeController = TextEditingController();
-  // final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _channelController = TextEditingController();
 
-  // bool _isLoading = false;
+  Future<void> _startCall() async {
+    if (_formKey.currentState!.validate()) {
+      final channelName = _channelController.text.trim();
 
-  // void _startCall() async {
-  //   final calleeId = _calleeController.text.trim();
-  //   if (calleeId.isEmpty) return;
+      // ✅ Go to video call page
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => VideoCallScreen(channelId: channelName),
+        ),
+      );
 
-  //   setState(() => _isLoading = true);
+      // ✅ After coming back from VideoCallScreen
+      _channelController.clear(); // Clear the input field
+    }
+  }
 
-  //   try {
-  //     // Step 1: Generate channelId
-  //     final String channelId = const Uuid().v4();
-  //     final String callerId = 'admin'; // or actual logged-in UID
-
-  //     // Step 2: Save call record in Firestore
-  //     await _firestore.collection('calls').doc(calleeId).set({
-  //       'channelId': channelId,
-  //       'callerId': callerId,
-  //       'status': 'incoming',
-  //       'timestamp': FieldValue.serverTimestamp(),
-  //     });
-
-  //     // Step 3: Send push notification
-  //     await NotificationService.sendIncomingCallNotification(
-  //       calleeId: calleeId,
-  //       channelId: channelId,
-  //       callerId: callerId,
-  //     );
-
-  //     // Step 4: Navigate to VideoCallScreen
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (_) => VideoCallScreen(channelId: channelId),
-  //       ),
-  //     );
-  //   } catch (e) {
-  //     print('❌ Error: $e');
-  //     ScaffoldMessenger.of(
-  //       context,
-  //     ).showSnackBar(SnackBar(content: Text('Failed to start call: $e')));
-  //   } finally {
-  //     setState(() => _isLoading = false);
-  //   }
-  // }
+  @override
+  void dispose() {
+    _channelController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Admin Panel - Start Call')),
+      appBar: AppBar(title: const Text("Enter Channel Name")),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextFormField(
+                controller: _channelController,
+                decoration: const InputDecoration(
+                  labelText: 'Channel Name',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter a channel name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _startCall,
+                child: const Text("Start Call"),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

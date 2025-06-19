@@ -15,7 +15,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   late final RtcEngine _engine;
   int? _remoteUid;
   bool localUserJoined = false;
-
+  bool _remoteUserJoined = false;
   bool _isMuted = false;
   bool _isCameraOff = false;
   bool _isReady = false;
@@ -36,41 +36,60 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   Widget build(BuildContext context) {
     if (!_isReady) return Center(child: CircularProgressIndicator());
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      // appBar: AppBar(
+      //   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
 
-        title: Text('dada'),
-      ),
+      //   title: Text('dada'),
+      // ),
       body: Stack(
         children: [
-          Center(child: _remoteVideo()),
-          Align(
-            alignment: Alignment.topLeft,
-            child: SizedBox(
+          // Center(child: _remoteVideo()),
+          // Align(
+          //   alignment: Alignment.topLeft,
+          //   child: SizedBox(
+          //     width: 120,
+          //     height: 160,
+          //     child:
+          //         _isCameraOff
+          //             ? Container(
+          //               color: Colors.black,
+          //               width: 120,
+          //               height: 160,
+          //               child: Center(
+          //                 child: Icon(Icons.videocam_off, color: Colors.white),
+          //               ),
+          //             )
+          //             : SizedBox(
+          //               width: 120,
+          //               height: 160,
+          //               child: AgoraVideoView(
+          //                 controller: VideoViewController(
+          //                   rtcEngine: _engine!,
+          //                   canvas: const VideoCanvas(uid: 0),
+          //                 ),
+          //               ),
+          //             ),
+          //   ),
+          // ),
+          _remoteUserJoined ? _remoteVideo() : _renderLocalPreview(),
+
+          // Foreground: Small local preview when remote joined
+          if (_remoteUserJoined)
+            Positioned(
+              top: 16,
+              right: 16,
               width: 120,
               height: 160,
-              child:
-                  _isCameraOff
-                      ? Container(
-                        color: Colors.black,
-                        width: 120,
-                        height: 160,
-                        child: Center(
-                          child: Icon(Icons.videocam_off, color: Colors.white),
-                        ),
-                      )
-                      : SizedBox(
-                        width: 120,
-                        height: 160,
-                        child: AgoraVideoView(
-                          controller: VideoViewController(
-                            rtcEngine: _engine!,
-                            canvas: const VideoCanvas(uid: 0),
-                          ),
-                        ),
-                      ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white, width: 2),
+                  ),
+                  child: _renderLocalPreview(),
+                ),
+              ),
             ),
-          ),
           _toolbar(),
         ],
       ),
@@ -117,13 +136,15 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
         onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
           debugPrint("local user ${connection.localUid} joined");
           setState(() {
-            localUserJoined = true;
+            // localUserJoined = true;
+            print("Joined local user: ${connection.localUid}");
           });
         },
         // Occurs when a remote user join the channel
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
           debugPrint("remote user $remoteUid joined");
           setState(() {
+            _remoteUserJoined = true;
             _remoteUid = remoteUid;
           });
         },
@@ -136,6 +157,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
           debugPrint("remote user $remoteUid left channel");
           setState(() {
             _remoteUid = null;
+            _remoteUserJoined = false;
           });
         },
       ),
@@ -143,6 +165,15 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     setState(() {
       _isReady = true;
     });
+  }
+
+  Widget _renderLocalPreview() {
+    return AgoraVideoView(
+      controller: VideoViewController(
+        rtcEngine: _engine,
+        canvas: const VideoCanvas(uid: 0),
+      ),
+    );
   }
 
   // Widget to display remote video

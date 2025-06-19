@@ -9,6 +9,7 @@ import 'package:synpitarn/data/language.dart';
 import 'package:synpitarn/data/shared_rsa_value.dart';
 import 'package:synpitarn/screens/auth/login.dart';
 import 'package:synpitarn/screens/auth/register.dart';
+import 'package:synpitarn/screens/components/language_dropdown.dart';
 import 'package:synpitarn/screens/home.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -181,7 +182,7 @@ class _MainPageState extends State<MainPage> {
             //   child: Padding(
             //     padding: const EdgeInsets.all(12.0),
             //     child: LanguageDropdown(
-            //       selectedLocale: currentLocale,
+            //       selectedLocale: currentLocale!,
             //       onLanguageChanged: (locale) {
             //         widget.onLanguageChanged!(locale);
             //       },

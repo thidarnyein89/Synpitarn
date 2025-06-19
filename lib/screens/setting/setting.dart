@@ -13,6 +13,7 @@ import 'package:synpitarn/screens/location/branch.dart';
 import 'package:synpitarn/screens/setting/about_us.dart';
 import 'package:synpitarn/screens/setting/call_center.dart';
 import 'package:synpitarn/screens/setting/guide.dart';
+import 'package:synpitarn/screens/videocall/admin_screen.dart';
 import 'package:synpitarn/screens/videocall/video_call_screen.dart';
 import 'package:synpitarn/services/auth_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -155,9 +156,7 @@ class SettingState extends State<SettingPage> {
           () => {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => VideoCallScreen(channelId: 'synpitarn'),
-              ),
+              MaterialPageRoute(builder: (context) => AdminScreen()),
             ),
             // FCMService().init(),
           },
