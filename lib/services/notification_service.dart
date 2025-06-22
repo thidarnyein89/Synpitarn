@@ -34,7 +34,9 @@ class NotificationService {
           onAccept: () {
             navigatorKey.currentState?.push(
               MaterialPageRoute(
-                builder: (_) => VideoCallScreen(channelId: data['channel']),
+                builder:
+                    (_) =>
+                        VideoCallScreen(channelId: data['channel'], token: ''),
               ),
             );
           },

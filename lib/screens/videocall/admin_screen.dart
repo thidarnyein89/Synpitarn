@@ -15,16 +15,18 @@ class AdminScreen extends StatefulWidget {
 class _AdminScreenState extends State<AdminScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _channelController = TextEditingController();
+  final TextEditingController _tokenController = TextEditingController();
 
   Future<void> _startCall() async {
     if (_formKey.currentState!.validate()) {
       final channelName = _channelController.text.trim();
+      final token = _tokenController.text.trim();
 
       // ✅ Go to video call page
       await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => VideoCallScreen(channelId: channelName),
+          builder: (_) => VideoCallScreen(channelId: channelName, token: token),
         ),
       );
 
@@ -59,6 +61,20 @@ class _AdminScreenState extends State<AdminScreen> {
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Please enter a channel name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: _tokenController,
+                decoration: const InputDecoration(
+                  labelText: 'Token',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter token';
                   }
                   return null;
                 },

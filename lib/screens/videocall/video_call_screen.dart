@@ -4,8 +4,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:synpitarn/util/constant.dart';
 
 class VideoCallScreen extends StatefulWidget {
-  const VideoCallScreen({super.key, required this.channelId});
+  const VideoCallScreen({
+    super.key,
+    required this.channelId,
+    required this.token,
+  });
   final String channelId;
+  final String token;
 
   @override
   State<VideoCallScreen> createState() => _VideoCallScreenState();
@@ -112,7 +117,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     await _engine?.startPreview();
     await _engine?.joinChannel(
       // Join a channel using a temporary token and channel name
-      token: token,
+      token: widget.token,
       channelId: widget.channelId,
       options: const ChannelMediaOptions(
         // Automatically subscribe to all video streams
