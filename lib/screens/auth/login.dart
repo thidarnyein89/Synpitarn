@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/custom_style.dart';
+import 'package:synpitarn/data/shared_rsa_value.dart';
+import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/models/User_response.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
@@ -35,7 +37,7 @@ class LoginState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    createBiometricDialog(context);
+    getInitData();
     phoneController.addListener(_validatePhoneValue);
     pinController.addListener(_validatePinValue);
   }
@@ -45,6 +47,13 @@ class LoginState extends State<LoginPage> {
     phoneController.dispose();
     pinController.dispose();
     super.dispose();
+  }
+
+  Future<void> getInitData() async {
+    User loginUser = await getLoginUser();
+    if (loginUser.phoneNumber != "") {
+      phoneController.text = loginUser.phoneNumber;
+    }
   }
 
   void _validatePhoneValue() {
@@ -190,6 +199,17 @@ class LoginState extends State<LoginPage> {
                         ),
                       ),
                       CustomWidget.verticalSpacing(),
+                      CustomWidget.verticalSpacing(),
+                      GestureDetector(
+                        onTap: () {
+                          createBiometricDialog(context);
+                        },
+                        child: Icon(
+                          Icons.fingerprint,
+                          size: 48.0,
+                          color: CustomStyle.primary_color,
+                        ),
+                      ),
                     ],
                   ),
                 ),

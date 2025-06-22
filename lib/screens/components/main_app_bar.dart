@@ -42,12 +42,10 @@ class MainAppBarState extends State<MainAppBar> {
 
       if (notificationResponse.response.code == 200) {
         _notificationCount = notificationResponse.data;
-      }
-      else if(notificationResponse.response.code == 403) {
+      } else if (notificationResponse.response.code == 403) {
         await showErrorDialog(notificationResponse.response.message);
         AuthService().logout(context);
-      }
-      else {
+      } else {
         showErrorDialog(notificationResponse.response.message);
       }
       setState(() {});
@@ -55,7 +53,10 @@ class MainAppBarState extends State<MainAppBar> {
   }
 
   Future<void> showErrorDialog(String errorMessage) async {
-    await CustomWidget.showDialogWithoutStyle(context: context, msg: errorMessage);
+    await CustomWidget.showDialogWithoutStyle(
+      context: context,
+      msg: errorMessage,
+    );
   }
 
   @override
