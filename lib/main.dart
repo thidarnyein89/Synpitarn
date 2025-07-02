@@ -1,27 +1,26 @@
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:synpitarn/data/custom_style.dart';
 import 'package:synpitarn/data/language.dart';
 import 'package:synpitarn/data/shared_rsa_value.dart';
 import 'package:synpitarn/screens/auth/login.dart';
 import 'package:synpitarn/screens/auth/register.dart';
-import 'package:synpitarn/screens/components/language_dropdown.dart';
 import 'package:synpitarn/screens/home.dart';
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:synpitarn/l10n/app_localizations.dart';
-import 'package:synpitarn/services/firebase_service.dart';
+import 'package:synpitarn/services/notification_service.dart';
 import 'package:synpitarn/util/rsaUtil.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
-
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await NotificationService.initializeFCM(clientId: '1559');
   runApp(MyApp());
 
   Future.microtask(() {
@@ -45,15 +44,12 @@ class _MyAppState extends State<MyApp> {
   late Future<AppStartStatus> _loginStatusFuture;
 
   Locale? currentLocale = Locale(LanguageType.my.toString())!;
-  // String? _token;
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
     super.initState();
     getInitData();
-    FirebaseService().init();
+    printDeviceInfo();
   }
 
   Future<void> getInitData() async {
@@ -63,6 +59,28 @@ class _MyAppState extends State<MyApp> {
     currentLocale = Locale(language.name);
 
     setState(() {});
+  }
+
+  Future<void> printDeviceInfo() async {
+    if (!Platform.isAndroid && !Platform.isIOS) {
+      print('❌ Device info not supported on this platform.');
+      return;
+    }
+
+    final deviceInfoPlugin = DeviceInfoPlugin();
+
+    if (Platform.isAndroid) {
+      final android = await deviceInfoPlugin.androidInfo;
+      print("✅ Android Device Info:");
+      print("Model: ${android.name}");
+      print("DeviceId: ${android.id}");
+      print("OS Version: ${android.version.release}");
+    } else if (Platform.isIOS) {
+      final ios = await deviceInfoPlugin.iosInfo;
+      print("✅ iOS Device Info:");
+      print("Model: ${ios.model}");
+      print("OS Version: ${ios.systemVersion}");
+    }
   }
 
   Future<AppStartStatus> checkAppStartStatus() async {
@@ -107,6 +125,7 @@ class _MyAppState extends State<MyApp> {
       navigatorObservers: [routeObserver],
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Poppins'),
+      navigatorKey: navigatorKey,
       home: FutureBuilder<AppStartStatus>(
         future: _loginStatusFuture,
         builder: (context, snapshot) {

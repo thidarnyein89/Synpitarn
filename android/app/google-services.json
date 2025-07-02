@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "619236238957",
-    "project_id": "fluttter-vcall",
-    "storage_bucket": "fluttter-vcall.firebasestorage.app"
+    "project_number": "106441364474",
+    "project_id": "synpitarn-b1458",
+    "storage_bucket": "synpitarn-b1458.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:619236238957:android:e4c291efaa6ea9837d8164",
+        "mobilesdk_app_id": "1:106441364474:android:187cc80131d8210c0e4a43",
         "android_client_info": {
           "package_name": "com.example.synpitarn"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDvQSL-Wilqq3nWN_OxVSD_j_IEuWnoSVU"
+          "current_key": "AIzaSyA8Q8IqB8TU6tur_2J_fQVnEY83djbCrIY"
         }
       ],
       "services": {

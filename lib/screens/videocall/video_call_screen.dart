@@ -8,9 +8,11 @@ class VideoCallScreen extends StatefulWidget {
     super.key,
     required this.channelId,
     required this.token,
+    required this.callerId,
   });
   final String channelId;
   final String token;
+  final String callerId;
 
   @override
   State<VideoCallScreen> createState() => _VideoCallScreenState();
@@ -22,6 +24,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   bool localUserJoined = false;
   bool _remoteUserJoined = false;
   bool _isMuted = false;
+  bool _isSpeakerOn = true;
   bool _isCameraOff = false;
   bool _isReady = false;
 
@@ -41,48 +44,13 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   Widget build(BuildContext context) {
     if (!_isReady) return Center(child: CircularProgressIndicator());
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
-      //   title: Text('dada'),
-      // ),
       body: Stack(
         children: [
-          // Center(child: _remoteVideo()),
-          // Align(
-          //   alignment: Alignment.topLeft,
-          //   child: SizedBox(
-          //     width: 120,
-          //     height: 160,
-          //     child:
-          //         _isCameraOff
-          //             ? Container(
-          //               color: Colors.black,
-          //               width: 120,
-          //               height: 160,
-          //               child: Center(
-          //                 child: Icon(Icons.videocam_off, color: Colors.white),
-          //               ),
-          //             )
-          //             : SizedBox(
-          //               width: 120,
-          //               height: 160,
-          //               child: AgoraVideoView(
-          //                 controller: VideoViewController(
-          //                   rtcEngine: _engine!,
-          //                   canvas: const VideoCanvas(uid: 0),
-          //                 ),
-          //               ),
-          //             ),
-          //   ),
-          // ),
           _remoteUserJoined ? _remoteVideo() : _renderLocalPreview(),
-
-          // Foreground: Small local preview when remote joined
           if (_remoteUserJoined)
             Positioned(
               top: 16,
-              right: 16,
+              left: 16,
               width: 120,
               height: 160,
               child: ClipRRect(
@@ -95,6 +63,19 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                 ),
               ),
             ),
+          Positioned(
+            top: 30,
+            right: 16,
+            child: CircleAvatar(
+              backgroundColor: Colors.grey.shade800,
+              child: IconButton(
+                icon: const Icon(Icons.cameraswitch, color: Colors.white),
+                onPressed: () {
+                  _engine.switchCamera();
+                },
+              ),
+            ),
+          ),
           _toolbar(),
         ],
       ),
@@ -105,17 +86,17 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     await [Permission.microphone, Permission.camera].request();
     _engine = createAgoraRtcEngine();
     // Initialize RtcEngine and set the channel profile to communication
-    await _engine?.initialize(
+    await _engine.initialize(
       const RtcEngineContext(
         appId: appId,
         channelProfile: ChannelProfileType.channelProfileCommunication,
       ),
     );
     // Enable the video module
-    await _engine?.enableVideo();
+    await _engine.enableVideo();
     // Enable local video preview
-    await _engine?.startPreview();
-    await _engine?.joinChannel(
+    await _engine.startPreview();
+    await _engine.joinChannel(
       // Join a channel using a temporary token and channel name
       token: widget.token,
       channelId: widget.channelId,
@@ -173,6 +154,15 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   }
 
   Widget _renderLocalPreview() {
+    if (_isCameraOff) {
+      return Container(
+        color: Colors.black,
+        child: const Center(
+          child: Icon(Icons.videocam_off, color: Colors.white, size: 48),
+        ),
+      );
+    }
+
     return AgoraVideoView(
       controller: VideoViewController(
         rtcEngine: _engine,
@@ -205,46 +195,83 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
       child: Padding(
         padding: const EdgeInsets.only(bottom: 24.0),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+
           children: <Widget>[
-            // Mute/unmute button
-            RawMaterialButton(
-              onPressed: _onToggleMute,
-              child: Icon(
-                _isMuted ? Icons.mic_off : Icons.mic,
-                color: _isMuted ? Colors.white : Colors.blueAccent,
-                size: 20.0,
+            CircleAvatar(
+              backgroundColor: Colors.grey.shade800,
+              radius: 24,
+              child: IconButton(
+                icon: Icon(
+                  _isMuted ? Icons.mic_off : Icons.mic,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isMuted = !_isMuted;
+                  });
+                  _engine.muteLocalAudioStream(_isMuted);
+                },
               ),
-              shape: CircleBorder(),
-              elevation: 2.0,
-              fillColor: _isMuted ? Colors.blueAccent : Colors.white,
-              padding: const EdgeInsets.all(12.0),
             ),
-            // End call button
-            RawMaterialButton(
-              onPressed: _onCallEnd,
-              child: const Icon(
-                Icons.call_end,
-                color: Colors.white,
-                size: 35.0,
+
+            // Speaker Button
+            CircleAvatar(
+              backgroundColor: Colors.grey.shade800,
+              radius: 24,
+              child: IconButton(
+                icon: Icon(
+                  _isSpeakerOn ? Icons.volume_up : Icons.volume_off,
+                  color: Colors.white,
+                ),
+                onPressed: () async {
+                  if (!localUserJoined) {
+                    print("Engine not connected yet.");
+                    return;
+                  }
+                  setState(() {
+                    _isSpeakerOn = !_isSpeakerOn;
+                  });
+                  await _engine.setEnableSpeakerphone(_isSpeakerOn);
+                },
               ),
-              shape: const CircleBorder(),
-              elevation: 2.0,
-              fillColor: Colors.redAccent,
-              padding: const EdgeInsets.all(15.0),
             ),
-            // Camera toggle
-            RawMaterialButton(
-              onPressed: _onToggleCamera,
-              child: Icon(
-                _isCameraOff ? Icons.videocam_off : Icons.videocam,
-                color: _isCameraOff ? Colors.white : Colors.blueAccent,
-                size: 20.0,
+
+            CircleAvatar(
+              backgroundColor: Colors.grey.shade800,
+              radius: 24,
+              child: IconButton(
+                icon: Icon(
+                  _isCameraOff ? Icons.videocam_off : Icons.videocam,
+                  color: Colors.white,
+                ),
+                onPressed: () async {
+                  setState(() {
+                    _isCameraOff = !_isCameraOff;
+                  });
+
+                  if (_isCameraOff) {
+                    await _engine.muteLocalVideoStream(true); // Hide to remote
+                    await _engine.stopPreview(); // Stop preview locally
+                  } else {
+                    await _engine.muteLocalVideoStream(false);
+                    await _engine.startPreview(); // Restart preview
+                  }
+                },
               ),
-              shape: const CircleBorder(),
-              elevation: 2.0,
-              fillColor: _isCameraOff ? Colors.blueAccent : Colors.white,
-              padding: const EdgeInsets.all(12.0),
+            ),
+
+            // End Call
+            CircleAvatar(
+              radius: 24,
+              backgroundColor: Colors.red,
+              child: IconButton(
+                icon: const Icon(Icons.call_end, color: Colors.white),
+                onPressed: () {
+                  _engine.leaveChannel();
+                  Navigator.pop(context);
+                },
+              ),
             ),
           ],
         ),
@@ -252,27 +279,8 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     );
   }
 
-  void _onToggleMute() {
-    setState(() {
-      _isMuted = !_isMuted;
-    });
-    _engine?.muteLocalAudioStream(_isMuted);
-  }
-
-  void _onToggleCamera() {
-    setState(() {
-      _isCameraOff = !_isCameraOff;
-    });
-    _engine?.muteLocalVideoStream(_isCameraOff); // true = camera off
-  }
-
-  void _onCallEnd() {
-    _engine?.leaveChannel();
-    Navigator.pop(context);
-  }
-
   Future<void> _dispose() async {
-    await _engine?.leaveChannel(); // Leave the channel
-    await _engine?.release(); // Release resources
+    await _engine.leaveChannel(); // Leave the channel
+    await _engine.release(); // Release resources
   }
 }

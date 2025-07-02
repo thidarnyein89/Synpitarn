@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:synpitarn/screens/videocall/incoming_call_screen.dart';
 import 'package:synpitarn/screens/videocall/video_call_screen.dart';
 import 'package:synpitarn/services/notification_service.dart';
 import 'package:uuid/uuid.dart';
@@ -26,7 +25,12 @@ class _AdminScreenState extends State<AdminScreen> {
       await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => VideoCallScreen(channelId: channelName, token: token),
+          builder:
+              (_) => VideoCallScreen(
+                channelId: channelName,
+                token: token,
+                callerId: 'Alic',
+              ),
         ),
       );
 
