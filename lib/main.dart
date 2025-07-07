@@ -20,7 +20,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await NotificationService.initializeFCM(clientId: '1559');
+  await NotificationService.initializeFCM();
   runApp(MyApp());
 
   Future.microtask(() {
