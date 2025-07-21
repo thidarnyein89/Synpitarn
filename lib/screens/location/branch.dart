@@ -95,131 +95,131 @@ class BranchState extends State<BranchPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PageAppBar(title: AppLocalizations.of(context)!.branches),
-      // body: Padding(
-      //   padding: const EdgeInsets.all(16),
-      //   child:
-      //       isLoading
-      //           ? CustomWidget.loading()
-      //           : Column(
-      //             children: [
-      //               Expanded(
-      //                 child: ListView.builder(
-      //                   itemCount: branchList?.length,
-      //                   itemBuilder: (context, index) {
-      //                     final branch = branchList?[index];
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child:
+            isLoading
+                ? CustomWidget.loading()
+                : Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: branchList?.length,
+                        itemBuilder: (context, index) {
+                          final branch = branchList?[index];
 
-      //                     /* For Lacalization */
-      //                     final String address;
-      //                     final String name;
+                          /* For Lacalization */
+                          final String address;
+                          final String name;
 
-      //                     if (Language.currentLanguage == LanguageType.en) {
-      //                       name = branch!.nameEn;
-      //                     } else if (Language.currentLanguage ==
-      //                         LanguageType.my) {
-      //                       name = branch!.nameMm;
-      //                     } else {
-      //                       name = branch!.nameTh;
-      //                     }
+                          if (Language.currentLanguage == LanguageType.en) {
+                            name = branch!.nameEn;
+                          } else if (Language.currentLanguage ==
+                              LanguageType.my) {
+                            name = branch!.nameMm;
+                          } else {
+                            name = branch!.nameTh;
+                          }
 
-      //                     if (Language.currentLanguage == LanguageType.en) {
-      //                       address = branch!.address;
-      //                     } else if (Language.currentLanguage ==
-      //                         LanguageType.my) {
-      //                       address = branch!.addressMm;
-      //                     } else {
-      //                       address = branch!.addressTh;
-      //                     }
-      //                     /* For Lacalization */
+                          if (Language.currentLanguage == LanguageType.en) {
+                            address = branch!.address;
+                          } else if (Language.currentLanguage ==
+                              LanguageType.my) {
+                            address = branch!.addressMm;
+                          } else {
+                            address = branch!.addressTh;
+                          }
+                          /* For Lacalization */
 
-      //                     return Card(
-      //                       elevation: 1,
-      //                       margin: EdgeInsets.only(bottom: 16),
-      //                       shape: RoundedRectangleBorder(
-      //                         borderRadius: BorderRadius.circular(10),
-      //                       ),
-      //                       child: Column(
-      //                         mainAxisAlignment: MainAxisAlignment.start,
-      //                         crossAxisAlignment: CrossAxisAlignment.start,
-      //                         children: [
-      //                           Container(
-      //                             padding: CustomStyle.pagePaddingSmall(),
-      //                             width: double.infinity,
-      //                             decoration: BoxDecoration(
-      //                               color: CustomStyle.primary_color,
-      //                               borderRadius: const BorderRadius.vertical(
-      //                                 top: Radius.circular(10),
-      //                               ),
-      //                             ),
-      //                             child: Text(
-      //                               name,
-      //                               style: CustomStyle.bodyWhiteColor(),
-      //                             ),
-      //                           ),
-      //                           Container(
-      //                             padding: CustomStyle.pagePaddingSmall(),
-      //                             child: Column(
-      //                               children: [
-      //                                 Row(
-      //                                   crossAxisAlignment:
-      //                                       CrossAxisAlignment.start,
-      //                                   children: [
-      //                                     Icon(
-      //                                       Icons.location_on,
-      //                                       color: CustomStyle.primary_color,
-      //                                     ),
-      //                                     SizedBox(width: 8),
-      //                                     Expanded(
-      //                                       child: Text(
-      //                                         address,
-      //                                         style: CustomStyle.body(),
-      //                                       ),
-      //                                     ),
-      //                                   ],
-      //                                 ),
-      //                                 SizedBox(height: 6),
-      //                                 Row(
-      //                                   children: [
-      //                                     Icon(
-      //                                       Icons.phone,
-      //                                       color: CustomStyle.primary_color,
-      //                                     ),
-      //                                     SizedBox(width: 8),
-      //                                     Text(
-      //                                       branch.phone,
-      //                                       style: CustomStyle.body(),
-      //                                     ),
-      //                                   ],
-      //                                 ),
-      //                                 SizedBox(height: 16),
-      //                                 TextButton(
-      //                                   onPressed:
-      //                                       () => openMap(
-      //                                         branch.latitude,
-      //                                         branch.longitude,
-      //                                       ),
-      //                                   child: Text(
-      //                                     AppLocalizations.of(
-      //                                       context,
-      //                                     )!.goToDirection,
-      //                                     style: TextStyle(
-      //                                       fontSize: 16,
-      //                                       fontWeight: FontWeight.w500,
-      //                                       color: Color(0xFF2E3192),
-      //                                     ),
-      //                                   ),
-      //                                 ),
-      //                               ],
-      //                             ),
-      //                           ),
-      //                         ],
-      //                       ),
-      //                     );
-      //                   },
-      //                 ),
-      //               ),
-      //             ],
-      //           ),
-      // ),
+                          return Card(
+                            elevation: 1,
+                            margin: EdgeInsets.only(bottom: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: CustomStyle.pagePaddingSmall(),
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: CustomStyle.primary_color,
+                                    borderRadius: const BorderRadius.vertical(
+                                      top: Radius.circular(10),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    name,
+                                    style: CustomStyle.bodyWhiteColor(),
+                                  ),
+                                ),
+                                Container(
+                                  padding: CustomStyle.pagePaddingSmall(),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Icon(
+                                            Icons.location_on,
+                                            color: CustomStyle.primary_color,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              address,
+                                              style: CustomStyle.body(),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 6),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.phone,
+                                            color: CustomStyle.primary_color,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            branch.phone,
+                                            style: CustomStyle.body(),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 16),
+                                      TextButton(
+                                        onPressed:
+                                            () => openMap(
+                                              branch.latitude,
+                                              branch.longitude,
+                                            ),
+                                        child: Text(
+                                          AppLocalizations.of(
+                                            context,
+                                          )!.goToDirection,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color(0xFF2E3192),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+      ),
     );
   }
 }

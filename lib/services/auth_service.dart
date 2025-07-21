@@ -36,7 +36,6 @@ class AuthService {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       final accessToken = data['access_token'];
-      print('🔐 Got token: $accessToken');
       return accessToken;
     } else {
       print('❌ Failed to get token: ${response.statusCode}');

@@ -13,6 +13,7 @@ import 'package:synpitarn/data/shared_value.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:synpitarn/l10n/app_localizations.dart';
 import 'package:synpitarn/services/notification_service.dart';
+import 'package:synpitarn/util/call_manager.dart';
 import 'package:synpitarn/util/rsaUtil.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -21,6 +22,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await NotificationService.initializeFCM();
+  CallManager.initializeCallkitEventHandler();
   runApp(MyApp());
 
   Future.microtask(() {

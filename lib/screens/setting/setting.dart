@@ -10,6 +10,7 @@ import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/screens/components/page_app_bar.dart';
 import 'package:synpitarn/models/user.dart';
 import 'package:synpitarn/screens/location/branch.dart';
+import 'package:synpitarn/screens/profile/profile/map_screen.dart';
 import 'package:synpitarn/screens/setting/about_us.dart';
 import 'package:synpitarn/screens/setting/call_center.dart';
 import 'package:synpitarn/screens/setting/guide.dart';
@@ -140,7 +141,7 @@ class SettingState extends State<SettingPage> {
         buildSettingTile(
           Icons.money,
           AppLocalizations.of(context)!.nearestATM,
-          () => {},
+          goToMapScreen,
         ),
       ],
     );
@@ -212,6 +213,13 @@ class SettingState extends State<SettingPage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => CallCenterPage()),
+    );
+  }
+
+  void goToMapScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => MapScreen()),
     );
   }
 

@@ -334,6 +334,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_callkit_incoming:
+    dependency: "direct main"
+    description:
+      name: flutter_callkit_incoming
+      sha256: "9f6076c132ab2a4e2df70d9ba2ff778ce7e1ce46aef95b880e932e80085ce959"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.4"
   flutter_file_downloader:
     dependency: "direct main"
     description:
@@ -437,6 +445,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "8.1.1"
+  google_maps_cluster_manager:
+    dependency: "direct main"
+    description:
+      name: google_maps_cluster_manager
+      sha256: "36e9a4b2d831c470fc85d692a6c9cec70e0f385d578b9697de5f4de347561b83"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.0"
   google_maps_flutter:
     dependency: "direct main"
     description:
@@ -613,6 +629,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.9.0"
+  latlong2:
+    dependency: "direct main"
+    description:
+      name: latlong2
+      sha256: "98227922caf49e6056f91b6c56945ea1c7b166f28ffcd5fb8e72fc0b453cc8fe"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.1"
   leak_tracker:
     dependency: transitive
     description:

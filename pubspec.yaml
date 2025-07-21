@@ -69,6 +69,9 @@ dependencies:
   agora_rtc_engine: ^6.5.2
   flutter_local_notifications: ^19.2.1
   device_info_plus: ^11.5.0
+  flutter_callkit_incoming: ^2.0.3
+  google_maps_cluster_manager: ^3.1.0
+  latlong2: ^0.9.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
