@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/data/language.dart';
@@ -66,6 +67,7 @@ class SettingState extends State<SettingPage> {
   }
 
   Future<void> handleLogout() async {
+    await FirebaseMessaging.instance.deleteToken();
     AuthService().logout(context);
   }
 

@@ -45,7 +45,7 @@ class OTPState extends State<OTPPage> {
 
   @override
   void dispose() {
-    otpController.dispose();
+    // otpController.dispose();
     _timer.cancel();
     super.dispose();
   }

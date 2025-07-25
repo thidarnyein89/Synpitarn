@@ -13,19 +13,15 @@ class CallManager {
 
     final params = CallKitParams(
       id: uuid,
-      nameCaller: data['caller_name'] ?? 'Unknown Caller',
-      appName: 'My App',
+      nameCaller: data['admin_name'] ?? 'Unknown Caller',
+      appName: 'Synpitarn',
       avatar: '',
       handle: data['caller_number'] ?? '1234567890',
       type: 0,
       duration: 30000,
       textAccept: 'Accept',
       textDecline: 'Decline',
-      extra: {
-        'userId': data['caller_id'],
-        'channelId': data['channel_id'],
-        'token': data['token'],
-      },
+      extra: data,
       android: AndroidParams(
         isCustomNotification: true,
         isShowLogo: false,
@@ -51,13 +47,14 @@ class CallManager {
 
       if (eventName == 'event.actioncallaccept' && body != null) {
         final extra = body['extra'] ?? {};
-        final channelId = extra['channelId'];
-        final token = extra['token'];
-        final callerId = extra['userId'];
+        final channelId = extra['channel_name'];
+        final token = extra['shared_token'];
+        final callerId = extra['call_id'];
 
         print('👉 Call accepted with extra: $extra');
 
-        if (channelId == null && token == null && callerId == null) {
+        if (channelId != null && token != null && callerId != null) {
+          // =======> Toto check for null
           final context = navigatorKey.currentContext;
           if (context == null) return;
 
@@ -65,9 +62,9 @@ class CallManager {
             MaterialPageRoute(
               builder:
                   (_) => VideoCallScreen(
-                    channelId: 'gfdsgfsd',
-                    token: 'gfdsgfds',
-                    callerId: '123',
+                    channelId: channelId,
+                    token: token,
+                    callerId: callerId,
                   ),
             ),
           );

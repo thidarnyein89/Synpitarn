@@ -48,7 +48,7 @@ class MainAppBarState extends State<MainAppBar> {
       } else {
         showErrorDialog(notificationResponse.response.message);
       }
-      setState(() {});
+      // setState(() {});
     }
   }
 

@@ -50,9 +50,7 @@ Future<LanguageType> getLanguage() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String langString = prefs.getString('language') ?? LanguageType.my.name;
   return LanguageType.values.firstWhere(
-        (e) => e.name == langString,
+    (e) => e.name == langString,
     orElse: () => LanguageType.my,
   );
 }
-
-
