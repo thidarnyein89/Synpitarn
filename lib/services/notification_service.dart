@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
@@ -8,75 +7,34 @@ import 'package:synpitarn/services/local_storage.dart';
 import 'package:synpitarn/util/call_manager.dart'; // Optional
 
 class NotificationService {
-  static final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  static final _localNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  static const AndroidNotificationChannel _defaultChannel =
-      AndroidNotificationChannel(
-        'call_channel',
-        'Calls',
-        importance: Importance.high,
-        playSound: true,
-      );
+  // ✅ Define Android Notification Channel
+  static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
+    'video_call_channel', // Must match with showNotification()
+    'Video Calls',
+    description: 'This channel is used for incoming video calls.',
+    importance: Importance.high,
+  );
 
-  static String? _lastToken;
-
+  /// Main entry to initialize FCM
   static Future<void> initializeFCM() async {
     final messaging = FirebaseMessaging.instance;
-
-    // ✅ Initialize local notifications
-    const initSettings = InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-      iOS: DarwinInitializationSettings(),
-    );
-
-    await _localNotificationsPlugin.initialize(
-      initSettings,
-      onDidReceiveNotificationResponse: (details) {
-        _handleNotificationClick(details.payload);
-      },
-    );
-
-    // ✅ Android channel
-    await _localNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >()
-        ?.createNotificationChannel(_defaultChannel);
 
     // ✅ Request permission
     await messaging.requestPermission(alert: true, badge: true, sound: true);
 
-    // ✅ Foreground handler
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      final data = message.data;
-      print('📬 Received message: ${data.toString()}');
+    // ✅ Create notification channel for Android
+    await _createNotificationChannel();
 
-      if (data['type'] == 'video_call') {
-        CallManager.showIncomingCall(data); // ✅ Updated class
-      } else {
-        _showLocalNotification(
-          title: message.notification?.title ?? data['title'] ?? 'Notification',
-          body: message.notification?.body ?? data['body'] ?? '',
-          payload: jsonEncode(data),
-        );
-      }
-    });
+    // ✅ Local Notification Init
+    await _initLocalNotifications();
 
-    // ✅ Tap when app opened from background
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      final data = message.data;
-      print('📬 Message opened from background: ${data.toString()}');
-
-      if (data['type'] == 'video_call') {
-        CallManager.showIncomingCall(data);
-      }
-    });
-
-    // ✅ Get current token
+    // ✅ Get and sync FCM token
     final currentToken = await messaging.getToken();
     final localToken = await LocalStorage.getSavedToken();
-    print('Current FCM Token: $currentToken');
+    print('📲 Current FCM Token: $currentToken');
+
     if (currentToken != null && currentToken != localToken) {
       final success = await _saveTokenToServer(currentToken);
       if (success) {
@@ -84,33 +42,56 @@ class NotificationService {
       }
     }
 
-    // 🔁 Listen for token refresh
+    // ✅ Listen for token refresh
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
-      final localToken = await LocalStorage.getSavedToken();
-      if (newToken != localToken) {
+      final oldToken = await LocalStorage.getSavedToken();
+      if (newToken != oldToken) {
         final success = await _saveTokenToServer(newToken);
         if (success) {
           await LocalStorage.saveToken(newToken);
         }
       }
     });
+
+    // ✅ Listen for messages
+    FirebaseMessaging.onMessage.listen(_handleMessage);
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
+  /// Create Android notification channel
+  static Future<void> _createNotificationChannel() async {
+    final androidPlugin =
+        _localNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
+
+    if (androidPlugin != null) {
+      await androidPlugin.createNotificationChannel(_channel);
+      print('✅ Notification channel created.');
+    } else {
+      print('⚠️ Android notification plugin not available.');
+    }
+  }
+
+  /// Save token to API server
   static Future<bool> _saveTokenToServer(String fcmToken) async {
     final bearerToken = await AuthService.getBearerToken();
     final userId = await getLoginUser();
-    final clientId = userId.id.toString(); // Assuming user ID is the client ID
+    final clientId = userId.id.toString();
     final deviceId = await AuthService.getDeviceId();
+
     print('Bearer Token: $bearerToken');
     print('Client ID: $clientId');
     print('Device ID: $deviceId');
 
     if (bearerToken == null || bearerToken.isEmpty) {
       print("❌ No bearer token available.");
-      return false; // ⬅ return false here
+      return false;
     }
 
     final url = Uri.parse('http://13.213.165.89/api/v1/fcm-token');
+
     try {
       final response = await http.post(
         url,
@@ -127,53 +108,75 @@ class NotificationService {
 
       if (response.statusCode == 200) {
         print("✅ Token synced with server.");
-        return true; // ⬅ success
+        return true;
       } else {
         print("❌ Failed to sync token: ${response.statusCode}");
         print(response.body);
-        return false; // ⬅ failed
+        return false;
       }
     } catch (e) {
       print("❌ Error syncing token: $e");
-      return false; // ⬅ on exception
+      return false;
     }
   }
 
-  static void _handleNotificationClick(String? payload) {
-    if (payload == null) return;
+  /// Handle foreground notification
+  static void _handleMessage(RemoteMessage message) async {
+    print('📩 Foreground message: ${message.toMap()}');
 
-    try {
-      final data = jsonDecode(payload);
-
-      if (data['type'] == 'video_call') {
-        CallManager.showIncomingCall(data);
-      } else {
-        print('📥 Unknown notification type, no action.');
-      }
-    } catch (e) {
-      print('❌ Error parsing notification payload: $e');
+    final data = message.data;
+    if (data['type'] == 'video_call') {
+      CallManager.showIncomingCall(data);
+      await showNotification(
+        "Incoming Call",
+        "${data['admin_name']} is calling...",
+      );
     }
   }
 
-  static Future<void> _showLocalNotification({
-    required String title,
-    required String body,
-    required String payload,
-  }) async {
-    await _localNotificationsPlugin.show(
-      0,
-      title,
-      body,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          _defaultChannel.id,
-          _defaultChannel.name,
-          importance: Importance.high,
-          priority: Priority.high,
-        ),
-        iOS: DarwinNotificationDetails(),
-      ),
-      payload: payload,
+  /// Handle background/terminated notification
+  static Future<void> _firebaseMessagingBackgroundHandler(
+    RemoteMessage message,
+  ) async {
+    print('📩 Background message: ${message.toMap()}');
+
+    final data = message.data;
+    if (data['type'] == 'video_call') {
+      await CallManager.showIncomingCall(data);
+      await showNotification(
+        "Incoming Call",
+        "${data['admin_name']} is calling...",
+      );
+    }
+  }
+
+  /// Initialize local notifications
+  static Future<void> _initLocalNotifications() async {
+    const AndroidInitializationSettings androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const InitializationSettings settings = InitializationSettings(
+      android: androidSettings,
     );
+
+    await _localNotificationsPlugin.initialize(settings);
+  }
+
+  /// Show a local notification
+  static Future<void> showNotification(String title, String body) async {
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'video_call_channel', // Must match with _channel.id
+          'Video Calls',
+          channelDescription: 'Incoming video calls',
+          importance: Importance.max,
+          priority: Priority.high,
+        );
+
+    const NotificationDetails platformDetails = NotificationDetails(
+      android: androidDetails,
+    );
+
+    await _localNotificationsPlugin.show(0, title, body, platformDetails);
   }
 }

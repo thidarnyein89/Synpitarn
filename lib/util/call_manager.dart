@@ -8,7 +8,7 @@ import 'package:synpitarn/screens/videocall/video_call_screen.dart';
 import 'package:uuid/uuid.dart';
 
 class CallManager {
-  static void showIncomingCall(Map<String, dynamic> data) async {
+  static Future<void> showIncomingCall(Map<String, dynamic> data) async {
     final uuid = const Uuid().v4();
 
     final params = CallKitParams(
