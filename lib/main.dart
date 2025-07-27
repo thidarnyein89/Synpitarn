@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -15,16 +14,34 @@ import 'package:synpitarn/l10n/app_localizations.dart';
 import 'package:synpitarn/services/notification_service.dart';
 import 'package:synpitarn/util/call_manager.dart';
 import 'package:synpitarn/util/rsaUtil.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+/// ✅ MUST be top-level and annotated
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await NotificationService.backgroundMessageHandler(message);
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // ✅ Initialize Firebase first
   await Firebase.initializeApp();
+
+  // ✅ Register background handler BEFORE anything else
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+  // ✅ Init FCM & Local Notifications
   await NotificationService.initializeFCM();
-  CallManager.initializeCallkitEventHandler();
+
   runApp(MyApp());
 
+  CallManager.initializeCallkitEventHandler();
+
+  // ✅ Async RSA key generation
   Future.microtask(() {
     runRSAKeyGenerator();
   });
@@ -45,7 +62,7 @@ enum AppStartStatus { loggedIn, needBiometricLogin, notLoggedIn }
 class _MyAppState extends State<MyApp> {
   late Future<AppStartStatus> _loginStatusFuture;
 
-  Locale? currentLocale = Locale(LanguageType.my.toString())!;
+  Locale? currentLocale = Locale(LanguageType.my.toString());
 
   @override
   void initState() {
@@ -87,14 +104,10 @@ class _MyAppState extends State<MyApp> {
 
   Future<AppStartStatus> checkAppStartStatus() async {
     bool isLoggedIn = await getLoginStatus();
-    if (isLoggedIn) {
-      return AppStartStatus.loggedIn;
-    }
+    if (isLoggedIn) return AppStartStatus.loggedIn;
 
     bool needBiometric = await getNeedBiometricLogin();
-    if (needBiometric) {
-      return AppStartStatus.needBiometricLogin;
-    }
+    if (needBiometric) return AppStartStatus.needBiometricLogin;
 
     return AppStartStatus.notLoggedIn;
   }
@@ -166,7 +179,7 @@ class _MyAppState extends State<MyApp> {
 }
 
 class MainPage extends StatefulWidget {
-  Function(Locale)? onLanguageChanged;
+  final Function(Locale)? onLanguageChanged;
 
   MainPage({this.onLanguageChanged});
 
@@ -196,95 +209,66 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Stack(
-          children: [
-            // Align(
-            //   alignment: Alignment.topRight,
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(12.0),
-            //     child: LanguageDropdown(
-            //       selectedLocale: currentLocale!,
-            //       onLanguageChanged: (locale) {
-            //         widget.onLanguageChanged!(locale);
-            //       },
-            //     ),
-            //   ),
-            // ),
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/images/synpitarn.jpg', height: 180),
-                    SizedBox(height: 20),
-                    Text(
-                      AppLocalizations.of(context)!.welcomeMessage,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: CustomStyle.primary_color,
-                      ),
-                    ),
-                    SizedBox(height: 100),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RegisterPage(),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: CustomStyle.primary_color,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 40,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                      ),
-                      child: Text(
-                        textAlign: TextAlign.center,
-                        AppLocalizations.of(context)!.openAccount,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    SizedBox(height: 30),
-                    Text(AppLocalizations.of(context)!.or),
-                    SizedBox(height: 30),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: CustomStyle.primary_color,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 40,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                      ),
-                      child: Text(
-                        textAlign: TextAlign.center,
-                        AppLocalizations.of(context)!.login,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset('assets/images/synpitarn.jpg', height: 180),
+                SizedBox(height: 20),
+                Text(
+                  AppLocalizations.of(context)!.welcomeMessage,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: CustomStyle.primary_color,
+                  ),
                 ),
-              ),
+                SizedBox(height: 100),
+                ElevatedButton(
+                  onPressed:
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => RegisterPage()),
+                      ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: CustomStyle.primary_color,
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)!.openAccount,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                SizedBox(height: 30),
+                Text(AppLocalizations.of(context)!.or),
+                SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed:
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => LoginPage()),
+                      ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: CustomStyle.primary_color,
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)!.login,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
