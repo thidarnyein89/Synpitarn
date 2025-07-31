@@ -10,6 +10,7 @@ import 'package:synpitarn/screens/profile/document_file.dart';
 import 'package:synpitarn/screens/profile/register/customer_information.dart';
 import 'package:synpitarn/screens/profile/register/additional_information.dart';
 import 'package:synpitarn/screens/profile/register/work_permit.dart';
+import 'package:synpitarn/services/notification_service.dart';
 
 class RouteService {
   static late User _loginUser;
@@ -28,6 +29,7 @@ class RouteService {
 
     await setLoginUser(loginUser);
     await setLoginStatus(true);
+    NotificationService.sendTokenIfAvailable();
 
     goToHome(context);
   }

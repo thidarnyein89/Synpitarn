@@ -4,12 +4,13 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:synpitarn/data/shared_value.dart';
 import 'package:synpitarn/services/auth_service.dart';
-import 'package:synpitarn/services/local_storage.dart';
 import 'package:synpitarn/util/call_manager.dart';
 
 @pragma('vm:entry-point') // ✅ Keep this whole class in release mode
 class NotificationService {
   static final _localNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
   // ✅ Android notification channel for high-priority calls/messages
   static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
@@ -21,24 +22,94 @@ class NotificationService {
 
   /// ✅ Main initialization (foreground + background + token)
   static Future<void> initializeFCM() async {
-    final messaging = FirebaseMessaging.instance;
+    print("🔧 Initializing FCM...");
 
-    // ✅ Request permission (iOS shows dialog)
-    await messaging.requestPermission(alert: true, badge: true, sound: true);
+    try {
+      await _messaging.requestPermission(alert: true, badge: true, sound: true);
+      print("✅ FCM permission granted.");
 
-    // ✅ Local Notification init
-    await _initLocalNotifications();
+      String? token = await _messaging.getToken();
+      print("📲 Current FCM Token: $token");
 
-    // ✅ Create Android notification channel
-    await _createNotificationChannel();
+      if (token != null) {
+        await _saveTokenToServer(token);
+      }
 
-    // ✅ Sync FCM token to server
-    await _syncFCMToken(messaging);
+      FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+        print("🔄 Token refreshed: $newToken");
+        await _saveTokenToServer(newToken);
+      });
 
-    // ✅ Foreground message listener
-    FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+      await _initLocalNotifications();
+      print("✅ Local notifications initialized.");
 
-    // ✅ Background handler is registered in main.dart (onBackgroundMessage)
+      await _createNotificationChannel();
+      print("✅ Notification channel created.");
+
+      FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+      FirebaseMessaging.onMessageOpenedApp.listen((msg) {
+        print("📬 App opened from notification: ${msg.data}");
+      });
+
+      print("✅ FCM fully initialized.");
+    } catch (e) {
+      print("❌ Error in initializeFCM: $e");
+    }
+  }
+
+  static Future<void> sendTokenIfAvailable() async {
+    String? token = await _messaging.getToken();
+    if (token != null) {
+      await _saveTokenToServer(token);
+    } else {
+      print("FCM token null");
+    }
+  }
+
+  /// ✅ Send token to backend
+  static Future<bool> _saveTokenToServer(String fcmToken) async {
+    final bearerToken = await AuthService.getBearerToken();
+    final userId = await getLoginUser();
+    final clientId = userId.id.toString();
+    final deviceId = await AuthService.getDeviceId();
+    print("🔑 FCM token: $fcmToken");
+    print("🔑 Client ID: $clientId");
+    print("🔑 Device ID: $deviceId");
+
+    if (bearerToken == null || bearerToken.isEmpty) {
+      print("❌ No bearer token available. Skipping token sync.");
+      return false;
+    }
+
+    final url = Uri.parse('http://13.213.165.89/api/v1/fcm-token');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'client_id': clientId,
+          'fcm_token': fcmToken,
+          'device_id': deviceId,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print("✅ Save fcm token successfully to  server!.");
+        print('Response===> ${response.body.toString()}');
+        return true;
+      } else {
+        print("❌ Save fcm token fail to Server: ${response.statusCode}");
+        print(response.body);
+        return false;
+      }
+    } catch (e) {
+      print("❌ Error syncing token: $e");
+      return false;
+    }
   }
 
   /// ✅ Handle foreground messages
@@ -123,73 +194,5 @@ class NotificationService {
       body,
       platformDetails,
     );
-  }
-
-  /// ✅ Sync token with API server
-  static Future<void> _syncFCMToken(FirebaseMessaging messaging) async {
-    final currentToken = await messaging.getToken();
-    final localToken = await LocalStorage.getSavedToken();
-
-    print('📲 Current FCM Token: $currentToken');
-
-    if (currentToken != null && currentToken != localToken) {
-      final success = await _saveTokenToServer(currentToken);
-      if (success) {
-        await LocalStorage.saveToken(currentToken);
-      }
-    }
-
-    // ✅ Token refresh listener
-    messaging.onTokenRefresh.listen((newToken) async {
-      final oldToken = await LocalStorage.getSavedToken();
-      if (newToken != oldToken) {
-        final success = await _saveTokenToServer(newToken);
-        if (success) {
-          await LocalStorage.saveToken(newToken);
-        }
-      }
-    });
-  }
-
-  /// ✅ Send token to backend
-  static Future<bool> _saveTokenToServer(String fcmToken) async {
-    final bearerToken = await AuthService.getBearerToken();
-    final userId = await getLoginUser();
-    final clientId = userId.id.toString();
-    final deviceId = await AuthService.getDeviceId();
-
-    if (bearerToken == null || bearerToken.isEmpty) {
-      print("❌ No bearer token available. Skipping token sync.");
-      return false;
-    }
-
-    final url = Uri.parse('http://13.213.165.89/api/v1/fcm-token');
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Authorization': 'Bearer $bearerToken',
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: {
-          'client_id': clientId,
-          'fcm_token': fcmToken,
-          'device_id': deviceId,
-        },
-      );
-
-      if (response.statusCode == 200) {
-        print("✅ FCM token synced with server.");
-        return true;
-      } else {
-        print("❌ Failed to sync token: ${response.statusCode}");
-        print(response.body);
-        return false;
-      }
-    } catch (e) {
-      print("❌ Error syncing token: $e");
-      return false;
-    }
   }
 }

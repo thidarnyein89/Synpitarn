@@ -6,6 +6,7 @@ import 'package:synpitarn/screens/components/custom_widget.dart';
 import 'package:synpitarn/models/User_response.dart';
 import 'package:synpitarn/repositories/auth_repository.dart';
 import 'package:synpitarn/models/user.dart';
+import 'package:synpitarn/services/notification_service.dart';
 import 'package:synpitarn/services/route_service.dart';
 import 'package:synpitarn/screens/auth/register.dart';
 import 'package:synpitarn/screens/auth/forget_password.dart';

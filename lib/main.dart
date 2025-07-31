@@ -28,23 +28,29 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ✅ Initialize Firebase first
-  await Firebase.initializeApp();
+  try {
+    // ✅ Firebase initialization
+    await Firebase.initializeApp();
 
-  // ✅ Register background handler BEFORE anything else
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    // ✅ Background handler
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-  // ✅ Init FCM & Local Notifications
-  await NotificationService.initializeFCM();
+    // ✅ FCM & Local Notifications
+    await NotificationService.initializeFCM();
 
-  runApp(MyApp());
+    // ✅ Init callkit (before UI starts)
+    CallManager.initializeCallkitEventHandler();
 
-  CallManager.initializeCallkitEventHandler();
+    // ✅ Start app
+    runApp(MyApp());
 
-  // ✅ Async RSA key generation
-  Future.microtask(() {
-    runRSAKeyGenerator();
-  });
+    // ✅ Generate RSA keys async
+    Future.microtask(() {
+      runRSAKeyGenerator();
+    });
+  } catch (e, stack) {
+    print('❌ Initialization failed: $e\n$stack');
+  }
 }
 
 class MyApp extends StatefulWidget {

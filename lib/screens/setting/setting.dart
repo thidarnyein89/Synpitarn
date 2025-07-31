@@ -161,7 +161,6 @@ class SettingState extends State<SettingPage> {
               context,
               MaterialPageRoute(builder: (context) => AdminScreen()),
             ),
-            // FCMService().init(),
           },
         ),
       ],

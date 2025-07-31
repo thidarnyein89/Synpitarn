@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:synpitarn/data/constant.dart';
 import 'package:synpitarn/data/loan_status.dart';
@@ -84,6 +85,10 @@ class HomeState extends State<HomePage> {
 
     loanStepKeys = List.generate(loanSteps.length, (_) => GlobalKey());
     setState(() {});
+    FirebaseMessaging.instance.getToken().then((token) {
+      print("🏷️ Token in HomePage: $token");
+      // You could also display it in a Text widget for manual testing
+    });
   }
 
   @override
