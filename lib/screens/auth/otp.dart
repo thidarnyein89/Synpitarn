@@ -241,7 +241,7 @@ class OTPState extends State<OTPPage> {
                         text: AppLocalizations.of(context)!.verifyOTPCode,
                         onPressed: handleVerifyOTP,
                       ),
-                      Text("OTP Code $code"),
+                      // Text("OTP Code $code"),
                     ],
                   ),
                 ),

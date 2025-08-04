@@ -89,7 +89,7 @@ class BranchAppointmentState extends State<BranchAppointmentPage> {
       branchList = branchResponse.data;
       setState(() {});
     } else if (branchResponse.response.code == 403) {
-      await showErrorDialog(branchResponse.response.message);
+      // await showErrorDialog(branchResponse.response.message);
       AuthService().logout(context);
     } else {
       showErrorDialog(branchResponse.response.message);
